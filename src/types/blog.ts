@@ -1,14 +1,14 @@
-import { EntrySkeletonType } from 'contentful'
+import type { EntrySkeletonType, Asset } from 'contentful'
+import type { Document } from '@contentful/rich-text-types'
 
-// Define fields expected from Contentful
 export interface BlogFields {
   title: string
   slug: string
-  description: string
+  description?: string | Document
+  body?: string | Document
+  coverImage?: Asset
+  datePublished?: string
+  authorName?: string
 }
 
-// Tell TypeScript these fields are REQUIRED
-export type BlogSkeleton = EntrySkeletonType<
-  BlogFields,
-  'title' | 'slug' | 'description'
->
+export type BlogSkeleton = EntrySkeletonType<BlogFields>

@@ -7,12 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "contentful-codegen --config contentful-codegen.config.js"
+    "codegen": "contentful-codegen --config contentful-codegen.config.js",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^16.1.0",
     "contentful": "^11.7.15",
     "contentful-management": "^11.54.1",
+    "geist": "^1.4.2",
     "graphql": "^16.11.0",
     "next": "15.4.1",
     "react": "19.1.0",
@@ -28,6 +30,7 @@
     "contentful-typescript-codegen": "^3.4.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.1",
+    "postcss-themes": "^1.0.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
