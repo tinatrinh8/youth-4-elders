@@ -1,14 +1,7 @@
-import { getEntries, debugContentful } from '@/lib/contentful'
+import { getEntries} from '@/lib/contentful'
 import type { HomepageSkeleton } from '@/types/homepage'
 
 export default async function Home() {
-  // Check environment variables first
-  console.log('Environment check:')
-  console.log('CONTENTFUL_SPACE_ID:', process.env.CONTENTFUL_SPACE_ID ? 'SET' : 'NOT SET')
-  console.log('CONTENTFUL_ACCESS_TOKEN:', process.env.CONTENTFUL_ACCESS_TOKEN ? 'SET' : 'NOT SET')
-  console.log('CONTENTFUL_ENVIRONMENT:', process.env.CONTENTFUL_ENVIRONMENT || 'NOT SET (will use master)')
-
-  await debugContentful(); // TEMP: prints to terminal
 
   let pages: import('contentful').Entry<HomepageSkeleton>[] = []
   try {
