@@ -17,5 +17,12 @@ export default async function Home() {
   }
 
   const page = pages[0]
-  return <main className="p-8">ok</main>
+  return (
+    <main className="p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8">Blog</h1>
+        <p className="text-lg text-gray-600">Blog posts coming soon...</p>
+      </div>
+    </main>
+  )
 }
