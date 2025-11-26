@@ -2,51 +2,63 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 
 export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
-  const [isFixed, setIsFixed] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const lastScrollY = useRef(0)
   const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
-      // Nav bar becomes fixed when "Youth 4 Elders" text moves to top (scrollY >= 100)
-      // On homepage, nav bar scrolls with page initially, then sticks when text reaches top
-      const textMoveThreshold = 100 // Same threshold as in page.tsx for text movement
-      const isHomePage = pathname === '/'
+      const currentScrollY = window.scrollY
       
-      if (isHomePage) {
-        // On homepage: scroll with page until text reaches top, then fix
-        setIsFixed(window.scrollY >= textMoveThreshold)
+      // Text position animation completes around scrollY = 100
+      // Only enable hide/show AFTER text has fully reached its final position
+      // Add a buffer (150px) to ensure animation is fully complete
+      const textAnimationComplete = currentScrollY >= 150
+      
+      if (textAnimationComplete) {
+        // Text has fully reached its position, now enable hide/show behavior
+        if (currentScrollY < lastScrollY.current) {
+          // Scrolling up - show nav bar
+          setIsVisible(true)
+        } else if (currentScrollY > lastScrollY.current && currentScrollY > 200) {
+          // Scrolling down and past threshold - hide nav bar
+          setIsVisible(false)
+        }
       } else {
-        // On other pages: always fixed
-        setIsFixed(true)
+        // Before text animation is complete, always show
+        setIsVisible(true)
       }
+      
+      // Always show at the very top
+      if (currentScrollY < 10) {
+        setIsVisible(true)
+      }
+      
+      lastScrollY.current = currentScrollY
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Check initial state
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [pathname])
+  }, [])
 
   const whoWeAreSubmenu = [
     { href: '/club-info', label: 'Club Info' },
     { href: '/partner', label: 'Partner Page' },
     { href: '/team', label: 'Meet the Team' },
   ]
-
-  // On homepage, nav bar should scroll with page initially, then become fixed
-  // On other pages, nav bar is always fixed
-  const navPosition = pathname === '/' && !isFixed ? 'relative' : 'fixed'
   
   return (
     <nav 
-      className="top-0 left-0 right-0 z-[100] py-6" 
+      className="fixed top-0 left-0 right-0 z-[100] py-6 transition-transform duration-300 ease-in-out"
       style={{
-        background: 'transparent',
-        position: navPosition
+        background: '#F8F5ED',
+        transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
+        willChange: 'transform'
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-center gap-1 sm:gap-2 w-full">

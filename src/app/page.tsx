@@ -25,9 +25,15 @@ export default function Home() {
         setFeatureHighlights([])
       })
 
-    // Scroll event listener
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', handleScroll)
+    // Scroll event listener for position tracking
+    // Text stays visible at bottom - no hide/show logic needed here
+    // Nav bar has its own hide/show logic in NavigationBar component
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      setScrollY(currentScrollY)
+    }
+    
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -39,24 +45,29 @@ export default function Home() {
     return (orderA as number) - (orderB as number)
   })
 
-  // Logo is always at top center, text moves from center to below logo
-  const logoSize = 50 // Logo size in pixels (matches NavigationBar)
-  const logoTop = 24 // Logo top position (py-6 = 24px)
-  const textBelowLogo = logoTop + logoSize + 4 // Text position below logo (reduced gap to 4px)
+  // Text position animation threshold
+  const positionAnimationThreshold = 100
   
+  // Text stays at bottom like a watermark - it does NOT hide/show
+  // Only the nav bar hides/shows, the text always stays visible at bottom
   const heroStyle = {
-    // Start perfectly centered, move to below logo on scroll
-    top: scrollY < 100
+    // Start perfectly centered, move to bottom of screen on scroll
+    top: scrollY < positionAnimationThreshold
       ? '50%' // Perfectly centered when at top
-      : `${textBelowLogo}px`, // Final position below logo
+      : 'auto', // Auto top when at bottom
+    bottom: scrollY < positionAnimationThreshold
+      ? 'auto' // No bottom when centered
+      : '24px', // Sticky at bottom with padding (watermark position)
     left: '50%',
-    transform: scrollY < 100
+    transform: scrollY < positionAnimationThreshold
       ? 'translate(-50%, -50%)' // Centered transform
-      : 'translate(-50%, 0)', // Aligned to top when below logo
-    fontSize: scrollY < 100
+      : 'translate(-50%, 0)', // Bottom position - always visible
+    fontSize: scrollY < positionAnimationThreshold
       ? `clamp(4rem, 12vw, 8rem)` // Large when centered
-      : '16px', // Smaller text when below logo
-    transition: 'all 0.7s ease-in-out'
+      : '16px', // Smaller text when at bottom (watermark size)
+    transition: 'all 0.3s ease-in-out',
+    willChange: 'transform',
+    opacity: 1 // Always visible - never fades out
   }
 
 
@@ -69,20 +80,21 @@ export default function Home() {
       }}>
         {/* HERO CONTENT: Starts centered, moves to underneath logo on scroll */}
         <div 
-          className="fixed z-40 font-bold transition-all duration-700 ease-in-out whitespace-nowrap"
+          className="fixed z-40 font-bold italic transition-all duration-700 ease-in-out whitespace-nowrap"
           style={{
             ...heroStyle,
             fontFamily: 'var(--font-playfair)',
             pointerEvents: 'none',
-            color: '#6B5D4F'
+            color: '#F8B4CB'
           }}
         >
           Youth 4 Elders
         </div>
+        
       </section>
 
       {/* Main Header Section - Large image on left, content on right */}
-      <section className="relative z-10 py-20">
+      <section className="relative z-10 py-20" style={{ background: '#FFF0F5' }}>
         <div className="max-w-7xl mx-auto px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left side - Image placeholder (you can add an actual image later) */}
