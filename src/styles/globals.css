@@ -29,17 +29,37 @@
   }
 }
 
+html {
+  background: #F8F5ED;
+  min-height: 100%;
+}
+
 body {
-  background: var(--background);
+  background: #F8F5ED;
   color: var(--foreground);
-  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-raleway), 'Noah', Georgia, 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   min-height: 100vh;
   position: relative; 
   overflow-x: hidden; 
 }
 
+/* Font variables for Noah and Georgia */
+:root {
+  --font-noah: 'Noah', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-georgia: Georgia, 'Times New Roman', serif;
+}
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Hide scrollbar for menu */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 /* 🌋 Lava Lamp Aura Class */
 .animate-lava-aura {
@@ -77,4 +97,36 @@ body {
     /* Returns to 0% state for a seamless loop */
     background-position: 0% 0%, 100% 100%, 0% 100%, 50% 50%, 80% 20%, 30% 70%;
   }
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dropdownFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
+/* Footer social link hover effect */
+.footer-social-link {
+  color: #8B6F5E;
+  transition: color 0.3s ease;
+}
+
+.footer-social-link:hover {
+  color: #F8B4CB;
 }

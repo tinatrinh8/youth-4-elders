@@ -3,10 +3,10 @@ import { getEntryBySlug } from '@/lib/contentful'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import { looksLikeRichText, asRichTextDocument, toText } from '@/utils/richTextGuards'
 
-type Params = { slug: string }
+type Params = Promise<{ slug: string }>
 
 export default async function BlogPostPage({ params }: { params: Params }) {
-  const { slug } = params
+  const { slug } = await params
 
   const post = await getEntryBySlug<BlogSkeleton>('blogPost', slug)
 

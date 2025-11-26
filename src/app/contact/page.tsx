@@ -1,87 +1,131 @@
+'use client'
+
+import { useState } from 'react'
+
 export default function Contact() {
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null)
+
+  const faqs = [
+    {
+      question: "HOW TO JOIN?",
+      answer: "Simply reach out to us via email or Instagram! We welcome all uOttawa students who are passionate about bridging generational gaps and making a positive impact in our community."
+    },
+    {
+      question: "WHAT ACTIVITIES?",
+      answer: "We organize workshops, storytelling sessions, technology help sessions, craft fairs, and various intergenerational activities that bring youth and elders together."
+    },
+    {
+      question: "SPECIAL SKILLS?",
+      answer: "Not at all! We value enthusiasm, empathy, and a willingness to learn. Whether you're tech-savvy, crafty, or just great at listening, there's a place for you here."
+    },
+    {
+      question: "MEETING FREQUENCY?",
+      answer: "We organize events throughout the semester and meet regularly for planning sessions. Follow us on Instagram for the latest updates on upcoming events and meetings."
+    }
+  ]
+
+  const toggleFAQ = (index: number) => {
+    setOpenFAQ(openFAQ === index ? null : index)
+  }
   return (
-    <main className="p-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-12 text-center">Contact Us</h1>
+    <main className="min-h-screen relative overflow-hidden" style={{ background: '#F8F5ED' }}>
+      {/* Soft Pink Flower at Top */}
+      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-32 h-32 opacity-80">
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <path d="M50 20 L55 35 L70 35 L60 45 L65 60 L50 50 L35 60 L40 45 L30 35 L45 35 Z" 
+                fill="#F8B4CB" opacity="0.8"/>
+          <path d="M50 15 L52 25 L62 25 L55 30 L58 40 L50 35 L42 40 L45 30 L38 25 L48 25 Z" 
+                fill="#F8B4CB" opacity="0.6"/>
+        </svg>
+      </div>
+      
+      <div className="max-w-6xl mx-auto relative z-10 pt-32 pb-16 px-8">
+        <h1 className="text-5xl font-bold mb-16 text-center" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
+          Frequently Asked Questions
+        </h1>
         
-        {/* FAQ Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white/80 backdrop-blur-sm border border-pink-200 rounded-2xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold mb-3 text-gray-900">How can I join Youth 4 Elders?</h3>
-              <p className="text-gray-700 leading-relaxed">
+        {/* Three Column Layout */}
+        <section className="mb-20">
+          <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+            {/* How to Join Column */}
+            <div className="text-center space-y-6">
+              <div className="flex justify-center">
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <svg className="w-16 h-16" style={{ color: '#8B6F5E' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
+                How can I join?
+              </h3>
+              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
                 Simply reach out to us via email or Instagram! We welcome all uOttawa students who are passionate about bridging generational gaps and making a positive impact in our community.
               </p>
             </div>
-            
-            <div className="bg-white/80 backdrop-blur-sm border border-pink-200 rounded-2xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold mb-3 text-gray-900">What activities do you organize?</h3>
-              <p className="text-gray-700 leading-relaxed">
+
+            {/* What Activities Column */}
+            <div className="text-center space-y-6">
+              <div className="flex justify-center">
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <svg className="w-16 h-16" style={{ color: '#9D7A6B' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
+                What activities do you organize?
+              </h3>
+              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-raleway)', color: '#7A5C5C' }}>
                 We organize workshops, storytelling sessions, technology help sessions, craft fairs, and various intergenerational activities that bring youth and elders together.
               </p>
             </div>
-            
-            <div className="bg-white/80 backdrop-blur-sm border border-pink-200 rounded-2xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold mb-3 text-gray-900">Do I need any special skills to participate?</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Not at all! We value enthusiasm, empathy, and a willingness to learn. Whether you&apos;re tech-savvy, crafty, or just great at listening, there&apos;s a place for you here.
-              </p>
-            </div>
-            
-            <div className="bg-white/80 backdrop-blur-sm border border-pink-200 rounded-2xl p-6 shadow-sm">
-              <h3 className="text-xl font-semibold mb-3 text-gray-900">How often do you meet?</h3>
-              <p className="text-gray-700 leading-relaxed">
+
+            {/* Meeting Frequency Column */}
+            <div className="text-center space-y-6">
+              <div className="flex justify-center">
+                <div className="w-20 h-20 flex items-center justify-center">
+                  <svg className="w-16 h-16" style={{ color: '#A68B7D' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
+                How often do you meet?
+              </h3>
+              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-raleway)', color: '#8B6F5E' }}>
                 We organize events throughout the semester and meet regularly for planning sessions. Follow us on Instagram for the latest updates on upcoming events and meetings.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Contact Us Section */}
-        <section className="bg-white/80 backdrop-blur-sm border border-pink-200 rounded-2xl p-8 shadow-sm">
-          <h2 className="text-3xl font-bold mb-6 text-center">Get in Touch</h2>
-          <p className="text-lg text-gray-600 mb-8 text-center">
-            Have a question or want to collaborate? We&apos;d love to hear from you.
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Email Us</h3>
-                <a 
-                  href="mailto:youth4elders@gmail.com"
-                  className="text-pink-600 hover:text-pink-700 transition-colors text-lg"
-                >
-                  youth4elders@gmail.com
-                </a>
-                <p className="text-gray-600 mt-2">We typically respond within 24 hours</p>
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Follow Us</h3>
-                <a 
-                  href="https://www.instagram.com/youth4elders/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-pink-600 hover:text-pink-700 transition-colors text-lg"
-                >
-                  @youth4elders
-                </a>
-                <p className="text-gray-600 mt-2">Stay updated with our latest events and activities</p>
-              </div>
+        {/* Contact Section */}
+        <section className="mb-16">
+          <div className="text-center space-y-8">
+            <h2 className="text-3xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
+              Ready to get started?
+            </h2>
+            <p className="text-lg max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
+              Have a question or want to collaborate? We&apos;d love to hear from you!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <a 
+                href="mailto:youth4elders@gmail.com"
+                className="border-2 px-8 py-3 rounded-lg font-semibold text-white transition-colors"
+                style={{ borderColor: '#8B6F5E', background: '#8B6F5E' }}
+              >
+                Email Us
+              </a>
+              <a 
+                href="https://www.instagram.com/youth4elders/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-2 px-8 py-3 rounded-lg font-semibold text-white transition-colors"
+                style={{ borderColor: '#9D7A6B', background: '#9D7A6B' }}
+              >
+                Follow Us
+              </a>
             </div>
           </div>
         </section>

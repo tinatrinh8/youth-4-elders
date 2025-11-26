@@ -49,7 +49,7 @@ const LINKS: NavItem[] = [
   { href: '/contact', label: 'Contact', icon: ICON.contact },
 ]
 
-export default function LeftMenu() {
+export default function MenuBar() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const toggleMenu = () => setOpen(!open)
@@ -98,7 +98,7 @@ export default function LeftMenu() {
         {/* We use a div instead of a button since it's just branding/decoration */}
         <div className="w-11 h-11 rounded-full overflow-hidden shadow-md">
             <Image 
-                src="/icon.jpg" 
+                src="/images/Y4E_CLEAR.PNG" 
                 alt="Youth 4 Elders Club Logo/Icon" 
                 width={44} // 44px = w-11
                 height={44} // 44px = h-11
@@ -188,3 +188,4 @@ export default function LeftMenu() {
     </>
   )
 }
+
