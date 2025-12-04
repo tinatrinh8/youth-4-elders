@@ -300,3 +300,102 @@ body::-webkit-scrollbar {
 .footer-social-link:hover {
   color: var(--color-pink-medium);
 }
+
+/* Torn Paper Edge Effect */
+.torn-edge-bottom {
+  clip-path: polygon(
+    0% 0%,
+    2% 98%,
+    5% 95%,
+    8% 99%,
+    12% 94%,
+    15% 100%,
+    18% 96%,
+    22% 99%,
+    25% 95%,
+    28% 98%,
+    32% 94%,
+    35% 100%,
+    38% 96%,
+    42% 99%,
+    45% 94%,
+    48% 98%,
+    52% 95%,
+    55% 100%,
+    58% 96%,
+    62% 99%,
+    65% 94%,
+    68% 98%,
+    72% 95%,
+    75% 100%,
+    78% 96%,
+    82% 99%,
+    85% 94%,
+    88% 98%,
+    92% 95%,
+    95% 100%,
+    98% 96%,
+    100% 0%
+  );
+}
+
+.torn-edge-top {
+  clip-path: polygon(
+    0% 100%,
+    2% 2%,
+    5% 5%,
+    8% 1%,
+    12% 6%,
+    15% 0%,
+    18% 4%,
+    22% 1%,
+    25% 5%,
+    28% 2%,
+    32% 6%,
+    35% 0%,
+    38% 4%,
+    42% 1%,
+    45% 6%,
+    48% 2%,
+    52% 5%,
+    55% 0%,
+    58% 4%,
+    62% 1%,
+    65% 6%,
+    68% 2%,
+    72% 5%,
+    75% 0%,
+    78% 4%,
+    82% 1%,
+    85% 6%,
+    88% 2%,
+    92% 5%,
+    95% 0%,
+    98% 4%,
+    100% 100%
+  );
+}
+
+/* Paper Swinging Animation - Flapping from bottom */
+@keyframes paperSwing {
+  0% { 
+    transform: rotateZ(3deg); 
+  }
+  100% { 
+    transform: rotateZ(-3deg); 
+  }
+}
+
+.paper-swing {
+  transition: animation-duration 0.3s ease-out, transform 1.5s ease-out;
+  transform-origin: 50% 0%;
+  transform: rotateZ(0deg);
+  animation: paperSwing var(--swing-duration, 3s) ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+
+.paper-swing:hover {
+  --swing-duration: 1s;
+  animation-play-state: running;
+  transition: animation-duration 0.8s ease-in;
+}

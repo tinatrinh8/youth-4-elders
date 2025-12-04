@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 
 export default function Home() {
   const [showModal, setShowModal] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const slowDownIntervals = useRef<Map<HTMLElement, NodeJS.Timeout>>(new Map())
 
   useEffect(() => {
     // Show modal after 6 seconds on page load
@@ -221,9 +222,7 @@ export default function Home() {
             color: '#985A40',
             textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
           }}>
-            we create meaningful
-            connections that bridge
-            generations for better
+            ... is now live !
           </p>
         </div>
 
@@ -351,64 +350,190 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sponsors Section */}
-      <section className="relative z-10 py-20 md:py-28" style={{ background: 'var(--color-brown-dark)' }}>
+      {/* Sponsors Section - Tear-Off Pad Design */}
+      <section className="relative z-10 py-20 md:py-32" style={{ background: 'var(--color-cream)' }}>
         <div className="max-w-7xl mx-auto px-8">
-          {/* Main Headline */}
-          <div className="text-center mb-12 md:mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}>
-              SPECIAL THANKS TO OUR SPONSORS
-            </h2>
-          </div>
-
-          {/* Sponsor Logos Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
-            {/* Sponsor 1 */}
-            <div className="flex flex-col items-center text-center p-6 md:p-8 rounded-lg hover:bg-opacity-10 transition-all duration-300" style={{ background: 'rgba(237, 162, 195, 0.05)' }}>
-              <div className="w-16 h-16 md:w-20 md:h-20 mb-6 flex items-center justify-center rounded-full" style={{ background: 'rgba(244, 142, 184, 0.2)' }}>
-                <svg className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
-                uOttawa
-              </h3>
+          {/* Main Card Container - Paper Pad */}
+          <div 
+            className="relative rounded-2xl p-8 md:p-12 shadow-2xl"
+            style={{ 
+              background: 'var(--color-pink-light)',
+              border: '4px solid var(--color-pink-medium)',
+              boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)'
+            }}
+          >
+            {/* Title Section */}
+            <div className="text-center mb-12 md:mb-16 relative z-10 pt-8">
+              <h2 
+                className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-4"
+                style={{ 
+                  fontFamily: 'var(--font-vintage-stylist)', 
+                  color: 'var(--color-brown-dark)'
+                }}
+              >
+                Our Sponsors
+              </h2>
+              <p 
+                className="text-base md:text-lg"
+                style={{ 
+                  fontFamily: 'var(--font-kollektif)', 
+                  color: 'var(--color-brown-medium)'
+                }}
+              >
+                Thank you for your continued support and partnership in building meaningful connections
+              </p>
             </div>
 
-            {/* Sponsor 2 */}
-            <div className="flex flex-col items-center text-center p-6 md:p-8 rounded-lg hover:bg-opacity-10 transition-all duration-300" style={{ background: 'rgba(237, 162, 195, 0.05)' }}>
-              <div className="w-16 h-16 md:w-20 md:h-20 mb-6 flex items-center justify-center rounded-full" style={{ background: 'rgba(244, 142, 184, 0.2)' }}>
-                <svg className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--color-pink-medium)' }}>
-                Community Foundation
-              </h3>
-                  </div>
+            {/* Tear-Off Strips Container */}
+            <div className="relative flex items-stretch justify-center gap-0 mt-16" style={{ minHeight: '350px' }}>
+              {/* Individual Sponsor Strips - Background Layer (invisible, just for layout) */}
+              {[
+                { width: '20%' },
+                { width: '20%' },
+                { width: '20%' },
+                { width: '20%' },
+                { width: '20%' },
+              ].map((sponsor, index) => (
+                <div
+                  key={index}
+                  className="relative"
+                  style={{
+                    width: sponsor.width,
+                    minWidth: '100px',
+                    height: '100%',
+                    zIndex: 1
+                  }}
+                />
+              ))}
 
-            {/* Sponsor 3 */}
-            <div className="flex flex-col items-center text-center p-6 md:p-8 rounded-lg hover:bg-opacity-10 transition-all duration-300" style={{ background: 'rgba(237, 162, 195, 0.05)' }}>
-              <div className="w-16 h-16 md:w-20 md:h-20 mb-6 flex items-center justify-center rounded-full" style={{ background: 'rgba(244, 142, 184, 0.2)' }}>
-                <svg className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              {/* Individual Brown Torn-Off Blocks for Each Sponsor */}
+              {[
+                { name: 'UOTTAWA', left: '0%', image: '/assets/sponsors/uottawa.png' },
+                { name: 'DOORS OPEN ONTARIO', left: '20%', image: '/assets/sponsors/doors open ontario.png' },
+                { name: 'LOCAL PARTNERS', left: '40%' },
+                { name: 'STUDENT UNION', left: '60%' },
+                { name: 'VOLUNTEER CENTER', left: '80%' },
+              ].map((sponsor, index) => {
+                const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+                  const element = e.currentTarget
+                  // Clear any existing interval
+                  const existingInterval = slowDownIntervals.current.get(element)
+                  if (existingInterval) clearInterval(existingInterval)
+                  
+                  let duration = 1
+                  const interval = setInterval(() => {
+                    duration += 0.2
+                    element.style.setProperty('--swing-duration', `${duration}s`)
+                    if (duration >= 3) {
+                      clearInterval(interval)
+                      slowDownIntervals.current.delete(element)
+                      element.style.animationPlayState = 'paused'
+                    }
+                  }, 50)
+                  slowDownIntervals.current.set(element, interval)
+                }
+
+                const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+                  const element = e.currentTarget
+                  // Clear any existing slowdown interval
+                  const existingInterval = slowDownIntervals.current.get(element)
+                  if (existingInterval) {
+                    clearInterval(existingInterval)
+                    slowDownIntervals.current.delete(element)
+                  }
+                  element.style.animationPlayState = 'running'
+                  element.style.setProperty('--swing-duration', '1s')
+                }
+
+              return (
+                <div
+                  key={index}
+                  className="absolute torn-edge-bottom paper-swing"
+                  style={{
+                    left: sponsor.left,
+                    width: '20%',
+                    height: '85%',
+                    background: 'var(--color-brown-medium)',
+                    zIndex: 10,
+                    boxShadow: '0 4px 8px rgba(100, 50, 27, 0.3)',
+                    borderLeft: index > 0 ? '2px dashed var(--color-brown-dark)' : 'none',
+                    borderRight: index < 4 ? '2px dashed var(--color-brown-dark)' : 'none',
+                    borderTop: '2px dashed var(--color-brown-dark)'
+                  }}
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{
+                      transform: 'rotate(-90deg)',
+                      transformOrigin: 'center',
+                      width: '100%',
+                      height: '100%'
+                    }}
+                  >
+                    {sponsor.image ? (
+                      <div style={{ 
+                        width: sponsor.name === 'UOTTAWA' ? '100%' : '90%', 
+                        height: sponsor.name === 'UOTTAWA' ? '100%' : '88%', 
+                        position: 'relative' 
+                      }}>
+                        <Image
+                          src={sponsor.image}
+                          alt={sponsor.name}
+                          fill
+                          className="object-contain"
+                          style={{ filter: 'brightness(0) invert(1)' }}
+                        />
+                      </div>
+                    ) : (
+                      <span
+                        className="text-xs md:text-sm font-bold tracking-wider whitespace-nowrap"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          color: 'var(--color-cream)'
+                        }}
+                      >
+                        {sponsor.name}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--color-pink-medium)' }}>
-                Local Partners
-              </h3>
+              )
+            })}
           </div>
 
-            {/* Sponsor 4 */}
-            <div className="flex flex-col items-center text-center p-6 md:p-8 rounded-lg hover:bg-opacity-10 transition-all duration-300" style={{ background: 'rgba(237, 162, 195, 0.05)' }}>
-              <div className="w-16 h-16 md:w-20 md:h-20 mb-6 flex items-center justify-center rounded-full" style={{ background: 'rgba(244, 142, 184, 0.2)' }}>
-                <svg className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
+            {/* Torn-Off "THANK YOU" Piece */}
+            <div
+              className="absolute bottom-6 right-8 md:right-12 transform rotate-12"
+              style={{
+                width: '120px',
+                height: '70px',
+                background: 'var(--color-cream)',
+                border: '2px dashed var(--color-brown-medium)',
+                borderRadius: '4px',
+                padding: '10px',
+                boxShadow: '0 4px 12px rgba(100, 50, 27, 0.25)',
+                zIndex: 15,
+                clipPath: 'polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%)' // Torn edge effect
+              }}
+            >
+              <div
+                className="h-full flex items-center justify-center"
+                style={{
+                  transform: 'rotate(-12deg)'
+                }}
+              >
+                <span
+                  className="text-xs font-bold"
+                  style={{
+                    fontFamily: 'var(--font-kollektif)',
+                    color: 'var(--color-brown-dark)'
+                  }}
+                >
+                  THANK YOU
+                </span>
               </div>
-              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--color-pink-medium)' }}>
-                Student Union
-          </h3>
             </div>
           </div>
           </div>
