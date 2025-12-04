@@ -3,11 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { usePathname } from 'next/navigation'
 
 export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
-  const pathname = usePathname()
 
   const whoWeAreSubmenu = [
     { href: '/club-info', label: 'Club Info' },
@@ -24,7 +22,7 @@ export default function NavigationBar() {
         border: 'none',
         marginLeft: '96px',
         marginRight: '96px',
-        marginTop: '24px',
+        marginTop: '40px',
         marginBottom: '16px',
         boxShadow: '0 4px 12px rgba(100, 50, 27, 0.15)'
       }}
@@ -43,7 +41,7 @@ export default function NavigationBar() {
             <span 
               className="text-xl md:text-2xl font-bold italic"
               style={{ 
-                fontFamily: 'var(--font-playfair)', 
+                fontFamily: 'var(--font-vintage-stylist)', 
                 color: 'var(--color-cream)'
               }}
             >
@@ -59,7 +57,7 @@ export default function NavigationBar() {
             className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
             style={{ 
               color: 'var(--color-cream)',
-              fontFamily: 'var(--font-lato)'
+              fontFamily: 'var(--font-kollektif)'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = 'var(--color-brown-medium)'
@@ -79,8 +77,14 @@ export default function NavigationBar() {
             <div 
               className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
               style={{ 
-                color: hoveredDropdown === 'who-we-are' || pathname === '/club-info' || pathname === '/partner' || pathname === '/team' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
-                fontFamily: 'var(--font-lato)'
+                color: hoveredDropdown === 'who-we-are' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
+                fontFamily: 'var(--font-kollektif)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-brown-medium)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--color-cream)'
               }}
             >
               Who We Are
@@ -117,21 +121,17 @@ export default function NavigationBar() {
                       href={item.href}
                       className="block px-4 py-3 text-sm transition-all duration-200"
                       style={{ 
-                        color: pathname === item.href ? 'var(--color-brown-dark)' : 'var(--color-brown-medium)',
-                        fontFamily: 'var(--font-lato)',
-                        background: pathname === item.href ? 'rgba(152, 90, 64, 0.15)' : 'transparent'
+                        color: 'var(--color-brown-medium)',
+                        fontFamily: 'var(--font-kollektif)',
+                        background: 'transparent'
                       }}
                       onMouseEnter={(e) => {
-                        if (pathname !== item.href) {
-                          e.currentTarget.style.background = 'rgba(152, 90, 64, 0.1)'
-                          e.currentTarget.style.color = 'var(--color-brown-dark)'
-                        }
+                        e.currentTarget.style.background = 'rgba(152, 90, 64, 0.1)'
+                        e.currentTarget.style.color = 'var(--color-brown-dark)'
                       }}
                       onMouseLeave={(e) => {
-                        if (pathname !== item.href) {
-                          e.currentTarget.style.background = 'transparent'
-                          e.currentTarget.style.color = 'var(--color-brown-medium)'
-                        }
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.color = 'var(--color-brown-medium)'
                       }}
                     >
                       {item.label}
@@ -146,16 +146,14 @@ export default function NavigationBar() {
             href="/join-us"
             className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
             style={{ 
-              color: pathname === '/join-us' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
-              fontFamily: 'var(--font-lato)'
+              color: 'var(--color-cream)',
+              fontFamily: 'var(--font-kollektif)'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = 'var(--color-brown-medium)'
             }}
             onMouseLeave={(e) => {
-              if (pathname !== '/join-us') {
-                e.currentTarget.style.color = 'var(--color-cream)'
-              }
+              e.currentTarget.style.color = 'var(--color-cream)'
             }}
           >
             Join Us
@@ -165,16 +163,14 @@ export default function NavigationBar() {
             href="/events"
             className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
             style={{ 
-              color: pathname === '/events' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
-              fontFamily: 'var(--font-lato)'
+              color: 'var(--color-cream)',
+              fontFamily: 'var(--font-kollektif)'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = 'var(--color-brown-medium)'
             }}
             onMouseLeave={(e) => {
-              if (pathname !== '/events') {
-                e.currentTarget.style.color = 'var(--color-cream)'
-              }
+              e.currentTarget.style.color = 'var(--color-cream)'
             }}
           >
             Events
@@ -184,16 +180,14 @@ export default function NavigationBar() {
             href="/contact"
             className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
             style={{ 
-              color: pathname === '/contact' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
-              fontFamily: 'var(--font-lato)'
+              color: 'var(--color-cream)',
+              fontFamily: 'var(--font-kollektif)'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = 'var(--color-brown-medium)'
             }}
             onMouseLeave={(e) => {
-              if (pathname !== '/contact') {
-                e.currentTarget.style.color = 'var(--color-cream)'
-              }
+              e.currentTarget.style.color = 'var(--color-cream)'
             }}
           >
             Contact

@@ -6,6 +6,7 @@ import Image from 'next/image'
 export default function Home() {
   const [showModal, setShowModal] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   useEffect(() => {
     // Show modal after 6 seconds on page load
@@ -19,27 +20,32 @@ export default function Home() {
     setIsClosing(true)
     setTimeout(() => {
       setShowModal(false)
+      setShowSuccess(false)
       setIsClosing(false)
-    }, 400) // Match animation duration
+    }, 400) // Match animation duration (fadeOut is 0.4s)
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     // Handle form submission here
-    handleClose()
+    // TODO: Send email to backend
+    // const formData = new FormData(e.currentTarget)
+    // const email = formData.get('email')
+    
+    // Show success message (user must click outside to close)
+    setShowSuccess(true)
   }
 
   return (
     <div className="min-h-screen">
       {/* Launch Signup Modal */}
-      {showModal && (
+      {(showModal && !showSuccess) || (isClosing && !showSuccess) ? (
         <div 
           className={`fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
           style={{ background: 'rgba(244, 142, 184, 0.6)' }}
-          onClick={handleClose}
         >
           <div 
-            className={`relative max-w-md w-full rounded-lg p-8 shadow-2xl ${isClosing ? 'animate-popout' : 'animate-popup'}`}
+            className={`relative max-w-md w-full rounded-lg p-8 shadow-2xl ${isClosing ? 'animate-fadeOut' : 'animate-popup'}`}
             style={{ 
               background: 'var(--color-cream)',
               border: '2px solid var(--color-brown-dark)'
@@ -48,16 +54,12 @@ export default function Home() {
           >
             {/* Headline */}
             <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-              Intergenerational
-              <br />
-              connections for youth
-              <br />
-              and elders
+              Help Us Grow Our Club
             </h2>
 
             {/* Body Text */}
             <p className="text-base md:text-lg mb-6 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-              Youth 4 Elders brings together passionate students, caring elders, and meaningful connections—all in one welcoming, supportive space. Come experience the joy of bridging generations and making a positive impact in your community.
+              We&apos;re doing a head count of interested individuals who want to join Youth 4 Elders! Add your email if you&apos;re interested in helping grow our club and connecting generations.
             </p>
 
             {/* Email Form */}
@@ -65,6 +67,7 @@ export default function Home() {
               <div className="flex gap-2">
                 <input
                   type="email"
+                  name="email"
                   placeholder="you@email.com"
                   required
                   className="flex-1 px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200"
@@ -126,8 +129,47 @@ export default function Home() {
               Maybe Another Time :)
             </button>
           </div>
+        </div>
+      ) : null}
+
+      {/* Success Modal */}
+      {(showModal && showSuccess) || (isClosing && showSuccess) ? (
+        <div 
+          className={`fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
+          style={{ background: 'rgba(244, 142, 184, 0.6)' }}
+          onClick={handleClose}
+        >
+          <div 
+            className={`relative max-w-md w-full rounded-lg p-8 shadow-2xl ${isClosing ? 'animate-fadeOut' : 'animate-popup'}`}
+            style={{ 
+              background: 'var(--color-cream)',
+              border: '2px solid var(--color-brown-dark)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Success Icon */}
+            <div className="flex justify-center mb-6">
+              <div 
+                className="w-20 h-20 rounded-full flex items-center justify-center"
+                style={{ background: 'var(--color-pink-medium)' }}
+              >
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Success Message */}
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+              Thanks for Signing Up!
+            </h2>
+
+            <p className="text-base md:text-lg mb-6 leading-relaxed text-center" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
+              We hope to see you soon! We&apos;ll be in touch with updates about Youth 4 Elders and upcoming events.
+            </p>
           </div>
-        )}
+        </div>
+      ) : null}
       
       {/* Hero Section - Large Text Overlay Style */}
       <section 
