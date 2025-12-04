@@ -2,49 +2,12 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 
 export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
-  const [isVisible, setIsVisible] = useState(true)
-  const lastScrollY = useRef(0)
   const pathname = usePathname()
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      
-      // Text position animation completes around scrollY = 100
-      // Only enable hide/show AFTER text has fully reached its final position
-      // Add a buffer (150px) to ensure animation is fully complete
-      const textAnimationComplete = currentScrollY >= 150
-      
-      if (textAnimationComplete) {
-        // Text has fully reached its position, now enable hide/show behavior
-        if (currentScrollY < lastScrollY.current) {
-          // Scrolling up - show nav bar
-          setIsVisible(true)
-        } else if (currentScrollY > lastScrollY.current && currentScrollY > 200) {
-          // Scrolling down and past threshold - hide nav bar
-          setIsVisible(false)
-        }
-      } else {
-        // Before text animation is complete, always show
-        setIsVisible(true)
-      }
-      
-      // Always show at the very top
-      if (currentScrollY < 10) {
-        setIsVisible(true)
-      }
-      
-      lastScrollY.current = currentScrollY
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   const whoWeAreSubmenu = [
     { href: '/club-info', label: 'Club Info' },
@@ -54,22 +17,58 @@ export default function NavigationBar() {
   
   return (
     <nav 
-      className="fixed top-0 left-0 right-0 z-[100] py-6 transition-transform duration-300 ease-in-out"
+      className="relative z-[100] py-2 md:py-3"
       style={{
-        background: '#F8F5ED',
-        transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
-        willChange: 'transform'
+        background: 'var(--color-brown-dark)',
+        borderRadius: '9999px',
+        border: 'none',
+        marginLeft: '96px',
+        marginRight: '96px',
+        marginTop: '24px',
+        marginBottom: '16px',
+        boxShadow: '0 4px 12px rgba(100, 50, 27, 0.15)'
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-center gap-1 sm:gap-2 w-full">
-        {/* Left Navigation Buttons - Connected together */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between w-full">
+        {/* Logo on the left */}
         <div className="flex items-center flex-shrink-0">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/Y4E_CLEAR.PNG"
+              alt="Youth 4 Elders Logo"
+              width={40}
+              height={40}
+              className="object-contain mr-2"
+            />
+            <span 
+              className="text-xl md:text-2xl font-bold italic"
+              style={{ 
+                fontFamily: 'var(--font-playfair)', 
+                color: 'var(--color-cream)'
+              }}
+            >
+              Youth 4 Elders
+            </span>
+          </Link>
+        </div>
+
+        {/* Navigation links on the right */}
+        <div className="flex items-center gap-6 md:gap-8 relative">
           <Link 
             href="/"
-            className="px-4 sm:px-6 py-2.5 text-white text-xs font-medium transition-colors hover:opacity-90 whitespace-nowrap rounded-l-full"
-            style={{ background: '#9D7A6B' }}
+            className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
+            style={{ 
+              color: 'var(--color-cream)',
+              fontFamily: 'var(--font-lato)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--color-brown-medium)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--color-cream)'
+            }}
           >
-            <span>home</span>
+            Home
           </Link>
           
           <div 
@@ -77,31 +76,62 @@ export default function NavigationBar() {
             onMouseEnter={() => setHoveredDropdown('who-we-are')}
             onMouseLeave={() => setHoveredDropdown(null)}
           >
-            <Link 
-              href="/club-info"
-              className="px-4 sm:px-6 py-2.5 text-white text-xs font-medium transition-colors hover:opacity-90 block whitespace-nowrap"
-              style={{ background: '#9D7A6B' }}
+            <div 
+              className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
+              style={{ 
+                color: hoveredDropdown === 'who-we-are' || pathname === '/club-info' || pathname === '/partner' || pathname === '/team' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
+                fontFamily: 'var(--font-lato)'
+              }}
             >
-              <span>who we are</span>
-            </Link>
+              Who We Are
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+            {/* Invisible bridge to prevent gap issues */}
+            {hoveredDropdown === 'who-we-are' && (
+              <div 
+                className="absolute top-full left-0 right-0 h-2 z-[109]"
+                style={{ marginTop: '-2px' }}
+                onMouseEnter={() => setHoveredDropdown('who-we-are')}
+              />
+            )}
             {/* Dropdown Menu */}
             {hoveredDropdown === 'who-we-are' && (
               <div 
-                className="absolute top-full left-0 mt-2 w-48 rounded-lg shadow-xl border-2 z-[110]"
+                className="absolute top-full left-0 w-56 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
-                  background: '#F8F5ED', 
-                  borderColor: '#F8B4CB' 
+                  background: 'var(--color-cream)', 
+                  border: '1px solid var(--color-brown-medium)',
+                  boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
+                  marginTop: '8px',
+                  animation: 'dropdownRollOut 0.3s ease-out',
+                  transformOrigin: 'top'
                 }}
+                onMouseEnter={() => setHoveredDropdown('who-we-are')}
               >
                 <div className="py-2">
                   {whoWeAreSubmenu.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="block px-4 py-2 text-sm transition-colors"
+                      className="block px-4 py-3 text-sm transition-all duration-200"
                       style={{ 
-                        color: pathname === item.href ? '#F8B4CB' : '#8B6F5E',
-                        background: pathname === item.href ? '#F8B4CB' : 'transparent'
+                        color: pathname === item.href ? 'var(--color-brown-dark)' : 'var(--color-brown-medium)',
+                        fontFamily: 'var(--font-lato)',
+                        background: pathname === item.href ? 'rgba(152, 90, 64, 0.15)' : 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (pathname !== item.href) {
+                          e.currentTarget.style.background = 'rgba(152, 90, 64, 0.1)'
+                          e.currentTarget.style.color = 'var(--color-brown-dark)'
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (pathname !== item.href) {
+                          e.currentTarget.style.background = 'transparent'
+                          e.currentTarget.style.color = 'var(--color-brown-medium)'
+                        }
                       }}
                     >
                       {item.label}
@@ -114,50 +144,59 @@ export default function NavigationBar() {
           
           <Link 
             href="/join-us"
-            className="px-4 sm:px-6 py-2.5 text-white text-xs font-medium transition-colors hover:opacity-90 whitespace-nowrap rounded-r-full"
-            style={{ background: '#9D7A6B' }}
+            className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
+            style={{ 
+              color: pathname === '/join-us' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
+              fontFamily: 'var(--font-lato)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--color-brown-medium)'
+            }}
+            onMouseLeave={(e) => {
+              if (pathname !== '/join-us') {
+                e.currentTarget.style.color = 'var(--color-cream)'
+              }
+            }}
           >
-            <span>join us</span>
-          </Link>
-        </div>
-
-        {/* Logo at center */}
-        <div className="flex items-center justify-center flex-shrink-0">
-          <Link href="/">
-            <Image
-              src="/images/Y4E_CLEAR.PNG"
-              alt="Youth 4 Elders Logo"
-              width={50}
-              height={50}
-              className="object-contain"
-            />
-          </Link>
-        </div>
-
-        {/* Right Navigation Buttons - Connected together */}
-        <div className="flex items-center flex-shrink-0">
-          <Link 
-            href="/workshops"
-            className="px-4 sm:px-6 py-2.5 text-white text-xs font-medium transition-colors hover:opacity-90 whitespace-nowrap rounded-l-full"
-            style={{ background: '#9D7A6B' }}
-          >
-            <span>workshops</span>
+            Join Us
           </Link>
           
           <Link 
             href="/events"
-            className="px-4 sm:px-6 py-2.5 text-white text-xs font-medium transition-colors hover:opacity-90 whitespace-nowrap"
-            style={{ background: '#9D7A6B' }}
+            className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
+            style={{ 
+              color: pathname === '/events' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
+              fontFamily: 'var(--font-lato)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--color-brown-medium)'
+            }}
+            onMouseLeave={(e) => {
+              if (pathname !== '/events') {
+                e.currentTarget.style.color = 'var(--color-cream)'
+              }
+            }}
           >
-            <span>events</span>
+            Events
           </Link>
           
           <Link 
             href="/contact"
-            className="px-4 sm:px-6 py-2.5 text-white text-xs font-medium transition-colors hover:opacity-90 whitespace-nowrap rounded-r-full"
-            style={{ background: '#9D7A6B' }}
+            className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
+            style={{ 
+              color: pathname === '/contact' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
+              fontFamily: 'var(--font-lato)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--color-brown-medium)'
+            }}
+            onMouseLeave={(e) => {
+              if (pathname !== '/contact') {
+                e.currentTarget.style.color = 'var(--color-cream)'
+              }
+            }}
           >
-            <span>contact</span>
+            Contact
           </Link>
         </div>
       </div>

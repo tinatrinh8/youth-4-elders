@@ -1,362 +1,376 @@
 'use client'
 
-import Link from 'next/link'
-import Image from 'next/image'
 import { useState, useEffect } from 'react'
-// import { getFeatureHighlights } from '@/lib/contentful' // Not used directly, fetched via API
-import type { FeatureHighlightSkeleton } from '@/types/featureHighlights'
-import type { Entry } from 'contentful'
+import Image from 'next/image'
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(0)
-  const [featureHighlights, setFeatureHighlights] = useState<Entry<FeatureHighlightSkeleton, undefined, string>[]>([])
+  const [showModal, setShowModal] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
 
   useEffect(() => {
-    // Fetch data from API route
-    fetch('/api/feature-highlights')
-      .then(response => response.json())
-      .then((highlights) => {
-        console.log('Fetched highlights:', highlights)
-        console.log('Highlights length:', highlights.length)
-        setFeatureHighlights(highlights)
-      })
-      .catch((error) => {
-        console.warn('Failed to fetch feature highlights:', error)
-        setFeatureHighlights([])
-      })
-
-    // Scroll event listener for position tracking
-    // Text stays visible at bottom - no hide/show logic needed here
-    // Nav bar has its own hide/show logic in NavigationBar component
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      setScrollY(currentScrollY)
-    }
-    
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    // Show modal after 6 seconds on page load
+    const timer = setTimeout(() => {
+      setShowModal(true)
+    }, 6000)
+    return () => clearTimeout(timer)
   }, [])
 
-  const sortedHighlights = [...featureHighlights].sort((a, b) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const orderA = (a.fields as any).order ?? 0
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const orderB = (b.fields as any).order ?? 0
-    return (orderA as number) - (orderB as number)
-  })
-
-  // Text position animation threshold
-  const positionAnimationThreshold = 100
-  
-  // Text stays at bottom like a watermark - it does NOT hide/show
-  // Only the nav bar hides/shows, the text always stays visible at bottom
-  const heroStyle = {
-    // Start perfectly centered, move to bottom of screen on scroll
-    top: scrollY < positionAnimationThreshold
-      ? '50%' // Perfectly centered when at top
-      : 'auto', // Auto top when at bottom
-    bottom: scrollY < positionAnimationThreshold
-      ? 'auto' // No bottom when centered
-      : '24px', // Sticky at bottom with padding (watermark position)
-    left: '50%',
-    transform: scrollY < positionAnimationThreshold
-      ? 'translate(-50%, -50%)' // Centered transform
-      : 'translate(-50%, 0)', // Bottom position - always visible
-    fontSize: scrollY < positionAnimationThreshold
-      ? `clamp(4rem, 12vw, 8rem)` // Large when centered
-      : '16px', // Smaller text when at bottom (watermark size)
-    transition: 'all 0.3s ease-in-out',
-    willChange: 'transform',
-    opacity: 1 // Always visible - never fades out
+  const handleClose = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      setShowModal(false)
+      setIsClosing(false)
+    }, 400) // Match animation duration
   }
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    // Handle form submission here
+    handleClose()
+  }
 
   return (
     <div className="min-h-screen">
-      
-      {/* Hero Section - Text moves from center to underneath logo on scroll */}
-      <section className="relative h-[200vh] overflow-hidden pt-24" style={{
-        background: '#F8F5ED'
-      }}>
-        {/* HERO CONTENT: Starts centered, moves to underneath logo on scroll */}
+      {/* Launch Signup Modal */}
+      {showModal && (
         <div 
-          className="fixed z-40 font-bold italic transition-all duration-700 ease-in-out whitespace-nowrap"
-          style={{
-            ...heroStyle,
-            fontFamily: 'var(--font-playfair)',
-            pointerEvents: 'none',
-            color: '#F8B4CB'
-          }}
+          className={`fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
+          style={{ background: 'rgba(244, 142, 184, 0.6)' }}
+          onClick={handleClose}
         >
-          Youth 4 Elders
-        </div>
-        
-      </section>
+          <div 
+            className={`relative max-w-md w-full rounded-lg p-8 shadow-2xl ${isClosing ? 'animate-popout' : 'animate-popup'}`}
+            style={{ 
+              background: 'var(--color-cream)',
+              border: '2px solid var(--color-brown-dark)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Headline */}
+            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+              Intergenerational
+              <br />
+              connections for youth
+              <br />
+              and elders
+            </h2>
 
-      {/* Main Header Section - Large image on left, content on right */}
-      <section className="relative z-10 py-20" style={{ background: '#FFF0F5' }}>
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Left side - Image placeholder (you can add an actual image later) */}
-            <div className="relative">
-              <div className="bg-gradient-to-br from-[#F8B4CB] to-[#F7D78B] rounded-3xl aspect-[4/5] flex items-center justify-center shadow-2xl">
-                <div className="text-center p-8">
-                  <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                    <svg className="w-16 h-16" style={{ color: '#8B6F5E' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <p className="font-medium" style={{ color: '#8B6F5E' }}>Community Connection</p>
-                </div>
-              </div>
-              {/* Badge overlay */}
-              <div className="absolute -bottom-6 -right-6 text-white rounded-full px-6 py-3 shadow-xl" style={{ background: '#9D7A6B' }}>
-                <p className="font-bold text-sm">JOIN YOUTH 4 ELDERS</p>
-              </div>
-            </div>
-
-            {/* Right side - Headline and content */}
-            <div className="space-y-8">
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
-                The Largest Student-Led Intergenerational Club at uOttawa
-        </h1>
-              
-              <div className="space-y-4">
-                <h2 className="text-2xl font-semibold" style={{ fontFamily: 'var(--font-playfair)', color: '#8B6F5E' }}>
-                  WELCOME TO THE HEART OF THE COMMUNITY
-                </h2>
-                <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
-                  Youth 4 Elders brings together passionate students, caring elders, and meaningful connections—all in one welcoming, supportive space. Come experience the joy of bridging generations and making a positive impact in your community.
-                </p>
-              </div>
-
-              <Link
-                href="/events"
-                className="inline-block text-white px-8 py-4 rounded-full font-semibold text-lg transition-colors shadow-lg hover:shadow-xl"
-                style={{ fontFamily: 'var(--font-raleway)', background: '#8B6F5E' }}
-              >
-                VIEW UPCOMING EVENTS
-              </Link>
-            </div>
-          </div>
-
-          {/* Footer text */}
-          <div className="mt-16 pt-8 border-t-2 text-center" style={{ borderColor: '#9D7A6B' }}>
-            <p className="text-sm font-semibold text-white uppercase tracking-wide" style={{ 
-              fontFamily: 'var(--font-raleway)',
-              background: '#8B6F5E',
-              padding: '12px 0',
-              marginTop: '-1px'
-            }}>
-              RUN BY A COMMITTEE OF PASSIONATE STUDENTS & COMMUNITY MEMBERS
+            {/* Body Text */}
+            <p className="text-base md:text-lg mb-6 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
+              Youth 4 Elders brings together passionate students, caring elders, and meaningful connections—all in one welcoming, supportive space. Come experience the joy of bridging generations and making a positive impact in your community.
             </p>
+
+            {/* Email Form */}
+            <form onSubmit={handleSubmit}>
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  placeholder="you@email.com"
+                  required
+                  className="flex-1 px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200"
+                  style={{ 
+                    borderColor: 'var(--color-brown-dark)',
+                    fontFamily: 'var(--font-kollektif)',
+                    background: 'white'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'var(--color-pink-medium)'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(244, 142, 184, 0.1)'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'var(--color-brown-dark)'
+                    e.target.style.boxShadow = 'none'
+                  }}
+                />
+                <button
+                  type="submit"
+                  className="w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-110"
+                  style={{ 
+                    background: 'var(--color-brown-dark)',
+                    color: 'white'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--color-pink-medium)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'var(--color-brown-dark)'
+                  }}
+                  aria-label="Submit"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
           </div>
+            </form>
+
+            {/* No Thanks Link */}
+            <button
+              onClick={handleClose}
+              className="mt-4 text-sm transition-colors duration-200 hover:opacity-70 w-full text-center"
+              style={{ 
+                fontFamily: 'var(--font-kollektif)', 
+                color: 'var(--color-brown-dark)',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                textDecoration: 'underline'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-pink-medium)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--color-brown-dark)'
+              }}
+            >
+              Maybe Another Time :)
+            </button>
+          </div>
+          </div>
+        )}
+      
+      {/* Hero Section - Large Text Overlay Style */}
+      <section 
+        className="relative overflow-hidden" 
+        style={{ 
+          background: 'transparent',
+          height: '120vh',
+          minHeight: '120vh',
+          borderTop: 'none',
+          borderLeft: 'none',
+          borderRight: 'none',
+          borderBottom: 'none',
+          borderRadius: '0',
+          marginLeft: '0',
+          marginRight: '0',
+          marginTop: '0',
+          paddingTop: '0',
+          padding: '0'
+        }}
+      >
+        {/* Background Image */}
+        <div className="absolute inset-0 w-full h-full" style={{ 
+          borderRadius: '24px',
+          overflow: 'hidden',
+          marginLeft: '16px',
+          marginRight: '16px',
+          marginTop: '40px',
+          marginBottom: '80px',
+          width: 'calc(100% - 32px)',
+          height: 'calc(100% - 120px)',
+          top: '0'
+        }}>
+          <Image
+            src="/assets/header.jpg"
+            alt="Youth 4 Elders"
+            fill
+            className="object-cover"
+            priority
+            style={{ objectPosition: 'center bottom' }}
+          />
+          {/* Overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
+        </div>
+
+        {/* Large Marketing Text - Upper Right */}
+        <div className="absolute top-20 right-8 md:right-12 z-20 max-w-lg text-right">
+          <p className="text-lg md:text-xl lg:text-2xl font-bold leading-tight tracking-tight" style={{ 
+            fontFamily: 'var(--font-leiko)', 
+            color: '#985A40',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+          }}>
+            we create meaningful
+            connections that bridge
+            generations for better
+          </p>
+        </div>
+
+        {/* Large Elegant Script "Youth 4 Elders" - Overlaying the images */}
+        <div className="absolute bottom-0 left-0 right-0 z-30 pointer-events-none" style={{ marginBottom: '-60px' }}>
+          <h1 
+            className="text-[10rem] md:text-[12rem] lg:text-[16rem] font-bold italic leading-none"
+            style={{ 
+              fontFamily: 'var(--font-vintage-stylist)', 
+              color: '#985A40',
+              textShadow: '2px 2px 8px rgba(0,0,0,0.1)',
+              mixBlendMode: 'normal',
+              opacity: 1
+            }}
+          >
+            Youth 4 Elders
+          </h1>
+        </div>
+
+      </section>
+
+      {/* "Nothing great is built alone" Section with Role Tags */}
+      <section className="relative z-10 py-32 md:py-48" style={{ background: '#985A40' }}>
+        <div className="max-w-7xl mx-auto px-8">
+          {/* Main Headline with Role Tags */}
+          <div className="relative text-center mb-20 md:mb-28">
+            {/* Role Tags positioned around headline */}
+            <div className="absolute -top-4 left-0 md:left-8 animate-float" style={{ animationDelay: '0s' }}>
+              <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
+                borderColor: 'var(--color-pink-medium)', 
+                color: 'var(--color-cream)',
+                fontFamily: 'var(--font-kollektif)',
+                background: 'var(--color-pink-light)'
+              }}>
+                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> VOLUNTEER
+              </span>
+            </div>
+            <div className="absolute -bottom-4 left-0 md:left-8 animate-float" style={{ animationDelay: '0.5s' }}>
+              <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
+                borderColor: 'var(--color-pink-medium)', 
+                color: 'var(--color-cream)',
+                fontFamily: 'var(--font-lato)',
+                background: 'var(--color-pink-light)'
+              }}>
+                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> WORKSHOPS
+              </span>
+            </div>
+            <div className="absolute -bottom-4 right-0 md:right-8 animate-float" style={{ animationDelay: '1s' }}>
+              <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
+                borderColor: 'var(--color-pink-medium)', 
+                color: 'var(--color-cream)',
+                fontFamily: 'var(--font-lato)',
+                background: 'var(--color-pink-light)'
+              }}>
+                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> EVENTS
+              </span>
+            </div>
+            <div className="absolute -top-4 right-0 md:right-8 animate-float" style={{ animationDelay: '1.5s' }}>
+              <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
+                borderColor: 'var(--color-pink-medium)', 
+                color: 'var(--color-cream)',
+                fontFamily: 'var(--font-lato)',
+                background: 'var(--color-pink-light)'
+              }}>
+                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> COMMUNITY
+              </span>
+            </div>
+            <div className="absolute top-1/2 -right-8 md:-right-12 transform -translate-y-1/2 animate-float" style={{ animationDelay: '2s' }}>
+              <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
+                borderColor: 'var(--color-pink-medium)', 
+                color: 'var(--color-cream)',
+                fontFamily: 'var(--font-lato)',
+                background: 'var(--color-pink-light)'
+              }}>
+                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> CONNECTIONS
+              </span>
+            </div>
+
+            <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-12" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}>
+              Nothing great is built alone.
+        </h2>
+          </div>
+
+          {/* Description */}
+          <p className="text-xl md:text-2xl lg:text-3xl max-w-5xl mx-auto leading-relaxed text-left md:text-center" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+            A student-led club dedicated to bridging the gap between elders and youth in a fast-moving society. Created by passionate uOttawa students and community members, Youth 4 Elders connects generations through volunteering, workshops, and meaningful relationships.
+          </p>
         </div>
       </section>
 
-      {/* Brown/Warm Band Section - Who We Are & Our Mission */}
-      <section className="relative z-10 py-20" style={{ background: '#8B6F5E' }}>
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Who We Are Box */}
-            <div className="rounded-2xl p-10 shadow-xl" style={{ background: '#F8F5ED' }}>
-              <h3 className="text-3xl font-bold mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
-                Who We Are
-              </h3>
-              <p className="leading-relaxed text-lg" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
-                Youth 4 Elders is a community-driven initiative proudly run by a passionate committee of uOttawa students and community members. We aim to create a space for meaningful connections, shared experiences, and intergenerational learning.
-              </p>
-            </div>
-
-            {/* Our Mission Box */}
-            <div className="rounded-2xl p-10 shadow-xl" style={{ background: '#F8F5ED' }}>
-              <h3 className="text-3xl font-bold mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
-                Our Mission
-              </h3>
-              <p className="leading-relaxed text-lg" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
-                To connect our community through meaningful intergenerational relationships while fostering empathy, understanding, and shared experiences between youth and elders.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Ways to Get Involved Section - 2x2 Grid */}
-      <section className="relative z-10 py-20">
-        <div className="max-w-7xl mx-auto px-8">
-          <h2 className="text-5xl md:text-6xl font-bold text-center mb-16" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
-            Ways to Get Involved
+      {/* Call-to-Action Section */}
+      <section className="relative z-10 py-20 md:py-28" style={{ background: 'var(--color-cream)' }}>
+        <div className="max-w-4xl mx-auto px-8 text-center">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+            Ready to Make a Difference?
           </h2>
+          <p className="text-lg md:text-xl mb-10 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)' }}>
+            Join our community of passionate students and caring elders. Together, we&apos;re building meaningful connections that bridge generations.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a
+              href="/join-us"
+              className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+              style={{
+                background: 'var(--color-pink-medium)',
+                color: 'white',
+                fontFamily: 'var(--font-kollektif)'
+              }}
+            >
+              Join Us Today
+            </a>
+            <a
+              href="/events"
+              className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 border-2"
+              style={{
+                borderColor: 'var(--color-brown-dark)',
+                color: 'var(--color-brown-dark)',
+                fontFamily: 'var(--font-kollektif)',
+                background: 'transparent'
+              }}
+            >
+              View Upcoming Events
+            </a>
+          </div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Become a Volunteer */}
-            <div className="rounded-2xl p-10 shadow-xl hover:shadow-2xl transition-shadow" style={{ background: '#F8F5ED' }}>
-              <div className="w-16 h-16 rounded-lg flex items-center justify-center mb-6" style={{ background: '#F8B4CB' }}>
-                <svg className="w-8 h-8" style={{ color: '#8B6F5E' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#7A5C5C' }}>
-                Become a Volunteer
-              </h3>
-              <p className="leading-relaxed mb-4" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
-                Join us in organizing workshops, assisting with events, or simply spending quality time with our elder community members.
-              </p>
-              <div className="flex gap-4 text-sm font-semibold" style={{ color: '#A68B7D' }}>
-                <span>FLEXIBLE HRS</span>
-                <span>•</span>
-                <span>FAMILY FRIENDLY</span>
-              </div>
-            </div>
+      {/* Sponsors Section */}
+      <section className="relative z-10 py-20 md:py-28" style={{ background: 'var(--color-brown-dark)' }}>
+        <div className="max-w-7xl mx-auto px-8">
+          {/* Main Headline */}
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}>
+              SPECIAL THANKS TO OUR SPONSORS
+            </h2>
+          </div>
 
-            {/* Host/Sponsor an Event */}
-            <div className="rounded-2xl p-10 shadow-xl hover:shadow-2xl transition-shadow" style={{ background: '#F8F5ED' }}>
-              <div className="w-16 h-16 rounded-lg flex items-center justify-center mb-6" style={{ background: '#F0C8B9' }}>
-                <svg className="w-8 h-8" style={{ color: '#9D7A6B' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#8B6F5E' }}>
-                Host/Sponsor an Event
-              </h3>
-              <p className="leading-relaxed mb-4" style={{ fontFamily: 'var(--font-raleway)', color: '#A68B7D' }}>
-                Partner with us to host workshops, community gatherings, or special events that bring generations together.
-              </p>
-              <div className="flex gap-4 text-sm font-semibold" style={{ color: '#B89A8A' }}>
-                <span>PRIVATE EVENTS</span>
-                <span>•</span>
-                <span>INDOOR OR OUTDOOR</span>
-              </div>
-            </div>
-
-            {/* Attend Workshops */}
-            <div className="rounded-2xl p-10 shadow-xl hover:shadow-2xl transition-shadow" style={{ background: '#F8F5ED' }}>
-              <div className="w-16 h-16 rounded-lg flex items-center justify-center mb-6" style={{ background: '#F7D78B' }}>
-                <svg className="w-8 h-8" style={{ color: '#7A5C5C' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
-                Attend Workshops
-              </h3>
-              <p className="leading-relaxed mb-4" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
-                Participate in our intergenerational workshops, storytelling sessions, and community activities that create meaningful connections.
-              </p>
-              <div className="flex gap-4 text-sm font-semibold" style={{ color: '#A68B7D' }}>
-                <span>FREE TO ATTEND</span>
-                <span>•</span>
-                <span>EVERY WEEK</span>
-              </div>
-            </div>
-
-            {/* Join as a Member */}
-            <div className="rounded-2xl p-10 shadow-xl hover:shadow-2xl transition-shadow" style={{ background: '#F8F5ED' }}>
-              <div className="w-16 h-16 rounded-lg flex items-center justify-center mb-6" style={{ background: '#F8B4CB' }}>
-                <svg className="w-8 h-8" style={{ color: '#8B6F5E' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Sponsor Logos Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+            {/* Sponsor 1 */}
+            <div className="flex flex-col items-center text-center p-6 md:p-8 rounded-lg hover:bg-opacity-10 transition-all duration-300" style={{ background: 'rgba(237, 162, 195, 0.05)' }}>
+              <div className="w-16 h-16 md:w-20 md:h-20 mb-6 flex items-center justify-center rounded-full" style={{ background: 'rgba(244, 142, 184, 0.2)' }}>
+                <svg className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#7A5C5C' }}>
-                Join as a Member
-        </h3>
-              <p className="leading-relaxed mb-4" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
-                Become an official member of Youth 4 Elders and help shape our community initiatives and programs.
-              </p>
-              <div className="flex gap-4 text-sm font-semibold" style={{ color: '#A68B7D' }}>
-                <span>NO FEE</span>
-                <span>•</span>
-                <span>OPEN TO ALL</span>
-              </div>
+              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
+                uOttawa
+              </h3>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Feature Highlights Section */}
-      <section className="relative z-10 py-20">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
-              FROM IDEA TO IMPACT
-            </h2>
-            <p className="text-2xl" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>Our Journey</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {sortedHighlights.length > 0 ? sortedHighlights.map((highlight, index) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const f = highlight.fields as any
-              const imageUrl: string | undefined = f.image?.fields?.file?.url
-              const imageAlt: string =
-                f.image?.fields?.description || (f.title as string) || 'Feature image'
-
-              return (
-                <div key={highlight.sys.id} className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
-                  <div className="relative">
-                    {imageUrl ? (
-                      <div className="aspect-video w-full overflow-hidden">
-                        <Image
-                          src={`https:${imageUrl}`}
-                          alt={imageAlt}
-                          width={400}
-                          height={300}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    ) : (
-                      <div className="aspect-video w-full bg-gradient-to-br from-pink-100 to-orange-100 flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-md">
-                            <svg
-                              className="w-8 h-8 text-pink-600"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={1.5}
-                                d="M4 7h16M4 12h16M4 17h16"
-                              />
-                            </svg>
-                          </div>
-                          <p className="font-medium text-pink-600">Highlight</p>
-                        </div>
-                      </div>
-                    )}
-                    <div className="absolute top-4 left-4 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center" style={{ background: '#F8F5ED' }}>
-                      <span className="text-sm font-bold" style={{ color: '#8B6F5E' }}>{index + 1}</span>
-                    </div>
+            {/* Sponsor 2 */}
+            <div className="flex flex-col items-center text-center p-6 md:p-8 rounded-lg hover:bg-opacity-10 transition-all duration-300" style={{ background: 'rgba(237, 162, 195, 0.05)' }}>
+              <div className="w-16 h-16 md:w-20 md:h-20 mb-6 flex items-center justify-center rounded-full" style={{ background: 'rgba(244, 142, 184, 0.2)' }}>
+                <svg className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--color-pink-medium)' }}>
+                Community Foundation
+              </h3>
                   </div>
-                  
-                  <div className="p-6">
-                    <h4 className="text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-playfair)', color: '#8B6F5E' }}>
-                      {f.title as string}
-                    </h4>
-                    <p className="leading-relaxed" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
-                      {typeof f.description === 'string'
-                        ? f.description
-                        : 'Creating meaningful connections through shared experiences between generations.'}
-                    </p>
-                  </div>
+
+            {/* Sponsor 3 */}
+            <div className="flex flex-col items-center text-center p-6 md:p-8 rounded-lg hover:bg-opacity-10 transition-all duration-300" style={{ background: 'rgba(237, 162, 195, 0.05)' }}>
+              <div className="w-16 h-16 md:w-20 md:h-20 mb-6 flex items-center justify-center rounded-full" style={{ background: 'rgba(244, 142, 184, 0.2)' }}>
+                <svg className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 </div>
-              )
-            }) : (
-              <div className="col-span-full text-center py-16">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: '#F0C8B9' }}>
-                  <svg className="w-10 h-10" style={{ color: '#7A5C5C' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h4 className="text-xl font-semibold mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#8B6F5E' }}>Loading Highlights</h4>
-                <p style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>We&apos;re preparing our journey highlights for you...</p>
+              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--color-pink-medium)' }}>
+                Local Partners
+              </h3>
           </div>
-            )}
+
+            {/* Sponsor 4 */}
+            <div className="flex flex-col items-center text-center p-6 md:p-8 rounded-lg hover:bg-opacity-10 transition-all duration-300" style={{ background: 'rgba(237, 162, 195, 0.05)' }}>
+              <div className="w-16 h-16 md:w-20 md:h-20 mb-6 flex items-center justify-center rounded-full" style={{ background: 'rgba(244, 142, 184, 0.2)' }}>
+                <svg className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg md:text-xl font-bold mb-3" style={{ fontFamily: 'var(--font-playfair)', color: 'var(--color-pink-medium)' }}>
+                Student Union
+          </h3>
+            </div>
           </div>
           </div>
         </section>
-
 
     </div>
   )

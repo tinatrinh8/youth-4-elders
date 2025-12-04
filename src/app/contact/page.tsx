@@ -28,7 +28,7 @@ export default function Contact() {
     setOpenFAQ(openFAQ === index ? null : index)
   }
   return (
-    <main className="min-h-screen relative overflow-hidden" style={{ background: '#F8F5ED' }}>
+    <main className="min-h-screen relative overflow-hidden" style={{ background: 'var(--color-cream)' }}>
       {/* Soft Pink Flower at Top */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-32 h-32 opacity-80">
         <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -59,7 +59,7 @@ export default function Contact() {
               <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
                 How can I join?
               </h3>
-              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
+              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: '#9D7A6B' }}>
                 Simply reach out to us via email or Instagram! We welcome all uOttawa students who are passionate about bridging generational gaps and making a positive impact in our community.
               </p>
             </div>
@@ -76,7 +76,7 @@ export default function Contact() {
               <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
                 What activities do you organize?
               </h3>
-              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-raleway)', color: '#7A5C5C' }}>
+              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: '#7A5C5C' }}>
                 We organize workshops, storytelling sessions, technology help sessions, craft fairs, and various intergenerational activities that bring youth and elders together.
               </p>
             </div>
@@ -93,7 +93,7 @@ export default function Contact() {
               <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
                 How often do you meet?
               </h3>
-              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-raleway)', color: '#8B6F5E' }}>
+              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: '#8B6F5E' }}>
                 We organize events throughout the semester and meet regularly for planning sessions. Follow us on Instagram for the latest updates on upcoming events and meetings.
               </p>
             </div>
@@ -106,7 +106,7 @@ export default function Contact() {
             <h2 className="text-3xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
               Ready to get started?
             </h2>
-            <p className="text-lg max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-raleway)', color: '#9D7A6B' }}>
+            <p className="text-lg max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-lato)', color: '#9D7A6B' }}>
               Have a question or want to collaborate? We&apos;d love to hear from you!
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
