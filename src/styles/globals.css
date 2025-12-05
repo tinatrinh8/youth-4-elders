@@ -170,6 +170,19 @@ body::-webkit-scrollbar {
   }
 }
 
+@keyframes dropdownRollIn {
+  from {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    transform-origin: top;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scaleY(0);
+    transform-origin: top;
+  }
+}
+
 @keyframes dropdownFadeOut {
   from {
     opacity: 1;
@@ -264,7 +277,7 @@ body::-webkit-scrollbar {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -275,7 +288,7 @@ body::-webkit-scrollbar {
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
   to {
     opacity: 1;
@@ -284,11 +297,13 @@ body::-webkit-scrollbar {
 }
 
 .animate-fadeInUp {
-  animation: fadeInUp 1.2s ease-out forwards;
+  opacity: 0;
+  animation: fadeInUp 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .animate-fadeInScale {
-  animation: fadeInScale 0.8s ease-out forwards;
+  opacity: 0;
+  animation: fadeInScale 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* Footer social link hover effect */
@@ -387,15 +402,36 @@ body::-webkit-scrollbar {
 }
 
 .paper-swing {
-  transition: animation-duration 0.3s ease-out, transform 1.5s ease-out;
   transform-origin: 50% 0%;
   transform: rotateZ(0deg);
-  animation: paperSwing var(--swing-duration, 3s) ease-in-out infinite alternate;
+  animation: paperSwing var(--swing-duration, 1s) ease-in-out infinite alternate;
   animation-play-state: paused;
+  will-change: transform;
 }
 
 .paper-swing:hover {
   --swing-duration: 1s;
   animation-play-state: running;
-  transition: animation-duration 0.8s ease-in;
+}
+
+/* Scrolling Background Text Animation */
+@keyframes scrollText {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll-text {
+  animation: scrollText 30s linear infinite;
+  will-change: transform;
+}
+
+/* Parallax Background Effect */
+.parallax-bg {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }

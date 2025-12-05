@@ -7,7 +7,9 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
-  const slowDownIntervals = useRef<Map<HTMLElement, NodeJS.Timeout>>(new Map())
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const parallaxSectionRef = useRef<HTMLElement>(null)
+  const parallaxBgRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     // Show modal after 6 seconds on page load
@@ -15,6 +17,66 @@ export default function Home() {
       setShowModal(true)
     }, 6000)
     return () => clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    // Position fixed background relative to section
+    const updateBackgroundPosition = () => {
+      if (parallaxSectionRef.current && parallaxBgRef.current) {
+        const section = parallaxSectionRef.current
+        const rect = section.getBoundingClientRect()
+        
+        // Set fixed position to match section's viewport position
+        parallaxBgRef.current.style.top = `${rect.top}px`
+        parallaxBgRef.current.style.left = `${rect.left}px`
+        parallaxBgRef.current.style.width = `${rect.width}px`
+        parallaxBgRef.current.style.height = `${rect.height}px`
+      }
+    }
+
+    const handleScroll = () => {
+      updateBackgroundPosition()
+    }
+
+    const handleResize = () => {
+      updateBackgroundPosition()
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleResize)
+    updateBackgroundPosition() // Initial call
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  useEffect(() => {
+    // Set target date (30 days from now, or customize to a specific event date)
+    const targetDate = new Date()
+    targetDate.setDate(targetDate.getDate() + 30)
+    
+    const calculateTimeLeft = () => {
+      const now = new Date().getTime()
+      const difference = targetDate.getTime() - now
+      
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+          seconds: Math.floor((difference % (1000 * 60)) / 1000)
+        })
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+      }
+    }
+    
+    calculateTimeLeft()
+    const interval = setInterval(calculateTimeLeft, 1000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   const handleClose = () => {
@@ -60,7 +122,7 @@ export default function Home() {
 
             {/* Body Text */}
             <p className="text-base md:text-lg mb-6 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-              We&apos;re doing a head count of interested individuals who want to join Youth 4 Elders! Add your email if you&apos;re interested in helping grow our club and connecting generations.
+              We would like to see who is interested to join the Youth 4 Elders community! Add your email if you&apos;re interested in helping grow our club and connecting generations.
             </p>
 
             {/* Email Form */}
@@ -313,231 +375,407 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Call-to-Action Section */}
-      <section className="relative z-10 py-20 md:py-28" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-4xl mx-auto px-8 text-center">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-            Ready to Make a Difference?
-          </h2>
-          <p className="text-lg md:text-xl mb-10 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)' }}>
-            Join our community of passionate students and caring elders. Together, we&apos;re building meaningful connections that bridge generations.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a
-              href="/join-us"
-              className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-              style={{
-                background: 'var(--color-pink-medium)',
-                color: 'white',
-                fontFamily: 'var(--font-kollektif)'
+      {/* How to Get Involved Section */}
+      <section ref={parallaxSectionRef} className="relative z-10 pt-32 md:pt-48 pb-20 md:pb-32 overflow-hidden" style={{ background: 'var(--color-cream)' }}>
+        {/* Fixed Background Images - Parallax Effect */}
+        <div ref={parallaxBgRef} className="absolute inset-0 pointer-events-none parallax-bg" style={{ zIndex: 0 }}>
+          {/* Create a grid of small decorative images */}
+          {Array.from({ length: 60 }).map((_, i) => {
+            const images = ['/assets/flower.png', '/assets/flower2.png', '/assets/star.png', '/assets/swirl.png']
+            const image = images[i % 4]
+            const positions = [
+              // Very top area (0-5%) - extend background upward, more spaced out
+              { top: '0.5%', left: '12%' },
+              { top: '1%', left: '35%' },
+              { top: '0.8%', left: '58%' },
+              { top: '1.2%', left: '82%' },
+              { top: '2%', left: '8%' },
+              { top: '2.5%', left: '48%' },
+              { top: '3%', left: '72%' },
+              { top: '3.5%', left: '25%' },
+              { top: '4%', left: '65%' },
+              { top: '4.5%', left: '88%' },
+              { top: '5%', left: '18%' },
+              // Top area (5-20%) - more spaced out
+              { top: '6%', left: '42%' },
+              { top: '7%', left: '75%' },
+              { top: '8%', left: '15%' },
+              { top: '9%', left: '58%' },
+              { top: '11%', left: '32%' },
+              { top: '12%', left: '68%' },
+              { top: '13%', left: '12%' },
+              { top: '14%', left: '52%' },
+              { top: '15%', left: '88%' },
+              { top: '16%', left: '28%' },
+              { top: '17%', left: '65%' },
+              { top: '18%', left: '8%' },
+              { top: '19%', left: '45%' },
+              { top: '20%', left: '82%' },
+              // Upper middle area (20-35%)
+              { top: '22%', left: '12%' },
+              { top: '25%', left: '35%' },
+              { top: '28%', left: '58%' },
+              { top: '30%', left: '78%' },
+              { top: '32%', left: '8%' },
+              { top: '35%', left: '48%' },
+              // Middle area (35-65%)
+              { top: '38%', left: '22%' },
+              { top: '42%', left: '45%' },
+              { top: '45%', left: '68%' },
+              { top: '48%', left: '15%' },
+              { top: '52%', left: '38%' },
+              { top: '55%', left: '62%' },
+              { top: '58%', left: '8%' },
+              { top: '62%', left: '52%' },
+              { top: '65%', left: '78%' },
+              // Lower middle area (65-80%)
+              { top: '68%', left: '18%' },
+              { top: '72%', left: '42%' },
+              { top: '75%', left: '65%' },
+              { top: '78%', left: '12%' },
+              { top: '80%', left: '48%' },
+              // Bottom area (80-95%) - heavily filled
+              { top: '82%', left: '5%' },
+              { top: '83%', left: '22%' },
+              { top: '84%', left: '38%' },
+              { top: '85%', left: '55%' },
+              { top: '86%', left: '72%' },
+              { top: '87%', left: '88%' },
+              { top: '88%', left: '12%' },
+              { top: '89%', left: '28%' },
+              { top: '90%', left: '45%' },
+              { top: '91%', left: '62%' },
+              { top: '92%', left: '78%' },
+              { top: '93%', left: '8%' },
+              { top: '94%', left: '35%' },
+              { top: '95%', left: '58%' },
+              // Very bottom area (95-100%) - extend background downward
+              { top: '95.5%', left: '15%' },
+              { top: '96%', left: '32%' },
+              { top: '96.5%', left: '48%' },
+              { top: '97%', left: '65%' },
+              { top: '97.5%', left: '82%' },
+              { top: '98%', left: '8%' },
+              { top: '98.5%', left: '25%' },
+              { top: '99%', left: '42%' },
+              { top: '99.2%', left: '58%' },
+              { top: '99.5%', left: '75%' },
+              { top: '99.8%', left: '92%' },
+              { top: '98%', left: '55%' },
+              { top: '99%', left: '88%' },
+            ]
+            const pos = positions[i] || { top: `${(i * 12) % 100}%`, left: `${(i * 17) % 100}%` }
+            const sizes = ['w-12 h-12', 'w-16 h-16', 'w-14 h-14', 'w-10 h-10', 'w-18 h-18']
+            const size = sizes[i % sizes.length]
+            const opacity = 0.15 + (i % 3) * 0.05
+            
+            return (
+              <div
+                key={i}
+                className="absolute"
+                style={{
+                  ...pos,
+                  opacity: opacity,
+                  transform: `rotate(${(i * 23) % 360}deg)`
+                }}
+              >
+                <Image
+                  src={image}
+                  alt=""
+                  width={100}
+                  height={100}
+                  className={size}
+                />
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Content - Scrolls normally */}
+        <div className="relative z-10 max-w-7xl mx-auto px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+              Want to Get Involved?
+            </h2>
+            <p className="text-lg md:text-xl mb-8 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)' }}>
+              Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
+            </p>
+            <div className="flex justify-center items-center">
+              <a
+                href="/join-us"
+                className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+                style={{
+                  background: 'var(--color-pink-medium)',
+                  color: 'white',
+                  fontFamily: 'var(--font-kollektif)',
+                  border: '2px solid transparent'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#D85A8F'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'transparent'
+                }}
+              >
+                LEARN MORE
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Events Section */}
+      <section className="relative z-10 py-32 md:py-48 lg:py-64 overflow-hidden" style={{ background: 'var(--color-brown-dark)' }}>
+        {/* Large Background Text - Scrolling */}
+        <div className="absolute inset-0 flex items-start pointer-events-none overflow-hidden" style={{ top: '10%' }}>
+          {/* Scrolling Text Container - Left to Right */}
+          <div className="flex whitespace-nowrap animate-scroll-text" style={{ width: '200%' }}>
+            <h2 
+              className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
+              style={{ 
+                fontFamily: 'var(--font-vintage-stylist)', 
+                color: 'var(--color-cream)',
+                display: 'inline-block'
               }}
             >
-              Join Us Today
-            </a>
+              Our Events
+            </h2>
+            <h2 
+              className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
+              style={{ 
+                fontFamily: 'var(--font-vintage-stylist)', 
+                color: 'var(--color-cream)',
+                display: 'inline-block'
+              }}
+            >
+              Our Events
+            </h2>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-8 relative z-10">
+          {/* Event Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-16 md:mb-20">
+            {/* Event Card 1 */}
+            <div 
+              className="relative rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              style={{ 
+                background: 'var(--color-cream)',
+                minHeight: '300px'
+              }}
+            >
+              <div className="h-48 bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--color-pink-medium)' }}>
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Upcoming Event
+                  </p>
+                </div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                  Workshop Series
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  Join us for our monthly intergenerational workshops connecting students and elders.
+                </p>
+              </div>
+            </div>
+
+            {/* Event Card 2 */}
+            <div 
+              className="relative rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              style={{ 
+                background: 'var(--color-cream)',
+                minHeight: '300px'
+              }}
+            >
+              <div className="h-48 bg-gradient-to-br from-pink-300 to-pink-400 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--color-pink-light)' }}>
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Past Event
+                  </p>
+                </div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                  Community Gathering
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  A successful event bringing together students and elders for meaningful conversations.
+                </p>
+              </div>
+            </div>
+
+            {/* Event Card 3 */}
+            <div 
+              className="relative rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              style={{ 
+                background: 'var(--color-cream)',
+                minHeight: '300px'
+              }}
+            >
+              <div className="h-48 bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--color-pink-medium)' }}>
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Upcoming Event
+                  </p>
+                </div>
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                  Volunteer Day
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  Join us for a day of volunteering and community service activities.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Section - Categories and View More */}
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+            <div>
+              <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+                Event Types
+              </p>
+              <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}>
+                Workshops / Community / Volunteering / Social
+              </p>
+            </div>
             <a
               href="/events"
-              className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 border-2"
+              className="group font-semibold text-lg transition-all duration-300 flex items-center gap-2 relative"
               style={{
-                borderColor: 'var(--color-brown-dark)',
-                color: 'var(--color-brown-dark)',
-                fontFamily: 'var(--font-kollektif)',
-                background: 'transparent'
+                color: 'var(--color-cream)',
+                fontFamily: 'var(--font-kollektif)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-pink-medium)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--color-cream)'
               }}
             >
-              View Upcoming Events
+              <span>VIEW MORE</span>
+              <svg 
+                className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              {/* Animated underline on hover */}
+              <span 
+                className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full"
+                style={{ background: 'var(--color-pink-medium)' }}
+              />
             </a>
           </div>
         </div>
       </section>
 
-      {/* Sponsors Section - Tear-Off Pad Design */}
-      <section className="relative z-10 py-20 md:py-32" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-7xl mx-auto px-8">
-          {/* Main Card Container - Paper Pad */}
-          <div 
-            className="relative rounded-2xl p-8 md:p-12 shadow-2xl"
-            style={{ 
-              background: 'var(--color-pink-light)',
-              border: '4px solid var(--color-pink-medium)',
-              boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)'
-            }}
-          >
-            {/* Title Section */}
-            <div className="text-center mb-12 md:mb-16 relative z-10 pt-8">
-              <h2 
-                className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-4"
-                style={{ 
-                  fontFamily: 'var(--font-vintage-stylist)', 
+      {/* Countdown Timer - Overlapping between brown and cream sections */}
+      <div className="relative z-20 -mt-16 md:-mt-24 mb-16 md:mb-24">
+        <div 
+          className="max-w-3xl mx-auto px-8 md:px-12 py-12 md:py-16 rounded-2xl shadow-2xl text-center"
+          style={{
+            background: 'var(--color-brown-dark)',
+            border: '1px solid rgba(247, 240, 227, 0.2)'
+          }}
+        >
+          {/* Large Days Display */}
+          <div className="flex items-center justify-center gap-0 mb-6">
+            {/* Left Panel - V indentations on right (inner) edge */}
+            <div 
+              className="px-10 md:px-14 py-12 md:py-16 relative"
+              style={{
+                background: 'var(--color-cream)',
+                clipPath: 'polygon(0% 8%, 0% 0%, 100% 0%, 100% 15%, 88% 50%, 100% 85%, 100% 100%, 0% 100%, 0% 92%)',
+                borderRadius: '20px 0 0 20px',
+                minWidth: '120px',
+                minHeight: '140px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: '-12%'
+              }}
+            >
+              <div 
+                className="text-6xl md:text-7xl lg:text-8xl font-bold"
+                style={{
+                  fontFamily: 'var(--font-kollektif)',
                   color: 'var(--color-brown-dark)'
                 }}
               >
-                Our Sponsors
-              </h2>
-              <p 
-                className="text-base md:text-lg"
-                style={{ 
-                  fontFamily: 'var(--font-kollektif)', 
-                  color: 'var(--color-brown-medium)'
-                }}
-              >
-                Thank you for your continued support and partnership in building meaningful connections
-              </p>
+                {String(timeLeft.days).padStart(2, '0')[0]}
+              </div>
             </div>
-
-            {/* Tear-Off Strips Container */}
-            <div className="relative flex items-stretch justify-center gap-0 mt-16" style={{ minHeight: '350px' }}>
-              {/* Individual Sponsor Strips - Background Layer (invisible, just for layout) */}
-              {[
-                { width: '20%' },
-                { width: '20%' },
-                { width: '20%' },
-                { width: '20%' },
-                { width: '20%' },
-              ].map((sponsor, index) => (
-                <div
-                  key={index}
-                  className="relative"
-                  style={{
-                    width: sponsor.width,
-                    minWidth: '100px',
-                    height: '100%',
-                    zIndex: 1
-                  }}
-                />
-              ))}
-
-              {/* Individual Brown Torn-Off Blocks for Each Sponsor */}
-              {[
-                { name: 'UOTTAWA', left: '0%', image: '/assets/sponsors/uottawa.png' },
-                { name: 'DOORS OPEN ONTARIO', left: '20%', image: '/assets/sponsors/doors open ontario.png' },
-                { name: 'LOCAL PARTNERS', left: '40%' },
-                { name: 'STUDENT UNION', left: '60%' },
-                { name: 'VOLUNTEER CENTER', left: '80%' },
-              ].map((sponsor, index) => {
-                const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-                  const element = e.currentTarget
-                  // Clear any existing interval
-                  const existingInterval = slowDownIntervals.current.get(element)
-                  if (existingInterval) clearInterval(existingInterval)
-                  
-                  let duration = 1
-                  const interval = setInterval(() => {
-                    duration += 0.2
-                    element.style.setProperty('--swing-duration', `${duration}s`)
-                    if (duration >= 3) {
-                      clearInterval(interval)
-                      slowDownIntervals.current.delete(element)
-                      element.style.animationPlayState = 'paused'
-                    }
-                  }, 50)
-                  slowDownIntervals.current.set(element, interval)
-                }
-
-                const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-                  const element = e.currentTarget
-                  // Clear any existing slowdown interval
-                  const existingInterval = slowDownIntervals.current.get(element)
-                  if (existingInterval) {
-                    clearInterval(existingInterval)
-                    slowDownIntervals.current.delete(element)
-                  }
-                  element.style.animationPlayState = 'running'
-                  element.style.setProperty('--swing-duration', '1s')
-                }
-
-              return (
-                <div
-                  key={index}
-                  className="absolute torn-edge-bottom paper-swing"
-                  style={{
-                    left: sponsor.left,
-                    width: '20%',
-                    height: '85%',
-                    background: 'var(--color-brown-medium)',
-                    zIndex: 10,
-                    boxShadow: '0 4px 8px rgba(100, 50, 27, 0.3)',
-                    borderLeft: index > 0 ? '2px dashed var(--color-brown-dark)' : 'none',
-                    borderRight: index < 4 ? '2px dashed var(--color-brown-dark)' : 'none',
-                    borderTop: '2px dashed var(--color-brown-dark)'
-                  }}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{
-                      transform: 'rotate(-90deg)',
-                      transformOrigin: 'center',
-                      width: '100%',
-                      height: '100%'
-                    }}
-                  >
-                    {sponsor.image ? (
-                      <div style={{ 
-                        width: sponsor.name === 'UOTTAWA' ? '100%' : '90%', 
-                        height: sponsor.name === 'UOTTAWA' ? '100%' : '88%', 
-                        position: 'relative' 
-                      }}>
-                        <Image
-                          src={sponsor.image}
-                          alt={sponsor.name}
-                          fill
-                          className="object-contain"
-                          style={{ filter: 'brightness(0) invert(1)' }}
-                        />
-                      </div>
-                    ) : (
-                      <span
-                        className="text-xs md:text-sm font-bold tracking-wider whitespace-nowrap"
-                        style={{
-                          fontFamily: 'var(--font-kollektif)',
-                          color: 'var(--color-cream)'
-                        }}
-                      >
-                        {sponsor.name}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-            {/* Torn-Off "THANK YOU" Piece */}
-            <div
-              className="absolute bottom-6 right-8 md:right-12 transform rotate-12"
+            {/* Right Panel - V indentations on left (inner) edge */}
+            <div 
+              className="px-10 md:px-14 py-12 md:py-16 relative"
               style={{
-                width: '120px',
-                height: '70px',
                 background: 'var(--color-cream)',
-                border: '2px dashed var(--color-brown-medium)',
-                borderRadius: '4px',
-                padding: '10px',
-                boxShadow: '0 4px 12px rgba(100, 50, 27, 0.25)',
-                zIndex: 15,
-                clipPath: 'polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%)' // Torn edge effect
+                clipPath: 'polygon(0% 0%, 0% 15%, 12% 50%, 0% 85%, 0% 100%, 100% 100%, 100% 92%, 100% 8%, 100% 0%)',
+                borderRadius: '0 20px 20px 0',
+                minWidth: '120px',
+                minHeight: '140px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginLeft: '-12%'
               }}
             >
-              <div
-                className="h-full flex items-center justify-center"
+              <div 
+                className="text-6xl md:text-7xl lg:text-8xl font-bold"
                 style={{
-                  transform: 'rotate(-12deg)'
+                  fontFamily: 'var(--font-kollektif)',
+                  color: 'var(--color-brown-dark)'
                 }}
               >
-                <span
-                  className="text-xs font-bold"
-                  style={{
-                    fontFamily: 'var(--font-kollektif)',
-                    color: 'var(--color-brown-dark)'
-                  }}
-                >
-                  THANK YOU
-                </span>
+                {String(timeLeft.days).padStart(2, '0')[1]}
               </div>
             </div>
           </div>
+
+          {/* Text Below */}
+          <div className="space-y-2">
+            <p 
+              className="text-base md:text-lg"
+              style={{
+                fontFamily: 'var(--font-kollektif)',
+                color: 'var(--color-cream)'
+              }}
+            >
+              DAYS LEFT UNTIL
+            </p>
+            <p 
+              className="text-xl md:text-2xl font-bold"
+              style={{
+                fontFamily: 'var(--font-vintage-stylist)',
+                color: 'var(--color-cream)'
+              }}
+            >
+              NEXT EVENT
+            </p>
           </div>
-        </section>
+        </div>
+      </div>
 
     </div>
   )

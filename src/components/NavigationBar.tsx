@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
+  const [isClosing, setIsClosing] = useState(false)
 
   const whoWeAreSubmenu = [
     { href: '/club-info', label: 'Club Info' },
@@ -71,8 +72,19 @@ export default function NavigationBar() {
           
           <div 
             className="relative"
-            onMouseEnter={() => setHoveredDropdown('who-we-are')}
-            onMouseLeave={() => setHoveredDropdown(null)}
+            onMouseEnter={() => {
+              setIsClosing(false)
+              setHoveredDropdown('who-we-are')
+            }}
+            onMouseLeave={() => {
+              if (hoveredDropdown === 'who-we-are') {
+                setIsClosing(true)
+                setTimeout(() => {
+                  setHoveredDropdown(null)
+                  setIsClosing(false)
+                }, 300) // Match animation duration
+              }
+            }}
           >
             <div 
               className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
@@ -93,15 +105,18 @@ export default function NavigationBar() {
               </svg>
             </div>
             {/* Invisible bridge to prevent gap issues */}
-            {hoveredDropdown === 'who-we-are' && (
+            {(hoveredDropdown === 'who-we-are' || isClosing) && (
               <div 
                 className="absolute top-full left-0 right-0 h-2 z-[109]"
                 style={{ marginTop: '-2px' }}
-                onMouseEnter={() => setHoveredDropdown('who-we-are')}
+                onMouseEnter={() => {
+                  setIsClosing(false)
+                  setHoveredDropdown('who-we-are')
+                }}
               />
             )}
             {/* Dropdown Menu */}
-            {hoveredDropdown === 'who-we-are' && (
+            {(hoveredDropdown === 'who-we-are' || isClosing) && (
               <div 
                 className="absolute top-full left-0 w-56 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
@@ -109,10 +124,13 @@ export default function NavigationBar() {
                   border: '1px solid var(--color-brown-medium)',
                   boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
                   marginTop: '8px',
-                  animation: 'dropdownRollOut 0.3s ease-out',
+                  animation: isClosing ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
                   transformOrigin: 'top'
                 }}
-                onMouseEnter={() => setHoveredDropdown('who-we-are')}
+                onMouseEnter={() => {
+                  setIsClosing(false)
+                  setHoveredDropdown('who-we-are')
+                }}
               >
                 <div className="py-2">
                   {whoWeAreSubmenu.map((item) => (

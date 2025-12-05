@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 interface TeamMember {
   name: string
@@ -65,25 +65,39 @@ export default function Team() {
   const [descriptionVisible, setDescriptionVisible] = useState(false)
 
   useEffect(() => {
-    // Title animation on mount
-    setTitleVisible(true)
+    let titleTimer: NodeJS.Timeout
+    let descTimer: NodeJS.Timeout
     
-    // Description animation with slight delay
-    const timer = setTimeout(() => {
-      setDescriptionVisible(true)
-    }, 200)
+    // Use requestAnimationFrame to ensure DOM is ready
+    requestAnimationFrame(() => {
+      // Small delay to ensure page is ready, then start title animation
+      titleTimer = setTimeout(() => {
+        setTitleVisible(true)
+      }, 200)
+      
+      // Description animation with delay
+      descTimer = setTimeout(() => {
+        setDescriptionVisible(true)
+      }, 700)
+    })
     
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(titleTimer)
+      clearTimeout(descTimer)
+    }
   }, [])
 
   return (
-    <main className="min-h-screen pt-[160px] pb-20" style={{ background: 'var(--color-cream)' }}>
+    <main className="min-h-screen pt-[140px] pb-20" style={{ background: 'var(--color-cream)' }}>
       <div className="max-w-7xl mx-auto px-8 py-16">
         {/* Page Header */}
         <div className="text-center mb-20">
           <div 
             className={`flex items-center justify-center gap-4 md:gap-8 mb-6 ${titleVisible ? 'animate-fadeInScale' : 'opacity-0'}`}
-            style={{ animationDelay: titleVisible ? '0.2s' : '0s' }}
+            style={{ 
+              animationDelay: titleVisible ? '0s' : '0s',
+              willChange: titleVisible ? 'auto' : 'opacity, transform'
+            }}
           >
             {/* Flower decoration - left */}
             <div className="flex-shrink-0">
@@ -120,7 +134,7 @@ export default function Team() {
               fontFamily: 'var(--font-leiko)', 
               color: 'var(--color-brown-medium)',
               marginBottom: '250px',
-              animationDelay: descriptionVisible ? '0.4s' : '0s'
+              animationDelay: descriptionVisible ? '0s' : '0s'
             }}
           >
             Get to know the passionate students who make Youth 4 Elders possible! From organizing workshops to building connections, our team brings creativity and dedication to everything we do.
@@ -133,7 +147,6 @@ export default function Team() {
             <TeamRow 
               key={rowIndex} 
               members={teamMembers.slice(rowIndex * 3, rowIndex * 3 + 3)} 
-              rowIndex={rowIndex}
             />
           ))}
         </div>
@@ -142,49 +155,56 @@ export default function Team() {
   )
 }
 
-function TeamRow({ members, rowIndex }: { members: TeamMember[]; rowIndex: number }) {
+function TeamRow({ members }: { members: TeamMember[] }) {
   const [isVisible, setIsVisible] = useState(false)
-  const [ref, setRef] = useState<HTMLDivElement | null>(null)
+  const ref = useRef<HTMLDivElement>(null)
+  const hasAnimated = useRef(false)
 
   useEffect(() => {
-    if (!ref) return
+    if (!ref.current || hasAnimated.current) return
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !isVisible) {
+          if (entry.isIntersecting && !hasAnimated.current) {
+            hasAnimated.current = true
             setIsVisible(true)
             observer.unobserve(entry.target)
           }
         })
       },
       {
-        threshold: 0.1,
-        rootMargin: '0px 0px 100px 0px'
+        threshold: 0.15,
+        rootMargin: '0px 0px -50px 0px'
       }
     )
 
-    observer.observe(ref)
+    observer.observe(ref.current)
 
     return () => {
       observer.disconnect()
     }
-  }, [ref, isVisible])
+  }, [])
 
   return (
     <div 
-      ref={setRef}
-      className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 md:gap-x-12 ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
-      style={{ animationDelay: isVisible ? `${rowIndex * 0.2}s` : '0s' }}
+      ref={ref}
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 md:gap-x-12 gap-y-16 md:gap-y-20"
     >
       {members.map((member, index) => (
-        <TeamMemberCard key={index} member={member} index={index} />
+        <TeamMemberCard 
+          key={index} 
+          member={member} 
+          index={index} 
+          isVisible={isVisible}
+          cardDelay={index * 0.1}
+        />
       ))}
     </div>
   )
 }
 
-function TeamMemberCard({ member, index }: { member: TeamMember; index: number }) {
+function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamMember; index: number; isVisible: boolean; cardDelay: number }) {
   // Generate unique blob shape for each card
   const blobShapes = [
     '60% 40% 30% 70% / 60% 30% 70% 40%',
@@ -209,7 +229,13 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
   const blobColor = blobColors[index % blobColors.length]
 
   return (
-    <div className="flex flex-col items-center">
+    <div 
+      className={`flex flex-col items-center ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+      style={{
+        animationDelay: isVisible ? `${cardDelay}s` : '0s',
+        willChange: isVisible ? 'auto' : 'opacity, transform'
+      }}
+    >
       {/* Image with Blob Background */}
       <div className="relative mb-6 w-full flex justify-center">
         {/* Organic Blob Shape Behind Image */}
