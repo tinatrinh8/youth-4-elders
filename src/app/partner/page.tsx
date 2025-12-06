@@ -9,9 +9,11 @@ export default function Partner() {
   const [imagesVisible, setImagesVisible] = useState<boolean[]>([])
   const [partnerVisible, setPartnerVisible] = useState(false)
   const [sponsorsVisible, setSponsorsVisible] = useState(false)
+  const [ctaVisible, setCtaVisible] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
   const partnerRef = useRef<HTMLDivElement>(null)
   const sponsorsRef = useRef<HTMLDivElement>(null)
+  const ctaRef = useRef<HTMLElement>(null)
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
 
   // Initialize image visibility array
@@ -50,6 +52,7 @@ export default function Partner() {
 
     const partnerElement = partnerRef.current
     const sponsorsElement = sponsorsRef.current
+    const ctaElement = ctaRef.current
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -58,6 +61,8 @@ export default function Partner() {
             setPartnerVisible(true)
           } else if (entry.target === sponsorsElement) {
             setSponsorsVisible(true)
+          } else if (entry.target === ctaElement) {
+            setCtaVisible(true)
           }
         }
       })
@@ -65,10 +70,12 @@ export default function Partner() {
 
     if (partnerElement) observer.observe(partnerElement)
     if (sponsorsElement) observer.observe(sponsorsElement)
+    if (ctaElement) observer.observe(ctaElement)
 
     return () => {
       if (partnerElement) observer.unobserve(partnerElement)
       if (sponsorsElement) observer.unobserve(sponsorsElement)
+      if (ctaElement) observer.unobserve(ctaElement)
     }
   }, [])
 
@@ -109,15 +116,15 @@ export default function Partner() {
     <main className="min-h-screen pb-20" style={{ background: 'var(--color-cream)', overflow: 'visible' }}>
       {/* Hero Section with Images Around Text */}
       <section 
-        className="relative min-h-[200vh] flex items-center justify-center py-32 md:py-40 lg:py-48"
-        style={{ background: 'var(--color-cream)', overflow: 'visible', paddingLeft: '4rem', paddingRight: '4rem' }}
+        className="relative min-h-[200vh] flex items-center justify-center py-16 md:py-32 lg:py-40 xl:py-48"
+        style={{ background: 'var(--color-cream)', overflow: 'visible', paddingLeft: '1rem', paddingRight: '1rem' }}
       >
         {/* Sponsor Photos - 5 Images Total */}
         <div 
           className="absolute inset-0 pointer-events-none"
           style={{ 
             zIndex: 1,
-            padding: '4rem'
+            padding: '1rem'
           }}
         >
           {/* Near Top Left - Horizontal (cane.jpg) - Behind */}
@@ -533,22 +540,36 @@ export default function Partner() {
         </section>
 
       {/* Call-to-Action Section */}
-      <section className="relative z-20 py-20 md:py-32" style={{ background: 'var(--color-cream)' }}>
+      <section 
+        ref={ctaRef}
+        className="relative z-20 py-20 md:py-32 transition-all duration-1000 ease-out" 
+        style={{ 
+          background: 'var(--color-cream)',
+          opacity: ctaVisible ? 1 : 0,
+          transform: ctaVisible ? 'translateY(0)' : 'translateY(50px)'
+        }}
+      >
         <div className="max-w-4xl mx-auto px-8 text-center">
           <h2 
-            className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-8 leading-tight"
+            className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-8 leading-tight transition-all duration-1000 ease-out"
             style={{ 
               fontFamily: 'var(--font-vintage-stylist)', 
-              color: 'var(--color-brown-dark)'
+              color: 'var(--color-brown-dark)',
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)',
+              transitionDelay: '200ms'
             }}
           >
             Become a Partner
           </h2>
           <p 
-            className="text-lg md:text-xl lg:text-2xl leading-relaxed mb-10 max-w-2xl mx-auto"
+            className="text-lg md:text-xl lg:text-2xl leading-relaxed mb-10 max-w-2xl mx-auto transition-all duration-1000 ease-out"
             style={{ 
               fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-brown-medium)'
+              color: 'var(--color-brown-medium)',
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0)' : 'translateY(20px)',
+              transitionDelay: '400ms'
             }}
           >
             We&apos;re always looking for organizations and businesses that share our mission of bridging generations. Reach out to us to explore how we can work together.
@@ -562,7 +583,10 @@ export default function Partner() {
               color: 'var(--color-cream)',
               fontFamily: 'var(--font-kollektif)',
               fontWeight: '600',
-              fontSize: '1.125rem'
+              fontSize: '1.125rem',
+              opacity: ctaVisible ? 1 : 0,
+              transform: ctaVisible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.9)',
+              transition: 'opacity 1000ms ease-out 600ms, transform 1000ms ease-out 600ms, all 300ms'
             }}
           >
             Get in Touch →

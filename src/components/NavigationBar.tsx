@@ -7,6 +7,8 @@ import { useState } from 'react'
 export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
   const [isClosing, setIsClosing] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false)
 
   const whoWeAreSubmenu = [
     { href: '/club-info', label: 'Club Info' },
@@ -16,7 +18,7 @@ export default function NavigationBar() {
   
   return (
     <nav 
-      className="relative z-[100] py-2 md:py-3"
+      className="relative z-[100] py-2 md:py-3 nav-mobile-margins"
       style={{
         background: 'var(--color-brown-dark)',
         borderRadius: '9999px',
@@ -51,8 +53,29 @@ export default function NavigationBar() {
           </Link>
         </div>
 
-        {/* Navigation links on the right */}
-        <div className="flex items-center gap-6 md:gap-8 relative">
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
+          style={{
+            color: 'var(--color-cream)',
+            background: mobileMenuOpen ? 'rgba(255, 255, 255, 0.1)' : 'transparent'
+          }}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
+
+        {/* Desktop Navigation links */}
+        <div className="hidden md:flex items-center gap-6 md:gap-8 relative">
           <Link 
             href="/"
             className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
@@ -210,6 +233,168 @@ export default function NavigationBar() {
           >
             Contact
           </Link>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            className="md:hidden fixed inset-0 z-[200] bg-black bg-opacity-50"
+            style={{
+              transition: 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+              animation: 'fadeIn 0.5s ease-in-out'
+            }}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Mobile Menu */}
+        <div 
+          className={`md:hidden fixed top-0 right-0 h-full w-80 max-w-[85vw] z-[201] transition-transform duration-500 ease-in-out ${
+            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          style={{
+            background: 'var(--color-brown-dark)',
+            boxShadow: '-4px 0 24px rgba(0, 0, 0, 0.3)'
+          }}
+        >
+          <div className="flex flex-col h-full p-6 overflow-y-auto">
+            {/* Mobile Menu Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center">
+                <Image
+                  src="/images/Y4E_CLEAR.PNG"
+                  alt="Youth 4 Elders Logo"
+                  width={32}
+                  height={32}
+                  className="object-contain mr-2"
+                />
+                <span 
+                  className="text-lg font-bold italic"
+                  style={{ 
+                    fontFamily: 'var(--font-vintage-stylist)', 
+                    color: 'var(--color-cream)'
+                  }}
+                >
+                  Youth 4 Elders
+                </span>
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full"
+                style={{ color: 'var(--color-cream)' }}
+                aria-label="Close menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Mobile Navigation Links */}
+            <div className="flex flex-col gap-2">
+              <Link 
+                href="/"
+                className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
+                style={{ 
+                  color: 'var(--color-cream)',
+                  fontFamily: 'var(--font-kollektif)',
+                  background: 'transparent'
+                }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              
+              <div className="flex flex-col">
+                <button
+                  onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+                  className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between"
+                  style={{ 
+                    color: 'var(--color-cream)',
+                    fontFamily: 'var(--font-kollektif)',
+                    background: 'transparent'
+                  }}
+                >
+                  <span>Who We Are</span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-200 ${mobileDropdownOpen ? 'rotate-180' : ''}`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div 
+                  className="overflow-hidden transition-all duration-300 ease-in-out"
+                  style={{
+                    maxHeight: mobileDropdownOpen ? '500px' : '0',
+                    opacity: mobileDropdownOpen ? 1 : 0
+                  }}
+                >
+                  <div className="ml-4 mt-2 flex flex-col gap-1">
+                    {whoWeAreSubmenu.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="text-sm px-4 py-2 transition-all duration-200"
+                        style={{ 
+                          color: 'var(--color-cream)',
+                          fontFamily: 'var(--font-kollektif)',
+                          background: 'transparent'
+                        }}
+                        onClick={() => {
+                          setMobileMenuOpen(false)
+                          setMobileDropdownOpen(false)
+                        }}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <Link 
+                href="/join-us"
+                className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
+                style={{ 
+                  color: 'var(--color-cream)',
+                  fontFamily: 'var(--font-kollektif)',
+                  background: 'transparent'
+                }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Join Us
+              </Link>
+              
+              <Link 
+                href="/events"
+                className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
+                style={{ 
+                  color: 'var(--color-cream)',
+                  fontFamily: 'var(--font-kollektif)',
+                  background: 'transparent'
+                }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Events
+              </Link>
+              
+              <Link 
+                href="/contact"
+                className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
+                style={{ 
+                  color: 'var(--color-cream)',
+                  fontFamily: 'var(--font-kollektif)',
+                  background: 'transparent'
+                }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
