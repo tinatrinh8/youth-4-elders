@@ -1,10 +1,19 @@
 import type { EntrySkeletonType, Asset, Entry } from 'contentful'
 import type { Document } from '@contentful/rich-text-types'
-import type { FeatureHighlightSkeleton } from './featureHighlights'
+import type { ClubUpdateSkeleton } from './clubUpdates'
+import type { FeaturedEventSkeleton } from './featuredEvents'
 
 export interface HomepageFields {
   title: string
   slug: string
+
+  // Launch Signup Modal Section
+  modalHeading?: string | null              // "Help Us Grow Our Club"
+  modalBodyText?: Document | string | null  // Modal description text
+  modalDismissText?: string | null          // "Maybe Another Time :)"
+  modalSuccessHeading?: string | null       // "Thanks for Signing Up!"
+  modalSuccessMessage?: Document | string | null // Success message text
+  modalShowDelay?: number | null            // Delay in milliseconds before showing modal (e.g., 6000)
 
   // Hero Section
   heroBackgroundImage?: Asset | null         // Background image for hero section
@@ -14,7 +23,7 @@ export interface HomepageFields {
   // Mission Section
   missionHeadline?: string | null            // "Nothing great is built alone."
   missionDescription?: Document | string | null // Description text
-  roleTags?: string[] | null                // Array of role tags (VOLUNTEER, WORKSHOPS, etc.)
+  roleTags?: string[] | null                // Array of role tags (VOLUNTEER, WORKSHOPS, EVENTS, COMMUNITY, CONNECTIONS)
 
   // Get Involved Section
   getInvolvedHeading?: string | null        // "Want to Get Involved?"
@@ -22,22 +31,12 @@ export interface HomepageFields {
   getInvolvedButtonLabel?: string | null    // "LEARN MORE"
   getInvolvedButtonURL?: string | null      // "/join-us"
 
-  // Testimonials Section
-  testimonialsHeading?: string | null       // "What People Say"
-  testimonials?: Array<{
-    quote: string
-    author: string
-  }> | null
-
   // Events Section
   eventsSectionHeading?: string | null    // "Our Events" (background text)
-  featuredEvents?: Array<{
-    image: Asset
-    title: string
-    date: string                           // e.g., "Started Sept 16, 2025 • Weekly"
-    description: string
-  }> | null
+  featuredEvents?: Entry<FeaturedEventSkeleton>[] | null  // Array of featured event entries from Contentful
+  eventTypesLabel?: string | null         // "Event Types" (label above event types text)
   eventTypesText?: string | null           // "Workshops / Community / Volunteering / Social"
+  eventsViewMoreLabel?: string | null     // "VIEW MORE" (link text)
   eventsViewMoreURL?: string | null        // "/events"
 
   // Countdown Timer Section
@@ -47,12 +46,16 @@ export interface HomepageFields {
   countdownTodayMessage?: string | null    // "Today is the"
   countdownTodayEventName?: string | null  // "Spikeball Event" (for when countdown reaches 0)
 
+  // Current Club Updates Section
+  clubUpdatesHeading?: string | null       // "Current Club Updates"
+  clubUpdates?: Entry<ClubUpdateSkeleton>[] | null  // Array of club update entries from Contentful
+
   // Social Links
   instagramURL?: string | null              // Instagram profile URL
+  linkedInURL?: string | null               // LinkedIn profile/company URL
   contactEmail?: string | null              // Contact email address
 
   // Legacy fields (kept for backwards compatibility)
-  featureHighlights?: Entry<FeatureHighlightSkeleton>[] | null
   datePublished?: string | null             // ISO date string
 }
 

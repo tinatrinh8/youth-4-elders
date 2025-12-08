@@ -2,99 +2,64 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+// Types for future Contentful integration
+// import type { Entry } from 'contentful'
+// import type { ClubUpdateSkeleton } from '@/types/clubUpdates'
+
+// Helper type for rendering (simplified from Contentful entry)
+interface ClubUpdate {
+  id: string
+  title: string
+  description: string
+  icon: string
+  type: 'highlight' | 'standard' // 'highlight' uses pink styling, 'standard' uses brown
+}
 
 export default function Home() {
   const [showModal, setShowModal] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-  const [typedSubject1, setTypedSubject1] = useState('')
-  const [typedSubject2, setTypedSubject2] = useState('')
+  const [visibleElements, setVisibleElements] = useState<Set<string>>(new Set())
   const parallaxSectionRef = useRef<HTMLElement>(null)
   const parallaxBgRef = useRef<HTMLDivElement>(null)
   const countdownBoxRef = useRef<HTMLDivElement>(null)
   const countdownShadowRef = useRef<HTMLDivElement>(null)
 
-  // Typing animation for testimonials "Subject" field - loops with type and delete
-  useEffect(() => {
-    // Arrays of subjects to cycle through
-    const subjects1 = ['Thank You', 'Grateful', 'Life Changing', 'Incredible Journey']
-    const subjects2 = ['My Experience', 'Amazing Program', 'Thank You So Much', 'Heartfelt Thanks']
-    
-    let currentSubjectIndex1 = 0
-    let currentSubjectIndex2 = 0
-    let currentText1 = subjects1[0]
-    let currentText2 = subjects2[0]
-    let index1 = 0
-    let index2 = 0
-    let isDeleting1 = false
-    let isDeleting2 = false
-    const delay1 = 2000 // Start first typing after 2 seconds
-    const delay2 = 4000 // Start second typing after 4 seconds
-    const typingSpeed = 200 // Much slower typing speed
-    const deletingSpeed = 120 // Slower deleting speed
-    const pauseAfterTyping = 5000 // Much longer pause before deleting
-
-    const animateText1 = () => {
-      if (!isDeleting1 && index1 < currentText1.length) {
-        // Typing phase
-        setTypedSubject1(currentText1.slice(0, index1 + 1))
-        index1++
-        setTimeout(animateText1, typingSpeed)
-      } else if (!isDeleting1 && index1 === currentText1.length) {
-        // Finished typing, wait then start deleting
-        setTimeout(() => {
-          isDeleting1 = true
-          animateText1()
-        }, pauseAfterTyping)
-      } else if (isDeleting1 && index1 > 0) {
-        // Deleting phase
-        index1--
-        setTypedSubject1(currentText1.slice(0, index1))
-        setTimeout(animateText1, deletingSpeed)
-      } else if (isDeleting1 && index1 === 0) {
-        // Finished deleting, move to next subject
-        isDeleting1 = false
-        currentSubjectIndex1 = (currentSubjectIndex1 + 1) % subjects1.length
-        currentText1 = subjects1[currentSubjectIndex1]
-        setTimeout(animateText1, typingSpeed)
-      }
+  // Club updates - can be populated from Contentful
+  // When updates are added or removed, the section will automatically adjust
+  // TODO: Replace this with Contentful data fetching
+  // Example: const clubUpdates = homepageData?.clubUpdates?.map(entry => ({
+  //   id: entry.sys.id,
+  //   title: entry.fields.title,
+  //   description: entry.fields.description,
+  //   icon: entry.fields.icon || '📢',
+  //   type: entry.fields.type || 'standard'
+  // })) || []
+  
+  const clubUpdates: ClubUpdate[] = [
+    {
+      id: '1',
+      title: 'Website Now Live!',
+      description: 'Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.',
+      icon: '✨',
+      type: 'highlight'
+    },
+    {
+      id: '2',
+      title: 'Upcoming Event: Spikeball Event',
+      description: 'Join us for our upcoming Spikeball event on January 16, 2026! Check the countdown to see how many days are left.',
+      icon: '🎾',
+      type: 'highlight'
+    },
+    {
+      id: '3',
+      title: 'Happy Holidays!',
+      description: 'Wishing everyone a wonderful holiday season and good luck with exams! We\'ll see you in the new year with more exciting events.',
+      icon: '🎄',
+      type: 'standard'
     }
-
-    const animateText2 = () => {
-      if (!isDeleting2 && index2 < currentText2.length) {
-        // Typing phase
-        setTypedSubject2(currentText2.slice(0, index2 + 1))
-        index2++
-        setTimeout(animateText2, typingSpeed)
-      } else if (!isDeleting2 && index2 === currentText2.length) {
-        // Finished typing, wait then start deleting
-        setTimeout(() => {
-          isDeleting2 = true
-          animateText2()
-        }, pauseAfterTyping)
-      } else if (isDeleting2 && index2 > 0) {
-        // Deleting phase
-        index2--
-        setTypedSubject2(currentText2.slice(0, index2))
-        setTimeout(animateText2, deletingSpeed)
-      } else if (isDeleting2 && index2 === 0) {
-        // Finished deleting, move to next subject
-        isDeleting2 = false
-        currentSubjectIndex2 = (currentSubjectIndex2 + 1) % subjects2.length
-        currentText2 = subjects2[currentSubjectIndex2]
-        setTimeout(animateText2, typingSpeed)
-      }
-    }
-
-    const timer1 = setTimeout(animateText1, delay1)
-    const timer2 = setTimeout(animateText2, delay2)
-
-    return () => {
-      clearTimeout(timer1)
-      clearTimeout(timer2)
-    }
-  }, [])
+  ]
 
   useEffect(() => {
     // Show modal after 6 seconds on page load
@@ -177,6 +142,51 @@ export default function Home() {
     
     return () => window.removeEventListener('resize', syncHeights)
   }, [timeLeft])
+
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    // Trigger hero animations immediately on load with different speeds
+    // Background image - fastest (appears first)
+    // Image - appears first
+    setTimeout(() => {
+      setVisibleElements((prev) => new Set(prev).add('hero-bg'))
+    }, 100)
+    
+    // Main heading "Youth 4 Elders" - appears second (after image, which finishes at ~700ms)
+    setTimeout(() => {
+      setVisibleElements((prev) => new Set(prev).add('hero-heading'))
+    }, 1200)
+    
+    // Marketing text "... is now live" - appears last (after Youth 4 Elders animation)
+    setTimeout(() => {
+      setVisibleElements((prev) => new Set(prev).add('hero-marketing'))
+    }, 2000)
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const elementId = entry.target.getAttribute('data-animate-id')
+          if (elementId) {
+            setVisibleElements((prev) => new Set(prev).add(elementId))
+          }
+        }
+      })
+    }, observerOptions)
+
+    // Observe all elements with data-animate-id (except hero elements which animate on load)
+    const animatedElements = document.querySelectorAll('[data-animate-id]:not([data-animate-id^="hero-"])')
+    animatedElements.forEach((el) => observer.observe(el))
+
+    return () => {
+      animatedElements.forEach((el) => observer.unobserve(el))
+      observer.disconnect()
+    }
+  }, [])
 
   const handleClose = () => {
     setIsClosing(true)
@@ -335,7 +345,7 @@ export default function Home() {
       
       {/* Hero Section - Large Text Overlay Style */}
       <section 
-        className="relative overflow-hidden" 
+        className="relative" 
         style={{ 
           background: 'transparent',
           height: '120vh',
@@ -349,21 +359,28 @@ export default function Home() {
           marginRight: '0',
           marginTop: '0',
           paddingTop: '0',
-          padding: '0'
+          padding: '0',
+          overflow: 'visible'
         }}
       >
         {/* Background Image */}
-        <div className="absolute inset-0 w-full h-full" style={{ 
-          borderRadius: '24px',
-          overflow: 'hidden',
-          marginLeft: '16px',
-          marginRight: '16px',
-          marginTop: '40px',
-          marginBottom: '80px',
-          width: 'calc(100% - 32px)',
-          height: 'calc(100% - 120px)',
-          top: '0'
-        }}>
+        <div 
+          className="absolute inset-0 w-full h-full"
+          style={{ 
+            borderRadius: '24px',
+            overflow: 'hidden',
+            marginLeft: '16px',
+            marginRight: '16px',
+            marginTop: '40px',
+            marginBottom: '80px',
+            width: 'calc(100% - 32px)',
+            height: 'calc(100% - 120px)',
+            top: '0',
+            opacity: visibleElements.has('hero-bg') ? 1 : 0,
+            transition: 'opacity 0.6s ease-out'
+          }}
+          data-animate-id="hero-bg"
+        >
           <Image
             src="/assets/header.jpg"
             alt="Youth 4 Elders"
@@ -377,7 +394,15 @@ export default function Home() {
         </div>
 
         {/* Large Marketing Text - Upper Right */}
-        <div className="absolute top-20 right-8 md:right-12 z-20 max-w-lg text-right">
+        <div 
+          className="absolute top-20 right-8 md:right-12 z-20 max-w-lg text-right"
+          style={{
+            opacity: visibleElements.has('hero-marketing') ? 1 : 0,
+            transform: visibleElements.has('hero-marketing') ? 'translateX(0)' : 'translateX(50px)',
+            transition: 'opacity 0.4s ease-out, transform 0.4s ease-out'
+          }}
+          data-animate-id="hero-marketing"
+        >
           <p className="text-lg md:text-xl lg:text-2xl font-bold leading-tight tracking-tight" style={{ 
             fontFamily: 'var(--font-leiko)', 
             color: '#985A40',
@@ -388,15 +413,21 @@ export default function Home() {
         </div>
 
         {/* Large Elegant Script "Youth 4 Elders" - Overlaying the images */}
-        <div className="absolute bottom-0 left-0 right-0 z-30 pointer-events-none" style={{ marginBottom: '-60px' }}>
+        <div 
+          className="absolute bottom-0 left-0 right-0 z-50 pointer-events-none"
+          style={{ marginBottom: '-60px', overflow: 'visible' }}
+        >
           <h1 
-            className="text-[10rem] md:text-[12rem] lg:text-[16rem] font-bold italic leading-none"
+            className="text-[10rem] md:text-[12rem] lg:text-[16rem] font-bold italic leading-none animate-hero-title-glow"
             style={{ 
               fontFamily: 'var(--font-vintage-stylist)', 
               color: '#985A40',
-              textShadow: '2px 2px 8px rgba(0,0,0,0.1)',
               mixBlendMode: 'normal',
-              opacity: 1
+              position: 'relative',
+              zIndex: 50,
+              opacity: 1,
+              visibility: 'visible',
+              transform: 'translateY(0)'
             }}
           >
             Youth 4 Elders
@@ -462,13 +493,21 @@ export default function Home() {
               </span>
             </div>
 
-            <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-12" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}>
+            <h2 
+              className={`text-6xl md:text-8xl lg:text-9xl font-bold mb-12 animate-on-scroll scale ${visibleElements.has('mission-headline') ? 'visible' : ''}`}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+              data-animate-id="mission-headline"
+            >
               Nothing great is built alone.
         </h2>
           </div>
 
           {/* Description */}
-          <p className="text-xl md:text-2xl lg:text-3xl max-w-5xl mx-auto leading-relaxed text-left md:text-center" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+          <p 
+            className={`text-xl md:text-2xl lg:text-3xl max-w-5xl mx-auto leading-relaxed text-left md:text-center animate-on-scroll fade ${visibleElements.has('mission-description') ? 'visible' : ''}`}
+            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}
+            data-animate-id="mission-description"
+          >
             A student-led club dedicated to bridging the gap between elders and youth in a fast-moving society. Created by passionate uOttawa students and community members, Youth 4 Elders connects generations through volunteering, workshops, and meaningful relationships.
           </p>
         </div>
@@ -593,13 +632,24 @@ export default function Home() {
         {/* Content - Scrolls normally */}
         <div className="relative z-10 max-w-7xl mx-auto px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+            <h2 
+              className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-on-scroll slide-up ${visibleElements.has('get-involved-heading') ? 'visible' : ''}`}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+              data-animate-id="get-involved-heading"
+            >
               Want to Get Involved?
             </h2>
-            <p className="text-lg md:text-xl mb-8 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)' }}>
+            <p 
+              className={`text-lg md:text-xl mb-8 leading-relaxed animate-on-scroll fade ${visibleElements.has('get-involved-description') ? 'visible' : ''}`}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)' }}
+              data-animate-id="get-involved-description"
+            >
               Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
             </p>
-            <div className="flex justify-center items-center">
+            <div 
+              className={`flex justify-center items-center animate-on-scroll scale ${visibleElements.has('get-involved-button') ? 'visible' : ''}`}
+              data-animate-id="get-involved-button"
+            >
               <a
                 href="/join-us"
                 className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
@@ -659,7 +709,8 @@ export default function Home() {
           <div className="flex flex-col md:flex-row gap-2 md:gap-3 mb-16 md:mb-20 overflow-x-auto" style={{ minHeight: '500px' }}>
             {/* Event Card 1 - Left Card */}
             <div 
-              className="relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group"
+              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-left ${visibleElements.has('event-card-1') ? 'visible' : ''}`}
+              data-animate-id="event-card-1"
               style={{ 
                 background: 'var(--color-cream)',
                 minHeight: '500px',
@@ -710,12 +761,12 @@ export default function Home() {
                 }
               }}
             >
-              <div className="relative h-full w-full min-h-[500px]">
+              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
                 <Image
                   src="/assets/workshop series.jpg"
                   alt="Workshop Series"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-6 group-hover:pb-8 transition-all duration-500" style={{ background: 'rgba(247, 240, 227, 0.95)' }}>
@@ -735,7 +786,8 @@ export default function Home() {
 
             {/* Event Card 2 - Middle Card */}
             <div 
-              className="relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group"
+              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-up ${visibleElements.has('event-card-2') ? 'visible' : ''}`}
+              data-animate-id="event-card-2"
               style={{ 
                 background: 'var(--color-cream)',
                 minHeight: '500px',
@@ -786,12 +838,12 @@ export default function Home() {
                 }
               }}
             >
-              <div className="relative h-full w-full min-h-[500px]">
+              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
                 <Image
                   src="/assets/club fair.jpg"
                   alt="Club Fair at uOttawa UCU"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-6 group-hover:pb-8 transition-all duration-500" style={{ background: 'rgba(247, 240, 227, 0.95)' }}>
@@ -811,7 +863,8 @@ export default function Home() {
 
             {/* Event Card 3 - Right Card */}
             <div 
-              className="relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group"
+              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-right ${visibleElements.has('event-card-3') ? 'visible' : ''}`}
+              data-animate-id="event-card-3"
               style={{ 
                 background: 'var(--color-cream)',
                 minHeight: '500px',
@@ -862,12 +915,12 @@ export default function Home() {
                 }
               }}
             >
-              <div className="relative h-full w-full min-h-[500px]">
+              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
                 <Image
                   src="/assets/sip.jpg"
                   alt="Sips, Samples, Social"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-6 group-hover:pb-8 transition-all duration-500" style={{ background: 'rgba(247, 240, 227, 0.95)' }}>
@@ -888,7 +941,10 @@ export default function Home() {
 
           {/* Bottom Section - Categories and View More */}
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
-            <div>
+            <div 
+              className={`animate-on-scroll slide-left ${visibleElements.has('event-types') ? 'visible' : ''}`}
+              data-animate-id="event-types"
+            >
               <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                 Event Types
               </p>
@@ -898,7 +954,8 @@ export default function Home() {
             </div>
             <a
               href="/events"
-              className="group font-semibold text-lg transition-all duration-300 flex items-center gap-2 relative"
+              className={`group font-semibold text-lg transition-all duration-300 flex items-center gap-2 relative animate-on-scroll slide-right ${visibleElements.has('event-view-more') ? 'visible' : ''}`}
+              data-animate-id="event-view-more"
               style={{
                 color: 'var(--color-cream)',
                 fontFamily: 'var(--font-kollektif)'
@@ -935,105 +992,65 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             {/* Left Side - Current Club Updates */}
             <div className="flex flex-col justify-center items-center lg:items-end order-2 lg:order-1">
-              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center lg:text-right" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+              <h3 
+                className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-8 mt-8 text-center lg:text-right animate-on-scroll slide-right ${visibleElements.has('club-updates-heading') ? 'visible' : ''}`}
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+                data-animate-id="club-updates-heading"
+              >
                 Current Club Updates
               </h3>
               
-              <div className="w-full max-w-md space-y-6">
-                {/* Website Launch Update */}
-                <div 
-                  className="p-6 rounded-lg"
-                  style={{
-                    background: 'rgba(244, 142, 184, 0.1)',
-                    border: '2px solid var(--color-pink-medium)'
-                  }}
-                >
-                  <div className="flex items-start gap-3 mb-2">
-                    <div 
-                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
-                      style={{
-                        background: 'var(--color-pink-medium)',
-                        color: 'white',
-                        fontFamily: 'var(--font-kollektif)'
-                      }}
-                    >
-                      ✨
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                        Website Now Live!
-                      </h4>
-                      <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
-                        Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Spikeball Event Update */}
-                <div 
-                  className="p-6 rounded-lg"
-                  style={{
-                    background: 'rgba(244, 142, 184, 0.1)',
-                    border: '2px solid var(--color-pink-medium)'
-                  }}
-                >
-                  <div className="flex items-start gap-3 mb-2">
-                    <div 
-                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
-                      style={{
-                        background: 'var(--color-pink-medium)',
-                        color: 'white',
-                        fontFamily: 'var(--font-kollektif)'
-                      }}
-                    >
-                      🎾
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                        Upcoming Event: Spikeball Event
-                      </h4>
-                      <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
-                        Join us for our upcoming Spikeball event on January 16, 2026! Check the countdown to see how many days are left.
-                      </p>
+              {/* Dynamic Updates Container - Automatically adjusts height based on number of updates */}
+              <div className="w-full max-w-md space-y-6 mb-8">
+                {clubUpdates.map((update, index) => (
+                  <div 
+                    key={update.id}
+                    className={`p-6 rounded-lg animate-on-scroll slide-up ${visibleElements.has(`club-update-${update.id}`) ? 'visible' : ''}`}
+                    data-animate-id={`club-update-${update.id}`}
+                    style={{
+                      transitionDelay: `${index * 0.1}s`,
+                      background: update.type === 'highlight' 
+                        ? 'rgba(244, 142, 184, 0.1)' 
+                        : 'var(--color-cream)',
+                      border: update.type === 'highlight'
+                        ? '2px solid var(--color-pink-medium)'
+                        : '2px solid rgba(152, 90, 64, 0.2)'
+                    }}
+                  >
+                    <div className="flex items-start gap-3 mb-2">
+                      <div 
+                        className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                        style={{
+                          background: update.type === 'highlight'
+                            ? 'var(--color-pink-medium)'
+                            : 'var(--color-brown-medium)',
+                          color: update.type === 'highlight'
+                            ? 'white'
+                            : 'var(--color-cream)',
+                          fontFamily: 'var(--font-kollektif)'
+                        }}
+                      >
+                        {update.icon}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                          {update.title}
+                        </h4>
+                        <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                          {update.description}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Holiday/Exam Season Message */}
-                <div 
-                  className="p-6 rounded-lg"
-                  style={{
-                    background: 'var(--color-cream)',
-                    border: '2px solid rgba(152, 90, 64, 0.2)'
-                  }}
-                >
-                  <div className="flex items-start gap-3 mb-2">
-                    <div 
-                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
-                      style={{
-                        background: 'var(--color-brown-medium)',
-                        color: 'var(--color-cream)',
-                        fontFamily: 'var(--font-kollektif)'
-                      }}
-                    >
-                      🎄
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                        Happy Holidays!
-                      </h4>
-                      <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
-                        Wishing everyone a wonderful holiday season and good luck with exams! We&apos;ll see you in the new year with more exciting events.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
             {/* Right Side - Countdown Timer */}
-            <div className="flex justify-center lg:justify-start order-1 lg:order-2">
+            <div 
+              className={`flex justify-center lg:justify-start order-1 lg:order-2 animate-on-scroll scale ${visibleElements.has('countdown-timer') ? 'visible' : ''}`}
+              data-animate-id="countdown-timer"
+            >
               <div className="relative">
                 {/* Shadow Box Layer - Full opacity, offset */}
                 <div 
@@ -1081,7 +1098,7 @@ export default function Home() {
                         }}
                       >
                         <div 
-                          className="text-7xl md:text-8xl lg:text-9xl font-bold relative z-10"
+                          className="text-7xl md:text-8xl lg:text-9xl font-bold relative z-10 animate-pulse-subtle"
                           style={{
                             fontFamily: 'var(--font-kollektif)',
                             color: 'white'
@@ -1173,119 +1190,6 @@ export default function Home() {
                     </div>
                   </>
                 )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="relative z-10 py-16 md:py-24" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="grid grid-cols-1 gap-12 md:gap-16">
-            {/* Student Testimonial - Email Style */}
-            <div 
-              className="p-10 md:p-14 relative overflow-visible"
-              style={{
-                background: 'var(--color-cream)',
-                border: '1px solid rgba(152, 90, 64, 0.2)',
-                borderRadius: '8px',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                overflow: 'visible'
-              }}
-            >
-              {/* Stamp Image - Positioned in bottom left corner */}
-              <div className="absolute bottom-0 left-12 opacity-60 z-10" style={{ transform: 'rotate(-15deg)' }}>
-                <Image
-                  src="/assets/stamp2.png"
-                  alt="Stamp"
-                  width={100}
-                  height={100}
-                  className="object-contain"
-                />
-              </div>
-              {/* Email Header */}
-              <div className="mb-8">
-                <div>
-                  <p className="text-sm mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                    Subject: <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>{typedSubject1}</span>
-                    <span className="animate-pulse" style={{ color: 'var(--color-brown-dark)' }}>|</span>
-                  </p>
-                  <div className="h-px" style={{ background: 'var(--color-brown-dark)', opacity: 0.3, width: '60%', maxWidth: '200px' }} />
-                </div>
-              </div>
-
-              {/* Testimonial Quote */}
-              <p className="text-lg md:text-xl mb-8 leading-relaxed" style={{ fontFamily: 'var(--font-georgia)', color: 'var(--color-brown-dark)' }}>
-                &ldquo;Being part of Youth 4 Elders has been incredibly rewarding. I&apos;ve learned so much from the elders I work with, and it&apos;s amazing to see how technology can bring generations together.&rdquo;
-              </p>
-
-              {/* Signature/Date at Bottom */}
-              <div className="mt-12 pt-6 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
-                <div className="flex flex-col items-end gap-2">
-                  <p className="text-sm italic" style={{ fontFamily: 'var(--font-georgia)', color: 'var(--color-brown-dark)', opacity: 0.7 }}>
-                    Sincerely,
-                  </p>
-                  <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                    A Student Volunteer
-                  </p>
-                  <p className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.6 }}>
-                    October 2025
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Elder Testimonial - Email Style */}
-            <div 
-              className="p-10 md:p-14 relative overflow-visible"
-              style={{
-                background: 'var(--color-cream)',
-                border: '1px solid rgba(152, 90, 64, 0.2)',
-                borderRadius: '8px',
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                overflow: 'visible'
-              }}
-            >
-              {/* Stamp Image - Positioned in bottom left corner */}
-              <div className="absolute bottom-4 left-4 opacity-60 z-10" style={{ transform: 'rotate(-15deg)' }}>
-                <Image
-                  src="/assets/stamp.png"
-                  alt="Stamp"
-                  width={160}
-                  height={160}
-                  className="object-contain"
-                />
-              </div>
-              {/* Email Header */}
-              <div className="mb-8">
-                <div>
-                  <p className="text-sm mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                    Subject: <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>{typedSubject2}</span>
-                    <span className="animate-pulse" style={{ color: 'var(--color-brown-dark)' }}>|</span>
-                  </p>
-                  <div className="h-px" style={{ background: 'var(--color-brown-dark)', opacity: 0.3, width: '60%', maxWidth: '200px' }} />
-                </div>
-              </div>
-
-              {/* Testimonial Quote */}
-              <p className="text-lg md:text-xl mb-8 leading-relaxed" style={{ fontFamily: 'var(--font-georgia)', color: 'var(--color-brown-dark)' }}>
-                &ldquo;The students are so patient and kind. They&apos;ve helped me learn to use my tablet and stay connected with my family. This program means the world to me.&rdquo;
-              </p>
-
-              {/* Signature/Date at Bottom */}
-              <div className="mt-12 pt-6 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
-                <div className="flex flex-col items-end gap-2">
-                  <p className="text-sm italic" style={{ fontFamily: 'var(--font-georgia)', color: 'var(--color-brown-dark)', opacity: 0.7 }}>
-                    With gratitude,
-                  </p>
-                  <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                    A Community Member
-                  </p>
-                  <p className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.6 }}>
-                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                  </p>
                 </div>
               </div>
             </div>

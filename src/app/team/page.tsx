@@ -88,7 +88,7 @@ export default function Team() {
   }, [])
 
   return (
-    <main className="min-h-screen pt-[140px] pb-20" style={{ background: 'var(--color-cream)' }}>
+    <main className="min-h-screen pt-[140px] pb-32 md:pb-40" style={{ background: 'var(--color-cream)' }}>
       <div className="max-w-7xl mx-auto px-8 py-16">
         {/* Page Header */}
         <div className="text-center mb-20">
@@ -316,35 +316,36 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
         </a>
       )}
 
-      {/* Info Block - Compact, Left Aligned */}
+      {/* Info Block - Elegant Card Style */}
       <div 
-        className="rounded-lg p-4 w-full mt-2 text-left"
+        className="rounded-xl p-5 w-full mt-2 text-left"
         style={{ 
-          background: 'var(--color-brown-medium)',
-          color: 'var(--color-cream)',
+          background: 'var(--color-cream)',
+          border: '2px solid var(--color-brown-medium)',
+          boxShadow: '0 4px 12px rgba(152, 90, 64, 0.15)',
         }}
       >
-        <div className="space-y-2 text-sm">
+        <div className="space-y-3 text-sm">
           <div>
             <span 
               className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)' }}
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
             >
               Year {member.yearOfStudy}
             </span>
             {' • '}
-            <span style={{ fontFamily: 'var(--font-kollektif)' }}>
+            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
               {member.program}
             </span>
           </div>
-          <div className="pt-1">
+          <div className="pt-2 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
             <span 
               className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)' }}
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
             >
               Fun Fact:{' '}
             </span>
-            <span style={{ fontFamily: 'var(--font-kollektif)' }}>
+            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
               {member.funFact}
             </span>
           </div>
