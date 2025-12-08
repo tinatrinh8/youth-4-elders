@@ -227,7 +227,7 @@ export default function JoinUs() {
               className="text-lg md:text-xl mb-4"
               style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
             >
-              Thank you for joining Youth 4 Elders! We&apos;ll be in touch with updates and upcoming opportunities.
+              Thank you for joining Youth 4 Elders as a volunteer! We&apos;ll be in touch with updates about upcoming events and volunteer opportunities.
             </p>
             <p 
               className="text-lg md:text-xl mb-8"
@@ -275,32 +275,36 @@ export default function JoinUs() {
   if (!hasStarted) {
     return (
       <main className="min-h-screen pt-[120px]" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-4xl mx-auto px-8 py-16">
-          <h1 
-            className="text-5xl md:text-7xl font-bold mb-4 text-center"
-            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-          >
-            Join Us
-          </h1>
-          <p 
-            className="text-lg md:text-xl leading-relaxed mb-12 text-center"
-            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
-          >
-            Join Youth 4 Elders and become part of our community! Let&apos;s get to know you better.
-          </p>
+        <div className="max-w-7xl mx-auto px-8 pt-4 md:pt-8 pb-8 md:pb-12">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-12 mb-24 md:mb-32">
+            <h1 
+              className="text-6xl md:text-8xl lg:text-9xl font-bold text-center md:text-left flex-shrink-0"
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+            >
+              Join Us
+            </h1>
+            <p 
+              className="text-xl md:text-2xl lg:text-3xl leading-relaxed text-center md:text-right flex-1 max-w-2xl"
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
+            >
+              Join Youth 4 Elders as a volunteer and become part of our student community!
+            </p>
+          </div>
           
+          {/* Quiz Box - Larger */}
           <div 
-            className="rounded-2xl p-12 shadow-lg text-center"
+            className="rounded-3xl p-12 md:p-16 shadow-xl text-center max-w-4xl mx-auto mb-8"
             style={{ 
               background: 'var(--color-cream)', 
-              border: '2px solid var(--color-pink-medium)' 
+              border: '3px solid var(--color-pink-medium)',
+              boxShadow: '0 8px 32px rgba(244, 142, 184, 0.2)'
             }}
           >
             <p 
-              className="text-xl mb-8"
+              className="text-xl md:text-2xl mb-10 leading-relaxed"
               style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
             >
-              Ready to get started? We&apos;ll ask you a few questions to learn more about you.
+              Ready to get started? We&apos;ll ask you a few quick questions to learn more about you.
             </p>
             <button
               onClick={() => setHasStarted(true)}
@@ -343,6 +347,23 @@ export default function JoinUs() {
             >
               🧪 Test Success Message
             </button>
+          </div>
+
+          {/* Notice about Exec Applications - Below quiz box, different design */}
+          <div 
+            className="max-w-4xl mx-auto px-6 py-5"
+            style={{ 
+              background: 'linear-gradient(135deg, rgba(244, 142, 184, 0.15) 0%, rgba(244, 142, 184, 0.05) 100%)',
+              borderLeft: '4px solid var(--color-pink-medium)',
+              borderRadius: '8px'
+            }}
+          >
+            <p 
+              className="text-base md:text-lg text-left leading-relaxed"
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+            >
+              <span className="font-bold" style={{ color: 'var(--color-pink-medium)' }}>Important:</span> Executive team applications are currently closed. Applications will reopen in 2026 (typically end of school year or summer). You can still join as a community volunteer and participate in all our events and activities!
+            </p>
           </div>
         </div>
       </main>

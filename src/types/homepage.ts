@@ -6,24 +6,54 @@ export interface HomepageFields {
   title: string
   slug: string
 
-  heroHeading: string
-  heroSubtext?: Document | string | null     // Rich text or plain text
-  heroButtonLabel?: Document | string | null // Rich text or plain text
-  heroButtonURL?: string | null              // URL for the button
+  // Hero Section
+  heroBackgroundImage?: Asset | null         // Background image for hero section
+  heroMarketingText?: string | null          // "... is now live !" text
+  heroMainHeading?: string | null            // "Youth 4 Elders" heading
 
-  coverImage?: Asset | null                  // Contentful Asset type
-  body?: Document | string | null            // Rich text or plain text
+  // Mission Section
+  missionHeadline?: string | null            // "Nothing great is built alone."
+  missionDescription?: Document | string | null // Description text
+  roleTags?: string[] | null                // Array of role tags (VOLUNTEER, WORKSHOPS, etc.)
 
-  featureHighlights?: Entry<FeatureHighlightSkeleton>[] | null // Array of linked entries
+  // Get Involved Section
+  getInvolvedHeading?: string | null        // "Want to Get Involved?"
+  getInvolvedDescription?: Document | string | null
+  getInvolvedButtonLabel?: string | null    // "LEARN MORE"
+  getInvolvedButtonURL?: string | null      // "/join-us"
 
-  blogSectionHeading: string
-  blogSectionText?: Document | string | null // Rich text or plain text
-  blogButtonLabel?: string | null            // Button label text
-  blogButtonURL?: string | null              // URL for the blog button
+  // Testimonials Section
+  testimonialsHeading?: string | null       // "What People Say"
+  testimonials?: Array<{
+    quote: string
+    author: string
+  }> | null
 
-  datePublished?: string | null              // ISO date string
-  instagramURL?: string | null               // Instagram profile URL
-  contactEmail?: string | null               // Contact email address
+  // Events Section
+  eventsSectionHeading?: string | null    // "Our Events" (background text)
+  featuredEvents?: Array<{
+    image: Asset
+    title: string
+    date: string                           // e.g., "Started Sept 16, 2025 • Weekly"
+    description: string
+  }> | null
+  eventTypesText?: string | null           // "Workshops / Community / Volunteering / Social"
+  eventsViewMoreURL?: string | null        // "/events"
+
+  // Countdown Timer Section
+  countdownEventName?: string | null       // "SPIKEBALL EVENT"
+  countdownEventDate?: string | null       // ISO date string (e.g., "2026-01-16T00:00:00")
+  countdownLabelText?: string | null       // "DAYS LEFT UNTIL"
+  countdownTodayMessage?: string | null    // "Today is the"
+  countdownTodayEventName?: string | null  // "Spikeball Event" (for when countdown reaches 0)
+
+  // Social Links
+  instagramURL?: string | null              // Instagram profile URL
+  contactEmail?: string | null              // Contact email address
+
+  // Legacy fields (kept for backwards compatibility)
+  featureHighlights?: Entry<FeatureHighlightSkeleton>[] | null
+  datePublished?: string | null             // ISO date string
 }
 
 // Export the skeleton type for Contentful entries

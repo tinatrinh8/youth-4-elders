@@ -4,132 +4,427 @@ import { useState } from 'react'
 
 export default function Contact() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null)
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
 
   const faqs = [
     {
-      question: "HOW TO JOIN?",
-      answer: "Simply reach out to us via email or Instagram! We welcome all uOttawa students who are passionate about bridging generational gaps and making a positive impact in our community."
+      question: "Who can join Youth 4 Elders?",
+      answer: "We welcome all uOttawa students who are passionate about bridging generational gaps and making a positive impact in our community. Whether you're an undergraduate, graduate student, or alumni, there's a place for you. We also welcome elders from the community to participate in our programs and activities. No prior experience is necessary - just enthusiasm and a willingness to connect across generations!"
     },
     {
-      question: "WHAT ACTIVITIES?",
-      answer: "We organize workshops, storytelling sessions, technology help sessions, craft fairs, and various intergenerational activities that bring youth and elders together."
+      question: "How do I join as a community member/volunteer?",
+      answer: "To join as a community volunteer, simply fill out the form on our 'Join Us' page! We welcome all uOttawa students who want to volunteer and participate in our events. You can also reach out to us via email or Instagram, or attend one of our events to meet the team and learn more. As a community member, you'll receive updates about upcoming events and can participate as your schedule allows."
     },
     {
-      question: "SPECIAL SKILLS?",
-      answer: "Not at all! We value enthusiasm, empathy, and a willingness to learn. Whether you're tech-savvy, crafty, or just great at listening, there's a place for you here."
+      question: "How do I join the executive team?",
+      answer: "Applications to join the executive team are currently closed. Applications will open in 2026, typically at the end of the school year or during the summer. When applications reopen, we'll post information on our Instagram and website. Executive team positions typically involve an application process and interview. If you're interested in joining the exec team, follow us on Instagram @youth4elders to stay updated on when applications open again."
     },
     {
-      question: "MEETING FREQUENCY?",
-      answer: "We organize events throughout the semester and meet regularly for planning sessions. Follow us on Instagram for the latest updates on upcoming events and meetings."
+      question: "What activities do you organize?",
+      answer: "We organize workshops, storytelling sessions, technology help sessions, craft fairs, and various intergenerational activities that bring youth and elders together. Our events range from one-time workshops to ongoing programs throughout the semester. Community volunteers can help facilitate these activities and engage with participants."
+    },
+    {
+      question: "Do I need special skills to join as a volunteer?",
+      answer: "Not at all! We value enthusiasm, empathy, and a willingness to learn. Whether you're tech-savvy, crafty, or just great at listening, there's a place for you here. We provide training and support for all our volunteers. As a community member, you can contribute in whatever way feels comfortable to you."
+    },
+    {
+      question: "How often do you meet?",
+      answer: "We organize events throughout the semester and meet regularly for planning sessions. Community volunteers can participate in events as their schedule allows - there's no mandatory meeting requirement. Executive team members have regular planning meetings. Follow us on Instagram for the latest updates on upcoming events and meetings."
+    },
+    {
+      question: "Can elders participate in your programs?",
+      answer: "Absolutely! Our programs are designed to bring youth and elders together. If you're an elder interested in participating, please reach out to us via email or Instagram, and we'll be happy to include you in our upcoming activities."
+    },
+    {
+      question: "How can I stay updated on events?",
+      answer: "The best way to stay updated is to follow us on Instagram @youth4elders. We post regular updates about upcoming events, meeting times, and opportunities to get involved. You can also reach out via email to be added to our mailing list, or fill out the 'Join Us' form to receive updates."
     }
   ]
 
   const toggleFAQ = (index: number) => {
     setOpenFAQ(openFAQ === index ? null : index)
   }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    
+    // Simulate form submission (replace with actual API call)
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setSubmitSuccess(true)
+      setFormData({ name: '', email: '', subject: '', message: '' })
+      setTimeout(() => setSubmitSuccess(false), 5000)
+    }, 1000)
+  }
+
   return (
-    <main className="min-h-screen relative overflow-hidden" style={{ background: 'var(--color-cream)' }}>
-      {/* Soft Pink Flower at Top */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-32 h-32 opacity-80">
-        <svg viewBox="0 0 100 100" className="w-full h-full">
-          <path d="M50 20 L55 35 L70 35 L60 45 L65 60 L50 50 L35 60 L40 45 L30 35 L45 35 Z" 
-                fill="#F8B4CB" opacity="0.8"/>
-          <path d="M50 15 L52 25 L62 25 L55 30 L58 40 L50 35 L42 40 L45 30 L38 25 L48 25 Z" 
-                fill="#F8B4CB" opacity="0.6"/>
-        </svg>
-      </div>
-      
-      <div className="max-w-6xl mx-auto relative z-10 pt-32 pb-16 px-8">
-        <h1 className="text-5xl font-bold mb-16 text-center" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
-          Frequently Asked Questions
-        </h1>
-        
-        {/* Three Column Layout */}
-        <section className="mb-20">
-          <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
-            {/* How to Join Column */}
-            <div className="text-center space-y-6">
-              <div className="flex justify-center">
-                <div className="w-20 h-20 flex items-center justify-center">
-                  <svg className="w-16 h-16" style={{ color: '#8B6F5E' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                  </svg>
+    <main className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
+      {/* Contact Form and Info Section */}
+      <section className="py-12 md:py-20">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+            {/* Contact Form */}
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-8" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                Send us a Message
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block mb-2 text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border-2 transition-all duration-300 focus:outline-none focus:ring-2"
+                    style={{
+                      background: 'var(--color-cream)',
+                      borderColor: 'rgba(152, 90, 64, 0.3)',
+                      fontFamily: 'var(--font-kollektif)',
+                      color: 'var(--color-brown-dark)'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(152, 90, 64, 0.3)'
+                    }}
+                  />
                 </div>
-              </div>
-              <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
-                How can I join?
-              </h3>
-              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: '#9D7A6B' }}>
-                Simply reach out to us via email or Instagram! We welcome all uOttawa students who are passionate about bridging generational gaps and making a positive impact in our community.
-              </p>
+
+                <div>
+                  <label htmlFor="email" className="block mb-2 text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border-2 transition-all duration-300 focus:outline-none focus:ring-2"
+                    style={{
+                      background: 'var(--color-cream)',
+                      borderColor: 'rgba(152, 90, 64, 0.3)',
+                      fontFamily: 'var(--font-kollektif)',
+                      color: 'var(--color-brown-dark)'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(152, 90, 64, 0.3)'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="subject" className="block mb-2 text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Subject
+                  </label>
+                  <select
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border-2 transition-all duration-300 focus:outline-none focus:ring-2"
+                    style={{
+                      background: 'var(--color-cream)',
+                      borderColor: 'rgba(152, 90, 64, 0.3)',
+                      fontFamily: 'var(--font-kollektif)',
+                      color: 'var(--color-brown-dark)'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(152, 90, 64, 0.3)'
+                    }}
+                  >
+                    <option value="">Select a subject</option>
+                    <option value="join">I want to join</option>
+                    <option value="volunteer">Volunteering opportunities</option>
+                    <option value="event">Event information</option>
+                    <option value="partnership">Partnership inquiry</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block mb-2 text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Message
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    required
+                    rows={6}
+                    className="w-full px-4 py-3 rounded-lg border-2 transition-all duration-300 focus:outline-none focus:ring-2 resize-none"
+                    style={{
+                      background: 'var(--color-cream)',
+                      borderColor: 'rgba(152, 90, 64, 0.3)',
+                      fontFamily: 'var(--font-kollektif)',
+                      color: 'var(--color-brown-dark)'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(152, 90, 64, 0.3)'
+                    }}
+                  />
+                </div>
+
+                {submitSuccess && (
+                  <div className="p-4 rounded-lg" style={{ background: 'rgba(76, 175, 80, 0.1)', border: '2px solid rgba(76, 175, 80, 0.3)' }}>
+                    <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: '#4CAF50' }}>
+                      ✓ Message sent successfully! We&apos;ll get back to you soon.
+                    </p>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    background: isSubmitting ? 'var(--color-brown-medium)' : 'var(--color-pink-medium)',
+                    color: 'white',
+                    fontFamily: 'var(--font-kollektif)',
+                    border: '2px solid transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSubmitting) {
+                      e.currentTarget.style.borderColor = '#D85A8F'
+                      e.currentTarget.style.background = '#D85A8F'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSubmitting) {
+                      e.currentTarget.style.borderColor = 'transparent'
+                      e.currentTarget.style.background = 'var(--color-pink-medium)'
+                    }
+                  }}
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+              </form>
             </div>
 
-            {/* What Activities Column */}
-            <div className="text-center space-y-6">
-              <div className="flex justify-center">
-                <div className="w-20 h-20 flex items-center justify-center">
-                  <svg className="w-16 h-16" style={{ color: '#9D7A6B' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                  </svg>
+            {/* Contact Information */}
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-8" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                Contact Information
+              </h2>
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-xl font-semibold mb-4" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Email
+                  </h3>
+                  <a
+                    href="mailto:youth4elders@gmail.com"
+                    className="text-lg transition-colors duration-300 inline-flex items-center gap-2"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = 'var(--color-brown-medium)'
+                    }}
+                  >
+                    youth4elders@gmail.com
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  </a>
                 </div>
-              </div>
-              <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
-                What activities do you organize?
-              </h3>
-              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: '#7A5C5C' }}>
-                We organize workshops, storytelling sessions, technology help sessions, craft fairs, and various intergenerational activities that bring youth and elders together.
-              </p>
-            </div>
 
-            {/* Meeting Frequency Column */}
-            <div className="text-center space-y-6">
-              <div className="flex justify-center">
-                <div className="w-20 h-20 flex items-center justify-center">
-                  <svg className="w-16 h-16" style={{ color: '#A68B7D' }} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                  </svg>
+                <div>
+                  <h3 className="text-xl font-semibold mb-4" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Social Media
+                  </h3>
+                  <div className="space-y-3">
+                    <a
+                      href="https://www.instagram.com/youth4elders/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-lg transition-colors duration-300 inline-flex items-center gap-2"
+                      style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = 'var(--color-brown-medium)'
+                      }}
+                    >
+                      @youth4elders
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                    </a>
+                    <div>
+                      <a
+                        href="https://www.linkedin.com/company/youth4elders"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg transition-colors duration-300 inline-flex items-center gap-2"
+                        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = 'var(--color-pink-medium)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = 'var(--color-brown-medium)'
+                        }}
+                      >
+                        LinkedIn
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-8 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
+                  <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                    We typically respond within 24-48 hours. For urgent matters, please reach out via Instagram DM for faster response.
+                  </p>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#F8B4CB' }}>
-                How often do you meet?
-              </h3>
-              <p className="text-lg leading-relaxed" style={{ fontFamily: 'var(--font-lato)', color: '#8B6F5E' }}>
-                We organize events throughout the semester and meet regularly for planning sessions. Follow us on Instagram for the latest updates on upcoming events and meetings.
-              </p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Contact Section */}
-        <section className="mb-16">
-          <div className="text-center space-y-8">
-            <h2 className="text-3xl font-bold" style={{ fontFamily: 'var(--font-playfair)', color: '#6B5D4F' }}>
-              Ready to get started?
+      {/* FAQ Section */}
+      <section className="py-12 md:py-20" style={{ background: 'var(--color-cream)' }}>
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+              Frequently Asked Questions
             </h2>
-            <p className="text-lg max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-lato)', color: '#9D7A6B' }}>
-              Have a question or want to collaborate? We&apos;d love to hear from you!
+            <p className="text-lg" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+              Find answers to common questions about Youth 4 Elders
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <a 
-                href="mailto:youth4elders@gmail.com"
-                className="border-2 px-8 py-3 rounded-lg font-semibold text-white transition-colors"
-                style={{ borderColor: '#8B6F5E', background: '#8B6F5E' }}
-              >
-                Email Us
-              </a>
-              <a 
-                href="https://www.instagram.com/youth4elders/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-2 px-8 py-3 rounded-lg font-semibold text-white transition-colors"
-                style={{ borderColor: '#9D7A6B', background: '#9D7A6B' }}
-              >
-                Follow Us
-              </a>
-            </div>
           </div>
-        </section>
-      </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="group relative p-6 md:p-8 rounded-2xl transition-all duration-300 cursor-pointer"
+                style={{
+                  background: 'var(--color-cream)',
+                  border: '2px solid rgba(152, 90, 64, 0.15)',
+                  boxShadow: '0 2px 12px rgba(0, 0, 0, 0.05)'
+                }}
+                onClick={() => toggleFAQ(index)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(244, 142, 184, 0.2)'
+                  e.currentTarget.style.transform = 'translateY(-4px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(152, 90, 64, 0.15)'
+                  e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.05)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
+              >
+                {/* Question Number */}
+                <div className="flex items-start gap-4 mb-4">
+                  <div 
+                    className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300"
+                    style={{
+                      background: openFAQ === index ? 'var(--color-pink-medium)' : 'rgba(244, 142, 184, 0.15)',
+                      color: openFAQ === index ? 'white' : 'var(--color-pink-medium)',
+                      fontFamily: 'var(--font-kollektif)'
+                    }}
+                  >
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    <h3 
+                      className="text-xl font-bold mb-3 transition-colors duration-300"
+                      style={{
+                        fontFamily: 'var(--font-kollektif)',
+                        color: openFAQ === index ? 'var(--color-pink-medium)' : 'var(--color-brown-dark)'
+                      }}
+                    >
+                      {faq.question}
+                    </h3>
+                  </div>
+                  <svg
+                    className={`w-6 h-6 transition-transform duration-300 flex-shrink-0 mt-1`}
+                    style={{
+                      transform: openFAQ === index ? 'rotate(180deg)' : 'rotate(0deg)',
+                      color: 'var(--color-pink-medium)'
+                    }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+
+                {/* Answer */}
+                <div
+                  className="overflow-hidden transition-all duration-500 ease-in-out"
+                  style={{
+                    maxHeight: openFAQ === index ? '300px' : '0',
+                    opacity: openFAQ === index ? 1 : 0,
+                    marginTop: openFAQ === index ? '1rem' : '0'
+                  }}
+                >
+                  <div className="pl-14">
+                    <div 
+                      className="h-px mb-4 transition-all duration-300"
+                      style={{
+                        width: openFAQ === index ? '100%' : '0%',
+                        background: 'rgba(152, 90, 64, 0.2)'
+                      }}
+                    />
+                    <p
+                      className="text-base leading-relaxed whitespace-pre-line"
+                      style={{
+                        fontFamily: 'var(--font-kollektif)',
+                        color: 'var(--color-brown-dark)',
+                        opacity: 0.8
+                      }}
+                    >
+                      {faq.answer}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </main>
   )
 }

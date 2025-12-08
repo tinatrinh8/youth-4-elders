@@ -8,10 +8,93 @@ export default function Home() {
   const [isClosing, setIsClosing] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const [typedSubject1, setTypedSubject1] = useState('')
+  const [typedSubject2, setTypedSubject2] = useState('')
   const parallaxSectionRef = useRef<HTMLElement>(null)
   const parallaxBgRef = useRef<HTMLDivElement>(null)
   const countdownBoxRef = useRef<HTMLDivElement>(null)
   const countdownShadowRef = useRef<HTMLDivElement>(null)
+
+  // Typing animation for testimonials "Subject" field - loops with type and delete
+  useEffect(() => {
+    // Arrays of subjects to cycle through
+    const subjects1 = ['Thank You', 'Grateful', 'Life Changing', 'Incredible Journey']
+    const subjects2 = ['My Experience', 'Amazing Program', 'Thank You So Much', 'Heartfelt Thanks']
+    
+    let currentSubjectIndex1 = 0
+    let currentSubjectIndex2 = 0
+    let currentText1 = subjects1[0]
+    let currentText2 = subjects2[0]
+    let index1 = 0
+    let index2 = 0
+    let isDeleting1 = false
+    let isDeleting2 = false
+    const delay1 = 2000 // Start first typing after 2 seconds
+    const delay2 = 4000 // Start second typing after 4 seconds
+    const typingSpeed = 200 // Much slower typing speed
+    const deletingSpeed = 120 // Slower deleting speed
+    const pauseAfterTyping = 5000 // Much longer pause before deleting
+
+    const animateText1 = () => {
+      if (!isDeleting1 && index1 < currentText1.length) {
+        // Typing phase
+        setTypedSubject1(currentText1.slice(0, index1 + 1))
+        index1++
+        setTimeout(animateText1, typingSpeed)
+      } else if (!isDeleting1 && index1 === currentText1.length) {
+        // Finished typing, wait then start deleting
+        setTimeout(() => {
+          isDeleting1 = true
+          animateText1()
+        }, pauseAfterTyping)
+      } else if (isDeleting1 && index1 > 0) {
+        // Deleting phase
+        index1--
+        setTypedSubject1(currentText1.slice(0, index1))
+        setTimeout(animateText1, deletingSpeed)
+      } else if (isDeleting1 && index1 === 0) {
+        // Finished deleting, move to next subject
+        isDeleting1 = false
+        currentSubjectIndex1 = (currentSubjectIndex1 + 1) % subjects1.length
+        currentText1 = subjects1[currentSubjectIndex1]
+        setTimeout(animateText1, typingSpeed)
+      }
+    }
+
+    const animateText2 = () => {
+      if (!isDeleting2 && index2 < currentText2.length) {
+        // Typing phase
+        setTypedSubject2(currentText2.slice(0, index2 + 1))
+        index2++
+        setTimeout(animateText2, typingSpeed)
+      } else if (!isDeleting2 && index2 === currentText2.length) {
+        // Finished typing, wait then start deleting
+        setTimeout(() => {
+          isDeleting2 = true
+          animateText2()
+        }, pauseAfterTyping)
+      } else if (isDeleting2 && index2 > 0) {
+        // Deleting phase
+        index2--
+        setTypedSubject2(currentText2.slice(0, index2))
+        setTimeout(animateText2, deletingSpeed)
+      } else if (isDeleting2 && index2 === 0) {
+        // Finished deleting, move to next subject
+        isDeleting2 = false
+        currentSubjectIndex2 = (currentSubjectIndex2 + 1) % subjects2.length
+        currentText2 = subjects2[currentSubjectIndex2]
+        setTimeout(animateText2, typingSpeed)
+      }
+    }
+
+    const timer1 = setTimeout(animateText1, delay1)
+    const timer2 = setTimeout(animateText2, delay2)
+
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+    }
+  }, [])
 
   useEffect(() => {
     // Show modal after 6 seconds on page load
@@ -526,11 +609,13 @@ export default function Home() {
                   fontFamily: 'var(--font-kollektif)',
                   border: '2px solid transparent'
                 }}
-                onMouseEnter={(e) => {
+                onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
                   e.currentTarget.style.borderColor = '#D85A8F'
+                  e.currentTarget.style.background = '#D85A8F'
                 }}
-                onMouseLeave={(e) => {
+                onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
                   e.currentTarget.style.borderColor = 'transparent'
+                  e.currentTarget.style.background = 'var(--color-pink-medium)'
                 }}
               >
                 LEARN MORE
@@ -844,198 +929,365 @@ export default function Home() {
           </div>
         </section>
 
-      {/* Countdown Timer - Soft Blob Shape Design */}
-      <div className="relative z-20 -mt-16 md:-mt-24 mb-16 md:mb-24 flex justify-center">
-        {/* Shadow Box Layer - Full opacity, offset */}
-        <div 
-          ref={countdownShadowRef}
-          className="absolute max-w-md px-10 md:px-16 text-center"
-          style={{
-            background: 'var(--color-pink-medium)',
-            borderRadius: '60px',
-            top: '12px',
-            left: 'calc(50% + 8px)',
-            transform: 'translateX(-50%)',
-            width: '100%',
-            maxWidth: '25rem',
-            paddingTop: '3rem',
-            paddingBottom: '3rem',
-            opacity: 1,
-            zIndex: 0
-          }}
-        />
-        <div 
-          ref={countdownBoxRef}
-          className="mx-auto px-10 md:px-16 text-center relative z-10"
-          style={{
-            background: 'var(--color-pink-light)',
-            borderRadius: '60px',
-            border: '2px solid var(--color-pink-medium)',
-            boxShadow: '0 8px 32px rgba(244, 142, 184, 0.3)',
-            paddingTop: '3rem',
-            paddingBottom: '3rem',
-            width: '100%',
-            maxWidth: '25rem'
-          }}
-        >
-          {timeLeft.days > 0 ? (
-            <>
-              {/* Single Cream Block with Number */}
-              <div className="mb-8 flex justify-center">
+      {/* Current Club Updates and Countdown Section - Connected to Events */}
+      <section className="relative z-20 py-20 md:py-32" style={{ background: 'var(--color-cream)' }}>
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+            {/* Left Side - Current Club Updates */}
+            <div className="flex flex-col justify-center items-center lg:items-end order-2 lg:order-1">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 text-center lg:text-right" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                Current Club Updates
+              </h3>
+              
+              <div className="w-full max-w-md space-y-6">
+                {/* Website Launch Update */}
                 <div 
-                  className="rounded-3xl px-12 md:px-16 py-10 md:py-14 flex items-center justify-center relative"
+                  className="p-6 rounded-lg"
                   style={{
-                    background: 'var(--color-pink-medium)',
-                    minWidth: '140px',
-                    minHeight: '140px',
-                    boxShadow: '0 4px 16px rgba(244, 142, 184, 0.4)'
+                    background: 'rgba(244, 142, 184, 0.1)',
+                    border: '2px solid var(--color-pink-medium)'
                   }}
                 >
-                  <div 
-                    className="text-7xl md:text-8xl lg:text-9xl font-bold relative z-10"
-                    style={{
-                      fontFamily: 'var(--font-kollektif)',
-                      color: 'white'
-                    }}
-                  >
-                    {timeLeft.days}
+                  <div className="flex items-start gap-3 mb-2">
+                    <div 
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                      style={{
+                        background: 'var(--color-pink-medium)',
+                        color: 'white',
+                        fontFamily: 'var(--font-kollektif)'
+                      }}
+                    >
+                      ✨
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                        Website Now Live!
+                      </h4>
+                      <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                        Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.
+                      </p>
+                    </div>
                   </div>
-                  {/* Flip clock divider line */}
-                  <div 
-                    className="absolute left-0 right-0 z-20"
-                    style={{
-                      top: '50%',
-                      height: '2px',
-                      background: 'white',
-                      transform: 'translateY(-50%)',
-                      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
-                    }}
-                  />
                 </div>
-              </div>
 
-              {/* Text Below */}
-              <div className="space-y-1">
-                <p 
-                  className="text-sm md:text-base uppercase tracking-wider"
-                  style={{
-                    fontFamily: 'var(--font-kollektif)',
-                    color: 'var(--color-brown-dark)',
-                    letterSpacing: '0.1em'
-                  }}
-                >
-                  DAYS LEFT UNTIL
-                </p>
-                <p 
-                  className="text-xl md:text-2xl lg:text-3xl font-bold"
-                  style={{
-                    fontFamily: 'var(--font-vintage-stylist)',
-                    color: 'var(--color-brown-dark)'
-                  }}
-                >
-                  SPIKEBALL EVENT
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* Today's Event Message */}
-              <div className="mb-8 flex justify-center">
+                {/* Spikeball Event Update */}
                 <div 
-                  className="rounded-3xl px-8 md:px-12 py-10 md:py-14 flex items-center justify-center"
+                  className="p-6 rounded-lg"
                   style={{
-                    background: 'var(--color-pink-medium)',
-                    minWidth: '140px',
-                    minHeight: '140px',
-                    boxShadow: '0 4px 16px rgba(244, 142, 184, 0.4)'
+                    background: 'rgba(244, 142, 184, 0.1)',
+                    border: '2px solid var(--color-pink-medium)'
                   }}
                 >
-                  <div 
-                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-center"
-                    style={{
-                      fontFamily: 'var(--font-kollektif)',
-                      color: 'white'
-                    }}
-                  >
-                    🎉
+                  <div className="flex items-start gap-3 mb-2">
+                    <div 
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                      style={{
+                        background: 'var(--color-pink-medium)',
+                        color: 'white',
+                        fontFamily: 'var(--font-kollektif)'
+                      }}
+                    >
+                      🎾
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                        Upcoming Event: Spikeball Event
+                      </h4>
+                      <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                        Join us for our upcoming Spikeball event on January 16, 2026! Check the countdown to see how many days are left.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Holiday/Exam Season Message */}
+                <div 
+                  className="p-6 rounded-lg"
+                  style={{
+                    background: 'var(--color-cream)',
+                    border: '2px solid rgba(152, 90, 64, 0.2)'
+                  }}
+                >
+                  <div className="flex items-start gap-3 mb-2">
+                    <div 
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                      style={{
+                        background: 'var(--color-brown-medium)',
+                        color: 'var(--color-cream)',
+                        fontFamily: 'var(--font-kollektif)'
+                      }}
+                    >
+                      🎄
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                        Happy Holidays!
+                      </h4>
+                      <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                        Wishing everyone a wonderful holiday season and good luck with exams! We&apos;ll see you in the new year with more exciting events.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Text Below */}
-              <div className="space-y-1">
-                <p 
-                  className="text-xl md:text-2xl lg:text-3xl font-bold"
+            {/* Right Side - Countdown Timer */}
+            <div className="flex justify-center lg:justify-start order-1 lg:order-2">
+              <div className="relative">
+                {/* Shadow Box Layer - Full opacity, offset */}
+                <div 
+                  ref={countdownShadowRef}
+                  className="absolute max-w-md px-10 md:px-16 text-center"
                   style={{
-                    fontFamily: 'var(--font-vintage-stylist)',
-                    color: 'var(--color-brown-dark)'
+                    background: 'var(--color-pink-medium)',
+                    borderRadius: '60px',
+                    top: '12px',
+                    left: 'calc(50% + 8px)',
+                    transform: 'translateX(-50%)',
+                    width: '100%',
+                    maxWidth: '25rem',
+                    paddingTop: '3rem',
+                    paddingBottom: '3rem',
+                    opacity: 1,
+                    zIndex: 0
+                  }}
+                />
+                <div 
+                  ref={countdownBoxRef}
+                  className="mx-auto px-10 md:px-16 text-center relative z-10"
+                  style={{
+                    background: 'var(--color-pink-light)',
+                    borderRadius: '60px',
+                    border: '2px solid var(--color-pink-medium)',
+                    boxShadow: '0 8px 32px rgba(244, 142, 184, 0.3)',
+                    paddingTop: '3rem',
+                    paddingBottom: '3rem',
+                    width: '100%',
+                    maxWidth: '25rem'
                   }}
                 >
-                  Today is the
-                </p>
-                <p 
-                  className="text-2xl md:text-3xl lg:text-4xl font-bold"
-                  style={{
-                    fontFamily: 'var(--font-vintage-stylist)',
-                    color: 'var(--color-brown-dark)'
-                  }}
-                >
-                  Spikeball Event
-                </p>
+                {timeLeft.days > 0 ? (
+                  <>
+                    {/* Single Cream Block with Number */}
+                    <div className="mb-8 flex justify-center">
+                      <div 
+                        className="rounded-3xl px-12 md:px-16 py-10 md:py-14 flex items-center justify-center relative"
+                        style={{
+                          background: 'var(--color-pink-medium)',
+                          minWidth: '140px',
+                          minHeight: '140px',
+                          boxShadow: '0 4px 16px rgba(244, 142, 184, 0.4)'
+                        }}
+                      >
+                        <div 
+                          className="text-7xl md:text-8xl lg:text-9xl font-bold relative z-10"
+                          style={{
+                            fontFamily: 'var(--font-kollektif)',
+                            color: 'white'
+                          }}
+                        >
+                          {timeLeft.days}
+                        </div>
+                        {/* Flip clock divider line */}
+                        <div 
+                          className="absolute left-0 right-0 z-20"
+                          style={{
+                            top: '50%',
+                            height: '2px',
+                            background: 'white',
+                            transform: 'translateY(-50%)'
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Text Below */}
+                    <div className="space-y-1">
+                      <p 
+                        className="text-sm md:text-base uppercase tracking-wider"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          color: 'var(--color-brown-dark)',
+                          letterSpacing: '0.1em'
+                        }}
+                      >
+                        DAYS LEFT UNTIL
+                      </p>
+                      <p 
+                        className="text-xl md:text-2xl lg:text-3xl font-bold"
+                        style={{
+                          fontFamily: 'var(--font-vintage-stylist)',
+                          color: 'var(--color-brown-dark)'
+                        }}
+                      >
+                        SPIKEBALL EVENT
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Today's Event Message */}
+                    <div className="mb-8 flex justify-center">
+                      <div 
+                        className="rounded-3xl px-8 md:px-12 py-10 md:py-14 flex items-center justify-center"
+                        style={{
+                          background: 'var(--color-pink-medium)',
+                          minWidth: '140px',
+                          minHeight: '140px',
+                          boxShadow: '0 4px 16px rgba(244, 142, 184, 0.4)'
+                        }}
+                      >
+                        <div 
+                          className="text-4xl md:text-5xl lg:text-6xl font-bold text-center"
+                          style={{
+                            fontFamily: 'var(--font-kollektif)',
+                            color: 'white'
+                          }}
+                        >
+                          🎉
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Text Below */}
+                    <div className="space-y-1">
+                      <p 
+                        className="text-xl md:text-2xl lg:text-3xl font-bold"
+                        style={{
+                          fontFamily: 'var(--font-vintage-stylist)',
+                          color: 'var(--color-brown-dark)'
+                        }}
+                      >
+                        Today is the
+                      </p>
+                      <p 
+                        className="text-2xl md:text-3xl lg:text-4xl font-bold"
+                        style={{
+                          fontFamily: 'var(--font-vintage-stylist)',
+                          color: 'var(--color-brown-dark)'
+                        }}
+                      >
+                        Spikeball Event
+                      </p>
+                    </div>
+                  </>
+                )}
+                </div>
               </div>
-            </>
-          )}
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Testimonials Section */}
       <section className="relative z-10 py-16 md:py-24" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-6xl mx-auto px-8">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-12 text-center" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-            What People Say
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            {/* Student Testimonial */}
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="grid grid-cols-1 gap-12 md:gap-16">
+            {/* Student Testimonial - Email Style */}
             <div 
-              className="p-8 rounded-2xl"
+              className="p-10 md:p-14 relative overflow-visible"
               style={{
-                background: 'var(--color-pink-light)',
-                border: '2px solid var(--color-pink-medium)'
+                background: 'var(--color-cream)',
+                border: '1px solid rgba(152, 90, 64, 0.2)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                overflow: 'visible'
               }}
             >
-              <div className="mb-4">
-                <svg className="w-8 h-8" style={{ color: 'var(--color-pink-medium)' }} fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.996 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.984zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.432.917-3.995 3.638-3.995 5.849h3.983v10h-9.984z"/>
-                </svg>
+              {/* Stamp Image - Positioned in bottom left corner */}
+              <div className="absolute bottom-0 left-12 opacity-60 z-10" style={{ transform: 'rotate(-15deg)' }}>
+                <Image
+                  src="/assets/stamp2.png"
+                  alt="Stamp"
+                  width={100}
+                  height={100}
+                  className="object-contain"
+                />
               </div>
-              <p className="text-lg mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+              {/* Email Header */}
+              <div className="mb-8">
+                <div>
+                  <p className="text-sm mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Subject: <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>{typedSubject1}</span>
+                    <span className="animate-pulse" style={{ color: 'var(--color-brown-dark)' }}>|</span>
+                  </p>
+                  <div className="h-px" style={{ background: 'var(--color-brown-dark)', opacity: 0.3, width: '60%', maxWidth: '200px' }} />
+                </div>
+              </div>
+
+              {/* Testimonial Quote */}
+              <p className="text-lg md:text-xl mb-8 leading-relaxed" style={{ fontFamily: 'var(--font-georgia)', color: 'var(--color-brown-dark)' }}>
                 &ldquo;Being part of Youth 4 Elders has been incredibly rewarding. I&apos;ve learned so much from the elders I work with, and it&apos;s amazing to see how technology can bring generations together.&rdquo;
               </p>
-              <p className="text-base font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                — Student Volunteer
-              </p>
+
+              {/* Signature/Date at Bottom */}
+              <div className="mt-12 pt-6 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
+                <div className="flex flex-col items-end gap-2">
+                  <p className="text-sm italic" style={{ fontFamily: 'var(--font-georgia)', color: 'var(--color-brown-dark)', opacity: 0.7 }}>
+                    Sincerely,
+                  </p>
+                  <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    A Student Volunteer
+                  </p>
+                  <p className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.6 }}>
+                    October 2025
+                  </p>
+                </div>
+              </div>
             </div>
 
-            {/* Elder Testimonial */}
+            {/* Elder Testimonial - Email Style */}
             <div 
-              className="p-8 rounded-2xl"
+              className="p-10 md:p-14 relative overflow-visible"
               style={{
-                background: 'var(--color-pink-light)',
-                border: '2px solid var(--color-pink-medium)'
+                background: 'var(--color-cream)',
+                border: '1px solid rgba(152, 90, 64, 0.2)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                overflow: 'visible'
               }}
             >
-              <div className="mb-4">
-                <svg className="w-8 h-8" style={{ color: 'var(--color-pink-medium)' }} fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.996 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.984zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.432.917-3.995 3.638-3.995 5.849h3.983v10h-9.984z"/>
-                </svg>
+              {/* Stamp Image - Positioned in bottom left corner */}
+              <div className="absolute bottom-4 left-4 opacity-60 z-10" style={{ transform: 'rotate(-15deg)' }}>
+                <Image
+                  src="/assets/stamp.png"
+                  alt="Stamp"
+                  width={160}
+                  height={160}
+                  className="object-contain"
+                />
               </div>
-              <p className="text-lg mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+              {/* Email Header */}
+              <div className="mb-8">
+                <div>
+                  <p className="text-sm mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    Subject: <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>{typedSubject2}</span>
+                    <span className="animate-pulse" style={{ color: 'var(--color-brown-dark)' }}>|</span>
+                  </p>
+                  <div className="h-px" style={{ background: 'var(--color-brown-dark)', opacity: 0.3, width: '60%', maxWidth: '200px' }} />
+                </div>
+              </div>
+
+              {/* Testimonial Quote */}
+              <p className="text-lg md:text-xl mb-8 leading-relaxed" style={{ fontFamily: 'var(--font-georgia)', color: 'var(--color-brown-dark)' }}>
                 &ldquo;The students are so patient and kind. They&apos;ve helped me learn to use my tablet and stay connected with my family. This program means the world to me.&rdquo;
               </p>
-              <p className="text-base font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                — Community Member
-              </p>
+
+              {/* Signature/Date at Bottom */}
+              <div className="mt-12 pt-6 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
+                <div className="flex flex-col items-end gap-2">
+                  <p className="text-sm italic" style={{ fontFamily: 'var(--font-georgia)', color: 'var(--color-brown-dark)', opacity: 0.7 }}>
+                    With gratitude,
+                  </p>
+                  <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    A Community Member
+                  </p>
+                  <p className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.6 }}>
+                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

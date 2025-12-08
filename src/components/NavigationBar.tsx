@@ -197,7 +197,7 @@ export default function NavigationBar() {
               e.currentTarget.style.color = 'var(--color-cream)'
             }}
           >
-            Join Us
+            Get Involved
           </Link>
           
           <Link 
@@ -365,7 +365,7 @@ export default function NavigationBar() {
                 }}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Join Us
+                Get Involved
               </Link>
               
               <Link 
