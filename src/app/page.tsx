@@ -732,9 +732,9 @@ export default function Home() {
                     }
                   })
                   // Show date and description
-                  const textContainer = e.currentTarget.querySelector('.overflow-hidden') as HTMLElement
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
-                    textContainer.style.maxHeight = '100px'
+                    textContainer.style.maxHeight = '120px'
                     textContainer.style.opacity = '1'
                   }
                 }
@@ -753,7 +753,7 @@ export default function Home() {
                     }
                   })
                   // Hide date and description
-                  const textContainer = e.currentTarget.querySelector('.overflow-hidden') as HTMLElement
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '0'
                     textContainer.style.opacity = '0'
@@ -773,7 +773,7 @@ export default function Home() {
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                   Workshop Series
                 </h3>
-                <div className="overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
+                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
                   <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
                     Started Sept 16, 2025 • Weekly
                   </p>
@@ -809,9 +809,9 @@ export default function Home() {
                     }
                   })
                   // Show date and description
-                  const textContainer = e.currentTarget.querySelector('.overflow-hidden') as HTMLElement
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
-                    textContainer.style.maxHeight = '100px'
+                    textContainer.style.maxHeight = '120px'
                     textContainer.style.opacity = '1'
                   }
                 }
@@ -830,7 +830,7 @@ export default function Home() {
                     }
                   })
                   // Hide date and description
-                  const textContainer = e.currentTarget.querySelector('.overflow-hidden') as HTMLElement
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '0'
                     textContainer.style.opacity = '0'
@@ -850,7 +850,7 @@ export default function Home() {
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                   School Club Fair
                 </h3>
-                <div className="overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
+                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
                   <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
                     Sept 3rd, 2025
                   </p>
@@ -886,7 +886,7 @@ export default function Home() {
                     }
                   })
                   // Show date and description
-                  const textContainer = e.currentTarget.querySelector('.overflow-hidden') as HTMLElement
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '120px'
                     textContainer.style.opacity = '1'
@@ -907,7 +907,7 @@ export default function Home() {
                     }
                   })
                   // Hide date and description
-                  const textContainer = e.currentTarget.querySelector('.overflow-hidden') as HTMLElement
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '0'
                     textContainer.style.opacity = '0'
@@ -927,7 +927,7 @@ export default function Home() {
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                   Sips, Samples, Social
                 </h3>
-                <div className="overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
+                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
                   <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
                     Nov 10th, 2025
                   </p>

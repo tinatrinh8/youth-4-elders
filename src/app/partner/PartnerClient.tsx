@@ -36,7 +36,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
 
   // Initialize image visibility array
   useEffect(() => {
-    setImagesVisible(new Array(6).fill(false))
+    setImagesVisible(new Array(7).fill(false))
   }, [])
 
   // Hero content fade-in on mount
@@ -127,7 +127,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
       imageRefs.current.forEach((ref, index) => {
         if (ref && imagesVisible[index]) {
           // Different parallax speeds for each image
-          const speeds = [0.3, 0.5, 0.4, 0.6, 0.35, 0.45]
+          const speeds = [0.3, 0.5, 0.4, 0.6, 0.35, 0.45, 0.4]
           const speed = speeds[index] || 0.3
           const yPos = scrollY * speed
           
@@ -139,7 +139,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             // For bottom image, keep translateX and add parallax Y
             ref.style.transform = `translateX(-50%) translateY(${yPos}px) scale(1)`
           } else {
-            // For top images, just add parallax Y
+            // For top images (including iPad), just add parallax Y
             ref.style.transform = `translateY(${yPos}px) scale(1)`
           }
         }
@@ -286,12 +286,29 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
               <Image src="/assets/sponsors/old.jpg" alt="Elders with technology" fill className="object-cover" />
             </div>
           </div>
+          
+          {/* Bottom Left - Vertical (ipad.jpg) */}
+          <div 
+            ref={(el) => { imageRefs.current[6] = el }}
+            className="absolute transition-all duration-1000 ease-out" 
+            style={{ 
+              bottom: '-5%', 
+              left: '30%', 
+              opacity: imagesVisible[6] ? 0.8 : 0, 
+              zIndex: 2,
+              transform: imagesVisible[6] ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'
+            }}
+          >
+            <div className="relative w-48 h-64 md:w-60 md:h-80 lg:w-72 lg:h-96 rounded-lg overflow-hidden shadow-2xl animate-float" style={{ background: 'var(--color-cream)', border: '4px solid var(--color-pink-light)', animationDelay: '3s' }}>
+              <Image src="/assets/sponsors/ipad.jpg" alt="Technology and digital connection" fill className="object-cover" />
+            </div>
+          </div>
         </div>
 
         {/* Hero Content - Centered, Higher Up */}
         <div 
           ref={heroRef}
-          className="relative z-10 max-w-4xl mx-auto px-8 md:px-12 lg:px-16 transition-all duration-1000 ease-out" 
+          className="relative z-10 max-w-4xl mx-auto px-8 md:px-1s2 lg:px-16 transition-all duration-1000 ease-out" 
           style={{ 
             marginTop: '-100vh',
             opacity: heroVisible ? 1 : 0,
@@ -348,7 +365,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                 ref={partnerRef}
                 className="absolute left-16 md:left-24 lg:left-32 z-10 max-w-3xl transition-all duration-1000 ease-out"
                 style={{ 
-                  top: '100vh',
+                  top: '130vh',
                   pointerEvents: 'auto',
                   opacity: partnerVisible ? 1 : 0,
                   transform: partnerVisible ? 'translateX(0) translateY(0)' : 'translateX(-50px) translateY(30px)'
@@ -449,7 +466,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                   ref={index === displayedPartners.length - 1 ? partnerRef : null}
                   className={`absolute ${isLeft ? 'left-16 md:left-24 lg:left-32' : 'right-16 md:right-24 lg:right-32'} z-10 max-w-3xl transition-all duration-1000 ease-out`}
                   style={{ 
-                    top: `${100 + index * 60}vh`,
+                    top: `${130 + index * 60}vh`,
                     pointerEvents: 'auto',
                     opacity: partnerVisible || index < displayedPartners.length - 1 ? 1 : 0,
                     transform: partnerVisible || index < displayedPartners.length - 1 

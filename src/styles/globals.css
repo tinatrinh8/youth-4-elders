@@ -20,11 +20,17 @@
   /* Medium Pink - Primary pink, main accents, CTAs */
   --color-pink-medium: #F48EB8;
   
+  /* Dark Pink - Darker pink for contrast, borders, emphasis (similar to brown-dark) */
+  --color-pink-dark: #c0507e;
+  
   /* Medium Brown - Text, borders, secondary backgrounds */
   --color-brown-medium: #985A40;
   
   /* Dark Brown - Headings, dark sections, strong contrast */
   --color-brown-dark: #64321B;
+  
+  /* Dynamic page background - updated by components for smooth transitions */
+  --page-background: var(--color-cream);
 
   /* --- REFINED AURA COLORS using Candy Summer Palette --- */
   /* Pink (FDC3DC) */
@@ -51,6 +57,7 @@
 html {
   background: var(--color-cream);
   min-height: 100%;
+  transition: background 0.8s ease-in-out;
   /* Hide scrollbar for webkit browsers (Chrome, Safari, Edge) */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -67,6 +74,7 @@ body {
   min-height: 100vh;
   position: relative; 
   overflow-x: hidden;
+  transition: background 0.8s ease-in-out;
   /* Hide scrollbar */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */

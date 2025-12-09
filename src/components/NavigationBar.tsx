@@ -2,13 +2,30 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
   const [isClosing, setIsClosing] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false)
+  const pathname = usePathname()
+  const isJoinUsPage = pathname === '/join-us'
+  
+  // Set page background behind nav - no animation when leaving join-us page
+  useEffect(() => {
+    if (!isJoinUsPage) {
+      // When leaving join-us page or on other pages
+      // Set background immediately without transition
+      document.body.style.background = 'var(--color-cream)'
+      document.documentElement.style.background = 'var(--color-cream)'
+      // Remove transition for instant change
+      document.body.style.transition = 'none'
+      document.documentElement.style.transition = 'none'
+    }
+    // Note: join-us page manages its own background with animation
+  }, [isJoinUsPage])
 
   const whoWeAreSubmenu = [
     { href: '/club-info', label: 'Club Info' },
