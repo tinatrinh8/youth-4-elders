@@ -1,6 +1,7 @@
 // src/lib/contentful.ts
 import { createClient, type Entry, type EntrySkeletonType } from 'contentful'
 import type { FeatureHighlightSkeleton } from '@/types/featureHighlights'
+import type { PartnerSkeleton, SponsorSkeleton } from '@/types/partner'
 
 // Check if environment variables are available
 const hasContentfulConfig = process.env.CONTENTFUL_SPACE_ID && process.env.CONTENTFUL_ACCESS_TOKEN
@@ -47,6 +48,66 @@ export async function getEntryBySlug<T extends EntrySkeletonType>(
 
 export async function getFeatureHighlights(): Promise<Entry<FeatureHighlightSkeleton>[]> {
   return getEntries<FeatureHighlightSkeleton>('featureHighlights')
+}
+
+export async function getPartners(): Promise<Entry<PartnerSkeleton>[]> {
+  if (!client) {
+    console.warn('Contentful client not configured. Returning empty array.')
+    return []
+  }
+  try {
+    const { items } = await client.getEntries<PartnerSkeleton>({ 
+      content_type: 'partner'
+    })
+    // Sort by order field manually
+    const sorted = items.sort((a, b) => {
+      const orderA = a.fields.order ?? 999
+      const orderB = b.fields.order ?? 999
+      return orderA - orderB
+    })
+    return sorted as Entry<PartnerSkeleton>[]
+  } catch (error: unknown) {
+    // Handle case where content type doesn't exist yet
+    if (error && typeof error === 'object' && 'message' in error) {
+      const errorMessage = String(error.message)
+      if (errorMessage.includes('unknownContentType') || errorMessage.includes('content type')) {
+        console.warn('Contentful content type "partner" does not exist yet. Please create it in Contentful. Returning empty array.')
+        return []
+      }
+    }
+    console.error('Error fetching partners from Contentful:', error)
+    return []
+  }
+}
+
+export async function getSponsors(): Promise<Entry<SponsorSkeleton>[]> {
+  if (!client) {
+    console.warn('Contentful client not configured. Returning empty array.')
+    return []
+  }
+  try {
+    const { items } = await client.getEntries<SponsorSkeleton>({ 
+      content_type: 'sponsor'
+    })
+    // Sort by order field manually
+    const sorted = items.sort((a, b) => {
+      const orderA = a.fields.order ?? 999
+      const orderB = b.fields.order ?? 999
+      return orderA - orderB
+    })
+    return sorted as Entry<SponsorSkeleton>[]
+  } catch (error: unknown) {
+    // Handle case where content type doesn't exist yet
+    if (error && typeof error === 'object' && 'message' in error) {
+      const errorMessage = String(error.message)
+      if (errorMessage.includes('unknownContentType') || errorMessage.includes('content type')) {
+        console.warn('Contentful content type "sponsor" does not exist yet. Please create it in Contentful. Returning empty array.')
+        return []
+      }
+    }
+    console.error('Error fetching sponsors from Contentful:', error)
+    return []
+  }
 }
 
 export async function listContentTypeIds(): Promise<string[]> {

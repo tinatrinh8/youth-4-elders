@@ -362,7 +362,7 @@ export default function JoinUs() {
               className="text-base md:text-lg text-left leading-relaxed"
               style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
             >
-              <span className="font-bold" style={{ color: 'var(--color-pink-medium)' }}>Important:</span> Executive team applications are currently closed. Applications will reopen in 2026 (typically end of school year or summer). You can still join as a community volunteer and participate in all our events and activities!
+              <span className="font-bold" style={{ color: 'var(--color-pink-medium)' }}>Important:</span> Executive team applications are currently closed. Applications will reopen in 2026 (typically end of school year). You can still join as a community volunteer and participate in all our events and activities!
             </p>
           </div>
         </div>
