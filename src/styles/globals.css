@@ -634,3 +634,72 @@ body::-webkit-scrollbar {
     margin-bottom: 1rem !important;
   }
 }
+
+/* Sponsor Logo Responsive Sizing */
+.sponsor-logo[data-sponsor-index="0"] {
+  max-width: 450px;
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="0"] {
+    max-width: 450px;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="0"] {
+    width: 800px !important;
+    max-width: 1000px;
+    height: auto !important;
+    min-height: 320px;
+    flex-shrink: 0;
+  }
+}
+
+.sponsor-logo[data-sponsor-index="1"] {
+  max-width: 500px;
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="1"] {
+    max-width: 400px;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="1"] {
+    width: 500px !important;
+    max-width: 1000px;
+    height: auto !important;
+    min-height: 320px;
+    flex-shrink: 0;
+  }
+}
+
+.sponsor-logo[data-sponsor-index="2"] {
+  max-width: 350px;
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="2"] {
+    max-width: 450px;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="2"] {
+    width: 400px !important;
+    max-width: 1000px;
+    height: auto !important;
+    min-height: 320px;
+    flex-shrink: 0;
+  }
+}
+
+.sponsor-logo[data-sponsor-index="3"] {
+  max-width: 300px;
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="3"] {
+    max-width: 400px;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="3"] {
+    max-width: 500px;
+  }
+}

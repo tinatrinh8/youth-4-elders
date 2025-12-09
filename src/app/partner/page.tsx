@@ -4,16 +4,13 @@ import Image from 'next/image'
 import React, { useRef, useState, useEffect } from 'react'
 
 export default function Partner() {
-  const slowDownIntervals = useRef<Map<HTMLElement, NodeJS.Timeout>>(new Map())
   const [heroVisible, setHeroVisible] = useState(false)
   const [imagesVisible, setImagesVisible] = useState<boolean[]>([])
   const [partnerVisible, setPartnerVisible] = useState(false)
   const [sponsorsVisible, setSponsorsVisible] = useState(false)
-  const [ctaVisible, setCtaVisible] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
   const partnerRef = useRef<HTMLDivElement>(null)
   const sponsorsRef = useRef<HTMLDivElement>(null)
-  const ctaRef = useRef<HTMLElement>(null)
   const imageRefs = useRef<(HTMLDivElement | null)[]>([])
 
   // Initialize image visibility array
@@ -52,7 +49,6 @@ export default function Partner() {
 
     const partnerElement = partnerRef.current
     const sponsorsElement = sponsorsRef.current
-    const ctaElement = ctaRef.current
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -61,8 +57,6 @@ export default function Partner() {
             setPartnerVisible(true)
           } else if (entry.target === sponsorsElement) {
             setSponsorsVisible(true)
-          } else if (entry.target === ctaElement) {
-            setCtaVisible(true)
           }
         }
       })
@@ -70,12 +64,10 @@ export default function Partner() {
 
     if (partnerElement) observer.observe(partnerElement)
     if (sponsorsElement) observer.observe(sponsorsElement)
-    if (ctaElement) observer.observe(ctaElement)
 
     return () => {
       if (partnerElement) observer.unobserve(partnerElement)
       if (sponsorsElement) observer.unobserve(sponsorsElement)
-      if (ctaElement) observer.unobserve(ctaElement)
     }
   }, [])
 
@@ -113,7 +105,7 @@ export default function Partner() {
   }, [imagesVisible])
 
   return (
-    <main className="min-h-screen pb-20" style={{ background: 'var(--color-cream)', overflow: 'visible' }}>
+    <main className="min-h-screen" style={{ background: 'var(--color-cream)', overflow: 'visible' }}>
       {/* Hero Section with Images Around Text */}
       <section 
         className="relative min-h-[200vh] flex items-center justify-center py-16 md:py-32 lg:py-40 xl:py-48"
@@ -369,228 +361,147 @@ export default function Partner() {
         </div>
       </section>
 
-      {/* Sponsors Section - Normal Scroll */}
+      {/* Sponsors Section - Redesigned with Visual Interest */}
       <section 
         ref={sponsorsRef}
-        className="relative z-20 pt-32 md:pt-48 lg:pt-64 pb-20 md:pb-32 transition-all duration-1000 ease-out" 
+        className="relative z-20 pt-24 md:pt-32 lg:pt-40 pb-32 md:pb-48 lg:pb-64 mt-40 md:mt-52 lg:mt-64 transition-all duration-1000 ease-out" 
         style={{ 
-          background: 'rgba(247, 240, 227, 0.9)',
+          background: 'var(--color-brown-medium)',
           opacity: sponsorsVisible ? 1 : 0,
-          transform: sponsorsVisible ? 'translateY(0)' : 'translateY(50px)'
+          transform: sponsorsVisible ? 'translateY(0)' : 'translateY(50px)',
+          position: 'relative'
         }}
       >
-        <div className="max-w-7xl mx-auto px-8">
-            {/* Main Card Container - Paper Pad */}
-            <div 
-              className="relative rounded-2xl p-8 md:p-12 shadow-2xl overflow-hidden transition-all duration-1000 ease-out"
+        {/* Decorative Pattern Overlay */}
+        <div 
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, var(--color-cream) 1px, transparent 0)',
+            backgroundSize: '40px 40px'
+          }}
+        />
+
+        {/* Decorative Top Border */}
+        <div 
+          className="absolute top-0 left-0 right-0 h-1"
+          style={{ 
+            background: 'linear-gradient(90deg, transparent, var(--color-pink-light), var(--color-pink-medium), var(--color-pink-light), transparent)'
+          }}
+        />
+
+        <div className="max-w-7xl mx-auto px-8 relative z-10">
+          {/* Title Section */}
+          <div className="text-center mb-12 md:mb-16">
+            <h2 
+              className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-4 transition-all duration-1000 ease-out"
               style={{ 
-                background: 'var(--aura-secondary)',
-                border: '4px solid var(--color-pink-medium)',
-                boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
-                transform: sponsorsVisible ? 'scale(1)' : 'scale(0.95)'
+                fontFamily: 'var(--font-vintage-stylist)', 
+                color: 'var(--color-cream)',
+                opacity: sponsorsVisible ? 1 : 0,
+                transform: sponsorsVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.95)',
+                transitionDelay: '200ms'
               }}
             >
-              {/* Title Section */}
-              <div className="text-center mb-12 md:mb-16 relative z-10 pt-8">
-                <h2 
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4"
-                  style={{ 
-                    fontFamily: 'var(--font-vintage-stylist)', 
-                    color: 'var(--color-brown-dark)'
-                  }}
-                >
-                  Our Sponsors
-                </h2>
+              Our Sponsors
+            </h2>
+            <p 
+              className="text-base md:text-lg mx-auto whitespace-nowrap transition-all duration-1000 ease-out"
+              style={{ 
+                fontFamily: 'var(--font-kollektif)', 
+                color: 'var(--color-cream)',
+                opacity: sponsorsVisible ? 1 : 0,
+                transform: sponsorsVisible ? 'translateY(0)' : 'translateY(20px)',
+                transitionDelay: '400ms'
+              }}
+            >
+              Thank you for your continued support and partnership in building meaningful connections
+            </p>
+          </div>
+
+          {/* Sponsor Logos Grid with Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 lg:gap-20 mb-20 md:mb-24">
+            {[
+              { name: 'UOTTAWA', image: '/assets/sponsors/uottawa.png', maxWidth: '350px', maxWidthMd: '450px', maxWidthLg: '550px' },
+              { name: 'SPCO', image: '/assets/sponsors/SPCO.png', maxWidth: '300px', maxWidthMd: '400px', maxWidthLg: '500px' },
+              { name: 'BRIDGEHEAD', image: '/assets/sponsors/bridgehead.png', maxWidth: '350px', maxWidthMd: '450px', maxWidthLg: '550px' },
+              { name: 'MERRY DAIRY', image: '/assets/sponsors/merry dairy.png', maxWidth: '300px', maxWidthMd: '400px', maxWidthLg: '500px' },
+            ].map((sponsor, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-center h-40 md:h-48 lg:h-56 p-6 md:p-8 rounded-2xl transition-all duration-500 ease-out hover:scale-105"
+                style={{
+                  background: 'rgba(247, 240, 227, 0.1)',
+                  border: '2px solid rgba(247, 240, 227, 0.2)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  opacity: sponsorsVisible ? 1 : 0,
+                  transform: sponsorsVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)',
+                  transitionDelay: `${600 + index * 150}ms`
+                }}
+              >
+                {sponsor.image ? (
+                  <div 
+                    className="relative w-full h-full sponsor-logo"
+                    data-sponsor-index={index}
+                    style={{ padding: '0.5rem' }}
+                  >
+                    <Image
+                      src={sponsor.image}
+                      alt={sponsor.name}
+                      fill
+                      className="object-contain"
+                      style={{ 
+                        filter: 'brightness(0) invert(1)',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <span
+                    className="text-xl md:text-2xl font-bold"
+                    style={{
+                      fontFamily: 'var(--font-kollektif)',
+                      color: 'var(--color-cream)'
+                    }}
+                  >
+                    {sponsor.name}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Become a Partner - Compact Note Style */}
+          <div className="mt-16 md:mt-20 pt-8 md:pt-10 border-t" style={{ borderColor: 'rgba(247, 240, 227, 0.2)' }}>
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 px-4">
+              <div className="flex-1 text-center md:text-left">
                 <p 
-                  className="text-base md:text-lg"
+                  className="text-sm md:text-base leading-relaxed"
                   style={{ 
-                    fontFamily: 'var(--font-kollektif)', 
-                    color: 'var(--color-brown-dark)'
+                    fontFamily: 'var(--font-leiko)', 
+                    color: 'var(--color-cream)',
+                    opacity: 0.9
                   }}
                 >
-                  Thank you for your continued support and partnership in building meaningful connections
+                  <span className="font-semibold uppercase" style={{ fontFamily: 'var(--font-freshwost), var(--font-kollektif), system-ui, Arial, sans-serif' }}>Become a Partner:</span> We&apos;re always looking for organizations and businesses that share our mission of bridging generations. Reach out to us to explore how we can work together.
                 </p>
               </div>
-
-              {/* Tear-Off Strips Container */}
-              <div className="relative flex items-stretch justify-center gap-0 mt-16" style={{ minHeight: '350px' }}>
-                {/* Individual Sponsor Strips - Background Layer (invisible, just for layout) */}
-                {[
-                  { width: '16.67%' },
-                  { width: '16.67%' },
-                  { width: '16.67%' },
-                  { width: '16.67%' },
-                  { width: '16.67%' },
-                  { width: '16.67%' },
-                ].map((sponsor, index) => (
-                  <div
-                    key={index}
-                    className="relative"
-                    style={{
-                      width: sponsor.width,
-                      minWidth: '100px',
-                      height: '100%',
-                      zIndex: 1
-                    }}
-                  />
-                ))}
-
-                {/* Individual Brown Torn-Off Blocks for Each Sponsor */}
-                {[
-                  { name: 'UOTTAWA', left: '0%', image: '/assets/sponsors/uottawa.png' },
-                  { name: 'SPCO', left: '16.67%', image: '/assets/sponsors/SPCO.png' },
-                  { name: 'BRIDGEHEAD', left: '33.34%', image: '/assets/sponsors/bridgehead.png' },
-                  { name: 'MERRY DAIRY', left: '50%', image: '/assets/sponsors/merry dairy.png' },
-                  { name: 'STUDENT UNION', left: '66.67%' },
-                  { name: 'VOLUNTEER CENTER', left: '83.34%' },
-                ].map((sponsor, index) => {
-                  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-                    const element = e.currentTarget
-                    // Clear any existing interval
-                    const existingInterval = slowDownIntervals.current.get(element)
-                    if (existingInterval) clearInterval(existingInterval)
-                    
-                    let duration = 1
-                    const interval = setInterval(() => {
-                      duration += 0.2
-                      element.style.setProperty('--swing-duration', `${duration}s`)
-                      if (duration >= 3) {
-                        clearInterval(interval)
-                        slowDownIntervals.current.delete(element)
-                        element.style.animationPlayState = 'paused'
-                      }
-                    }, 50)
-                    slowDownIntervals.current.set(element, interval)
-                  }
-
-                  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-                    const element = e.currentTarget
-                    // Clear any existing slowdown interval
-                    const existingInterval = slowDownIntervals.current.get(element)
-                    if (existingInterval) {
-                      clearInterval(existingInterval)
-                      slowDownIntervals.current.delete(element)
-                    }
-                    element.style.animationPlayState = 'running'
-                    element.style.setProperty('--swing-duration', '1s')
-                  }
-
-                return (
-                  <div
-                    key={index}
-                    className="absolute paper-swing"
-                    style={{
-                      left: sponsor.left,
-                      width: '16.67%',
-                      height: '85%',
-                      background: 'var(--color-brown-medium)',
-                      zIndex: 10,
-                      boxShadow: '0 4px 8px rgba(100, 50, 27, 0.3)',
-                      border: '2px dashed var(--color-brown-dark)',
-                      borderRadius: '0',
-                      ['--swing-duration' as string]: '1s',
-                      overflow: sponsor.name === 'SPCO' ? 'visible' : 'hidden'
-                    } as React.CSSProperties}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <div
-                      className="absolute inset-0 flex items-center justify-center"
-                      style={{
-                        transform: 'rotate(-90deg)',
-                        transformOrigin: 'center',
-                        width: '100%',
-                        height: '100%',
-                        overflow: sponsor.name === 'SPCO' ? 'visible' : 'hidden'
-                      }}
-                    >
-                      {sponsor.image ? (
-                        <div style={{ 
-                          width: '100%', 
-                          height: '100%', 
-                          position: 'relative',
-                          transform: sponsor.name === 'SPCO' ? 'scale(1.5)' : 'scale(1)'
-                        }}>
-                          <Image
-                            src={sponsor.image}
-                            alt={sponsor.name}
-                            fill
-                            className="object-contain"
-                            style={{ filter: 'brightness(0) invert(1)' }}
-                          />
-                        </div>
-                      ) : (
-                        <span
-                          className="text-xs md:text-sm font-bold tracking-wider whitespace-nowrap"
-                          style={{
-                            fontFamily: 'var(--font-kollektif)',
-                            color: 'var(--color-cream)'
-                          }}
-                        >
-                          {sponsor.name}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+              <a
+                href="/contact"
+                className="flex-shrink-0 px-6 py-3 rounded-full transition-all duration-300 hover:scale-105"
+                style={{ 
+                  background: 'var(--color-pink-medium)',
+                  border: '2px solid var(--color-cream)',
+                  color: 'var(--color-cream)',
+                  fontFamily: 'var(--font-kollektif)',
+                  fontWeight: '600',
+                  fontSize: '0.875rem',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                Get in Touch →
+              </a>
             </div>
           </div>
-        </section>
-
-      {/* Call-to-Action Section */}
-      <section 
-        ref={ctaRef}
-        className="relative z-20 py-20 md:py-32 transition-all duration-1000 ease-out" 
-        style={{ 
-          background: 'var(--color-cream)',
-          opacity: ctaVisible ? 1 : 0,
-          transform: ctaVisible ? 'translateY(0)' : 'translateY(50px)'
-        }}
-      >
-        <div className="max-w-4xl mx-auto px-8 text-center">
-          <h2 
-            className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-8 leading-tight transition-all duration-1000 ease-out"
-            style={{ 
-              fontFamily: 'var(--font-vintage-stylist)', 
-              color: 'var(--color-brown-dark)',
-              opacity: ctaVisible ? 1 : 0,
-              transform: ctaVisible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)',
-              transitionDelay: '200ms'
-            }}
-          >
-            Become a Partner
-          </h2>
-          <p 
-            className="text-lg md:text-xl lg:text-2xl leading-relaxed mb-10 max-w-2xl mx-auto transition-all duration-1000 ease-out"
-            style={{ 
-              fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-brown-medium)',
-              opacity: ctaVisible ? 1 : 0,
-              transform: ctaVisible ? 'translateY(0)' : 'translateY(20px)',
-              transitionDelay: '400ms'
-            }}
-          >
-            We&apos;re always looking for organizations and businesses that share our mission of bridging generations. Reach out to us to explore how we can work together.
-          </p>
-          <a
-            href="/contact"
-            className="inline-block px-10 py-5 rounded-full transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-            style={{ 
-              background: 'var(--color-pink-medium)',
-              border: '2px solid var(--color-brown-dark)',
-              color: 'var(--color-cream)',
-              fontFamily: 'var(--font-kollektif)',
-              fontWeight: '600',
-              fontSize: '1.125rem',
-              opacity: ctaVisible ? 1 : 0,
-              transform: ctaVisible ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.9)',
-              transition: 'opacity 1000ms ease-out 600ms, transform 1000ms ease-out 600ms, all 300ms'
-            }}
-          >
-            Get in Touch →
-          </a>
         </div>
       </section>
     </main>

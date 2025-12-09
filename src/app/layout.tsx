@@ -61,6 +61,20 @@ const leiko = localFont({
   display: 'swap',
 })
 
+// Font 5: Freshwost
+const freshwost = localFont({
+  src: [
+    {
+      path: '../../public/fonts/Freshwost-1GJJL.otf',
+      weight: '400',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-freshwost',
+  fallback: ['system-ui', 'Arial', 'sans-serif'],
+  display: 'swap',
+})
+
 // Map Vintage Stylist as the main display font (for large headings)
 // This ensures all existing code using --font-playfair will use Vintage Stylist
 const playfair = vintageStylist
@@ -79,7 +93,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${vintageStylist.variable} ${vintageStylistLigatures.variable} ${kollektif.variable} ${leiko.variable} ${playfair.variable} ${lato.variable} font-sans antialiased flex flex-col min-h-screen`} style={{ 
+      <body className={`${vintageStylist.variable} ${vintageStylistLigatures.variable} ${kollektif.variable} ${leiko.variable} ${freshwost.variable} ${playfair.variable} ${lato.variable} font-sans antialiased flex flex-col min-h-screen`} style={{ 
         fontFamily: 'var(--font-kollektif), var(--font-leiko), system-ui, Arial, sans-serif' 
       }}>
         <NavigationBar />

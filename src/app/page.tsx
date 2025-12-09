@@ -160,7 +160,7 @@ export default function Home() {
     // Marketing text "... is now live" - appears last (after Youth 4 Elders animation)
     setTimeout(() => {
       setVisibleElements((prev) => new Set(prev).add('hero-marketing'))
-    }, 2000)
+    }, 200)
 
     const observerOptions = {
       threshold: 0.1,
@@ -399,7 +399,7 @@ export default function Home() {
           style={{
             opacity: visibleElements.has('hero-marketing') ? 1 : 0,
             transform: visibleElements.has('hero-marketing') ? 'translateX(0)' : 'translateX(50px)',
-            transition: 'opacity 0.4s ease-out, transform 0.4s ease-out'
+            transition: 'opacity 0.5s ease-out, transform 0.5s ease-out'
           }}
           data-animate-id="hero-marketing"
         >
