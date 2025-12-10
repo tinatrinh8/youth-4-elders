@@ -13,6 +13,7 @@ interface ClubUpdate {
   description: string
   icon: string
   type: 'highlight' | 'standard' // 'highlight' uses pink styling, 'standard' uses brown
+  hasCountdown?: boolean // Only highlight pink if countdown is attached
 }
 
 export default function Home() {
@@ -43,21 +44,24 @@ export default function Home() {
       title: 'Website Now Live!',
       description: 'Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.',
       icon: '✨',
-      type: 'highlight'
+      type: 'highlight',
+      hasCountdown: false
     },
     {
       id: '2',
       title: 'Upcoming Event: Spikeball Event',
       description: 'Join us for our upcoming Spikeball event on January 16, 2026! Check the countdown to see how many days are left.',
       icon: '🎾',
-      type: 'highlight'
+      type: 'highlight',
+      hasCountdown: true // This one has the countdown, so it should be pink
     },
     {
       id: '3',
       title: 'Happy Holidays!',
       description: 'Wishing everyone a wonderful holiday season and good luck with exams! We\'ll see you in the new year with more exciting events.',
       icon: '🎄',
-      type: 'standard'
+      type: 'standard',
+      hasCountdown: false
     }
   ]
 
@@ -987,7 +991,7 @@ export default function Home() {
         </section>
 
       {/* Current Club Updates and Countdown Section - Connected to Events */}
-      <section className="relative z-20 py-20 md:py-32" style={{ background: 'var(--color-cream)' }}>
+      <section className="relative z-20 pt-20 md:pt-24 pb-8 md:pb-10" style={{ background: 'var(--color-cream)' }}>
         <div className="max-w-7xl mx-auto px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             {/* Left Side - Current Club Updates */}
@@ -1009,10 +1013,10 @@ export default function Home() {
                     data-animate-id={`club-update-${update.id}`}
                     style={{
                       transitionDelay: `${index * 0.1}s`,
-                      background: update.type === 'highlight' 
+                      background: update.hasCountdown 
                         ? 'rgba(244, 142, 184, 0.1)' 
                         : 'var(--color-cream)',
-                      border: update.type === 'highlight'
+                      border: update.hasCountdown
                         ? '2px solid var(--color-pink-medium)'
                         : '2px solid rgba(152, 90, 64, 0.2)'
                     }}
@@ -1021,10 +1025,10 @@ export default function Home() {
                       <div 
                         className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
                         style={{
-                          background: update.type === 'highlight'
+                          background: update.hasCountdown
                             ? 'var(--color-pink-medium)'
                             : 'var(--color-brown-medium)',
-                          color: update.type === 'highlight'
+                          color: update.hasCountdown
                             ? 'white'
                             : 'var(--color-cream)',
                           fontFamily: 'var(--font-kollektif)'
@@ -1193,6 +1197,55 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Impact Statement Section - Redesigned */}
+      <section className="relative z-10 pt-4 pb-16 md:pt-6 md:pb-20" style={{ background: 'var(--color-cream)' }}>
+        <div className="max-w-6xl mx-auto px-8">
+          <div 
+            className={`relative rounded-2xl p-5 md:p-8 animate-on-scroll slide-up ${visibleElements.has('impact-quote') ? 'visible' : ''}`}
+            data-animate-id="impact-quote"
+            style={{
+              background: 'linear-gradient(135deg, rgba(244, 142, 184, 0.15) 0%, rgba(237, 162, 195, 0.08) 100%)',
+              border: '2px dashed rgba(244, 142, 184, 0.3)',
+              boxShadow: '0 4px 16px rgba(244, 142, 184, 0.1)'
+            }}
+          >
+            {/* Decorative quote mark - top left */}
+            <div 
+              className="absolute top-1 left-3 md:left-4 text-4xl md:text-5xl opacity-25"
+              style={{ 
+                fontFamily: 'var(--font-vintage-stylist)',
+                color: 'var(--color-pink-medium)',
+                lineHeight: 1
+              }}
+            >
+              &ldquo;
+            </div>
+            {/* Decorative quote mark - bottom right */}
+            <div 
+              className="absolute bottom-1 right-3 md:right-4 text-4xl md:text-5xl opacity-25"
+              style={{ 
+                fontFamily: 'var(--font-vintage-stylist)',
+                color: 'var(--color-pink-medium)',
+                lineHeight: 1,
+                transform: 'rotate(180deg)'
+              }}
+            >
+              &ldquo;
+            </div>
+            <p 
+              className="text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed text-center relative z-10 px-4"
+              style={{ 
+                fontFamily: 'var(--font-leiko)',
+                color: 'var(--color-brown-dark)',
+                fontStyle: 'italic'
+              }}
+            >
+              Bridging generations, one connection at a time.
+            </p>
           </div>
         </div>
       </section>

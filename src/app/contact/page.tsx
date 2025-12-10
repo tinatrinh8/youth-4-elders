@@ -12,6 +12,16 @@ export default function Contact() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [isSubjectDropdownOpen, setIsSubjectDropdownOpen] = useState(false)
+
+  const subjectOptions = [
+    { value: '', label: 'Select a subject' },
+    { value: 'join', label: 'I want to join' },
+    { value: 'volunteer', label: 'Volunteering opportunities' },
+    { value: 'event', label: 'Event information' },
+    { value: 'partnership', label: 'Partnership inquiry' },
+    { value: 'other', label: 'Other' }
+  ]
 
   const faqs = [
     {
@@ -143,33 +153,114 @@ export default function Contact() {
                   <label htmlFor="subject" className="block mb-2 text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                     Subject
                   </label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 rounded-lg border-2 transition-all duration-300 focus:outline-none focus:ring-2"
-                    style={{
-                      background: 'var(--color-cream)',
-                      borderColor: 'rgba(152, 90, 64, 0.3)',
-                      fontFamily: 'var(--font-kollektif)',
-                      color: 'var(--color-brown-dark)'
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(152, 90, 64, 0.3)'
-                    }}
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="join">I want to join</option>
-                    <option value="volunteer">Volunteering opportunities</option>
-                    <option value="event">Event information</option>
-                    <option value="partnership">Partnership inquiry</option>
-                    <option value="other">Other</option>
-                  </select>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setIsSubjectDropdownOpen(!isSubjectDropdownOpen)}
+                      className="w-full py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-200 text-left flex items-center relative"
+                      style={{
+                        borderColor: formData.subject 
+                          ? 'var(--color-pink-medium)' 
+                          : 'rgba(152, 90, 64, 0.3)',
+                        fontFamily: 'var(--font-kollektif)',
+                        background: 'var(--color-cream)',
+                        color: formData.subject ? 'var(--color-brown-dark)' : '#999',
+                        paddingLeft: '1rem',
+                        paddingRight: '3rem'
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+                        e.currentTarget.style.boxShadow = '0 0 0 3px rgba(244, 142, 184, 0.1)'
+                      }}
+                      onBlur={(e) => {
+                        setTimeout(() => {
+                          setIsSubjectDropdownOpen(false)
+                          if (e.currentTarget) {
+                            e.currentTarget.style.borderColor = formData.subject 
+                              ? 'var(--color-pink-medium)' 
+                              : 'rgba(152, 90, 64, 0.3)'
+                            e.currentTarget.style.boxShadow = 'none'
+                          }
+                        }, 200)
+                      }}
+                    >
+                      <span>
+                        {formData.subject 
+                          ? subjectOptions.find(opt => opt.value === formData.subject)?.label
+                          : subjectOptions[0]?.label || 'Select a subject'}
+                      </span>
+                      <svg
+                        className={`transition-transform duration-200 ${isSubjectDropdownOpen ? 'rotate-180' : ''}`}
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        style={{
+                          color: 'var(--color-pink-medium)',
+                          marginLeft: '0.75rem',
+                          flexShrink: 0,
+                          position: 'absolute',
+                          right: '1rem',
+                          pointerEvents: 'none'
+                        }}
+                      >
+                        <path
+                          d="M4 6L8 10L12 6"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    {isSubjectDropdownOpen && (
+                      <div
+                        className="absolute z-50 w-full mt-1 rounded-lg border-2 shadow-lg max-h-60 overflow-auto"
+                        style={{
+                          background: 'var(--color-cream)',
+                          borderColor: 'var(--color-pink-medium)',
+                          boxShadow: '0 8px 24px rgba(244, 142, 184, 0.2)'
+                        }}
+                      >
+                        {subjectOptions.map((option) => {
+                          if (option.value === '') return null // Skip the placeholder option
+                          return (
+                            <button
+                              key={option.value}
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  subject: option.value
+                                }))
+                                setIsSubjectDropdownOpen(false)
+                              }}
+                              className="w-full text-left px-4 py-3 hover:bg-opacity-10 transition-colors"
+                              style={{
+                                fontFamily: 'var(--font-kollektif)',
+                                color: formData.subject === option.value ? 'var(--color-pink-medium)' : 'var(--color-brown-dark)',
+                                background: formData.subject === option.value 
+                                  ? 'rgba(244, 142, 184, 0.1)'
+                                  : 'transparent'
+                              }}
+                              onMouseEnter={(e) => {
+                                if (formData.subject !== option.value) {
+                                  e.currentTarget.style.background = 'rgba(244, 142, 184, 0.05)'
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (formData.subject !== option.value) {
+                                  e.currentTarget.style.background = 'transparent'
+                                }
+                              }}
+                            >
+                              {option.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -201,7 +292,7 @@ export default function Contact() {
 
                 {submitSuccess && (
                   <div className="p-4 rounded-lg" style={{ background: 'rgba(76, 175, 80, 0.1)', border: '2px solid rgba(76, 175, 80, 0.3)' }}>
-                    <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: '#4CAF50' }}>
+                    <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-leiko)', color: '#4CAF50' }}>
                       ✓ Message sent successfully! We&apos;ll get back to you soon.
                     </p>
                   </div>
@@ -214,7 +305,7 @@ export default function Contact() {
                   style={{
                     background: isSubmitting ? 'var(--color-brown-medium)' : 'var(--color-pink-medium)',
                     color: 'white',
-                    fontFamily: 'var(--font-kollektif)',
+                    fontFamily: 'var(--font-freshwost)',
                     border: '2px solid transparent'
                   }}
                   onMouseEnter={(e) => {
@@ -242,7 +333,7 @@ export default function Contact() {
               </h2>
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-xl font-semibold mb-4" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                  <h3 className="text-xl font-semibold mb-4" style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-brown-dark)' }}>
                     Email
                   </h3>
                   <a
@@ -264,7 +355,7 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-4" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                  <h3 className="text-xl font-semibold mb-4" style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-brown-dark)' }}>
                     Social Media
                   </h3>
                   <div className="space-y-3">
@@ -310,7 +401,7 @@ export default function Contact() {
                 </div>
 
                 <div className="pt-8 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
-                  <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                  <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
                     We typically respond within 24-48 hours. For urgent matters, please reach out via Instagram DM for faster response.
                   </p>
                 </div>
@@ -327,7 +418,7 @@ export default function Contact() {
             <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
               Frequently Asked Questions
             </h2>
-            <p className="text-lg" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+            <p className="text-lg" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
               Find answers to common questions about Youth 4 Elders
             </p>
           </div>
@@ -370,7 +461,7 @@ export default function Contact() {
                     <h3 
                       className="text-xl font-bold mb-3 transition-colors duration-300"
                       style={{
-                        fontFamily: 'var(--font-kollektif)',
+                        fontFamily: 'var(--font-freshwost)',
                         color: openFAQ === index ? 'var(--color-pink-medium)' : 'var(--color-brown-dark)'
                       }}
                     >
@@ -411,7 +502,7 @@ export default function Contact() {
                     <p
                       className="text-base leading-relaxed whitespace-pre-line"
                       style={{
-                        fontFamily: 'var(--font-kollektif)',
+                        fontFamily: 'var(--font-leiko)',
                         color: 'var(--color-brown-dark)',
                         opacity: 0.8
                       }}

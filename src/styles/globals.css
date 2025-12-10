@@ -788,6 +788,16 @@ body::-webkit-scrollbar {
   opacity: 1;
 }
 
+.animate-on-scroll.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.animate-on-scroll.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Mobile Navigation Margins - Only applies on mobile devices */
 @media (max-width: 767px) {
   .nav-mobile-margins {

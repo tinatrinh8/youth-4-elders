@@ -2,16 +2,44 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 
 export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
-  const [isClosing, setIsClosing] = useState(false)
+  const [closingDropdown, setClosingDropdown] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false)
+  const [language, setLanguage] = useState<'en' | 'fr'>('en')
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const pathname = usePathname()
   const isJoinUsPage = pathname === '/join-us'
+
+  // Load language preference from localStorage
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') as 'en' | 'fr' | null
+    if (savedLanguage) {
+      setLanguage(savedLanguage)
+    }
+  }, [])
+
+  // Save language preference to localStorage
+  const handleLanguageChange = (lang: 'en' | 'fr') => {
+    setLanguage(lang)
+    localStorage.setItem('language', lang)
+    // Clear any pending close timeout
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
+      closeTimeoutRef.current = null
+    }
+    setClosingDropdown('language')
+    closeTimeoutRef.current = setTimeout(() => {
+      setHoveredDropdown(null)
+      setClosingDropdown(null)
+      closeTimeoutRef.current = null
+    }, 300)
+    // Translation implementation will be added later
+  }
   
   // Set page background behind nav - no animation when leaving join-us page
   useEffect(() => {
@@ -113,15 +141,26 @@ export default function NavigationBar() {
           <div 
             className="relative"
             onMouseEnter={() => {
-              setIsClosing(false)
+              // Clear any pending close timeout
+              if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current)
+                closeTimeoutRef.current = null
+              }
+              // Immediately close any other dropdown
+              if (hoveredDropdown && hoveredDropdown !== 'who-we-are') {
+                setClosingDropdown(null)
+                setHoveredDropdown(null)
+              }
+              setClosingDropdown(null)
               setHoveredDropdown('who-we-are')
             }}
             onMouseLeave={() => {
               if (hoveredDropdown === 'who-we-are') {
-                setIsClosing(true)
-                setTimeout(() => {
+                setClosingDropdown('who-we-are')
+                closeTimeoutRef.current = setTimeout(() => {
                   setHoveredDropdown(null)
-                  setIsClosing(false)
+                  setClosingDropdown(null)
+                  closeTimeoutRef.current = null
                 }, 300) // Match animation duration
               }
             }}
@@ -145,18 +184,22 @@ export default function NavigationBar() {
               </svg>
             </div>
             {/* Invisible bridge to prevent gap issues */}
-            {(hoveredDropdown === 'who-we-are' || isClosing) && (
+            {hoveredDropdown === 'who-we-are' && (
               <div 
                 className="absolute top-full left-0 right-0 h-2 z-[109]"
                 style={{ marginTop: '-2px' }}
                 onMouseEnter={() => {
-                  setIsClosing(false)
+                  if (closeTimeoutRef.current) {
+                    clearTimeout(closeTimeoutRef.current)
+                    closeTimeoutRef.current = null
+                  }
+                  setClosingDropdown(null)
                   setHoveredDropdown('who-we-are')
                 }}
               />
             )}
             {/* Dropdown Menu */}
-            {(hoveredDropdown === 'who-we-are' || isClosing) && (
+            {(hoveredDropdown === 'who-we-are' || closingDropdown === 'who-we-are') && (
               <div 
                 className="absolute top-full left-0 w-56 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
@@ -164,11 +207,15 @@ export default function NavigationBar() {
                   border: '1px solid var(--color-brown-medium)',
                   boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
                   marginTop: '8px',
-                  animation: isClosing ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
+                  animation: closingDropdown === 'who-we-are' ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
                   transformOrigin: 'top'
                 }}
                 onMouseEnter={() => {
-                  setIsClosing(false)
+                  if (closeTimeoutRef.current) {
+                    clearTimeout(closeTimeoutRef.current)
+                    closeTimeoutRef.current = null
+                  }
+                  setClosingDropdown(null)
                   setHoveredDropdown('who-we-are')
                 }}
               >
@@ -250,6 +297,136 @@ export default function NavigationBar() {
           >
             Contact
           </Link>
+
+          {/* Language Switcher */}
+          <div 
+            className="relative ml-2"
+            onMouseEnter={() => {
+              // Clear any pending close timeout
+              if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current)
+                closeTimeoutRef.current = null
+              }
+              // Immediately close any other dropdown
+              if (hoveredDropdown && hoveredDropdown !== 'language') {
+                setClosingDropdown(null)
+                setHoveredDropdown(null)
+              }
+              setClosingDropdown(null)
+              setHoveredDropdown('language')
+            }}
+            onMouseLeave={() => {
+              if (hoveredDropdown === 'language') {
+                setClosingDropdown('language')
+                closeTimeoutRef.current = setTimeout(() => {
+                  setHoveredDropdown(null)
+                  setClosingDropdown(null)
+                  closeTimeoutRef.current = null
+                }, 300) // Match animation duration
+              }
+            }}
+          >
+            <div 
+              className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
+              style={{ 
+                color: hoveredDropdown === 'language' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
+                fontFamily: 'var(--font-kollektif)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-brown-medium)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--color-cream)'
+              }}
+            >
+              {language === 'en' ? 'EN' : 'FR'}
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+            {/* Invisible bridge to prevent gap issues */}
+            {hoveredDropdown === 'language' && (
+              <div 
+                className="absolute top-full left-0 right-0 h-2 z-[109]"
+                style={{ marginTop: '-2px' }}
+                onMouseEnter={() => {
+                  if (closeTimeoutRef.current) {
+                    clearTimeout(closeTimeoutRef.current)
+                    closeTimeoutRef.current = null
+                  }
+                  setClosingDropdown(null)
+                  setHoveredDropdown('language')
+                }}
+              />
+            )}
+            {/* Dropdown Menu */}
+            {(hoveredDropdown === 'language' || closingDropdown === 'language') && (
+              <div 
+                className="absolute top-full right-0 w-40 rounded-2xl shadow-xl z-[110] overflow-hidden"
+                style={{ 
+                  background: 'var(--color-cream)', 
+                  border: '1px solid var(--color-brown-medium)',
+                  boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
+                  marginTop: '8px',
+                  animation: closingDropdown === 'language' ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
+                  transformOrigin: 'top'
+                }}
+                onMouseEnter={() => {
+                  if (closeTimeoutRef.current) {
+                    clearTimeout(closeTimeoutRef.current)
+                    closeTimeoutRef.current = null
+                  }
+                  setClosingDropdown(null)
+                  setHoveredDropdown('language')
+                }}
+              >
+                <div className="py-2">
+                  <button
+                    onClick={() => handleLanguageChange('en')}
+                    className="block w-full text-left px-4 py-3 text-sm transition-all duration-200"
+                    style={{ 
+                      color: language === 'en' ? 'var(--color-brown-dark)' : 'var(--color-brown-medium)',
+                      fontFamily: 'var(--font-kollektif)',
+                      background: language === 'en' ? 'rgba(152, 90, 64, 0.1)' : 'transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(152, 90, 64, 0.1)'
+                      e.currentTarget.style.color = 'var(--color-brown-dark)'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (language !== 'en') {
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.color = 'var(--color-brown-medium)'
+                      }
+                    }}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => handleLanguageChange('fr')}
+                    className="block w-full text-left px-4 py-3 text-sm transition-all duration-200"
+                    style={{ 
+                      color: language === 'fr' ? 'var(--color-brown-dark)' : 'var(--color-brown-medium)',
+                      fontFamily: 'var(--font-kollektif)',
+                      background: language === 'fr' ? 'rgba(152, 90, 64, 0.1)' : 'transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(152, 90, 64, 0.1)'
+                      e.currentTarget.style.color = 'var(--color-brown-dark)'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (language !== 'fr') {
+                        e.currentTarget.style.background = 'transparent'
+                        e.currentTarget.style.color = 'var(--color-brown-medium)'
+                      }
+                    }}
+                  >
+                    Français
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile Menu Overlay */}
@@ -410,6 +587,65 @@ export default function NavigationBar() {
               >
                 Contact
               </Link>
+
+              {/* Mobile Language Switcher */}
+              <div className="border-t border-opacity-20 mt-2 pt-2" style={{ borderColor: 'var(--color-cream)' }}>
+                <div className="px-4 py-2 text-sm font-medium" style={{ 
+                  color: 'var(--color-cream)',
+                  fontFamily: 'var(--font-kollektif)',
+                  opacity: 0.8
+                }}>
+                  Language
+                </div>
+                <button
+                  onClick={() => handleLanguageChange('en')}
+                  className="w-full text-left px-4 py-2 text-base rounded-lg transition-colors"
+                  style={{
+                    fontFamily: 'var(--font-kollektif)',
+                    color: language === 'en' ? 'var(--color-cream)' : 'var(--color-cream)',
+                    background: language === 'en' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+                    opacity: language === 'en' ? 1 : 0.7
+                  }}
+                  onMouseEnter={(e) => {
+                    if (language !== 'en') {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.opacity = '1'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (language !== 'en') {
+                      e.currentTarget.style.background = 'transparent'
+                      e.currentTarget.style.opacity = '0.7'
+                    }
+                  }}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => handleLanguageChange('fr')}
+                  className="w-full text-left px-4 py-2 text-base rounded-lg transition-colors"
+                  style={{
+                    fontFamily: 'var(--font-kollektif)',
+                    color: language === 'fr' ? 'var(--color-cream)' : 'var(--color-cream)',
+                    background: language === 'fr' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+                    opacity: language === 'fr' ? 1 : 0.7
+                  }}
+                  onMouseEnter={(e) => {
+                    if (language !== 'fr') {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.opacity = '1'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (language !== 'fr') {
+                      e.currentTarget.style.background = 'transparent'
+                      e.currentTarget.style.opacity = '0.7'
+                    }
+                  }}
+                >
+                  Français
+                </button>
+              </div>
             </div>
           </div>
         </div>
