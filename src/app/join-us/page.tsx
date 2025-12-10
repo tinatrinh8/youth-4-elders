@@ -1,7 +1,122 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+
+// Confetti Component - Shoots from left and right sides
+const ConfettiComponent = ({ isLightMode, boxRef }: { isLightMode: boolean; boxRef?: React.RefObject<HTMLDivElement | null> }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const confettiColors = isLightMode 
+      ? ['#F48EB8', '#EDA2C3', '#c0507e', '#F7F0E3'] // Pink shades for light mode
+      : ['#985A40', '#64321B', '#F7F0E3', '#EDA2C3'] // Brown/cream for dark mode
+
+    // Get box position for shooting from sides
+    let boxLeft = window.innerWidth * 0.5 - 400 // Approximate center minus half width
+    let boxRight = window.innerWidth * 0.5 + 400
+    let boxTop = window.innerHeight * 0.4 // Approximate vertical center
+    let boxHeight = 400
+
+    if (boxRef?.current) {
+      const rect = boxRef.current.getBoundingClientRect()
+      boxLeft = rect.left
+      boxRight = rect.right
+      boxTop = rect.top + rect.height / 2
+      boxHeight = rect.height
+    }
+
+    const confetti: Array<{
+      x: number
+      y: number
+      vx: number
+      vy: number
+      color: string
+      size: number
+      rotation: number
+      rotationSpeed: number
+      side: 'left' | 'right'
+    }> = []
+
+    // Create confetti pieces shooting from left and right
+    for (let i = 0; i < 100; i++) {
+      const side = i % 2 === 0 ? 'left' : 'right'
+      const startX = side === 'left' ? boxLeft : boxRight
+      const startY = boxTop + (Math.random() - 0.5) * boxHeight
+      
+      // Velocity: shoot outward from the box
+      const angle = side === 'left' 
+        ? Math.random() * Math.PI / 3 - Math.PI / 6 // -30 to 0 degrees
+        : Math.random() * Math.PI / 3 + (2 * Math.PI / 3) // 120 to 150 degrees
+      
+      const speed = Math.random() * 8 + 4
+      
+      confetti.push({
+        x: startX,
+        y: startY,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2, // Slight upward initial velocity
+        color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+        size: Math.random() * 8 + 4,
+        rotation: Math.random() * 360,
+        rotationSpeed: (Math.random() - 0.5) * 15,
+        side
+      })
+    }
+
+    const startTime = Date.now()
+    const duration = 2000 // 2 seconds
+
+    let animationId: number
+    const animate = () => {
+      const elapsed = Date.now() - startTime
+      if (elapsed > duration) {
+        return // Stop animation after 2 seconds
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      confetti.forEach((piece) => {
+        piece.x += piece.vx
+        piece.y += piece.vy
+        piece.rotation += piece.rotationSpeed
+        piece.vy += 0.15 // gravity
+
+        ctx.save()
+        ctx.translate(piece.x, piece.y)
+        ctx.rotate((piece.rotation * Math.PI) / 180)
+        ctx.fillStyle = piece.color
+        ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size)
+        ctx.restore()
+      })
+
+      animationId = requestAnimationFrame(animate)
+    }
+
+    animate()
+
+    return () => {
+      cancelAnimationFrame(animationId)
+    }
+  }, [isLightMode, boxRef])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none z-50"
+      style={{ position: 'fixed' }}
+    />
+  )
+}
 
 interface FormData {
   name: string
@@ -113,6 +228,9 @@ export default function JoinUs() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isLightMode, setIsLightMode] = useState(false) // false = dark mode (pink bg, brown content), true = light mode (cream bg, pink content)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right')
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [isInitialViewVisible, setIsInitialViewVisible] = useState(false)
 
   // Validation functions
   const validateField = (id: keyof FormData, value: string): string => {
@@ -217,12 +335,14 @@ export default function JoinUs() {
       const newErrors = { ...fieldErrors }
       delete newErrors[currentQuestion.id]
       setFieldErrors(newErrors)
+      setSlideDirection('right')
       setCurrentStep(currentStep + 1)
     }
   }
 
   const handlePrevious = () => {
     if (currentStep > 0) {
+      setSlideDirection('left')
       setCurrentStep(currentStep - 1)
     }
   }
@@ -248,6 +368,9 @@ export default function JoinUs() {
       })
 
       if (response.ok) {
+        // Add a small delay to show loading state
+        await new Promise(resolve => setTimeout(resolve, 1500))
+        setShowConfetti(true)
         setSubmitStatus('success')
         setFormData({
           name: '',
@@ -260,6 +383,8 @@ export default function JoinUs() {
         })
         setCurrentStep(0)
         setHasStarted(false)
+        // Stop confetti after 2 seconds
+        setTimeout(() => setShowConfetti(false), 2000)
       } else {
         setSubmitStatus('error')
       }
@@ -313,16 +438,55 @@ export default function JoinUs() {
     }
   }, [isLightMode])
 
+  // Page load animation
+  useEffect(() => {
+    setTimeout(() => {
+      setIsInitialViewVisible(true)
+    }, 100)
+  }, [])
+
   const toggleLightMode = () => {
     setIsLightMode(!isLightMode)
   }
 
+  const successBoxRef = useRef<HTMLDivElement>(null)
+
+  // Show loading state while submitting
+  if (isSubmitting && submitStatus === 'idle') {
+    return (
+      <main className="min-h-screen pt-[120px] pb-[120px] relative flex items-center justify-center" style={{ background: 'transparent' }}>
+        <div className="text-center">
+          <div className="mb-8">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-solid border-current border-r-transparent" 
+              style={{ 
+                color: isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)',
+                animation: 'spin 1s linear infinite'
+              }}
+            />
+          </div>
+          <p 
+            className="text-2xl font-semibold"
+            style={{ 
+              fontFamily: 'var(--font-leiko)', 
+              color: isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)' 
+            }}
+          >
+            Submitting your application...
+          </p>
+        </div>
+      </main>
+    )
+  }
+
   if (submitStatus === 'success') {
     return (
-      <main className="min-h-screen pt-[120px] pb-[120px] relative" style={{ background: 'transparent' }}>
+      <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden" style={{ background: 'transparent' }}>
+        {/* Confetti Effect */}
+        {showConfetti && <ConfettiComponent isLightMode={isLightMode} boxRef={successBoxRef as React.RefObject<HTMLDivElement>} />}
         <div className="max-w-2xl mx-auto px-8 pt-4 md:pt-8 pb-8 md:pb-12 text-center relative">
           <div 
-            className="rounded-2xl p-12 shadow-lg"
+            ref={successBoxRef}
+            className="rounded-2xl p-12 shadow-lg animate-success-fade-in"
             style={{ 
               background: isLightMode ? 'var(--color-pink-medium)' : 'var(--color-brown-medium)', 
               border: `3px solid ${isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)'}`,
@@ -339,19 +503,19 @@ export default function JoinUs() {
               />
             </div>
             <h2 
-              className="text-4xl md:text-5xl font-bold mb-4"
+              className="text-4xl md:text-5xl font-bold mb-4 animate-success-title"
               style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-cream)' }}
             >
               Thank You!
             </h2>
             <p 
-              className="text-lg md:text-xl mb-4"
+              className="text-lg md:text-xl mb-4 animate-success-text"
               style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}
             >
               Thank you for joining Youth 4 Elders as a volunteer! We&apos;ll be in touch with updates about upcoming events and volunteer opportunities.
             </p>
             <p 
-              className="text-lg md:text-xl mb-8"
+              className="text-lg md:text-xl mb-8 animate-success-text"
               style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}
             >
               For now,{' '}
@@ -378,7 +542,7 @@ export default function JoinUs() {
                 setHasStarted(false)
                 setCurrentStep(0)
               }}
-              className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg"
+              className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg animate-success-button"
               style={{
                 background: 'var(--color-cream)',
                 color: isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)',
@@ -428,17 +592,25 @@ export default function JoinUs() {
 
   if (!hasStarted) {
     return (
-      <main className="min-h-screen pt-[120px] relative" style={{ background: 'transparent' }}>
+      <main className="min-h-screen pt-[120px] relative overflow-hidden" style={{ background: 'transparent' }}>
+        {/* Confetti Effect */}
+        {showConfetti && <ConfettiComponent isLightMode={isLightMode} />}
         <div className="max-w-7xl mx-auto px-8 pt-4 md:pt-8 pb-8 md:pb-12 relative">
-          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-12 mb-24 md:mb-32">
+          <div className={`flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-12 mb-24 md:mb-32 transition-all duration-1000 ${
+            isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             <h1 
-              className="text-6xl md:text-8xl lg:text-9xl font-bold text-center md:text-left flex-shrink-0"
+              className={`text-6xl md:text-8xl lg:text-9xl font-bold text-center md:text-left flex-shrink-0 transition-all duration-1000 delay-200 ${
+                isInitialViewVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+              }`}
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)' }}
             >
               Join Us
             </h1>
             <p 
-              className="text-xl md:text-2xl lg:text-3xl leading-relaxed text-center md:text-right flex-1 max-w-2xl"
+              className={`text-xl md:text-2xl lg:text-3xl leading-relaxed text-center md:text-right flex-1 max-w-2xl transition-all duration-1000 delay-300 ${
+                isInitialViewVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
+              }`}
               style={{ fontFamily: 'var(--font-leiko)', color: isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)' }}
             >
               Join Youth 4 Elders as a volunteer and become part of our student community!
@@ -447,7 +619,9 @@ export default function JoinUs() {
           
           {/* Quiz Box - Larger */}
           <div 
-            className="rounded-3xl p-12 md:p-16 shadow-xl text-center max-w-4xl mx-auto mb-8"
+            className={`rounded-3xl p-12 md:p-16 shadow-xl text-center max-w-4xl mx-auto mb-8 transition-all duration-1000 delay-500 ${
+              isInitialViewVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'
+            }`}
             style={{ 
               background: isLightMode ? 'var(--color-pink-medium)' : 'var(--color-brown-medium)', 
               border: `3px solid ${isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)'}`,
@@ -461,7 +635,10 @@ export default function JoinUs() {
               Ready to get started? We&apos;ll ask you a few quick questions to learn more about you.
             </p>
             <button
-              onClick={() => setHasStarted(true)}
+              onClick={() => {
+                setSlideDirection('right')
+                setHasStarted(true)
+              }}
               className="px-12 py-5 rounded-full font-semibold text-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
               style={{
                 background: 'var(--color-cream)',
@@ -483,7 +660,11 @@ export default function JoinUs() {
             
             {/* TEST BUTTON - Remove this after testing */}
             <button
-              onClick={() => setSubmitStatus('success')}
+              onClick={() => {
+                setShowConfetti(true)
+                setSubmitStatus('success')
+                setTimeout(() => setShowConfetti(false), 2000)
+              }}
               className="mt-4 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 hover:scale-105"
               style={{
                 background: 'transparent',
@@ -506,20 +687,22 @@ export default function JoinUs() {
             </button>
           </div>
 
-          {/* Notice about Exec Applications - Below quiz box, different design */}
+          {/* Notice about Exec Applications - Below quiz box, different design with infinite animation */}
           <div 
-            className="max-w-4xl mx-auto mb-16 md:mb-24 relative"
+            className={`max-w-4xl mx-auto mb-16 md:mb-24 relative important-note-container transition-all duration-1000 delay-700 ${
+              isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
             style={{ 
               transform: 'rotate(-1deg)',
             }}
           >
             <div 
-              className="px-8 py-6 rounded-lg relative"
+              className="px-8 py-6 rounded-lg relative important-note-box"
+              data-light-mode={isLightMode}
               style={{ 
                 background: isLightMode ? 'var(--color-pink-light)' : 'var(--color-brown-dark)',
                 border: '2px dashed var(--color-cream)',
                 borderTop: '4px solid var(--color-cream)',
-                boxShadow: isLightMode ? '0 6px 24px rgba(237, 162, 195, 0.4), 0 2px 8px rgba(237, 162, 195, 0.3)' : '0 6px 24px rgba(100, 50, 27, 0.4), 0 2px 8px rgba(100, 50, 27, 0.3)',
                 position: 'relative',
               }}
             >
@@ -586,7 +769,7 @@ export default function JoinUs() {
     <main className="min-h-screen pt-[120px] relative" style={{ background: 'transparent' }}>
       <div className="max-w-3xl mx-auto px-8 pt-4 md:pt-8 pb-8 md:pb-12 relative">
         {/* Progress Bar */}
-        <div className="mb-8">
+        <div className="mb-8 animate-progress-fade-in">
           <div className="flex justify-between items-center mb-2">
             <span 
               className="text-sm font-semibold"
@@ -615,13 +798,17 @@ export default function JoinUs() {
           </div>
         </div>
 
-        {/* Question Card */}
+        {/* Question Card with Slide Animation */}
         <div 
-          className="rounded-2xl p-8 md:p-12 shadow-lg mb-16 md:mb-24 min-h-[400px] flex flex-col justify-center"
+          className={`rounded-2xl p-8 md:p-12 shadow-lg mb-16 md:mb-24 min-h-[400px] flex flex-col justify-center transition-transform duration-500 ease-in-out ${
+            slideDirection === 'right' ? 'slide-in-right' : 'slide-in-left'
+          }`}
           style={{ 
-            background: isLightMode ? 'var(--color-cream)' : 'var(--color-cream)', 
+            background: 'var(--color-cream)', 
             border: `3px solid ${isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-medium)'}`,
-            boxShadow: isLightMode ? '0 8px 24px rgba(217, 115, 159, 0.2)' : '0 8px 24px rgba(152, 90, 64, 0.2)'
+            boxShadow: isLightMode 
+              ? '0 8px 24px rgba(217, 115, 159, 0.2)' 
+              : '0 8px 24px rgba(152, 90, 64, 0.2)'
           }}
         >
           <h2 
@@ -835,9 +1022,9 @@ export default function JoinUs() {
           {/* Error Message */}
           {currentFieldError && (
             <div className="mb-6 -mt-4">
-              <p 
+              <p
                 className="text-sm text-red-600"
-                style={{ fontFamily: 'var(--font-leiko)' }}
+                style={{ fontFamily: 'var(--font-kollektif)' }}
               >
                 {currentFieldError}
               </p>
@@ -966,7 +1153,7 @@ export default function JoinUs() {
                 border: '2px solid rgba(244, 67, 54, 0.3)'
               }}
             >
-              <p className="text-red-700" style={{ fontFamily: 'var(--font-leiko)' }}>
+              <p className="text-red-700" style={{ fontFamily: 'var(--font-kollektif)' }}>
                 ✗ There was an error submitting your application. Please try again.
               </p>
             </div>

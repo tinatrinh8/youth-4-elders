@@ -434,6 +434,164 @@ body::-webkit-scrollbar {
   will-change: transform;
 }
 
+/* Slide Animations for Join Us Page */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+/* Important Note Infinite Animation */
+@keyframes importantNoteFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-1.5deg);
+  }
+}
+
+@keyframes importantNotePulseLight {
+  0%, 100% {
+    box-shadow: 0 6px 24px rgba(237, 162, 195, 0.4), 0 2px 8px rgba(237, 162, 195, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(237, 162, 195, 0.6), 0 4px 12px rgba(237, 162, 195, 0.5);
+  }
+}
+
+@keyframes importantNotePulseDark {
+  0%, 100% {
+    box-shadow: 0 6px 24px rgba(100, 50, 27, 0.4), 0 2px 8px rgba(100, 50, 27, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(100, 50, 27, 0.6), 0 4px 12px rgba(100, 50, 27, 0.5);
+  }
+}
+
+.important-note-container {
+  animation: importantNoteFloat 3s ease-in-out infinite;
+}
+
+.important-note-box[data-light-mode="true"] {
+  animation: importantNoteFloat 3s ease-in-out infinite, importantNotePulseLight 2s ease-in-out infinite;
+}
+
+.important-note-box[data-light-mode="false"] {
+  animation: importantNoteFloat 3s ease-in-out infinite, importantNotePulseDark 2s ease-in-out infinite;
+}
+
+/* Success Page Animations */
+@keyframes successFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes successTitle {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes successText {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes successButton {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-success-fade-in {
+  animation: successFadeIn 0.6s ease-out;
+}
+
+.animate-success-title {
+  animation: successTitle 0.8s ease-out 0.2s both;
+}
+
+.animate-success-text {
+  animation: successText 0.8s ease-out 0.4s both;
+}
+
+.animate-success-button {
+  animation: successButton 0.8s ease-out 0.6s both;
+}
+
+/* Progress Bar Animation */
+@keyframes progressFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-progress-fade-in {
+  animation: progressFadeIn 0.5s ease-out;
+}
+
+/* Loading Spinner Animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Parallax Background Effect */
 .parallax-bg {
   will-change: transform;
