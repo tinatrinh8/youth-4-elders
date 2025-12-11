@@ -132,7 +132,7 @@ export default function Team() {
             className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${descriptionVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
             style={{ 
               fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-brown-medium)',
+              color: 'var(--color-brown-dark)',
               marginBottom: '250px',
               animationDelay: descriptionVisible ? '0s' : '0s'
             }}
@@ -217,14 +217,14 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
   
   const blobShape = blobShapes[index % blobShapes.length]
   
-  // Alternate between pink and yellow colors staying on theme
+  // Alternate between pink colors staying on theme
   const blobColors = [
     'var(--color-pink-medium)',
     'var(--color-pink-light)',
-    '#FFC370', // Yellow from the color palette
-    '#FFA970', // Light orange/peach
+    'var(--color-pink-dark)',
     'var(--color-pink-medium)',
-    '#FFC370', // Yellow
+    'var(--color-pink-light)',
+    'var(--color-pink-dark)',
   ]
   const blobColor = blobColors[index % blobColors.length]
 
@@ -277,7 +277,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
             >
               <div 
                 className="text-5xl"
-                style={{ color: 'var(--color-brown-medium)', opacity: 0.3 }}
+                style={{ color: 'var(--color-pink-medium)', opacity: 0.3 }}
               >
                 👤
               </div>
@@ -296,8 +296,8 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
 
       {/* Role */}
       <p 
-        className="text-sm md:text-base mb-3 text-center"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
+        className="text-sm md:text-base mb-3 text-center italic"
+        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
       >
         {member.role}
       </p>
@@ -321,8 +321,8 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
         className="rounded-xl p-5 w-full mt-2 text-left"
         style={{ 
           background: 'var(--color-cream)',
-          border: '2px solid var(--color-brown-medium)',
-          boxShadow: '0 4px 12px rgba(152, 90, 64, 0.15)',
+          border: '2px solid var(--color-pink-medium)',
+          boxShadow: '0 4px 12px rgba(209, 142, 151, 0.15)',
         }}
       >
         <div className="space-y-3 text-sm">
@@ -334,18 +334,18 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
               Year {member.yearOfStudy}
             </span>
             {' • '}
-            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
               {member.program}
             </span>
           </div>
-          <div className="pt-2 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
+          <div className="pt-2 border-t" style={{ borderColor: 'rgba(209, 142, 151, 0.2)' }}>
             <span 
               className="font-semibold"
               style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
             >
               Fun Fact:{' '}
             </span>
-            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
               {member.funFact}
             </span>
           </div>

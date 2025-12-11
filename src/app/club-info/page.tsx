@@ -71,7 +71,7 @@ export default function ClubInfo() {
                   }}
                 >
                   We&apos;re Not Just a Club.<br />We&apos;re Your Community Partners.
-                </h1>
+        </h1>
                 
                 <div 
                   className="w-16 h-0.5 mb-4 md:mb-5"

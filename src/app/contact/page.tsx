@@ -158,21 +158,21 @@ export default function Contact() {
                       type="button"
                       onClick={() => setIsSubjectDropdownOpen(!isSubjectDropdownOpen)}
                       className="w-full py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-200 text-left flex items-center relative"
-                      style={{
+                    style={{
                         borderColor: formData.subject 
                           ? 'var(--color-pink-medium)' 
                           : 'rgba(152, 90, 64, 0.3)',
                         fontFamily: 'var(--font-kollektif)',
-                        background: 'var(--color-cream)',
+                      background: 'var(--color-cream)',
                         color: formData.subject ? 'var(--color-brown-dark)' : '#999',
                         paddingLeft: '1rem',
                         paddingRight: '3rem'
-                      }}
-                      onFocus={(e) => {
-                        e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
                         e.currentTarget.style.boxShadow = '0 0 0 3px rgba(244, 142, 184, 0.1)'
-                      }}
-                      onBlur={(e) => {
+                    }}
+                    onBlur={(e) => {
                         setTimeout(() => {
                           setIsSubjectDropdownOpen(false)
                           if (e.currentTarget) {

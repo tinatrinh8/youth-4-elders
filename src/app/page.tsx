@@ -164,7 +164,7 @@ export default function Home() {
     // Marketing text "... is now live" - appears last (after Youth 4 Elders animation)
     setTimeout(() => {
       setVisibleElements((prev) => new Set(prev).add('hero-marketing'))
-    }, 200)
+    }, 1600)
 
     const observerOptions = {
       threshold: 0.1,
@@ -218,7 +218,7 @@ export default function Home() {
       {(showModal && !showSuccess) || (isClosing && !showSuccess) ? (
         <div 
           className={`fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
-          style={{ background: 'rgba(244, 142, 184, 0.6)' }}
+          style={{ background: 'rgba(188, 87, 39, 0.6)' }}
         >
           <div 
             className={`relative max-w-md w-full rounded-lg p-8 shadow-2xl ${isClosing ? 'animate-fadeOut' : 'animate-popup'}`}
@@ -253,8 +253,8 @@ export default function Home() {
                     background: 'white'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--color-pink-medium)'
-                    e.target.style.boxShadow = '0 0 0 3px rgba(244, 142, 184, 0.1)'
+                    e.target.style.borderColor = 'var(--color-brown-medium)'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(188, 87, 39, 0.1)'
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = 'var(--color-brown-dark)'
@@ -269,7 +269,7 @@ export default function Home() {
                     color: 'white'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'var(--color-pink-medium)'
+                    e.currentTarget.style.background = 'var(--color-brown-medium)'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = 'var(--color-brown-dark)'
@@ -296,7 +296,7 @@ export default function Home() {
                 textDecoration: 'underline'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-pink-medium)'
+                e.currentTarget.style.color = 'var(--color-brown-medium)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.color = 'var(--color-brown-dark)'
@@ -312,7 +312,7 @@ export default function Home() {
       {(showModal && showSuccess) || (isClosing && showSuccess) ? (
         <div 
           className={`fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
-          style={{ background: 'rgba(244, 142, 184, 0.6)' }}
+          style={{ background: 'rgba(188, 87, 39, 0.6)' }}
           onClick={handleClose}
         >
           <div 
@@ -327,7 +327,7 @@ export default function Home() {
             <div className="flex justify-center mb-6">
               <div 
                 className="w-20 h-20 rounded-full flex items-center justify-center"
-                style={{ background: 'var(--color-pink-medium)' }}
+                style={{ background: 'var(--color-brown-medium)' }}
               >
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -409,7 +409,7 @@ export default function Home() {
         >
           <p className="text-lg md:text-xl lg:text-2xl font-bold leading-tight tracking-tight" style={{ 
             fontFamily: 'var(--font-leiko)', 
-            color: '#985A40',
+            color: 'var(--color-pink-medium)',
             textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
           }}>
             ... is now live !
@@ -422,16 +422,17 @@ export default function Home() {
           style={{ marginBottom: '-60px', overflow: 'visible' }}
         >
           <h1 
-            className="text-[10rem] md:text-[12rem] lg:text-[16rem] font-bold italic leading-none animate-hero-title-glow"
+            className="text-[10rem] md:text-[12rem] lg:text-[16rem] font-bold italic leading-none"
             style={{ 
               fontFamily: 'var(--font-vintage-stylist)', 
-              color: '#985A40',
+              color: 'var(--color-pink-medium)',
               mixBlendMode: 'normal',
               position: 'relative',
               zIndex: 50,
               opacity: 1,
               visibility: 'visible',
-              transform: 'translateY(0)'
+              transform: 'translateY(0)',
+              textShadow: 'none'
             }}
           >
             Youth 4 Elders
@@ -441,59 +442,59 @@ export default function Home() {
       </section>
 
       {/* "Nothing great is built alone" Section with Role Tags */}
-      <section className="relative z-10 py-32 md:py-48" style={{ background: '#985A40' }}>
+      <section className="relative z-10 py-32 md:py-48" style={{ background: 'var(--color-pink-medium)' }}>
         <div className="max-w-7xl mx-auto px-8">
           {/* Main Headline with Role Tags */}
           <div className="relative text-center mb-20 md:mb-28">
             {/* Role Tags positioned around headline */}
             <div className="absolute -top-4 left-0 md:left-8 animate-float" style={{ animationDelay: '0s' }}>
               <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
-                borderColor: 'var(--color-pink-medium)', 
+                borderColor: 'var(--color-olive)', 
                 color: 'var(--color-cream)',
                 fontFamily: 'var(--font-kollektif)',
-                background: 'var(--color-pink-light)'
+                background: 'var(--color-olive)'
               }}>
-                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> VOLUNTEER
+                <span style={{ color: 'var(--color-cream)' }}>+</span> VOLUNTEER
               </span>
             </div>
             <div className="absolute -bottom-4 left-0 md:left-8 animate-float" style={{ animationDelay: '0.5s' }}>
               <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
-                borderColor: 'var(--color-pink-medium)', 
+                borderColor: 'var(--color-olive)', 
                 color: 'var(--color-cream)',
                 fontFamily: 'var(--font-lato)',
-                background: 'var(--color-pink-light)'
+                background: 'var(--color-olive)'
               }}>
-                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> WORKSHOPS
+                <span style={{ color: 'var(--color-cream)' }}>+</span> WORKSHOPS
               </span>
             </div>
             <div className="absolute -bottom-4 right-0 md:right-8 animate-float" style={{ animationDelay: '1s' }}>
               <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
-                borderColor: 'var(--color-pink-medium)', 
+                borderColor: 'var(--color-olive)', 
                 color: 'var(--color-cream)',
                 fontFamily: 'var(--font-lato)',
-                background: 'var(--color-pink-light)'
+                background: 'var(--color-olive)'
               }}>
-                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> EVENTS
+                <span style={{ color: 'var(--color-cream)' }}>+</span> EVENTS
               </span>
             </div>
             <div className="absolute -top-4 right-0 md:right-8 animate-float" style={{ animationDelay: '1.5s' }}>
               <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
-                borderColor: 'var(--color-pink-medium)', 
+                borderColor: 'var(--color-olive)', 
                 color: 'var(--color-cream)',
                 fontFamily: 'var(--font-lato)',
-                background: 'var(--color-pink-light)'
+                background: 'var(--color-olive)'
               }}>
-                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> COMMUNITY
+                <span style={{ color: 'var(--color-cream)' }}>+</span> COMMUNITY
               </span>
             </div>
             <div className="absolute top-1/2 -right-8 md:-right-12 transform -translate-y-1/2 animate-float" style={{ animationDelay: '2s' }}>
               <span className="px-3 py-1 rounded-full text-sm font-medium border-2" style={{ 
-                borderColor: 'var(--color-pink-medium)', 
+                borderColor: 'var(--color-olive)', 
                 color: 'var(--color-cream)',
                 fontFamily: 'var(--font-lato)',
-                background: 'var(--color-pink-light)'
+                background: 'var(--color-olive)'
               }}>
-                <span style={{ color: 'var(--color-pink-medium)' }}>+</span> CONNECTIONS
+                <span style={{ color: 'var(--color-cream)' }}>+</span> CONNECTIONS
               </span>
             </div>
 
@@ -645,7 +646,7 @@ export default function Home() {
             </h2>
             <p 
               className={`text-lg md:text-xl mb-8 leading-relaxed animate-on-scroll fade ${visibleElements.has('get-involved-description') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)' }}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
               data-animate-id="get-involved-description"
             >
               Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
@@ -658,18 +659,18 @@ export default function Home() {
                 href="/join-us"
                 className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
                 style={{
-                  background: 'var(--color-pink-medium)',
+                  background: 'var(--color-brown-medium)',
                   color: 'white',
                   fontFamily: 'var(--font-kollektif)',
                   border: '2px solid transparent'
                 }}
                 onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.currentTarget.style.borderColor = '#D85A8F'
-                  e.currentTarget.style.background = '#D85A8F'
+                  e.currentTarget.style.borderColor = 'var(--color-orange-dark)'
+                  e.currentTarget.style.background = 'var(--color-orange-dark)'
                 }}
                 onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
                   e.currentTarget.style.borderColor = 'transparent'
-                  e.currentTarget.style.background = 'var(--color-pink-medium)'
+                  e.currentTarget.style.background = 'var(--color-brown-medium)'
                 }}
               >
                 LEARN MORE
@@ -710,7 +711,7 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-8 relative z-10 -mt-2 md:mt-2 lg:mt-4">
           {/* Event Cards Grid */}
-          <div className="flex flex-col md:flex-row gap-2 md:gap-3 mb-16 md:mb-20 overflow-x-auto" style={{ minHeight: '500px' }}>
+          <div className="flex flex-col md:flex-row gap-2 md:gap-3 mb-16 md:mb-20" style={{ minHeight: '500px', overflowX: 'hidden' }}>
             {/* Event Card 1 - Left Card */}
             <div 
               className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-left ${visibleElements.has('event-card-1') ? 'visible' : ''}`}
@@ -773,15 +774,15 @@ export default function Home() {
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 group-hover:pb-8 transition-all duration-500" style={{ background: 'rgba(247, 240, 227, 0.95)' }}>
-                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-medium)', padding: '1.5rem' }}>
+                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                   Workshop Series
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                     Started Sept 16, 2025 • Weekly
                   </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                     A 6-week weekly workshop series teaching and helping with technology. Will resume again shortly.
                   </p>
                 </div>
@@ -850,15 +851,15 @@ export default function Home() {
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 group-hover:pb-8 transition-all duration-500" style={{ background: 'rgba(247, 240, 227, 0.95)' }}>
-                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-medium)', padding: '1.5rem' }}>
+                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                   School Club Fair
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                     Sept 3rd, 2025
                   </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                     At the beginning of the school year, we joined the club fair to connect with students and share our mission.
                   </p>
                 </div>
@@ -927,15 +928,15 @@ export default function Home() {
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 group-hover:pb-8 transition-all duration-500" style={{ background: 'rgba(247, 240, 227, 0.95)' }}>
-                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-medium)', padding: '1.5rem' }}>
+                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                   Sips, Samples, Social
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                     Nov 10th, 2025
                   </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                     Sample delicious goodies from our favourite local vendors at Abbotsford Seniors Centre.
                   </p>
                 </div>
@@ -949,10 +950,10 @@ export default function Home() {
               className={`animate-on-scroll slide-left ${visibleElements.has('event-types') ? 'visible' : ''}`}
               data-animate-id="event-types"
             >
-              <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+              <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
                 Event Types
               </p>
-              <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}>
+              <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
                 Workshops / Community / Volunteering / Social
               </p>
             </div>
@@ -961,14 +962,14 @@ export default function Home() {
               className={`group font-semibold text-lg transition-all duration-300 flex items-center gap-2 relative animate-on-scroll slide-right ${visibleElements.has('event-view-more') ? 'visible' : ''}`}
               data-animate-id="event-view-more"
               style={{
-                color: 'var(--color-cream)',
+                color: 'var(--color-olive)',
                 fontFamily: 'var(--font-kollektif)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-pink-medium)'
+                e.currentTarget.style.color = 'var(--color-olive)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'var(--color-cream)'
+                e.currentTarget.style.color = 'var(--color-olive)'
               }}
             >
               <span>VIEW MORE</span>
@@ -983,7 +984,7 @@ export default function Home() {
               {/* Animated underline on hover */}
               <span 
                 className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full"
-                style={{ background: 'var(--color-pink-medium)' }}
+                style={{ background: 'var(--color-olive)' }}
               />
             </a>
           </div>
@@ -1014,10 +1015,10 @@ export default function Home() {
                     style={{
                       transitionDelay: `${index * 0.1}s`,
                       background: update.hasCountdown 
-                        ? 'rgba(244, 142, 184, 0.1)' 
+                        ? 'rgba(188, 87, 39, 0.1)' 
                         : 'var(--color-cream)',
                       border: update.hasCountdown
-                        ? '2px solid var(--color-pink-medium)'
+                        ? '2px solid var(--color-brown-medium)'
                         : '2px solid rgba(152, 90, 64, 0.2)'
                     }}
                   >
@@ -1025,22 +1026,18 @@ export default function Home() {
                       <div 
                         className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
                         style={{
-                          background: update.hasCountdown
-                            ? 'var(--color-pink-medium)'
-                            : 'var(--color-brown-medium)',
-                          color: update.hasCountdown
-                            ? 'white'
-                            : 'var(--color-cream)',
+                          background: 'var(--color-brown-medium)',
+                          color: 'white',
                           fontFamily: 'var(--font-kollektif)'
                         }}
                       >
                         {update.icon}
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                        <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
                           {update.title}
                         </h4>
-                        <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                        <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
                           {update.description}
                         </p>
                       </div>
@@ -1208,9 +1205,9 @@ export default function Home() {
             className={`relative rounded-2xl p-5 md:p-8 animate-on-scroll slide-up ${visibleElements.has('impact-quote') ? 'visible' : ''}`}
             data-animate-id="impact-quote"
             style={{
-              background: 'linear-gradient(135deg, rgba(244, 142, 184, 0.15) 0%, rgba(237, 162, 195, 0.08) 100%)',
-              border: '2px dashed rgba(244, 142, 184, 0.3)',
-              boxShadow: '0 4px 16px rgba(244, 142, 184, 0.1)'
+              background: 'rgba(188, 87, 39, 0.15)',
+              border: '2px dashed rgba(188, 87, 39, 0.3)',
+              boxShadow: '0 4px 16px rgba(188, 87, 39, 0.1)'
             }}
           >
             {/* Decorative quote mark - top left */}
@@ -1218,7 +1215,7 @@ export default function Home() {
               className="absolute top-1 left-3 md:left-4 text-4xl md:text-5xl opacity-25"
               style={{ 
                 fontFamily: 'var(--font-vintage-stylist)',
-                color: 'var(--color-pink-medium)',
+                color: 'var(--color-brown-medium)',
                 lineHeight: 1
               }}
             >
@@ -1229,7 +1226,7 @@ export default function Home() {
               className="absolute bottom-1 right-3 md:right-4 text-4xl md:text-5xl opacity-25"
               style={{ 
                 fontFamily: 'var(--font-vintage-stylist)',
-                color: 'var(--color-pink-medium)',
+                color: 'var(--color-brown-medium)',
                 lineHeight: 1,
                 transform: 'rotate(180deg)'
               }}

@@ -31,7 +31,7 @@ export default function Footer() {
                     style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
@@ -50,7 +50,7 @@ export default function Footer() {
                     style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
@@ -69,7 +69,7 @@ export default function Footer() {
                     style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
@@ -88,7 +88,7 @@ export default function Footer() {
                     style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
@@ -118,7 +118,7 @@ export default function Footer() {
                     style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
@@ -139,7 +139,7 @@ export default function Footer() {
                     style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
@@ -158,7 +158,7 @@ export default function Footer() {
                     style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
@@ -177,7 +177,7 @@ export default function Footer() {
                     style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-pink-medium)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
@@ -228,8 +228,8 @@ export default function Footer() {
           color: 'var(--color-cream)'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'var(--color-pink-medium)'
-          e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+          e.currentTarget.style.background = 'var(--color-olive)'
+          e.currentTarget.style.borderColor = 'var(--color-olive)'
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = 'var(--color-brown-dark)'

@@ -12,22 +12,26 @@
   */
   
   /* Cream/Off-white - Primary background, light sections */
-  --color-cream: #F7F0E3;
+  --color-cream: #EAE1CB;
   
-  /* Light Pink - Accents, highlights, secondary elements */
-  --color-pink-light: #EDA2C3;
+  /* Rose/Pink - Accents, highlights, secondary elements */
+  --color-pink-light: #E5B5BD;
+  --color-pink-medium: #D18E97;
+  --color-pink-dark: #B87A82;
   
-  /* Medium Pink - Primary pink, main accents, CTAs */
-  --color-pink-medium: #F48EB8;
+  /* Mustard Yellow - Accents, secondary elements */
+  --color-olive: #D2A432;
+  --color-olive-light: #E8C05A;
+  --color-olive-dark: #B88A1F;
   
-  /* Dark Pink - Darker pink for contrast, borders, emphasis (similar to brown-dark) */
-  --color-pink-dark: #c0507e;
-  
-  /* Medium Brown - Text, borders, secondary backgrounds */
-  --color-brown-medium: #985A40;
+  /* Orange/Rust - Text, borders, secondary backgrounds */
+  --color-brown-medium: #BC5727;
+  --color-orange: #BC5727;
+  --color-orange-light: #D67A4F;
+  --color-orange-dark: #9A451F;
   
   /* Dark Brown - Headings, dark sections, strong contrast */
-  --color-brown-dark: #64321B;
+  --color-brown-dark: #5B3B1E;
   
   /* Dynamic page background - updated by components for smooth transitions */
   --page-background: var(--color-cream);
@@ -589,6 +593,26 @@ body::-webkit-scrollbar {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes testPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
   }
 }
 

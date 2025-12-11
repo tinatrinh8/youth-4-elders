@@ -129,7 +129,7 @@ export default function NavigationBar() {
               fontFamily: 'var(--font-kollektif)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-brown-medium)'
+              e.currentTarget.style.color = 'var(--color-olive)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = 'var(--color-cream)'
@@ -168,11 +168,11 @@ export default function NavigationBar() {
             <div 
               className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
               style={{ 
-                color: hoveredDropdown === 'who-we-are' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
+                color: hoveredDropdown === 'who-we-are' ? 'var(--color-olive)' : 'var(--color-cream)',
                 fontFamily: 'var(--font-kollektif)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-brown-medium)'
+                e.currentTarget.style.color = 'var(--color-olive)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.color = 'var(--color-cream)'
@@ -226,17 +226,17 @@ export default function NavigationBar() {
                       href={item.href}
                       className="block px-4 py-3 text-sm transition-all duration-200"
                       style={{ 
-                        color: 'var(--color-brown-medium)',
+                        color: 'var(--color-brown-dark)',
                         fontFamily: 'var(--font-kollektif)',
                         background: 'transparent'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(152, 90, 64, 0.1)'
-                        e.currentTarget.style.color = 'var(--color-brown-dark)'
+                        e.currentTarget.style.background = 'rgba(210, 164, 50, 0.1)'
+                        e.currentTarget.style.color = 'var(--color-olive)'
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'var(--color-brown-medium)'
+                        e.currentTarget.style.color = 'var(--color-brown-dark)'
                       }}
                     >
                       {item.label}
@@ -255,7 +255,7 @@ export default function NavigationBar() {
               fontFamily: 'var(--font-kollektif)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-brown-medium)'
+              e.currentTarget.style.color = 'var(--color-olive)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = 'var(--color-cream)'
@@ -272,7 +272,7 @@ export default function NavigationBar() {
               fontFamily: 'var(--font-kollektif)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-brown-medium)'
+              e.currentTarget.style.color = 'var(--color-olive)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = 'var(--color-cream)'
@@ -289,7 +289,7 @@ export default function NavigationBar() {
               fontFamily: 'var(--font-kollektif)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-brown-medium)'
+              e.currentTarget.style.color = 'var(--color-olive)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.color = 'var(--color-cream)'
@@ -329,11 +329,11 @@ export default function NavigationBar() {
             <div 
               className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
               style={{ 
-                color: hoveredDropdown === 'language' ? 'var(--color-brown-medium)' : 'var(--color-cream)',
+                color: hoveredDropdown === 'language' ? 'var(--color-olive)' : 'var(--color-cream)',
                 fontFamily: 'var(--font-kollektif)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-brown-medium)'
+                e.currentTarget.style.color = 'var(--color-olive)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.color = 'var(--color-cream)'
@@ -385,18 +385,18 @@ export default function NavigationBar() {
                     onClick={() => handleLanguageChange('en')}
                     className="block w-full text-left px-4 py-3 text-sm transition-all duration-200"
                     style={{ 
-                      color: language === 'en' ? 'var(--color-brown-dark)' : 'var(--color-brown-medium)',
+                      color: 'var(--color-brown-dark)',
                       fontFamily: 'var(--font-kollektif)',
                       background: language === 'en' ? 'rgba(152, 90, 64, 0.1)' : 'transparent'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(152, 90, 64, 0.1)'
-                      e.currentTarget.style.color = 'var(--color-brown-dark)'
+                      e.currentTarget.style.background = 'rgba(210, 164, 50, 0.1)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                     }}
                     onMouseLeave={(e) => {
                       if (language !== 'en') {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'var(--color-brown-medium)'
+                        e.currentTarget.style.color = 'var(--color-brown-dark)'
                       }
                     }}
                   >
@@ -406,18 +406,18 @@ export default function NavigationBar() {
                     onClick={() => handleLanguageChange('fr')}
                     className="block w-full text-left px-4 py-3 text-sm transition-all duration-200"
                     style={{ 
-                      color: language === 'fr' ? 'var(--color-brown-dark)' : 'var(--color-brown-medium)',
+                      color: 'var(--color-brown-dark)',
                       fontFamily: 'var(--font-kollektif)',
                       background: language === 'fr' ? 'rgba(152, 90, 64, 0.1)' : 'transparent'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(152, 90, 64, 0.1)'
-                      e.currentTarget.style.color = 'var(--color-brown-dark)'
+                      e.currentTarget.style.background = 'rgba(210, 164, 50, 0.1)'
+                      e.currentTarget.style.color = 'var(--color-olive)'
                     }}
                     onMouseLeave={(e) => {
                       if (language !== 'fr') {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'var(--color-brown-medium)'
+                        e.currentTarget.style.color = 'var(--color-brown-dark)'
                       }
                     }}
                   >

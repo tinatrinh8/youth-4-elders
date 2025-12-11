@@ -4,6 +4,7 @@ import localFont from 'next/font/local'
 import '@/styles/globals.css'
 import NavigationBar from '@/components/NavigationBar'
 import Footer from '@/components/Footer'
+import GlobalLoading from '@/components/GlobalLoading'
 
 // Font 1: Vintage Stylist - Elegant display/serif font
 const vintageStylist = localFont({
@@ -96,6 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${vintageStylist.variable} ${vintageStylistLigatures.variable} ${kollektif.variable} ${leiko.variable} ${freshwost.variable} ${playfair.variable} ${lato.variable} font-sans antialiased flex flex-col min-h-screen`} style={{ 
         fontFamily: 'var(--font-kollektif), var(--font-leiko), system-ui, Arial, sans-serif' 
       }}>
+        <GlobalLoading />
         <NavigationBar />
         <main className="flex-1">
           {children}
