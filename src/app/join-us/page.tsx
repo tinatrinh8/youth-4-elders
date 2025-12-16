@@ -228,6 +228,7 @@ export default function JoinUs() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isLightMode, setIsLightMode] = useState(false) // false = dark mode (pink bg, brown content), true = light mode (cream bg, pink content)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isDropdownClosing, setIsDropdownClosing] = useState(false)
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right')
   const [showConfetti, setShowConfetti] = useState(false)
   const [isInitialViewVisible, setIsInitialViewVisible] = useState(false)
@@ -880,7 +881,19 @@ export default function JoinUs() {
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  onClick={() => {
+                    if (isDropdownOpen) {
+                      // Start closing animation
+                      setIsDropdownClosing(true)
+                      setTimeout(() => {
+                        setIsDropdownOpen(false)
+                        setIsDropdownClosing(false)
+                      }, 400) // Match animation duration
+                    } else {
+                      setIsDropdownOpen(true)
+                      setIsDropdownClosing(false)
+                    }
+                  }}
                   className="w-full py-4 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all duration-200 text-lg text-left flex items-center relative"
                 style={{ 
                     borderColor: currentFieldError 
@@ -905,21 +918,38 @@ export default function JoinUs() {
                 onBlur={(e) => {
                     // Delay to allow option click
                     setTimeout(() => {
-                      setIsDropdownOpen(false)
-                      handleBlur()
-                      if (e.currentTarget) {
-                        e.currentTarget.style.borderColor = currentFieldError 
-                          ? '#dc2626' 
-                          : formData[currentQuestion.id] 
-                            ? primaryColor 
-                            : primaryColor
-                        e.currentTarget.style.boxShadow = 'none'
+                      if (isDropdownOpen) {
+                        // Start closing animation
+                        setIsDropdownClosing(true)
+                        setTimeout(() => {
+                          setIsDropdownOpen(false)
+                          setIsDropdownClosing(false)
+                          handleBlur()
+                          if (e.currentTarget) {
+                            e.currentTarget.style.borderColor = currentFieldError 
+                              ? '#dc2626' 
+                              : formData[currentQuestion.id] 
+                                ? primaryColor 
+                                : primaryColor
+                            e.currentTarget.style.boxShadow = 'none'
+                          }
+                        }, 400) // Match animation duration
+                      } else {
+                        handleBlur()
+                        if (e.currentTarget) {
+                          e.currentTarget.style.borderColor = currentFieldError 
+                            ? '#dc2626' 
+                            : formData[currentQuestion.id] 
+                              ? primaryColor 
+                              : primaryColor
+                          e.currentTarget.style.boxShadow = 'none'
+                        }
                       }
                     }, 200)
                   }}
                 >
                   <span style={{ 
-                    color: formData[currentQuestion.id] ? 'var(--color-brown-dark)' : 'var(--color-brown-medium)'
+                    color: formData[currentQuestion.id] ? 'var(--color-brown-dark)' : primaryColor
                   }}>
                     {formData[currentQuestion.id] 
                       ? currentQuestion.options?.find(opt => opt.value === formData[currentQuestion.id])?.label
@@ -949,9 +979,11 @@ export default function JoinUs() {
                     />
                   </svg>
                 </button>
-                {isDropdownOpen && currentQuestion.options && (
+                {(isDropdownOpen || isDropdownClosing) && currentQuestion.options && (
                   <div
-                    className="absolute z-50 w-full mt-1 rounded-lg border-2 shadow-lg max-h-60 overflow-auto"
+                    className={`absolute z-50 w-full mt-1 rounded-lg border-2 shadow-lg max-h-60 overflow-auto ${
+                      isDropdownClosing ? 'animate-dropdown-roll-in' : 'animate-dropdown-roll-out'
+                    }`}
                     style={{
                       background: 'white',
                       borderColor: primaryColor,
@@ -966,7 +998,12 @@ export default function JoinUs() {
                         type="button"
                         onClick={() => {
                           handleChange(option.value)
-                          setIsDropdownOpen(false)
+                          // Start closing animation
+                          setIsDropdownClosing(true)
+                          setTimeout(() => {
+                            setIsDropdownOpen(false)
+                            setIsDropdownClosing(false)
+                          }, 400) // Match animation duration
                         }}
                         className="w-full text-left px-4 py-3 hover:bg-opacity-10 transition-colors"
                         style={{

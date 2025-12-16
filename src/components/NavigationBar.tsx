@@ -204,7 +204,7 @@ export default function NavigationBar() {
                 className="absolute top-full left-0 w-56 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
                   background: 'var(--color-cream)', 
-                  border: '1px solid var(--color-brown-medium)',
+                  border: '1px solid var(--color-brown-dark)',
                   boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
                   marginTop: '8px',
                   animation: closingDropdown === 'who-we-are' ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
@@ -365,7 +365,7 @@ export default function NavigationBar() {
                 className="absolute top-full right-0 w-40 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
                   background: 'var(--color-cream)', 
-                  border: '1px solid var(--color-brown-medium)',
+                  border: '1px solid var(--color-brown-dark)',
                   boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
                   marginTop: '8px',
                   animation: closingDropdown === 'language' ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',

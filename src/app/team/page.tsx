@@ -289,7 +289,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
       {/* Name */}
       <h2 
         className="text-xl md:text-2xl font-bold mb-2 text-center"
-        style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
+        style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-dark)' }}
       >
         {member.name}
       </h2>
@@ -297,7 +297,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
       {/* Role */}
       <p 
         className="text-sm md:text-base mb-3 text-center italic"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
+        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
       >
         {member.role}
       </p>
@@ -329,23 +329,23 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
           <div>
             <span 
               className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
             >
               Year {member.yearOfStudy}
             </span>
             {' • '}
-            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
               {member.program}
             </span>
           </div>
           <div className="pt-2 border-t" style={{ borderColor: 'rgba(209, 142, 151, 0.2)' }}>
             <span 
               className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
             >
               Fun Fact:{' '}
             </span>
-            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
               {member.funFact}
             </span>
           </div>

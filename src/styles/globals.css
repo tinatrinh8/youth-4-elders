@@ -41,8 +41,6 @@
   --aura-pink: rgba(253, 195, 220, 0.7); 
   /* Light Orange/Peach (FFA970) */
   --aura-orange: rgba(255, 169, 112, 0.7); 
-  /* Yellow/Gold (FFC370) */
-  --aura-yellow: rgba(255, 195, 112, 0.7); 
   /* Secondary Color (FCB0C6) - Added for richer blending/depth */
   --aura-secondary: rgba(252, 176, 198, 0.7); 
   
@@ -126,14 +124,14 @@ body::-webkit-scrollbar {
   background-image: 
     /* Bubble 1: Main Pink */
     radial-gradient(at 10% 20%, var(--aura-pink) 0px, transparent 50%),
-    /* Bubble 2: Yellow/Gold */
-    radial-gradient(at 90% 80%, var(--aura-yellow) 0px, transparent 50%),
+    /* Bubble 2: Secondary Pink */
+    radial-gradient(at 90% 80%, var(--aura-secondary) 0px, transparent 50%),
     /* Bubble 3: Light Orange/Peach */
     radial-gradient(at 40% 70%, var(--aura-orange) 0px, transparent 50%),
     /* Bubble 4: Secondary Pink (for depth) */
     radial-gradient(at 75% 30%, var(--aura-secondary) 0px, transparent 50%),
-    /* Bubble 5: Yellow/Gold (Secondary) */
-    radial-gradient(at 20% 95%, var(--aura-yellow) 0px, transparent 50%),
+    /* Bubble 5: Main Pink (Secondary) */
+    radial-gradient(at 20% 95%, var(--aura-pink) 0px, transparent 50%),
     /* Bubble 6: Light Orange/Peach (Secondary) */
     radial-gradient(at 85% 50%, var(--aura-orange) 0px, transparent 50%);
 }
@@ -190,6 +188,14 @@ body::-webkit-scrollbar {
     transform: translateY(-20px) scaleY(0);
     transform-origin: top;
   }
+}
+
+.animate-dropdown-roll-out {
+  animation: dropdownRollOut 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+.animate-dropdown-roll-in {
+  animation: dropdownRollIn 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
 }
 
 @keyframes dropdownFadeOut {
