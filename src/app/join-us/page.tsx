@@ -235,7 +235,6 @@ export default function JoinUs() {
 
   // Color variables based on light/dark mode - defined at component level
   const textColor = isLightMode ? 'var(--color-brown-dark)' : 'var(--color-cream)'
-  const backgroundColor = isLightMode ? 'var(--color-pink-light)' : 'var(--color-brown-medium)'
 
   // Validation functions
   const validateField = (id: keyof FormData, value: string): string => {

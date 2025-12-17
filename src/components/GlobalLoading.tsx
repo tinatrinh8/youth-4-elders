@@ -3,6 +3,10 @@
 import { useEffect, useState } from 'react'
 import LoadingSpinner from './LoadingSpinner'
 
+type NetworkEffectiveType = 'slow-2g' | '2g' | '3g' | '4g'
+type NetworkInformationLike = { effectiveType?: NetworkEffectiveType }
+type NavigatorWithConnection = Navigator & { connection?: NetworkInformationLike }
+
 export default function GlobalLoading() {
   const [isLoading, setIsLoading] = useState(true)
   const [showDelayedMessage, setShowDelayedMessage] = useState(false)
@@ -39,7 +43,7 @@ export default function GlobalLoading() {
   // Also check for slow network connections
   useEffect(() => {
     if ('connection' in navigator) {
-      const connection = (navigator as any).connection
+      const connection = (navigator as NavigatorWithConnection).connection
       if (connection) {
         const effectiveType = connection.effectiveType
         // If slow connection, show loading longer

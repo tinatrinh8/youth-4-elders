@@ -1,7 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
 export default function LoadingSpinner({ message = 'Loading...' }: { message?: string }) {
   return (
     <div 

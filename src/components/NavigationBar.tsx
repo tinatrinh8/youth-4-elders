@@ -186,8 +186,8 @@ export default function NavigationBar() {
             {/* Invisible bridge to prevent gap issues */}
             {hoveredDropdown === 'who-we-are' && (
               <div 
-                className="absolute top-full left-0 right-0 h-2 z-[109]"
-                style={{ marginTop: '-2px' }}
+                className="absolute top-full left-0 right-0 h-10 z-[109]"
+                style={{ marginTop: 0 }}
                 onMouseEnter={() => {
                   if (closeTimeoutRef.current) {
                     clearTimeout(closeTimeoutRef.current)
@@ -347,8 +347,8 @@ export default function NavigationBar() {
             {/* Invisible bridge to prevent gap issues */}
             {hoveredDropdown === 'language' && (
               <div 
-                className="absolute top-full left-0 right-0 h-2 z-[109]"
-                style={{ marginTop: '-2px' }}
+                className="absolute top-full left-0 right-0 h-10 z-[109]"
+                style={{ marginTop: 0 }}
                 onMouseEnter={() => {
                   if (closeTimeoutRef.current) {
                     clearTimeout(closeTimeoutRef.current)

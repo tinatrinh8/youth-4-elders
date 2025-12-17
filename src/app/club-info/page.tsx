@@ -5,10 +5,16 @@ import { useEffect, useState } from 'react'
 
 export default function ClubInfo() {
   const [isVisible, setIsVisible] = useState(false)
+  const [clubBasicsStep, setClubBasicsStep] = useState(0)
 
   useEffect(() => {
     setIsVisible(true)
   }, [])
+
+  // Sticky + reveal scroll distances (vh).
+  const HERO_SCROLL_VH = 105
+  const SECOND_SECTION_SCROLL_VH = 160
+  const SCROLL_WRAPPER_HEIGHT_VH = HERO_SCROLL_VH + SECOND_SECTION_SCROLL_VH
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
@@ -16,7 +22,7 @@ export default function ClubInfo() {
       <div 
         style={{
           position: 'relative',
-          height: '200vh', 
+          height: `${SCROLL_WRAPPER_HEIGHT_VH}vh`, 
           zIndex: 2
         }}
       >
@@ -25,200 +31,242 @@ export default function ClubInfo() {
           style={{
             position: 'sticky', 
             top: 0,
-            height: '80vh',
+            height: `${HERO_SCROLL_VH}vh`,
             zIndex: 2,          
             display: 'flex',
             alignItems: 'center',
+            boxSizing: 'border-box',
+            // Keep generous spacing, but let the hero content breathe.
+            paddingTop: 'clamp(84px, 8vh, 120px)',
+            paddingBottom: 'clamp(120px, 16vh, 320px)',
             background: 'var(--color-cream)', 
           }}
         >
-          <div className="max-w-7xl mx-auto px-8 w-full flex items-center pt-[100px] pb-[1rem]">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 w-full">
+          <div className="max-w-screen-2xl mx-auto px-6 md:px-10 w-full flex items-center pt-0 pb-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 lg:gap-16 w-full">
               
               {/* Left Column - Photo */}
               <div 
-                className="relative w-full flex items-center transition-all duration-1000"
+                className="relative w-full flex items-center md:items-stretch transition-all duration-1000"
                 style={{
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? 'translateX(0)' : 'translateX(-30px)',
                   transitionDelay: '200ms'
                 }}
               >
-                <div className="relative w-full h-[50vh] md:h-[55vh] rounded-lg overflow-hidden" style={{ boxShadow: '0 8px 24px rgba(100, 50, 27, 0.15)' }}>
-                  <div className="w-full h-full flex items-center justify-center" style={{ background: 'rgba(152, 90, 64, 0.1)' }}>
-                    <p style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)', fontSize: '1.25rem', textAlign: 'center', padding: '2rem' }}>
-                      [Club Photo Placeholder]
-                    </p>
+                <div
+                  className="relative w-full h-[52vh] sm:h-[58vh] md:h-[64vh] lg:h-[70vh] rounded-3xl overflow-hidden border"
+                  style={{
+                    boxShadow: '0 10px 28px rgba(100, 50, 27, 0.16)',
+                    borderColor: 'rgba(91, 59, 30, 0.18)',
+                  }}
+                >
+                  <Image
+                    src="/assets/club-info/signing.jpg"
+                    alt="Members signing up at a Youth 4 Elders event"
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div
+                    aria-hidden
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'linear-gradient(to top, rgba(91, 59, 30, 0.30) 0%, rgba(91, 59, 30, 0.0) 60%)',
+                    }}
+                  />
+                  <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
+                    <div>
+                      <p
+                        className="text-xs uppercase tracking-widest"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          color: 'rgba(234, 225, 203, 0.92)',
+                          letterSpacing: '0.2em',
+                        }}
+                      >
+                        Club life
+                      </p>
+                      <p
+                        className="text-lg md:text-xl leading-tight"
+                        style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'rgba(234, 225, 203, 0.98)' }}
+                      >
+                        Real people, real connection.
+                      </p>
+                    </div>
+                    {/* stamp removed */}
                   </div>
                 </div>
               </div>
 
             {/* Right Column - About Us Text */}
             <div 
-              className="flex items-center transition-all duration-1000 w-full"
+              className="relative flex items-stretch transition-all duration-1000 w-full"
               style={{
                 opacity: isVisible ? 1 : 0,
                 transform: isVisible ? 'translateX(0)' : 'translateX(30px)',
                 transitionDelay: '400ms'
               }}
             >
-              <div className="w-full">
-                <h1 
-                  className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 md:mb-5 leading-tight"
-                  style={{ 
-                    fontFamily: 'var(--font-vintage-stylist)', 
-                    color: 'var(--color-brown-dark)'
-                  }}
+              <div className="w-full h-full flex flex-col justify-center py-2 md:py-0">
+                <blockquote
+                  className="text-4xl md:text-5xl lg:text-6xl leading-[1.05]"
+                  style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
                 >
-                  We&apos;re Not Just a Club.<br />We&apos;re Your Community Partners.
-        </h1>
-                
-                <div 
-                  className="w-16 h-0.5 mb-4 md:mb-5"
-                  style={{ background: 'var(--color-brown-dark)' }}
-                />
+                  <span style={{ opacity: 0.9 }}>“</span>
+                  <span className="font-bold italic">
+                    We&apos;re not just a club — we&apos;re your community partners.
+                  </span>
+                  <span style={{ opacity: 0.9 }}>”</span>
+                </blockquote>
 
-                <div className="space-y-3 md:space-y-4">
-                  <p 
-                    className="text-sm md:text-base leading-relaxed"
-                    style={{ 
-                      fontFamily: 'var(--font-leiko)', 
-                      color: 'var(--color-brown-dark)',
-                      opacity: 0.9
-                    }}
-                  >
-                    Youth 4 Elders was born from that hard-to-pinpoint, yet monumental, moment where passion meets clear purpose - the realization that bridging generations could create something truly meaningful for our community.
-                  </p>
-                  <p 
-                    className="text-sm md:text-base leading-relaxed"
-                    style={{ 
-                      fontFamily: 'var(--font-leiko)', 
-                      color: 'var(--color-brown-dark)',
-                      opacity: 0.9
-                    }}
-                  >
-                    Our club is dedicated to redefining what&apos;s possible for intergenerational connections. We&apos;ve witnessed the life-changing impact of bringing youth and elders together, and we&apos;re committed to helping our community revel in meaningful relationships, one workshop, one story, one connection at a time.
-                  </p>
-                </div>
+                <div className="w-24 h-[2px] my-7" style={{ background: 'rgba(91, 59, 30, 0.25)' }} />
+
+                <p
+                  className="text-2xl md:text-3xl leading-relaxed"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+                >
+                  We bring youth and elders together through welcoming programs that make connection feel easy—and meaningful.
+                </p>
+
+                <p
+                  className="mt-5 text-lg md:text-xl leading-relaxed"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.82 }}
+                >
+                  A student-led club focused on connection, community, and care.
+                </p>
               </div>
             </div>
             </div>
           </div>
         </section>
 
+        {/* Second section (redesigned): Founders + Impact (scroll-reveal over hero) */}
         <section 
-          className="py-16 md:py-24"
+          className="relative py-16 md:py-24"
           style={{ 
             position: 'absolute', 
-            top: '100vh',
+            top: `${HERO_SCROLL_VH}vh`,
             left: 0,
             right: 0,
             width: '100%',
-            height: '100vh',
+            height: `${SECOND_SECTION_SCROLL_VH}vh`,
             background: 'var(--color-pink-light)',
             zIndex: 3,
-            pointerEvents: 'auto'
+            pointerEvents: 'auto',
           }}
         >
-          <div className="max-w-7xl mx-auto px-8">
-            <div className="text-center mb-12 md:mb-16">
-              <p 
-                className="text-sm md:text-base uppercase tracking-widest mb-4"
-                style={{ 
-                  fontFamily: 'var(--font-kollektif)', 
+          <div className="max-w-6xl mx-auto px-8 relative">
+            <div className="mb-10 md:mb-12">
+              <p
+                className="text-sm md:text-base uppercase tracking-widest mb-3"
+                style={{
+                  fontFamily: 'var(--font-kollektif)',
                   color: 'var(--color-brown-dark)',
-                  letterSpacing: '0.2em'
+                  letterSpacing: '0.2em',
                 }}
               >
-                Small Team, Big Impact
+                Our story
               </p>
-              <h2 
-                className="text-3xl md:text-5xl lg:text-6xl font-bold italic mb-6"
-                style={{ 
-                  fontFamily: 'var(--font-vintage-stylist)', 
-                  color: 'var(--color-brown-dark)'
-                }}
+              <h2
+                className="text-4xl md:text-5xl lg:text-6xl font-bold italic"
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
               >
-                The Founders
+                Founders
               </h2>
-            </div>
-
-            {/* Founders Photo */}
-            <div className="max-w-3xl mx-auto mb-16">
-              <div 
-                className="relative w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden"
-                style={{ 
-                  boxShadow: '0 8px 24px rgba(100, 50, 27, 0.15)'
-                }}
+              <p
+                className="mt-3 text-base md:text-lg leading-relaxed max-w-3xl"
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.88 }}
               >
-                <div className="w-full h-full flex items-center justify-center" style={{ background: 'rgba(152, 90, 64, 0.1)' }}>
-                  <p style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)', fontSize: '1.25rem' }}>
-                    [Founders Photo Placeholder - Photo of both founders together]
+                Founders (left to right): Julia, Peter.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+              {/* Photo */}
+              <div className="w-full max-w-xl mx-auto lg:mx-0">
+                <div
+                  className="relative w-full h-[420px] md:h-[520px] rounded-3xl overflow-hidden"
+                  style={{ boxShadow: '0 12px 34px rgba(100, 50, 27, 0.16)' }}
+                >
+                  <Image
+                    src="/assets/club-info/founders.jpg"
+                    alt="Youth 4 Elders founders at a club gathering"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 520px"
+                    style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
+                  />
+                  <div
+                    aria-hidden
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'linear-gradient(to top, rgba(91, 59, 30, 0.18) 0%, rgba(91, 59, 30, 0.0) 72%)',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Text */}
+              <div className="pt-2 md:pt-4">
+                <p
+                  className="text-lg md:text-xl leading-relaxed"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+                >
+                  Youth 4 Elders started when we noticed the same thing everywhere: youth wanted ways to give back, and elders wanted connection that felt warm,
+                  consistent, and genuinely two-way.
+                </p>
+
+                <p
+                  className="mt-6 text-lg md:text-xl leading-relaxed"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+                >
+                  We began with small meet-ups and simple activities. Over time, we shaped a repeatable format—so volunteers can lead confidently and every visit
+                  feels comfortable, familiar, and welcoming.
+                </p>
+
+                <div className="mt-10 pt-8 border-t" style={{ borderColor: 'rgba(91, 59, 30, 0.18)' }}>
+                  <p
+                    className="text-xs md:text-sm uppercase tracking-widest mb-5"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(91, 59, 30, 0.70)', letterSpacing: '0.2em' }}
+                  >
+                    What we focus on
                   </p>
+                  <ul
+                    className="space-y-4"
+                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+                  >
+                    <li>
+                      <span style={{ fontWeight: 700 }}>Start small.</span> Conversation, crafts, and tech help—focused on comfort and kindness.
+                    </li>
+                    <li>
+                      <span style={{ fontWeight: 700 }}>Show up consistently.</span> Familiar formats help new faces join and returning faces feel at home.
+                    </li>
+                    <li>
+                      <span style={{ fontWeight: 700 }}>Grow with partners.</span> Collaborate with community spaces while keeping the small-group feel.
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
 
-            {/* Story of Formation */}
-            <div className="max-w-4xl mx-auto pt-16 border-t" style={{ borderColor: 'rgba(152, 90, 64, 0.2)' }}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-                <div>
-                  <p 
-                    className="text-xs md:text-sm uppercase tracking-widest mb-4"
-                    style={{ 
-                      fontFamily: 'var(--font-kollektif)', 
-                      color: 'var(--color-pink-dark)',
-                      letterSpacing: '0.2em'
-                    }}
-                  >
-                    IT&apos;S ALL IN OUR NAME
-                  </p>
-                  <p 
-                    className="text-2xl md:text-3xl lg:text-4xl leading-tight mb-6"
-                    style={{ 
-                      fontFamily: 'var(--font-vintage-stylist)', 
-                      color: 'var(--color-brown-dark)'
-                    }}
-                  >
-                    Youth 4 Elders represents our commitment to bringing together two generations that have so much to offer each other.
-                  </p>
-                </div>
-                <div>
-                  <p 
-                    className="text-base md:text-lg leading-relaxed mb-4"
-                    style={{ 
-                      fontFamily: 'var(--font-leiko)', 
-                      color: 'var(--color-brown-dark)'
-                    }}
-                  >
-                    We founded Youth 4 Elders with a simple yet powerful vision: to bridge the generational gap through meaningful connections, shared experiences, and mutual learning. What started as an idea between two friends has grown into a vibrant community of students and elders working together to create positive change.
-                  </p>
-                  <p 
-                    className="text-base md:text-lg leading-relaxed"
-                    style={{ 
-                      fontFamily: 'var(--font-leiko)', 
-                      color: 'var(--color-brown-dark)'
-                    }}
-                  >
-                    Through workshops, technology assistance, storytelling sessions, and intergenerational events, we&apos;ve created a space where wisdom meets innovation, and where every interaction enriches both generations.
-                  </p>
-                </div>
-              </div>
-            </div>
+            {/* (Intentionally kept simple: no extra blocks here) */}
           </div>
         </section>
       </div>
 
       <section 
-        className="py-16 md:py-24"
+        className="pt-14 pb-8 md:pt-20 md:pb-12"
         style={{
           position: 'relative',
           zIndex: 4,
-          background: 'var(--color-pink-light)'
+          background: 'var(--color-cream)'
         }}
       >
         <div className="max-w-7xl mx-auto px-8">
-          <div className="text-center mb-16 md:mb-20">
+          <div className="text-center mb-8 md:mb-10">
             <p 
               className="text-xs md:text-sm uppercase tracking-widest mb-4"
               style={{ 
@@ -227,7 +275,7 @@ export default function ClubInfo() {
                 letterSpacing: '0.2em'
               }}
             >
-              INTRODUCTION
+              Club basics
             </p>
             <h2 
               className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 max-w-4xl mx-auto leading-tight"
@@ -236,76 +284,84 @@ export default function ClubInfo() {
                 color: 'var(--color-brown-dark)'
               }}
             >
-              We consider every touchpoint, how our club shows up in the community, and how we can connect generations.
+              Three quick things to know.
             </h2>
           </div>
 
-          {/* Three Column Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            {/* Column 1: How the Club Works */}
-            <div>
-              <h3 
-                className="text-xl md:text-2xl font-bold mb-4"
-                style={{ 
-                  fontFamily: 'var(--font-vintage-stylist)', 
-                  color: 'var(--color-brown-dark)'
+          {/* Carousel (not sticky; click dots to switch) */}
+          <div className="flex justify-center">
+            <div className="w-full max-w-6xl">
+              <div
+                className="relative overflow-hidden rounded-[32px] border"
+                style={{
+                  borderColor: 'rgba(91, 59, 30, 0.18)',
+                  background: 'rgba(229, 181, 189, 0.10)',
+                  boxShadow: '0 14px 34px rgba(100, 50, 27, 0.10)',
                 }}
               >
-                How the Club Works
-              </h3>
-              <p 
-                className="text-base leading-relaxed"
-                style={{ 
-                  fontFamily: 'var(--font-leiko)', 
-                  color: 'var(--color-brown-dark)'
-                }}
-              >
-                Our club operates through a combination of executive leadership and community volunteers. We organize regular workshops, events, and activities that bring youth and elders together. From technology assistance sessions to craft fairs, every program is designed to foster meaningful connections and mutual learning.
-              </p>
-            </div>
+                <div
+                  className="flex"
+                  style={{
+                    width: '300%',
+                    transform: `translateX(-${clubBasicsStep * (100 / 3)}%)`,
+                    transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1)',
+                  }}
+                >
+                  {[
+                    {
+                      kicker: '01',
+                      title: 'Point of the club',
+                      body: 'Make intergenerational connection normal—not rare. We create low-pressure ways to meet and build relationships that last.',
+                    },
+                    {
+                      kicker: '02',
+                      title: 'How it works',
+                      body: 'Attend our events and workshops anytime. Want to be more involved? Join as a volunteer/member and help support visits and activities.',
+                    },
+                    {
+                      kicker: '03',
+                      title: 'What we do',
+                      body: 'Tech support, hands-on workshops, storytelling, and community events—designed for conversation and connection.',
+                    },
+                  ].map((card) => (
+                    <div key={card.kicker} className="w-1/3 p-10 md:p-14">
+                      <p
+                        className="text-xs uppercase tracking-widest"
+                        style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(91, 59, 30, 0.65)', letterSpacing: '0.25em' }}
+                      >
+                        {card.kicker}
+                      </p>
+                      <p
+                        className="mt-4 text-4xl md:text-5xl leading-[1.05]"
+                        style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+                      >
+                        {card.title}
+                      </p>
+                      <p
+                        className="mt-5 text-lg md:text-xl leading-relaxed max-w-2xl"
+                        style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.9 }}
+                      >
+                        {card.body}
+                      </p>
+                    </div>
+                  ))}
+                </div>
 
-            {/* Column 2: What We Do */}
-            <div>
-              <h3 
-                className="text-xl md:text-2xl font-bold mb-4"
-                style={{ 
-                  fontFamily: 'var(--font-vintage-stylist)', 
-                  color: 'var(--color-brown-dark)'
-                }}
-              >
-                What We Do
-              </h3>
-              <p 
-                className="text-base leading-relaxed"
-                style={{ 
-                  fontFamily: 'var(--font-leiko)', 
-                  color: 'var(--color-brown-dark)'
-                }}
-              >
-                We organize a variety of intergenerational activities including technology help sessions, storytelling workshops, craft fairs, and community events. Our programs are designed to be accessible, engaging, and beneficial for both youth participants and elder community members.
-              </p>
-            </div>
-
-            {/* Column 3: Mission */}
-            <div>
-              <h3 
-                className="text-xl md:text-2xl font-bold mb-4"
-                style={{ 
-                  fontFamily: 'var(--font-vintage-stylist)', 
-                  color: 'var(--color-brown-dark)'
-                }}
-              >
-                Our Mission
-              </h3>
-              <p 
-                className="text-base leading-relaxed"
-                style={{ 
-                  fontFamily: 'var(--font-leiko)', 
-                  color: 'var(--color-brown-dark)'
-                }}
-              >
-                We value the same things: compassion, respect, and innovation. Our mission is to bridge generational gaps by creating opportunities for meaningful connections, shared learning, and mutual support that enriches the lives of both youth and elders in our community.
-              </p>
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                  {[0, 1, 2].map((i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      aria-label={`Show club basics slide ${i + 1}`}
+                      onClick={() => setClubBasicsStep(i)}
+                      className="w-3 h-3 rounded-full"
+                      style={{
+                        background: clubBasicsStep === i ? 'var(--color-brown-dark)' : 'rgba(91, 59, 30, 0.25)',
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

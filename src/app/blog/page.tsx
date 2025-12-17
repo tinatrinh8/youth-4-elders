@@ -16,7 +16,6 @@ export default async function Home() {
     return <main className="p-8">No blog posts found in this environment.</main>
   }
 
-  const page = pages[0]
   return (
     <main className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
       <div className="max-w-6xl mx-auto px-8 py-16">
