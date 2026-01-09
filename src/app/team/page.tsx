@@ -217,14 +217,14 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
   
   const blobShape = blobShapes[index % blobShapes.length]
   
-  // Alternate between pink colors staying on theme
+  // Different pink shades for each person
   const blobColors = [
-    'var(--color-pink-medium)',
-    'var(--color-pink-light)',
-    'var(--color-pink-dark)',
-    'var(--color-pink-medium)',
-    'var(--color-pink-light)',
-    'var(--color-pink-dark)',
+    'var(--color-pink-light)',      // Light pink
+    'var(--color-pink-medium)',     // Medium pink
+    'rgba(211, 165, 165, 0.8)',     // Pink light with opacity
+    'var(--color-pink-dark)',       // Dark pink
+    'rgba(175, 121, 120, 0.7)',     // Pink medium with opacity
+    'rgba(211, 165, 165, 0.9)',     // Pink light more opaque
   ]
   const blobColor = blobColors[index % blobColors.length]
 
@@ -277,7 +277,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
             >
               <div 
                 className="text-5xl"
-                style={{ color: 'var(--color-pink-medium)', opacity: 0.3 }}
+                style={{ color: 'var(--color-brown-medium)', opacity: 0.3 }}
               >
                 👤
               </div>
@@ -289,7 +289,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
       {/* Name */}
       <h2 
         className="text-xl md:text-2xl font-bold mb-2 text-center"
-        style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-dark)' }}
+        style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
       >
         {member.name}
       </h2>
@@ -309,7 +309,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
           className="text-sm mb-4 block hover:opacity-70 transition-opacity text-center"
           style={{ 
             fontFamily: 'var(--font-kollektif)', 
-            color: 'var(--color-pink-medium)' 
+            color: 'var(--color-brown-medium)' 
           }}
         >
           {member.email}
@@ -320,16 +320,16 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
       <div 
         className="rounded-xl p-5 w-full mt-2 text-left"
         style={{ 
-          background: 'var(--color-cream)',
-          border: '2px solid var(--color-pink-medium)',
-          boxShadow: '0 4px 12px rgba(209, 142, 151, 0.15)',
+          background: 'rgba(211, 165, 165, 0.15)', // Light pink background - slightly more visible
+          border: '2px solid var(--color-pink-light)', // Light pink border
+          boxShadow: '0 4px 12px rgba(211, 165, 165, 0.2)',
         }}
       >
         <div className="space-y-3 text-sm">
           <div>
             <span 
               className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
             >
               Year {member.yearOfStudy}
             </span>
@@ -338,10 +338,10 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
               {member.program}
             </span>
           </div>
-          <div className="pt-2 border-t" style={{ borderColor: 'rgba(209, 142, 151, 0.2)' }}>
+          <div className="pt-2 border-t" style={{ borderColor: 'rgba(211, 165, 165, 0.2)' }}>
             <span 
               className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
             >
               Fun Fact:{' '}
             </span>

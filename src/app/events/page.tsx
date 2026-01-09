@@ -139,7 +139,7 @@ export default function Events() {
   const getEventColor = (type: CalendarEvent['type']) => {
     switch (type) {
       case 'holiday':
-        return 'var(--color-pink-medium)'
+        return 'var(--color-brown-medium)'
       case 'school':
       case 'club':
       default:
@@ -150,13 +150,13 @@ export default function Events() {
   const getEventTint = (type: CalendarEvent['type']) => {
     switch (type) {
       case 'holiday':
-        return 'rgba(209, 142, 151, 0.12)'
+        return 'rgba(211, 165, 165, 0.12)'
       case 'school':
-        return 'rgba(188, 87, 39, 0.10)'
+        return 'rgba(175, 121, 120, 0.10)'
       case 'club':
-        return 'rgba(188, 87, 39, 0.06)'
+        return 'rgba(175, 121, 120, 0.06)'
       default:
-        return 'rgba(188, 87, 39, 0.08)'
+        return 'rgba(175, 121, 120, 0.08)'
     }
   }
 
@@ -236,15 +236,6 @@ export default function Events() {
     return { upcoming: up, past: pa }
   }, [displayEvents, today])
 
-  const stats = useMemo(() => {
-    const total = displayEvents.length
-    const club = displayEvents.filter(e => e.type === 'club').length
-    const school = displayEvents.filter(e => e.type === 'school').length
-    const holiday = displayEvents.filter(e => e.type === 'holiday').length
-    const upcomingCount = upcoming.length
-    return { total, club, school, holiday, upcomingCount }
-  }, [displayEvents, upcoming.length])
-
   const groupedUpcoming = useMemo(() => {
     const groups = new Map<number, DisplayEvent[]>()
     for (const e of upcoming) {
@@ -287,14 +278,14 @@ export default function Events() {
         className="group w-full text-left rounded-2xl border transition-all duration-300 hover:-translate-y-[2px]"
         style={{
           background: 'var(--color-cream)',
-          borderColor: isActiveToday ? 'var(--color-pink-medium)' : 'rgba(188, 87, 39, 0.18)',
-          boxShadow: isActiveToday ? '0 12px 34px rgba(209, 142, 151, 0.18)' : '0 10px 30px rgba(188, 87, 39, 0.08)'
+          borderColor: isActiveToday ? 'var(--color-brown-medium)' : 'rgba(175, 121, 120, 0.18)',
+          boxShadow: isActiveToday ? '0 12px 34px rgba(211, 165, 165, 0.18)' : '0 10px 30px rgba(175, 121, 120, 0.08)'
         }}
       >
         <div className="p-6 md:p-7">
           <div className="flex items-start justify-between gap-4 mb-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span
                   className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wider"
                   style={{
@@ -309,7 +300,7 @@ export default function Events() {
                   <span
                     className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wider"
                     style={{
-                      background: 'rgba(188, 87, 39, 0.12)',
+                      background: 'rgba(175, 121, 120, 0.12)',
                       color: 'var(--color-brown-dark)',
                       fontFamily: 'var(--font-kollektif)'
                     }}
@@ -321,10 +312,10 @@ export default function Events() {
                   <span
                     className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wider"
                     style={{
-                      background: 'var(--color-pink-medium)',
+                      background: 'var(--color-brown-medium)',
                       color: 'var(--color-cream)',
                       fontFamily: 'var(--font-kollektif)',
-                      boxShadow: '0 6px 18px rgba(209, 142, 151, 0.25)'
+                      boxShadow: '0 6px 18px rgba(211, 165, 165, 0.25)'
                     }}
                   >
                     TODAY
@@ -332,7 +323,7 @@ export default function Events() {
                 )}
               </div>
               <h3
-                className="text-xl md:text-2xl font-bold leading-tight"
+                className="text-xl md:text-2xl font-bold leading-tight mb-2"
                 style={{
                   fontFamily: 'var(--font-vintage-stylist)',
                   color: 'var(--color-brown-dark)'
@@ -340,11 +331,32 @@ export default function Events() {
               >
                 {event.title}
               </h3>
+              {(time || location) && (
+                <div className="flex flex-wrap items-center gap-4 text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  {time && (
+                    <span className="inline-flex items-center gap-2">
+                      <svg className="w-4 h-4" style={{ opacity: 0.8 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {time}
+                    </span>
+                  )}
+                  {location && (
+                    <span className="inline-flex items-center gap-2">
+                      <svg className="w-4 h-4" style={{ opacity: 0.8 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {location}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="flex-shrink-0 text-right">
               <div
-                className="text-sm font-semibold"
+                className="text-sm font-semibold whitespace-nowrap"
                 style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
               >
                 {formatRange(event.date, event.endDate)}
@@ -352,35 +364,9 @@ export default function Events() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4 mb-4">
-            {time && (
-              <span
-                className="inline-flex items-center gap-2 text-sm"
-                style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
-              >
-                <svg className="w-4 h-4" style={{ color: 'var(--color-brown-medium)', opacity: 0.8 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {time}
-              </span>
-            )}
-            {location && (
-              <span
-                className="inline-flex items-center gap-2 text-sm"
-                style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
-              >
-                <svg className="w-4 h-4" style={{ color: 'var(--color-brown-medium)', opacity: 0.8 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                {location}
-              </span>
-            )}
-          </div>
-
           {event.description && (
             <p
-              className="text-sm leading-relaxed line-clamp-2"
+              className="text-sm leading-relaxed line-clamp-2 mb-4"
               style={{
                 fontFamily: 'var(--font-kollektif)',
                 color: 'var(--color-brown-medium)',
@@ -391,7 +377,7 @@ export default function Events() {
             </p>
           )}
 
-          <div className="mt-5 pt-5 border-t" style={{ borderColor: 'rgba(188, 87, 39, 0.12)' }}>
+          <div className="pt-4 border-t" style={{ borderColor: 'rgba(175, 121, 120, 0.12)' }}>
             <span
               className="inline-flex items-center gap-2 text-xs font-semibold"
               style={{ fontFamily: 'var(--font-kollektif)', color: getEventColor(event.type), letterSpacing: '0.06em' }}
@@ -410,18 +396,10 @@ export default function Events() {
   return (
     <main className="min-h-screen pt-[60px] pb-20" style={{ background: 'var(--color-cream)' }}>
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
-        {/* Header */}
-        <div className="mb-10">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
-            <div className="max-w-2xl">
-              <div className="mb-3">
-                <span
-                  className="text-sm font-semibold tracking-wider uppercase"
-                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)', letterSpacing: '0.15em' }}
-                >
-                  Events
-                </span>
-              </div>
+        {/* Simplified Header */}
+        <div className="mb-12">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            <div>
               <h1
                 className="text-5xl md:text-6xl font-bold mb-3"
                 style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', lineHeight: '1.1' }}
@@ -432,7 +410,7 @@ export default function Events() {
                 className="text-base md:text-lg"
                 style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)', lineHeight: '1.7' }}
               >
-                Browse what’s happening this month. Use search + filters to find club events, school dates, or holidays.
+                Browse events, search, and filter by type.
               </p>
             </div>
 
@@ -446,7 +424,7 @@ export default function Events() {
                   fontFamily: 'var(--font-kollektif)',
                   background: 'var(--color-brown-medium)',
                   color: 'var(--color-cream)',
-                  boxShadow: '0 2px 8px rgba(188, 87, 39, 0.18)'
+                  boxShadow: '0 2px 8px rgba(175, 121, 120, 0.18)'
                 }}
               >
                 Prev
@@ -457,9 +435,9 @@ export default function Events() {
                 className="h-11 px-4 rounded-lg font-semibold transition-all"
                 style={{
                   fontFamily: 'var(--font-kollektif)',
-                  background: 'rgba(188, 87, 39, 0.10)',
+                  background: 'rgba(175, 121, 120, 0.10)',
                   color: 'var(--color-brown-dark)',
-                  border: '1px solid rgba(188, 87, 39, 0.20)'
+                  border: '1px solid rgba(175, 121, 120, 0.20)'
                 }}
               >
                 Today
@@ -472,7 +450,7 @@ export default function Events() {
                   fontFamily: 'var(--font-kollektif)',
                   background: 'var(--color-brown-medium)',
                   color: 'var(--color-cream)',
-                  boxShadow: '0 2px 8px rgba(188, 87, 39, 0.18)'
+                  boxShadow: '0 2px 8px rgba(175, 121, 120, 0.18)'
                 }}
               >
                 Next
@@ -481,24 +459,24 @@ export default function Events() {
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
+        {/* Simplified Controls */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
           <div className="lg:col-span-7">
             <div className="relative">
               <input
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search title, description, or location…"
+                placeholder="Search events..."
                 className="w-full h-12 pl-12 pr-12 rounded-xl border-2 focus:outline-none"
                 style={{
                   fontFamily: 'var(--font-kollektif)',
                   background: 'var(--color-cream)',
-                  borderColor: searchQuery ? 'var(--color-pink-medium)' : 'rgba(188, 87, 39, 0.20)',
+                  borderColor: searchQuery ? 'var(--color-brown-medium)' : 'rgba(175, 121, 120, 0.20)',
                   color: 'var(--color-brown-dark)',
-                  boxShadow: searchQuery ? '0 10px 24px rgba(209, 142, 151, 0.12)' : 'none'
+                  boxShadow: searchQuery ? '0 10px 24px rgba(211, 165, 165, 0.12)' : 'none'
                 }}
               />
-              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--color-pink-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: 'var(--color-brown-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               {searchQuery && (
@@ -506,7 +484,7 @@ export default function Events() {
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg transition-all"
-                  style={{ background: 'rgba(188, 87, 39, 0.10)', color: 'var(--color-brown-medium)' }}
+                  style={{ background: 'rgba(175, 121, 120, 0.10)', color: 'var(--color-brown-medium)' }}
                   aria-label="Clear search"
                 >
                   <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -528,7 +506,7 @@ export default function Events() {
                   fontFamily: 'var(--font-kollektif)',
                   background: filterType === t ? getEventColor(t === 'all' ? 'club' : t) : 'transparent',
                   color: filterType === t ? 'var(--color-cream)' : 'var(--color-brown-medium)',
-                  border: `2px solid ${filterType === t ? getEventColor(t === 'all' ? 'club' : t) : 'rgba(188, 87, 39, 0.25)'}`
+                  border: `2px solid ${filterType === t ? getEventColor(t === 'all' ? 'club' : t) : 'rgba(175, 121, 120, 0.25)'}`
                 }}
               >
                 {t === 'all' ? 'All' : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -537,162 +515,90 @@ export default function Events() {
           </div>
         </div>
 
-        {/* Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          {[
-            { label: 'Upcoming', value: stats.upcomingCount, tint: 'rgba(209, 142, 151, 0.10)', accent: 'var(--color-pink-medium)' },
-            { label: 'Club', value: stats.club, tint: getEventTint('club'), accent: 'var(--color-brown-medium)' },
-            { label: 'School', value: stats.school, tint: getEventTint('school'), accent: 'var(--color-brown-medium)' },
-            { label: 'Holidays', value: stats.holiday, tint: getEventTint('holiday'), accent: 'var(--color-pink-medium)' }
-          ].map(item => (
-            <div
-              key={item.label}
-              className="rounded-2xl border p-5"
-              style={{
-                background: item.tint,
-                borderColor: 'rgba(188, 87, 39, 0.15)'
-              }}
-            >
-              <div className="text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                {item.value}
-              </div>
-              <div className="text-xs font-semibold tracking-wider uppercase mt-1" style={{ fontFamily: 'var(--font-kollektif)', color: item.accent, letterSpacing: '0.14em' }}>
-                {item.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Sidebar */}
-          <aside className="lg:col-span-4">
-            <div className="rounded-2xl border p-6" style={{ background: 'var(--color-cream)', borderColor: 'rgba(188, 87, 39, 0.15)', boxShadow: '0 10px 30px rgba(188, 87, 39, 0.06)' }}>
-              <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                Legend
+        {/* Events Timeline - Simplified with Sticky Dates */}
+        <section>
+          {groupedUpcoming.length > 0 && (
+            <div className="mb-16" id="upcoming">
+              <h2 
+                className="text-3xl md:text-4xl font-bold mb-8"
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+              >
+                Upcoming
               </h2>
-              <div className="space-y-3">
-                {(
-                  [
-                    { label: 'Club', type: 'club' as const, desc: 'Workshops & Y4E events' },
-                    { label: 'School', type: 'school' as const, desc: 'Term dates & exams' },
-                    { label: 'Holiday', type: 'holiday' as const, desc: 'Statutory & special days' }
-                  ]
-                ).map(row => (
-                  <div key={row.type} className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: getEventTint(row.type), border: `1px solid ${getEventColor(row.type)}` }}>
-                      <div className="w-3 h-3 rounded-full" style={{ background: getEventColor(row.type) }} />
+
+              <div className="space-y-8">
+                {groupedUpcoming.map(group => (
+                  <div key={group.startKey} className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div className="md:col-span-3">
+                      <div className="sticky top-[92px]">
+                        <div className="rounded-2xl border p-5" style={{ background: 'rgba(175, 121, 120, 0.05)', borderColor: 'rgba(175, 121, 120, 0.15)' }}>
+                          <div className="text-sm font-semibold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                            {group.date.toLocaleDateString('en-US', { weekday: 'long' })}
+                          </div>
+                          <div className="text-2xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                            {group.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                        {row.label}
-                      </div>
-                      <div className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)', opacity: 0.85 }}>
-                        {row.desc}
-                      </div>
+                    <div className="md:col-span-9 space-y-4">
+                      {group.events.map(renderEventCard)}
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
+          )}
 
-              <div className="mt-6 pt-6 border-t" style={{ borderColor: 'rgba(188, 87, 39, 0.12)' }}>
-                <div className="text-xs font-semibold tracking-wider uppercase mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)', letterSpacing: '0.15em' }}>
-                  Tip
-                </div>
-                <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)', lineHeight: '1.6' }}>
-                  Exam periods and reading weeks are shown as a single date-range event (not repeated daily).
-                </p>
+          {groupedPast.length > 0 && (
+            <div id="past">
+              <h2 
+                className="text-3xl md:text-4xl font-bold mb-8"
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+              >
+                Past
+              </h2>
+
+              <div className="space-y-8">
+                {groupedPast.map(group => (
+                  <div key={group.startKey} className="grid grid-cols-1 md:grid-cols-12 gap-6 opacity-90">
+                    <div className="md:col-span-3">
+                      <div className="sticky top-[92px]">
+                        <div className="rounded-2xl border p-5" style={{ background: 'rgba(175, 121, 120, 0.03)', borderColor: 'rgba(175, 121, 120, 0.12)' }}>
+                          <div className="text-sm font-semibold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                            {group.date.toLocaleDateString('en-US', { weekday: 'long' })}
+                          </div>
+                          <div className="text-2xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                            {group.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="md:col-span-9 space-y-4">
+                      {group.events.map(renderEventCard)}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          </aside>
+          )}
 
-          {/* Timeline */}
-          <section className="lg:col-span-8">
-            {groupedUpcoming.length > 0 && (
-              <div className="mb-12">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-px flex-1" style={{ background: 'rgba(188, 87, 39, 0.18)' }} />
-                  <h2 className="text-2xl md:text-3xl font-bold whitespace-nowrap" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                    Upcoming
-                  </h2>
-                  <div className="h-px flex-1" style={{ background: 'rgba(188, 87, 39, 0.18)' }} />
-                </div>
-
-                <div className="space-y-6">
-                  {groupedUpcoming.map(group => (
-                    <div key={group.startKey} className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
-                      <div className="md:col-span-3">
-                        <div className="sticky top-[92px]">
-                          <div className="rounded-2xl border p-4" style={{ background: 'rgba(188, 87, 39, 0.05)', borderColor: 'rgba(188, 87, 39, 0.15)' }}>
-                            <div className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                              {group.date.toLocaleDateString('en-US', { weekday: 'long' })}
-                            </div>
-                            <div className="text-2xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                              {group.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="md:col-span-9 space-y-4">
-                        {group.events.map(renderEventCard)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          {groupedUpcoming.length === 0 && groupedPast.length === 0 && (
+            <div className="text-center py-20">
+              <div className="mb-4">
+                <svg className="w-16 h-16 mx-auto opacity-30" style={{ color: 'var(--color-brown-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               </div>
-            )}
-
-            {groupedPast.length > 0 && (
-              <div>
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="h-px flex-1" style={{ background: 'rgba(188, 87, 39, 0.18)' }} />
-                  <h2 className="text-2xl md:text-3xl font-bold whitespace-nowrap" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                    Past
-                  </h2>
-                  <div className="h-px flex-1" style={{ background: 'rgba(188, 87, 39, 0.18)' }} />
-                </div>
-
-                <div className="space-y-6">
-                  {groupedPast.map(group => (
-                    <div key={group.startKey} className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 opacity-90">
-                      <div className="md:col-span-3">
-                        <div className="sticky top-[92px]">
-                          <div className="rounded-2xl border p-4" style={{ background: 'rgba(188, 87, 39, 0.03)', borderColor: 'rgba(188, 87, 39, 0.12)' }}>
-                            <div className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                              {group.date.toLocaleDateString('en-US', { weekday: 'long' })}
-                            </div>
-                            <div className="text-2xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                              {group.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="md:col-span-9 space-y-4">
-                        {group.events.map(renderEventCard)}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {groupedUpcoming.length === 0 && groupedPast.length === 0 && (
-              <div className="text-center py-20">
-                <div className="mb-4">
-                  <svg className="w-16 h-16 mx-auto opacity-30" style={{ color: 'var(--color-brown-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <p className="text-lg font-medium mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                  No events found
-                </p>
-                <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)', opacity: 0.85 }}>
-                  Try a different month, clear search, or adjust filters.
-                </p>
-              </div>
-            )}
-          </section>
-        </div>
+              <p className="text-lg font-medium mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                No events found
+              </p>
+              <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)', opacity: 0.85 }}>
+                Try a different month, clear search, or adjust filters.
+              </p>
+            </div>
+          )}
+        </section>
 
         {/* Modal */}
         {selectedEvent && (
@@ -705,12 +611,12 @@ export default function Events() {
               className="w-full max-w-3xl rounded-2xl overflow-hidden"
               style={{
                 background: 'var(--color-cream)',
-                border: '2px solid rgba(188, 87, 39, 0.2)',
+                border: '2px solid rgba(175, 121, 120, 0.2)',
                 boxShadow: '0 20px 70px rgba(0, 0, 0, 0.35)'
               }}
               onClick={e => e.stopPropagation()}
             >
-              <div className="p-6 md:p-8 border-b" style={{ borderColor: 'rgba(188, 87, 39, 0.15)' }}>
+              <div className="p-6 md:p-8 border-b" style={{ borderColor: 'rgba(175, 121, 120, 0.15)' }}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-3">
@@ -723,7 +629,7 @@ export default function Events() {
                       {selectedEvent.endDate && (
                         <span
                           className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wider"
-                          style={{ background: 'rgba(188, 87, 39, 0.12)', color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
+                          style={{ background: 'rgba(175, 121, 120, 0.12)', color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
                         >
                           DATE RANGE
                         </span>
@@ -741,7 +647,7 @@ export default function Events() {
                     type="button"
                     onClick={() => setSelectedEvent(null)}
                     className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                    style={{ background: 'rgba(188, 87, 39, 0.10)', color: 'var(--color-brown-dark)' }}
+                    style={{ background: 'rgba(175, 121, 120, 0.10)', color: 'var(--color-brown-dark)' }}
                     aria-label="Close"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

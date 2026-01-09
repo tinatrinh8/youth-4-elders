@@ -61,7 +61,7 @@ export const events: CalendarEvent[] = [
   {
     id: 'spikeball',
     title: 'Spikeball Event',
-    date: new Date(2026, 0, 16), // January 16, 2026
+    date: new Date(2026, 0, 15), // January 15, 2026
     type: 'club',
     description: 'Join us for our fun Spikeball tournament!'
   },

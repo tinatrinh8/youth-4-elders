@@ -7,42 +7,41 @@
   /* ============================================
      MAIN COLOR PALETTE - Youth 4 Elders Theme
      ============================================
+     Color Priority: Brown (main) > Cream > Green > Pink shades
      Use these variables throughout the site for consistent theming.
-     Reference: Color palette provided for brand consistency.
   */
   
-  /* Cream/Off-white - Primary background, light sections */
-  --color-cream: #EAE1CB;
+  /* BROWN - Main/Primary Color */
+  --color-brown-dark: #492F1E;
+  --color-brown-medium: #AF7978;
   
-  /* Rose/Pink - Accents, highlights, secondary elements */
-  --color-pink-light: #E5B5BD;
-  --color-pink-medium: #D18E97;
-  --color-pink-dark: #B87A82;
+  /* CREAM - Secondary/Background Color */
+  --color-cream: #EAD4C4;
   
-  /* Mustard Yellow - Accents, secondary elements */
-  --color-olive: #D2A432;
-  --color-olive-light: #E8C05A;
-  --color-olive-dark: #B88A1F;
+  /* GREEN/OLIVE - Accent Color */
+  --color-olive: #40532C;
+  --color-olive-light: #4F6A3A;
+  --color-olive-dark: #314021;
   
-  /* Orange/Rust - Text, borders, secondary backgrounds */
-  --color-brown-medium: #BC5727;
-  --color-orange: #BC5727;
-  --color-orange-light: #D67A4F;
-  --color-orange-dark: #9A451F;
-  
-  /* Dark Brown - Headings, dark sections, strong contrast */
-  --color-brown-dark: #5B3B1E;
+  /* PINK SHADES - Tertiary Accents */
+  --color-pink-light: #D3A5A5;
+  --color-pink-medium: #AF7978;
+  --color-pink-dark: #AF7978;
   
   /* Dynamic page background - updated by components for smooth transitions */
   --page-background: var(--color-cream);
 
-  /* --- REFINED AURA COLORS using Candy Summer Palette --- */
-  /* Pink (FDC3DC) */
-  --aura-pink: rgba(253, 195, 220, 0.7); 
-  /* Light Orange/Peach (FFA970) */
-  --aura-orange: rgba(255, 169, 112, 0.7); 
-  /* Secondary Color (FCB0C6) - Added for richer blending/depth */
-  --aura-secondary: rgba(252, 176, 198, 0.7); 
+  /* --- AURA COLORS - Following color priority --- */
+  /* Brown (main) */
+  --aura-brown: rgba(73, 47, 30, 0.4); 
+  /* Cream */
+  --aura-cream: rgba(234, 212, 196, 0.5); 
+  /* Green/Olive */
+  --aura-green: rgba(64, 83, 44, 0.476);
+  /* Pink shades */
+  --aura-pink: rgba(211, 165, 165, 0.5);
+  --aura-pink-medium: rgba(175, 121, 120, 0.5);
+  
   
   --aura-size: 300%; 
   --aura-speed: 30s; 
@@ -120,20 +119,20 @@ body::-webkit-scrollbar {
   background-size: var(--aura-size) var(--aura-size);
   animation: lava-aura-flow var(--aura-speed) linear infinite;
   
-  /* Initial background gradient setup (6 overlapping bubbles) */
+  /* Initial background gradient setup (6 overlapping bubbles) - Following color priority */
   background-image: 
-    /* Bubble 1: Main Pink */
-    radial-gradient(at 10% 20%, var(--aura-pink) 0px, transparent 50%),
-    /* Bubble 2: Secondary Pink */
-    radial-gradient(at 90% 80%, var(--aura-secondary) 0px, transparent 50%),
-    /* Bubble 3: Light Orange/Peach */
-    radial-gradient(at 40% 70%, var(--aura-orange) 0px, transparent 50%),
-    /* Bubble 4: Secondary Pink (for depth) */
-    radial-gradient(at 75% 30%, var(--aura-secondary) 0px, transparent 50%),
-    /* Bubble 5: Main Pink (Secondary) */
+    /* Bubble 1: Brown (main) */
+    radial-gradient(at 10% 20%, var(--aura-brown) 0px, transparent 50%),
+    /* Bubble 2: Cream */
+    radial-gradient(at 90% 80%, var(--aura-cream) 0px, transparent 50%),
+    /* Bubble 3: Green/Olive */
+    radial-gradient(at 40% 70%, var(--aura-green) 0px, transparent 50%),
+    /* Bubble 4: Cream (for depth) */
+    radial-gradient(at 75% 30%, var(--aura-cream) 0px, transparent 50%),
+    /* Bubble 5: Pink Light */
     radial-gradient(at 20% 95%, var(--aura-pink) 0px, transparent 50%),
-    /* Bubble 6: Light Orange/Peach (Secondary) */
-    radial-gradient(at 85% 50%, var(--aura-orange) 0px, transparent 50%);
+    /* Bubble 6: Pink Medium */
+    radial-gradient(at 85% 50%, var(--aura-pink-medium) 0px, transparent 50%);
 }
 
 @keyframes lava-aura-flow {
@@ -308,6 +307,17 @@ body::-webkit-scrollbar {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes fadeOutScale {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
   }
 }
 
@@ -496,10 +506,10 @@ body::-webkit-scrollbar {
 
 @keyframes importantNotePulseDark {
   0%, 100% {
-    box-shadow: 0 6px 24px rgba(100, 50, 27, 0.4), 0 2px 8px rgba(100, 50, 27, 0.3);
+    box-shadow: 0 6px 24px rgba(73, 47, 30, 0.4), 0 2px 8px rgba(73, 47, 30, 0.3);
   }
   50% {
-    box-shadow: 0 8px 32px rgba(100, 50, 27, 0.6), 0 4px 12px rgba(100, 50, 27, 0.5);
+    box-shadow: 0 8px 32px rgba(73, 47, 30, 0.6), 0 4px 12px rgba(73, 47, 30, 0.5);
   }
 }
 
@@ -710,7 +720,7 @@ body::-webkit-scrollbar {
     text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
   }
   50% {
-    text-shadow: 2px 2px 12px rgba(0,0,0,0.15), 0 0 25px rgba(152, 90, 64, 0.25);
+    text-shadow: 2px 2px 12px rgba(0,0,0,0.15), 0 0 25px rgba(73, 47, 30, 0.25);
   }
 }
 
@@ -904,5 +914,23 @@ body::-webkit-scrollbar {
 @media (min-width: 1024px) {
   .sponsor-logo[data-sponsor-index="3"] {
     max-width: 500px;
+  }
+}
+
+.sponsor-logo[data-sponsor-index="4"] {
+  max-width: 180px;
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="4"] {
+    max-width: 200px;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="4"] {
+    width: 240px !important;
+    max-width: 300px;
+    height: auto !important;
+    min-height: 200px;
+    flex-shrink: 0;
   }
 }

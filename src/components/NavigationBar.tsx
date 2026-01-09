@@ -14,6 +14,62 @@ export default function NavigationBar() {
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const pathname = usePathname()
   const isJoinUsPage = pathname === '/join-us'
+  const isHomePage = pathname === '/'
+
+  // Determine navbar color scheme based on page
+  const getNavbarColors = () => {
+    if (isJoinUsPage) {
+      // Join-us page: Green background with green accents
+      return {
+        background: 'var(--color-olive)',
+        text: 'var(--color-cream)',
+        border: 'var(--color-olive-dark)',
+        hover: 'var(--color-olive-dark)', // Darker green for hover
+        shadow: 'rgba(103, 105, 48, 0.15)',
+        mobileBackground: 'var(--color-olive)',
+        mobileBorder: 'var(--color-olive-dark)',
+        dropdownBackground: 'var(--color-cream)',
+        dropdownBorder: 'var(--color-olive-dark)',
+        dropdownText: 'var(--color-olive-dark)',
+        dropdownHover: 'rgba(103, 105, 48, 0.1)',
+        dropdownHoverText: 'var(--color-olive)'
+      }
+    } else if (isHomePage) {
+      // Homepage: Brown background with brown accents
+      return {
+        background: 'var(--color-brown-dark)',
+        text: 'var(--color-cream)',
+        border: 'none',
+        hover: 'rgba(234, 212, 196, 0.65)', // Light brown/cream for hover (slightly darker)
+        shadow: 'rgba(73, 47, 30, 0.15)',
+        mobileBackground: 'var(--color-brown-dark)',
+        mobileBorder: 'none',
+        dropdownBackground: 'var(--color-cream)',
+        dropdownBorder: 'var(--color-brown-dark)',
+        dropdownText: 'var(--color-brown-dark)',
+        dropdownHover: 'rgba(73, 47, 30, 0.1)',
+        dropdownHoverText: 'var(--color-brown-dark)'
+      }
+    } else {
+      // All other pages: Brown background with brown accents (default)
+      return {
+        background: 'var(--color-brown-dark)',
+        text: 'var(--color-cream)',
+        border: 'none',
+        hover: 'rgba(234, 212, 196, 0.65)', // Light brown/cream for hover (slightly darker)
+        shadow: 'rgba(73, 47, 30, 0.15)',
+        mobileBackground: 'var(--color-brown-dark)',
+        mobileBorder: 'none',
+        dropdownBackground: 'var(--color-cream)',
+        dropdownBorder: 'var(--color-brown-dark)',
+        dropdownText: 'var(--color-brown-dark)',
+        dropdownHover: 'rgba(73, 47, 30, 0.1)',
+        dropdownHoverText: 'var(--color-brown-dark)'
+      }
+    }
+  }
+
+  const navColors = getNavbarColors()
 
   // Load language preference from localStorage
   useEffect(() => {
@@ -65,14 +121,17 @@ export default function NavigationBar() {
     <nav 
       className="relative z-[100] py-2 md:py-3 nav-mobile-margins"
       style={{
-        background: 'var(--color-brown-dark)',
+        background: navColors.background,
         borderRadius: '9999px',
-        border: 'none',
+        border: '2px solid transparent', // Always have border to maintain size
+        borderColor: navColors.border !== 'none' ? navColors.border : 'transparent',
         marginLeft: '96px',
         marginRight: '96px',
         marginTop: '40px',
         marginBottom: '16px',
-        boxShadow: '0 4px 12px rgba(100, 50, 27, 0.15)'
+        boxShadow: `0 4px 12px ${navColors.shadow}`,
+        transition: 'background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+        boxSizing: 'border-box'
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between w-full">
@@ -90,7 +149,8 @@ export default function NavigationBar() {
               className="text-xl md:text-2xl font-bold italic"
               style={{ 
                 fontFamily: 'var(--font-vintage-stylist)', 
-                color: 'var(--color-cream)'
+                color: navColors.text,
+                transition: 'color 0.3s ease'
               }}
             >
               Youth 4 Elders
@@ -102,7 +162,7 @@ export default function NavigationBar() {
         <button
           className="md:hidden flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
           style={{
-            color: 'var(--color-cream)',
+            color: navColors.text,
             background: mobileMenuOpen ? 'rgba(255, 255, 255, 0.1)' : 'transparent'
           }}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -123,16 +183,17 @@ export default function NavigationBar() {
         <div className="hidden md:flex items-center gap-6 md:gap-8 relative">
           <Link 
             href="/"
-            className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
+            className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2"
             style={{ 
-              color: 'var(--color-cream)',
-              fontFamily: 'var(--font-kollektif)'
+              color: navColors.text,
+              fontFamily: 'var(--font-kollektif)',
+              transition: 'color 0.3s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-olive)'
+              e.currentTarget.style.color = navColors.hover
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-cream)'
+              e.currentTarget.style.color = navColors.text
             }}
           >
             Home
@@ -166,16 +227,17 @@ export default function NavigationBar() {
             }}
           >
             <div 
-              className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
+              className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
               style={{ 
-                color: hoveredDropdown === 'who-we-are' ? 'var(--color-olive)' : 'var(--color-cream)',
-                fontFamily: 'var(--font-kollektif)'
+                color: hoveredDropdown === 'who-we-are' ? navColors.hover : navColors.text,
+                fontFamily: 'var(--font-kollektif)',
+                transition: 'color 0.3s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-olive)'
+                e.currentTarget.style.color = navColors.hover
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'var(--color-cream)'
+                e.currentTarget.style.color = navColors.text
               }}
             >
               Who We Are
@@ -203,9 +265,9 @@ export default function NavigationBar() {
               <div 
                 className="absolute top-full left-0 w-56 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
-                  background: 'var(--color-cream)', 
-                  border: '1px solid var(--color-brown-dark)',
-                  boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
+                  background: navColors.dropdownBackground || 'var(--color-cream)', 
+                  border: `1px solid ${navColors.dropdownBorder || 'var(--color-brown-dark)'}`,
+                  boxShadow: `0 8px 24px ${navColors.shadow}`,
                   marginTop: '8px',
                   animation: closingDropdown === 'who-we-are' ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
                   transformOrigin: 'top'
@@ -224,19 +286,20 @@ export default function NavigationBar() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="block px-4 py-3 text-sm transition-all duration-200"
+                      className="block px-4 py-3 text-sm"
                       style={{ 
-                        color: 'var(--color-brown-dark)',
+                        color: navColors.dropdownText || 'var(--color-brown-dark)',
                         fontFamily: 'var(--font-kollektif)',
-                        background: 'transparent'
+                        background: 'transparent',
+                        transition: 'background 0.3s ease, color 0.3s ease'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(210, 164, 50, 0.1)'
-                        e.currentTarget.style.color = 'var(--color-olive)'
+                        e.currentTarget.style.background = navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)'
+                        e.currentTarget.style.color = navColors.dropdownHoverText || navColors.dropdownText || 'var(--color-brown-dark)'
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'var(--color-brown-dark)'
+                        e.currentTarget.style.color = navColors.dropdownText || 'var(--color-brown-dark)'
                       }}
                     >
                       {item.label}
@@ -249,50 +312,163 @@ export default function NavigationBar() {
           
           <Link 
             href="/join-us"
-            className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
+            className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2"
             style={{ 
-              color: 'var(--color-cream)',
-              fontFamily: 'var(--font-kollektif)'
+              color: navColors.text,
+              fontFamily: 'var(--font-kollektif)',
+              transition: 'color 0.3s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-olive)'
+              e.currentTarget.style.color = navColors.hover
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-cream)'
+              e.currentTarget.style.color = navColors.text
             }}
           >
             Get Involved
           </Link>
           
-          <Link 
-            href="/events"
-            className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
-            style={{ 
-              color: 'var(--color-cream)',
-              fontFamily: 'var(--font-kollektif)'
+          <div 
+            className="relative"
+            onMouseEnter={() => {
+              // Clear any pending close timeout
+              if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current)
+                closeTimeoutRef.current = null
+              }
+              // Immediately close any other dropdown
+              if (hoveredDropdown && hoveredDropdown !== 'events') {
+                setClosingDropdown(null)
+                setHoveredDropdown(null)
+              }
+              setClosingDropdown(null)
+              setHoveredDropdown('events')
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-olive)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-cream)'
+            onMouseLeave={() => {
+              if (hoveredDropdown === 'events') {
+                setClosingDropdown('events')
+                closeTimeoutRef.current = setTimeout(() => {
+                  setHoveredDropdown(null)
+                  setClosingDropdown(null)
+                  closeTimeoutRef.current = null
+                }, 300) // Match animation duration
+              }
             }}
           >
-            Events
-          </Link>
+            <div 
+              className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
+              style={{ 
+                color: hoveredDropdown === 'events' ? navColors.hover : navColors.text,
+                fontFamily: 'var(--font-kollektif)',
+                transition: 'color 0.3s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = navColors.hover
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = navColors.text
+              }}
+            >
+              Events
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+            {/* Invisible bridge to prevent gap issues */}
+            {hoveredDropdown === 'events' && (
+              <div 
+                className="absolute top-full left-0 right-0 h-10 z-[109]"
+                style={{ marginTop: 0 }}
+                onMouseEnter={() => {
+                  if (closeTimeoutRef.current) {
+                    clearTimeout(closeTimeoutRef.current)
+                    closeTimeoutRef.current = null
+                  }
+                  setClosingDropdown(null)
+                  setHoveredDropdown('events')
+                }}
+              />
+            )}
+            {/* Dropdown Menu */}
+            {(hoveredDropdown === 'events' || closingDropdown === 'events') && (
+              <div 
+                className="absolute top-full left-0 w-48 rounded-2xl shadow-xl z-[110] overflow-hidden"
+                style={{ 
+                  background: navColors.dropdownBackground || 'var(--color-cream)', 
+                  border: `1px solid ${navColors.dropdownBorder || 'var(--color-brown-dark)'}`,
+                  boxShadow: `0 8px 24px ${navColors.shadow}`,
+                  marginTop: '8px',
+                  animation: closingDropdown === 'events' ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
+                  transformOrigin: 'top'
+                }}
+                onMouseEnter={() => {
+                  if (closeTimeoutRef.current) {
+                    clearTimeout(closeTimeoutRef.current)
+                    closeTimeoutRef.current = null
+                  }
+                  setClosingDropdown(null)
+                  setHoveredDropdown('events')
+                }}
+              >
+                <div className="py-2">
+                  <Link
+                    href="/events#upcoming"
+                    className="block px-4 py-3 text-sm"
+                    style={{ 
+                      color: navColors.dropdownText || 'var(--color-brown-dark)',
+                      fontFamily: 'var(--font-kollektif)',
+                      background: 'transparent',
+                      transition: 'background 0.3s ease, color 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)'
+                      e.currentTarget.style.color = navColors.dropdownHoverText || navColors.dropdownText || 'var(--color-brown-dark)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent'
+                      e.currentTarget.style.color = navColors.dropdownText || 'var(--color-brown-dark)'
+                    }}
+                  >
+                    Upcoming Events
+                  </Link>
+                  <Link
+                    href="/events#past"
+                    className="block px-4 py-3 text-sm"
+                    style={{ 
+                      color: navColors.dropdownText || 'var(--color-brown-dark)',
+                      fontFamily: 'var(--font-kollektif)',
+                      background: 'transparent',
+                      transition: 'background 0.3s ease, color 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)'
+                      e.currentTarget.style.color = navColors.dropdownHoverText || navColors.dropdownText || 'var(--color-brown-dark)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent'
+                      e.currentTarget.style.color = navColors.dropdownText || 'var(--color-brown-dark)'
+                    }}
+                  >
+                    Past Events
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
           
           <Link 
             href="/contact"
-            className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2"
+            className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2"
             style={{ 
-              color: 'var(--color-cream)',
-              fontFamily: 'var(--font-kollektif)'
+              color: navColors.text,
+              fontFamily: 'var(--font-kollektif)',
+              transition: 'color 0.3s ease'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--color-olive)'
+              e.currentTarget.style.color = navColors.hover
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--color-cream)'
+              e.currentTarget.style.color = navColors.text
             }}
           >
             Contact
@@ -327,16 +503,17 @@ export default function NavigationBar() {
             }}
           >
             <div 
-              className="text-sm md:text-base font-medium transition-all duration-200 whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
+              className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
               style={{ 
-                color: hoveredDropdown === 'language' ? 'var(--color-olive)' : 'var(--color-cream)',
-                fontFamily: 'var(--font-kollektif)'
+                color: hoveredDropdown === 'language' ? navColors.hover : navColors.text,
+                fontFamily: 'var(--font-kollektif)',
+                transition: 'color 0.3s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-olive)'
+                e.currentTarget.style.color = navColors.hover
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'var(--color-cream)'
+                e.currentTarget.style.color = navColors.text
               }}
             >
               {language === 'en' ? 'EN' : 'FR'}
@@ -364,9 +541,9 @@ export default function NavigationBar() {
               <div 
                 className="absolute top-full right-0 w-40 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
-                  background: 'var(--color-cream)', 
-                  border: '1px solid var(--color-brown-dark)',
-                  boxShadow: '0 8px 24px rgba(100, 50, 27, 0.2)',
+                  background: navColors.dropdownBackground || 'var(--color-cream)', 
+                  border: `1px solid ${navColors.dropdownBorder || 'var(--color-brown-dark)'}`,
+                  boxShadow: `0 8px 24px ${navColors.shadow}`,
                   marginTop: '8px',
                   animation: closingDropdown === 'language' ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
                   transformOrigin: 'top'
@@ -383,20 +560,21 @@ export default function NavigationBar() {
                 <div className="py-2">
                   <button
                     onClick={() => handleLanguageChange('en')}
-                    className="block w-full text-left px-4 py-3 text-sm transition-all duration-200"
+                    className="block w-full text-left px-4 py-3 text-sm"
                     style={{ 
-                      color: 'var(--color-brown-dark)',
+                      color: navColors.dropdownText || 'var(--color-brown-dark)',
                       fontFamily: 'var(--font-kollektif)',
-                      background: language === 'en' ? 'rgba(152, 90, 64, 0.1)' : 'transparent'
+                      background: language === 'en' ? (navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)') : 'transparent',
+                      transition: 'background 0.3s ease, color 0.3s ease'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(210, 164, 50, 0.1)'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.background = navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)'
+                      e.currentTarget.style.color = navColors.dropdownHoverText || navColors.dropdownText || 'var(--color-brown-dark)'
                     }}
                     onMouseLeave={(e) => {
                       if (language !== 'en') {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'var(--color-brown-dark)'
+                        e.currentTarget.style.color = navColors.dropdownText || 'var(--color-brown-dark)'
                       }
                     }}
                   >
@@ -404,20 +582,21 @@ export default function NavigationBar() {
                   </button>
                   <button
                     onClick={() => handleLanguageChange('fr')}
-                    className="block w-full text-left px-4 py-3 text-sm transition-all duration-200"
+                    className="block w-full text-left px-4 py-3 text-sm"
                     style={{ 
-                      color: 'var(--color-brown-dark)',
+                      color: navColors.dropdownText || 'var(--color-brown-dark)',
                       fontFamily: 'var(--font-kollektif)',
-                      background: language === 'fr' ? 'rgba(152, 90, 64, 0.1)' : 'transparent'
+                      background: language === 'fr' ? (navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)') : 'transparent',
+                      transition: 'background 0.3s ease, color 0.3s ease'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(210, 164, 50, 0.1)'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.background = navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)'
+                      e.currentTarget.style.color = navColors.dropdownHoverText || navColors.dropdownText || 'var(--color-brown-dark)'
                     }}
                     onMouseLeave={(e) => {
                       if (language !== 'fr') {
                         e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = 'var(--color-brown-dark)'
+                        e.currentTarget.style.color = navColors.dropdownText || 'var(--color-brown-dark)'
                       }
                     }}
                   >
@@ -447,8 +626,9 @@ export default function NavigationBar() {
             mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
           style={{
-            background: 'var(--color-brown-dark)',
-            boxShadow: '-4px 0 24px rgba(0, 0, 0, 0.3)'
+            background: navColors.mobileBackground,
+            boxShadow: `-4px 0 24px ${navColors.shadow}`,
+            border: navColors.mobileBorder !== 'none' ? `2px solid ${navColors.mobileBorder}` : 'none'
           }}
         >
           <div className="flex flex-col h-full p-6 overflow-y-auto">
@@ -466,7 +646,7 @@ export default function NavigationBar() {
                   className="text-lg font-bold italic"
                   style={{ 
                     fontFamily: 'var(--font-vintage-stylist)', 
-                    color: 'var(--color-cream)'
+                    color: navColors.text
                   }}
                 >
                   Youth 4 Elders
@@ -475,7 +655,7 @@ export default function NavigationBar() {
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="w-8 h-8 flex items-center justify-center rounded-full"
-                style={{ color: 'var(--color-cream)' }}
+                style={{ color: navColors.text }}
                 aria-label="Close menu"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -490,7 +670,7 @@ export default function NavigationBar() {
                 href="/"
                 className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
                 style={{ 
-                  color: 'var(--color-cream)',
+                  color: isJoinUsPage ? 'var(--color-olive-dark)' : 'var(--color-cream)',
                   fontFamily: 'var(--font-kollektif)',
                   background: 'transparent'
                 }}
@@ -504,7 +684,7 @@ export default function NavigationBar() {
                   onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
                   className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between"
                   style={{ 
-                    color: 'var(--color-cream)',
+                    color: navColors.text,
                     fontFamily: 'var(--font-kollektif)',
                     background: 'transparent'
                   }}
@@ -533,7 +713,7 @@ export default function NavigationBar() {
                         href={item.href}
                         className="text-sm px-4 py-2 transition-all duration-200"
                         style={{ 
-                          color: 'var(--color-cream)',
+                          color: navColors.text,
                           fontFamily: 'var(--font-kollektif)',
                           background: 'transparent'
                         }}
@@ -591,7 +771,7 @@ export default function NavigationBar() {
               {/* Mobile Language Switcher */}
               <div className="border-t border-opacity-20 mt-2 pt-2" style={{ borderColor: 'var(--color-cream)' }}>
                 <div className="px-4 py-2 text-sm font-medium" style={{ 
-                  color: 'var(--color-cream)',
+                  color: navColors.text,
                   fontFamily: 'var(--font-kollektif)',
                   opacity: 0.8
                 }}>
@@ -602,7 +782,7 @@ export default function NavigationBar() {
                   className="w-full text-left px-4 py-2 text-base rounded-lg transition-colors"
                   style={{
                     fontFamily: 'var(--font-kollektif)',
-                    color: language === 'en' ? 'var(--color-cream)' : 'var(--color-cream)',
+                    color: navColors.text,
                     background: language === 'en' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
                     opacity: language === 'en' ? 1 : 0.7
                   }}
@@ -626,7 +806,7 @@ export default function NavigationBar() {
                   className="w-full text-left px-4 py-2 text-base rounded-lg transition-colors"
                   style={{
                     fontFamily: 'var(--font-kollektif)',
-                    color: language === 'fr' ? 'var(--color-cream)' : 'var(--color-cream)',
+                    color: navColors.text,
                     background: language === 'fr' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
                     opacity: language === 'fr' ? 1 : 0.7
                   }}

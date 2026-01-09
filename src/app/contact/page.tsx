@@ -207,7 +207,7 @@ export default function Contact() {
               className="p-8 md:p-10 rounded-lg"
               style={{ 
                 background: 'var(--color-brown-medium)',
-                boxShadow: '0 8px 24px rgba(188, 87, 39, 0.2)'
+                boxShadow: '0 8px 24px rgba(175, 121, 120, 0.2)'
               }}
             >
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -457,7 +457,7 @@ export default function Contact() {
                 <div
                   key={index}
                   className="border-b transition-all"
-                  style={{ borderColor: 'rgba(188, 87, 39, 0.2)' }}
+                  style={{ borderColor: 'rgba(175, 121, 120, 0.2)' }}
                 >
                   <button
                     onClick={() => toggleFAQ(index)}
@@ -507,74 +507,6 @@ export default function Contact() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Map Section */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-          <div className="mb-10 text-center">
-            <div className="mb-3">
-              <span 
-                className="text-xs font-semibold tracking-wider uppercase"
-                style={{
-                  fontFamily: 'var(--font-kollektif)',
-                  color: 'var(--color-brown-medium)',
-                  letterSpacing: '0.15em'
-                }}
-              >
-                LOCATION
-              </span>
-            </div>
-            <h2 
-              className="text-3xl md:text-4xl font-bold mb-4"
-              style={{ 
-                fontFamily: 'var(--font-vintage-stylist)', 
-                color: 'var(--color-brown-dark)'
-              }}
-            >
-              Find Us
-            </h2>
-            <p 
-              className="text-base max-w-2xl mx-auto"
-              style={{ 
-                fontFamily: 'var(--font-kollektif)', 
-                color: 'var(--color-brown-medium)'
-              }}
-            >
-              Visit us at the University of Ottawa
-            </p>
-          </div>
-          
-          <div className="relative">
-            <div 
-              className="w-full h-[450px] md:h-[550px] rounded-2xl overflow-hidden border-2 shadow-xl"
-              style={{ 
-                borderColor: 'rgba(188, 87, 39, 0.2)',
-                boxShadow: '0 12px 40px rgba(188, 87, 39, 0.15)'
-              }}
-            >
-              <iframe
-                src="https://www.google.com/maps?q=75+Laurier+Ave+E,+Ottawa,+ON+K1N+6N5&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
-            
-            {/* Decorative corner accents */}
-            <div 
-              className="absolute -top-2 -left-2 w-16 h-16 rounded-full opacity-20"
-              style={{ background: 'var(--color-pink-medium)' }}
-            />
-            <div 
-              className="absolute -bottom-2 -right-2 w-20 h-20 rounded-full opacity-20"
-              style={{ background: 'var(--color-brown-medium)' }}
-            />
           </div>
         </div>
       </section>

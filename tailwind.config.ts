@@ -11,8 +11,12 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          pink: '#ec4899',   // tailwind pink-500
-          orange: '#f97316', // tailwind orange-500
+          brownDark: '#492F1E',
+          brownMedium: '#AF7978',
+          cream: '#EAD4C4',
+          olive: '#676930',
+          pinkLight: '#D3A5A5',
+          pinkMedium: '#AF7978',
         },
       },
       spacing: {

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 
 // Confetti Component - Shoots from left and right sides
-const ConfettiComponent = ({ isLightMode, boxRef }: { isLightMode: boolean; boxRef?: React.RefObject<HTMLDivElement | null> }) => {
+const ConfettiComponent = ({ boxRef }: { boxRef?: React.RefObject<HTMLDivElement | null> }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -17,9 +17,7 @@ const ConfettiComponent = ({ isLightMode, boxRef }: { isLightMode: boolean; boxR
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
-    const confettiColors = isLightMode 
-      ? ['#D2A432', '#EAE1CB', '#5B3B1E', '#D18E97'] // Yellow, cream, brown, pink for light mode
-      : ['#D2A432', '#EAE1CB', '#5B3B1E', '#BC5727'] // Yellow, cream, brown, orange for dark mode
+    const confettiColors = ['#676930', '#EAD4C4', '#D3A5A5', '#AF7978'] // Green, cream, pink light, pink medium
 
     // Get box position for shooting from sides
     let boxLeft = window.innerWidth * 0.5 - 400 // Approximate center minus half width
@@ -107,7 +105,7 @@ const ConfettiComponent = ({ isLightMode, boxRef }: { isLightMode: boolean; boxR
     return () => {
       cancelAnimationFrame(animationId)
     }
-  }, [isLightMode, boxRef])
+  }, [boxRef])
 
   return (
     <canvas
@@ -226,15 +224,14 @@ export default function JoinUs() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [hasStarted, setHasStarted] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
-  const [isLightMode, setIsLightMode] = useState(false) // false = dark mode (pink bg, brown content), true = light mode (cream bg, pink content)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isDropdownClosing, setIsDropdownClosing] = useState(false)
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right')
   const [showConfetti, setShowConfetti] = useState(false)
   const [isInitialViewVisible, setIsInitialViewVisible] = useState(false)
 
-  // Color variables based on light/dark mode - defined at component level
-  const textColor = isLightMode ? 'var(--color-brown-dark)' : 'var(--color-cream)'
+  // Color variables - using cream, pink, and green (no brown to avoid clashing with green)
+  const textColor = 'var(--color-pink-light)'
 
   // Validation functions
   const validateField = (id: keyof FormData, value: string): string => {
@@ -280,11 +277,9 @@ export default function JoinUs() {
     ? (currentFieldValue.trim() !== '' && isValid)
     : (currentFieldValue.trim() === '' || isValid)
   
-  // Color variables based on light/dark mode
-  // Light mode: use various pink shades (pink-light, pink-medium, pink-dark) + cream for variety
-  // Dark mode: use brown shades (brown-dark, brown-medium) + cream
-  const primaryColor = isLightMode ? 'var(--color-pink-medium)' : 'var(--color-brown-medium)'
-  const primaryDarkColor = isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)'
+  // Color variables - using cream, pink, and green
+  const primaryColor = 'var(--color-pink-medium)'
+  const primaryDarkColor = 'var(--color-pink-dark)'
 
   const handleChange = (value: string) => {
     setFormData({
@@ -422,16 +417,9 @@ export default function JoinUs() {
       
       // Then set background - the transition will handle the animation
       requestAnimationFrame(() => {
-        // This runs on mount (with default isLightMode = false) and whenever isLightMode changes
-        if (isLightMode) {
-          // Light mode: baby pink background with gradient shades
-          document.body.style.background = 'linear-gradient(135deg, var(--color-pink-light) 0%, var(--color-pink-medium) 30%, var(--color-pink-light) 60%, var(--color-cream) 100%)'
-          document.documentElement.style.background = 'linear-gradient(135deg, var(--color-pink-light) 0%, var(--color-pink-medium) 30%, var(--color-pink-light) 60%, var(--color-cream) 100%)'
-        } else {
-          // Dark mode: orange background with gradient shades
-          document.body.style.background = 'linear-gradient(135deg, var(--color-brown-medium) 0%, var(--color-orange-light) 25%, var(--color-brown-medium) 50%, var(--color-orange-dark) 75%, var(--color-brown-medium) 100%)'
-          document.documentElement.style.background = 'linear-gradient(135deg, var(--color-brown-medium) 0%, var(--color-orange-light) 25%, var(--color-brown-medium) 50%, var(--color-orange-dark) 75%, var(--color-brown-medium) 100%)'
-        }
+        // Plain beige/cream background
+        document.body.style.background = 'var(--color-cream)'
+        document.documentElement.style.background = 'var(--color-cream)'
       })
     })
     
@@ -440,7 +428,7 @@ export default function JoinUs() {
       // IMPORTANT: Don't cleanup background on unmount
       // The NavigationBar will handle transitioning back to cream when isJoinUsPage becomes false
     }
-  }, [isLightMode])
+  }, [])
 
   // Page load animation
   useEffect(() => {
@@ -449,9 +437,6 @@ export default function JoinUs() {
     }, 100)
   }, [])
 
-  const toggleLightMode = () => {
-    setIsLightMode(!isLightMode)
-  }
 
   const successBoxRef = useRef<HTMLDivElement>(null)
 
@@ -474,7 +459,7 @@ export default function JoinUs() {
             className="text-2xl font-semibold"
             style={{ 
               fontFamily: 'var(--font-leiko)', 
-              color: isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)' 
+              color: 'var(--color-pink-light)' 
             }}
           >
             Submitting your application...
@@ -487,20 +472,18 @@ export default function JoinUs() {
   if (submitStatus === 'success') {
     return (
       <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden" style={{ 
-        background: isLightMode 
-          ? 'linear-gradient(135deg, var(--color-pink-light) 0%, var(--color-pink-medium) 50%, var(--color-pink-light) 100%)'
-          : 'linear-gradient(135deg, var(--color-brown-medium) 0%, var(--color-orange-light) 30%, var(--color-brown-medium) 60%, var(--color-orange-dark) 100%)'
+        background: 'var(--color-cream)'
       }}>
         {/* Confetti Effect */}
-        {showConfetti && <ConfettiComponent isLightMode={isLightMode} boxRef={successBoxRef as React.RefObject<HTMLDivElement>} />}
+        {showConfetti && <ConfettiComponent boxRef={successBoxRef as React.RefObject<HTMLDivElement>} />}
         <div className="max-w-2xl mx-auto px-8 pt-4 md:pt-8 pb-8 md:pb-12 text-center relative">
           <div 
             ref={successBoxRef}
             className="rounded-2xl p-12 shadow-lg animate-success-fade-in"
             style={{ 
-              background: isLightMode ? 'var(--color-cream)' : 'var(--color-brown-dark)', 
-              border: 'none',
-              boxShadow: isLightMode ? '0 8px 32px rgba(217, 115, 159, 0.4)' : '0 8px 32px rgba(100, 50, 27, 0.3)'
+              background: 'var(--color-olive)', 
+              border: '3px solid var(--color-olive-dark)',
+              boxShadow: '0 8px 32px rgba(103, 105, 48, 0.2)'
             }}
           >
             <div className="mb-6 flex justify-center">
@@ -514,19 +497,19 @@ export default function JoinUs() {
             </div>
             <h2 
               className="text-4xl md:text-5xl font-bold mb-4 animate-success-title"
-              style={{ fontFamily: 'var(--font-freshwost)', color: isLightMode ? 'var(--color-brown-dark)' : 'var(--color-cream)' }}
+              style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-pink-light)' }}
             >
               Thank You!
             </h2>
             <p 
               className="text-lg md:text-xl mb-4 animate-success-text"
-              style={{ fontFamily: 'var(--font-leiko)', color: isLightMode ? 'var(--color-brown-dark)' : 'var(--color-cream)' }}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-light)' }}
             >
-              Thank you for joining Youth 4 Elders as a volunteer! We&apos;ll be in touch with updates about upcoming events and volunteer opportunities.
+              Thank you for signing up to be a community volunteer! We&apos;ll reach out if we have opportunities that match your interests.
             </p>
             <p 
               className="text-lg md:text-xl mb-8 animate-success-text"
-              style={{ fontFamily: 'var(--font-leiko)', color: isLightMode ? 'var(--color-brown-dark)' : 'var(--color-cream)' }}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-light)' }}
             >
               For now,{' '}
               <a
@@ -554,53 +537,24 @@ export default function JoinUs() {
               }}
               className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg animate-success-button"
               style={{
-                background: isLightMode ? 'var(--color-brown-dark)' : 'var(--color-olive)',
-                color: isLightMode ? 'var(--color-olive)' : 'var(--color-brown-dark)',
+                background: 'var(--color-pink-medium)',
+                color: 'var(--color-cream)',
                 fontFamily: 'var(--font-leiko)',
-                border: 'none'
+                border: '2px solid var(--color-pink-dark)'
               }}
               onMouseEnter={(e) => {
-                if (isLightMode) {
-                  e.currentTarget.style.background = 'var(--color-olive)'
-                  e.currentTarget.style.color = 'var(--color-brown-dark)'
-                } else {
-                  e.currentTarget.style.background = 'var(--color-brown-dark)'
-                  e.currentTarget.style.color = 'var(--color-olive)'
-                }
+                e.currentTarget.style.background = 'var(--color-pink-dark)'
+                e.currentTarget.style.color = 'var(--color-cream)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = isLightMode ? 'var(--color-brown-dark)' : 'var(--color-olive)'
-                e.currentTarget.style.color = isLightMode ? 'var(--color-olive)' : 'var(--color-brown-dark)'
+                e.currentTarget.style.background = 'var(--color-pink-medium)'
+                e.currentTarget.style.color = 'var(--color-cream)'
               }}
             >
               Submit Another Application
             </button>
           </div>
         </div>
-        {/* Lamp image - clickable light switch */}
-        <button
-          onClick={toggleLightMode}
-          className="fixed bottom-4 z-10 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
-          style={{
-            left: '2px',
-            opacity: 0.8,
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            filter: isLightMode 
-              ? 'brightness(0) saturate(100%) invert(25%) sepia(20%) saturate(2000%) hue-rotate(15deg) brightness(0.8) contrast(1.2)' // Brown for light mode
-              : 'brightness(0) saturate(100%) invert(96%) sepia(8%) saturate(300%) hue-rotate(10deg) brightness(105%) contrast(95%)' // Cream for dark mode
-          }}
-          aria-label={isLightMode ? 'Switch to dark mode' : 'Switch to light mode'}
-        >
-          <Image
-            src="/assets/sponsors/lamp.png"
-            alt="Light switch"
-            width={80}
-            height={130}
-            className="object-contain"
-          />
-        </button>
       </main>
     )
   }
@@ -608,10 +562,10 @@ export default function JoinUs() {
   if (!hasStarted) {
     return (
       <main className="min-h-screen pt-[120px] relative overflow-hidden" style={{ 
-        background: 'transparent'
+        background: 'var(--color-cream)'
       }}>
         {/* Confetti Effect */}
-        {showConfetti && <ConfettiComponent isLightMode={isLightMode} />}
+        {showConfetti && <ConfettiComponent />}
         <div className="max-w-7xl mx-auto px-8 pt-4 md:pt-8 pb-8 md:pb-12 relative">
           <div className={`flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-12 mb-24 md:mb-32 transition-all duration-1000 ${
             isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -620,7 +574,7 @@ export default function JoinUs() {
               className={`text-6xl md:text-8xl lg:text-9xl font-bold text-center md:text-left flex-shrink-0 transition-all duration-1000 delay-200 ${
                 isInitialViewVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: textColor }}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}
             >
               Join Us
             </h1>
@@ -634,15 +588,27 @@ export default function JoinUs() {
             </p>
           </div>
           
+          {/* Intro paragraph about volunteering */}
+          <div className={`max-w-3xl mx-auto mb-12 text-center transition-all duration-1000 delay-400 ${
+            isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}>
+            <p 
+              className="text-base md:text-lg leading-relaxed"
+              style={{ fontFamily: 'var(--font-kollektif)', color: textColor, opacity: 0.9 }}
+            >
+              Join us as a community volunteer and help build meaningful intergenerational connections. Through workshops, tech support sessions, storytelling events, and community activities, you&apos;ll create spaces where stories, skills, and support move across generations. Below, we&apos;ll ask you a few quick questions to learn more about you and your interests.
+            </p>
+          </div>
+          
           {/* Quiz Box - Larger */}
           <div 
             className={`rounded-3xl p-12 md:p-16 shadow-xl text-center max-w-4xl mx-auto mb-8 transition-all duration-1000 delay-500 ${
               isInitialViewVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-8'
             }`}
             style={{ 
-              background: isLightMode ? 'var(--color-pink-medium)' : 'var(--color-orange-light)', 
-              border: '3px solid var(--color-brown-dark)',
-              boxShadow: isLightMode ? '0 8px 32px rgba(217, 115, 159, 0.3)' : '0 8px 32px rgba(100, 50, 27, 0.3)'
+              background: 'var(--color-olive)', 
+              border: '3px solid var(--color-olive-dark)',
+              boxShadow: '0 8px 32px rgba(103, 105, 48, 0.2)'
             }}
           >
             <p 
@@ -658,18 +624,18 @@ export default function JoinUs() {
               }}
               className="px-12 py-5 rounded-full font-semibold text-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
               style={{
-                background: 'var(--color-cream)',
-                color: 'var(--color-brown-dark)',
+                background: 'var(--color-pink-medium)',
+                color: 'var(--color-cream)',
                 fontFamily: 'var(--font-leiko)',
-                border: '2px solid var(--color-brown-dark)'
+                border: '2px solid var(--color-pink-dark)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)'
+                e.currentTarget.style.background = 'var(--color-pink-dark)'
                 e.currentTarget.style.color = 'var(--color-cream)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--color-cream)'
-                e.currentTarget.style.color = 'var(--color-brown-dark)'
+                e.currentTarget.style.background = 'var(--color-pink-medium)'
+                e.currentTarget.style.color = 'var(--color-cream)'
               }}
             >
               Let&apos;s Begin →
@@ -691,8 +657,8 @@ export default function JoinUs() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = 'var(--color-cream)'
-                e.currentTarget.style.color = 'var(--color-brown-dark)'
-                e.currentTarget.style.borderColor = 'var(--color-brown-dark)'
+                e.currentTarget.style.color = 'var(--color-pink-light)'
+                e.currentTarget.style.borderColor = 'var(--color-pink-light)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'transparent'
@@ -715,76 +681,51 @@ export default function JoinUs() {
           >
             <div 
               className="px-8 py-6 rounded-lg relative important-note-box"
-              data-light-mode={isLightMode}
               style={{ 
-                background: isLightMode ? 'var(--color-pink-light)' : 'var(--color-brown-dark)',
-                border: '2px dashed var(--color-cream)',
-                borderTop: '4px solid var(--color-cream)',
+                background: 'var(--color-olive)',
+                border: '2px dashed var(--color-olive-dark)',
+                borderTop: '4px solid var(--color-olive-dark)',
                 position: 'relative',
               }}
             >
               {/* Note pin/tape effect at top */}
               <div 
                 className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                style={{
-                  width: '40px',
-                  height: '20px',
-                  background: 'var(--color-cream)',
-                  borderRadius: '50% 50% 0 0',
-                  opacity: 0.7,
-                }}
+                  style={{
+                    width: '40px',
+                    height: '20px',
+                    background: 'var(--color-olive)',
+                    borderRadius: '50% 50% 0 0',
+                    opacity: 0.7,
+                  }}
               />
               <div className="flex items-start gap-3 pt-2">
                 <div 
                   className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
                   style={{ 
-                    background: 'var(--color-cream)',
-                    boxShadow: '0 2px 8px rgba(247, 240, 227, 0.3)'
+                    background: 'var(--color-olive)',
+                    boxShadow: '0 2px 8px rgba(103, 105, 48, 0.3)'
                   }}
                 >
                   <span className="text-base font-bold" style={{ color: textColor }}>!</span>
                 </div>
                 <p 
                   className="text-base md:text-lg text-left leading-relaxed flex-1"
-                  style={{ fontFamily: 'var(--font-kollektif)', color: isLightMode ? textColor : 'var(--color-cream)' }}
+                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-light)' }}
                 >
-                  <span className="font-bold" style={{ color: isLightMode ? textColor : 'var(--color-cream)' }}>Important:</span> Executive team applications are currently closed. Applications will reopen in 2026 (typically end of school year). You can still join as a community volunteer and participate in all our events and activities!
+                  <span className="font-bold" style={{ color: 'var(--color-pink-light)' }}>Important:</span> Executive team applications are currently closed. Applications will reopen in 2026 (typically end of school year). You can still join as a community volunteer and participate in all our events and activities!
             </p>
           </div>
         </div>
           </div>
         </div>
-        {/* Lamp image - clickable light switch */}
-        <button
-          onClick={toggleLightMode}
-          className="fixed bottom-4 z-10 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
-          style={{
-            left: '2px',
-            opacity: 0.8,
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            filter: isLightMode 
-              ? 'brightness(0) saturate(100%) invert(25%) sepia(20%) saturate(2000%) hue-rotate(15deg) brightness(0.8) contrast(1.2)' // Brown for light mode
-              : 'brightness(0) saturate(100%) invert(96%) sepia(8%) saturate(300%) hue-rotate(10deg) brightness(105%) contrast(95%)' // Cream for dark mode
-          }}
-          aria-label={isLightMode ? 'Switch to dark mode' : 'Switch to light mode'}
-        >
-          <Image
-            src="/assets/sponsors/lamp.png"
-            alt="Light switch"
-            width={80}
-            height={130}
-            className="object-contain"
-          />
-        </button>
       </main>
     )
   }
 
   return (
     <main className="min-h-screen pt-[120px] relative" style={{ 
-      background: 'transparent'
+      background: 'var(--color-cream)'
     }}>
       <div className="max-w-3xl mx-auto px-8 pt-4 md:pt-8 pb-8 md:pb-12 relative">
         {/* Progress Bar */}
@@ -792,26 +733,26 @@ export default function JoinUs() {
           <div className="flex justify-between items-center mb-2">
             <span 
               className="text-sm font-semibold"
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-light)' }}
             >
               Question {currentStep + 1} of {questions.length}
             </span>
             <span 
               className="text-sm font-semibold"
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-light)' }}
             >
               {Math.round(progress)}%
             </span>
           </div>
           <div 
             className="w-full h-3 rounded-full overflow-hidden"
-            style={{ background: 'var(--color-cream)' }}
+            style={{ background: 'var(--color-pink-light)' }}
           >
             <div
               className="h-full rounded-full transition-all duration-500 ease-out"
               style={{ 
                 width: `${progress}%`,
-                background: isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-medium)'
+                background: 'var(--color-olive)'
               }}
             />
           </div>
@@ -823,16 +764,14 @@ export default function JoinUs() {
             slideDirection === 'right' ? 'slide-in-right' : 'slide-in-left'
           }`}
           style={{ 
-            background: 'var(--color-cream)', 
-            border: `3px solid ${isLightMode ? 'var(--color-pink-dark)' : 'var(--color-brown-dark)'}`,
-            boxShadow: isLightMode 
-              ? '0 8px 24px rgba(217, 115, 159, 0.2)' 
-              : '0 8px 24px rgba(152, 90, 64, 0.2)'
+            background: 'var(--color-olive)', 
+            border: `3px solid var(--color-olive-dark)`,
+            boxShadow: '0 8px 24px rgba(103, 105, 48, 0.2)'
           }}
         >
           <h2 
             className="text-3xl md:text-4xl font-bold mb-8"
-            style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-brown-dark)' }}
+            style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-pink-light)' }}
           >
             {currentQuestion.label}
             {currentQuestion.required && (
@@ -862,17 +801,13 @@ export default function JoinUs() {
                   e.target.style.borderColor = currentFieldError ? '#dc2626' : primaryDarkColor
                   e.target.style.boxShadow = currentFieldError 
                     ? '0 0 0 3px rgba(220, 38, 38, 0.1)' 
-                    : isLightMode 
-                      ? '0 0 0 3px rgba(244, 114, 182, 0.1)' 
-                      : '0 0 0 3px rgba(152, 90, 64, 0.1)'
+                    : '0 0 0 3px rgba(103, 105, 48, 0.15)'
                 }}
                 onBlur={(e) => {
                   handleBlur()
                   e.target.style.borderColor = currentFieldError 
                     ? '#dc2626' 
-                    : formData[currentQuestion.id] 
-                      ? primaryColor 
-                      : primaryColor
+                    : primaryColor
                   e.target.style.boxShadow = 'none'
                 }}
               />
@@ -902,7 +837,7 @@ export default function JoinUs() {
                         : primaryColor,
                   fontFamily: 'var(--font-kollektif)',
                     background: 'white',
-                    color: 'var(--color-brown-dark)',
+                    color: 'var(--color-pink-light)',
                     paddingLeft: '1rem',
                     paddingRight: '3rem'
                 }}
@@ -910,9 +845,7 @@ export default function JoinUs() {
                     e.currentTarget.style.borderColor = currentFieldError ? '#dc2626' : primaryDarkColor
                     e.currentTarget.style.boxShadow = currentFieldError 
                       ? '0 0 0 3px rgba(220, 38, 38, 0.1)' 
-                      : isLightMode 
-                        ? '0 0 0 3px rgba(244, 114, 182, 0.1)' 
-                        : '0 0 0 3px rgba(152, 90, 64, 0.1)'
+                      : '0 0 0 3px rgba(211, 165, 165, 0.1)'
                 }}
                 onBlur={(e) => {
                     // Delay to allow option click
@@ -948,7 +881,7 @@ export default function JoinUs() {
                   }}
                 >
                   <span style={{ 
-                    color: formData[currentQuestion.id] ? 'var(--color-brown-dark)' : primaryColor
+                    color: formData[currentQuestion.id] ? 'var(--color-pink-light)' : primaryColor
                   }}>
                     {formData[currentQuestion.id] 
                       ? currentQuestion.options?.find(opt => opt.value === formData[currentQuestion.id])?.label
@@ -986,9 +919,7 @@ export default function JoinUs() {
                     style={{
                       background: 'white',
                       borderColor: primaryColor,
-                      boxShadow: isLightMode 
-                        ? '0 8px 24px rgba(217, 115, 159, 0.2)' 
-                        : '0 8px 24px rgba(152, 90, 64, 0.2)'
+                      boxShadow: '0 8px 24px rgba(103, 105, 48, 0.2)'
                     }}
                   >
                     {currentQuestion.options.map((option) => (
@@ -1007,16 +938,14 @@ export default function JoinUs() {
                         className="w-full text-left px-4 py-3 hover:bg-opacity-10 transition-colors"
                         style={{
                           fontFamily: 'var(--font-kollektif)',
-                          color: formData[currentQuestion.id] === option.value ? primaryColor : 'var(--color-brown-dark)',
+                          color: formData[currentQuestion.id] === option.value ? 'var(--color-pink-light)' : 'var(--color-pink-light)',
                           background: formData[currentQuestion.id] === option.value 
-                            ? (isLightMode ? 'rgba(209, 142, 151, 0.2)' : 'rgba(188, 87, 39, 0.2)')
+                            ? 'rgba(103, 105, 48, 0.15)'
                             : 'transparent'
                         }}
                         onMouseEnter={(e) => {
                           if (formData[currentQuestion.id] !== option.value) {
-                            e.currentTarget.style.background = isLightMode 
-                              ? 'rgba(209, 142, 151, 0.1)' 
-                              : 'rgba(188, 87, 39, 0.1)'
+                            e.currentTarget.style.background = 'rgba(103, 105, 48, 0.1)'
                           }
                         }}
                         onMouseLeave={(e) => {
@@ -1052,17 +981,13 @@ export default function JoinUs() {
                   e.target.style.borderColor = currentFieldError ? '#dc2626' : primaryDarkColor
                   e.target.style.boxShadow = currentFieldError 
                     ? '0 0 0 3px rgba(220, 38, 38, 0.1)' 
-                    : isLightMode 
-                      ? '0 0 0 3px rgba(244, 114, 182, 0.1)' 
-                      : '0 0 0 3px rgba(152, 90, 64, 0.1)'
+                    : '0 0 0 3px rgba(103, 105, 48, 0.15)'
                 }}
                 onBlur={(e) => {
                   handleBlur()
                   e.target.style.borderColor = currentFieldError 
                     ? '#dc2626' 
-                    : formData[currentQuestion.id] 
-                      ? primaryColor 
-                      : primaryColor
+                    : primaryColor
                   e.target.style.boxShadow = 'none'
                 }}
                 onKeyDown={(e) => {
@@ -1133,13 +1058,8 @@ export default function JoinUs() {
                   border: `2px solid ${primaryDarkColor}`
               }}
               onMouseEnter={(e) => {
-                  if (isLightMode) {
-                    e.currentTarget.style.background = 'var(--color-brown-dark)'
-                    e.currentTarget.style.color = 'var(--color-cream)'
-                  } else {
-                    e.currentTarget.style.background = primaryDarkColor
-                    e.currentTarget.style.color = 'var(--color-cream)'
-                  }
+                e.currentTarget.style.background = primaryDarkColor
+                e.currentTarget.style.color = 'var(--color-cream)'
               }}
               onMouseLeave={(e) => {
                   e.currentTarget.style.background = primaryColor
@@ -1156,20 +1076,15 @@ export default function JoinUs() {
                 disabled={!canProceed || isSubmitting}
                 className="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
-                  background: canProceed ? primaryColor : (isLightMode ? 'rgba(244, 114, 182, 0.5)' : 'rgba(152, 90, 64, 0.5)'),
+                  background: canProceed ? primaryColor : 'rgba(211, 165, 165, 0.5)',
                   color: 'var(--color-cream)',
                   fontFamily: 'var(--font-leiko)',
                   border: `2px solid ${primaryDarkColor}`
                 }}
                 onMouseEnter={(e) => {
                   if (canProceed && !isSubmitting) {
-                    if (isLightMode) {
-                      e.currentTarget.style.background = 'var(--color-brown-dark)'
-                      e.currentTarget.style.color = 'var(--color-cream)'
-                    } else {
-                      e.currentTarget.style.background = primaryDarkColor
-                      e.currentTarget.style.color = 'var(--color-cream)'
-                    }
+                    e.currentTarget.style.background = primaryDarkColor
+                    e.currentTarget.style.color = 'var(--color-cream)'
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -1187,20 +1102,15 @@ export default function JoinUs() {
                 disabled={!canProceed}
                 className="px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
-                  background: canProceed ? primaryColor : (isLightMode ? 'rgba(244, 114, 182, 0.5)' : 'rgba(152, 90, 64, 0.5)'),
+                  background: canProceed ? primaryColor : 'rgba(211, 165, 165, 0.5)',
                   color: 'var(--color-cream)',
                   fontFamily: 'var(--font-leiko)',
                   border: `2px solid ${primaryDarkColor}`
                 }}
                 onMouseEnter={(e) => {
                   if (canProceed) {
-                    if (isLightMode) {
-                      e.currentTarget.style.background = 'var(--color-brown-dark)'
-                      e.currentTarget.style.color = 'var(--color-cream)'
-                    } else {
-                      e.currentTarget.style.background = primaryDarkColor
-                      e.currentTarget.style.color = 'var(--color-cream)'
-                    }
+                    e.currentTarget.style.background = primaryDarkColor
+                    e.currentTarget.style.color = 'var(--color-cream)'
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -1230,30 +1140,6 @@ export default function JoinUs() {
             </div>
           )}
         </div>
-        {/* Lamp image - clickable light switch */}
-        <button
-          onClick={toggleLightMode}
-          className="fixed bottom-4 z-10 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
-          style={{
-            left: '2px',
-            opacity: 0.8,
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            filter: isLightMode 
-              ? 'brightness(0) saturate(100%) invert(25%) sepia(20%) saturate(2000%) hue-rotate(15deg) brightness(0.8) contrast(1.2)' // Brown for light mode
-              : 'brightness(0) saturate(100%) invert(96%) sepia(8%) saturate(300%) hue-rotate(10deg) brightness(105%) contrast(95%)' // Cream for dark mode
-          }}
-          aria-label={isLightMode ? 'Switch to dark mode' : 'Switch to light mode'}
-        >
-          <Image
-            src="/assets/sponsors/lamp.png"
-            alt="Light switch"
-            width={80}
-            height={130}
-            className="object-contain"
-          />
-        </button>
       </div>
     </main>
   )
