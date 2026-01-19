@@ -572,7 +572,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
         ref={sponsorsRef}
         className="relative z-20 pt-24 md:pt-32 lg:pt-40 pb-32 md:pb-48 lg:pb-64 mt-40 md:mt-52 lg:mt-64 transition-all duration-1000 ease-out" 
         style={{ 
-          background: 'var(--color-olive)',
+          background: 'var(--color-pink-dark)',
           opacity: sponsorsVisible ? 1 : 0,
           transform: sponsorsVisible ? 'translateY(0)' : 'translateY(50px)',
           position: 'relative'
@@ -591,7 +591,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
         <div 
           className="absolute top-0 left-0 right-0 h-1"
           style={{ 
-            background: 'linear-gradient(90deg, transparent, var(--color-olive-light), var(--color-olive), var(--color-olive-light), transparent)'
+            background: 'linear-gradient(90deg, transparent, var(--color-pink-light), var(--color-pink-medium), var(--color-pink-light), transparent)'
           }}
         />
 
@@ -764,11 +764,11 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = 'var(--color-cream)'
-                  e.currentTarget.style.background = 'var(--color-olive-dark)'
-                  e.currentTarget.style.borderColor = 'var(--color-olive-dark)'
+                  e.currentTarget.style.background = 'var(--color-pink-medium)'
+                  e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = 'var(--color-olive)'
+                  e.currentTarget.style.color = 'var(--color-brown-dark)'
                   e.currentTarget.style.background = 'var(--color-cream)'
                   e.currentTarget.style.borderColor = 'var(--color-cream)'
                 }}

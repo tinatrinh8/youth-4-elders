@@ -151,7 +151,7 @@ export default function ClubInfo() {
                 transitionDelay: '200ms'
               }}
             >
-              <div
+              <div 
                 className="relative w-full h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[52vh] rounded-3xl overflow-hidden border"
                 style={{
                   boxShadow: '0 10px 28px rgba(73, 47, 30, 0.16)',
@@ -219,7 +219,7 @@ export default function ClubInfo() {
                 </span>
                 <span style={{ opacity: 0.9 }}>&rdquo;</span>
               </blockquote>
-              
+                
               <div className="w-20 h-[2px] mx-auto my-6 md:my-8" style={{ background: 'rgba(91, 59, 30, 0.25)' }} />
 
               <p 
@@ -227,14 +227,14 @@ export default function ClubInfo() {
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92, whiteSpace: 'nowrap', textAlign: 'center', width: '100%' }}
               >
                 We bring youth and elders together through welcoming programs that make connection feel easy and meaningful.
-              </p>
+                  </p>
 
-              <p 
+                  <p 
                 className="mt-3 md:mt-4 text-base md:text-lg leading-relaxed italic text-center"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.82, fontStyle: 'italic' }}
               >
                 A student-led club focused on connection,<br />community, and care.
-              </p>
+                  </p>
             </div>
           </div>
         </section>
@@ -300,7 +300,7 @@ export default function ClubInfo() {
               {/* Photo - Now on the right with decorative blobs */}
               <div className="w-full max-w-2xl mx-auto lg:mx-0 order-1 lg:order-2 relative" style={{ minHeight: '600px', padding: '40px 20px', overflow: 'visible' }}>
                 {/* First decorative blob - top right (outside) */}
-                <div 
+              <div 
                   className="absolute"
                   style={{
                     width: '420px',
@@ -336,8 +336,8 @@ export default function ClubInfo() {
                     overflow: 'hidden',
                     boxShadow: '0 12px 34px rgba(73, 47, 30, 0.16)',
                     background: 'var(--color-cream)',
-                  }}
-                >
+                }}
+              >
                   <Image
                     src="/assets/club-info/founders.jpg"
                     alt="Youth 4 Elders founders at a club gathering"
@@ -469,7 +469,7 @@ export default function ClubInfo() {
             </div>
 
             <div className="rounded-2xl border p-6 md:p-8" style={{ background: 'var(--color-cream)', borderColor: 'rgba(175, 121, 120, 0.18)', boxShadow: '0 10px 30px rgba(175, 121, 120, 0.08)' }}>
-              <h3
+              <h3 
                 className="text-2xl md:text-3xl font-bold mb-4"
                 style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
               >
@@ -489,13 +489,13 @@ export default function ClubInfo() {
             </div>
 
             <div className="rounded-2xl border p-6 md:p-8" style={{ background: 'var(--color-cream)', borderColor: 'rgba(175, 121, 120, 0.18)', boxShadow: '0 10px 30px rgba(175, 121, 120, 0.08)' }}>
-              <h3
+              <h3 
                 className="text-2xl md:text-3xl font-bold mb-4"
                 style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
               >
                 Volunteer Training
               </h3>
-              <p
+              <p 
                 className="text-base md:text-lg leading-relaxed mb-4"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
               >
@@ -603,8 +603,8 @@ export default function ClubInfo() {
                       width: '90%',
                       pointerEvents: 'auto',
                       animation: isClosingError ? 'fadeOutScale 0.3s ease-in forwards' : 'fadeInScale 0.3s ease-out forwards',
-                    }}
-                  >
+                }}
+              >
                     <div className="flex items-start justify-between gap-3">
                       <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
                         {ideaSubmitError}

@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react'
 interface TeamMember {
   name: string
   role: string
+  category: 'Presidents' | 'Internal' | 'External' | 'Finance' | 'Marketing' | 'Events'
   yearOfStudy: number
   program: string
   funFact: string
@@ -21,6 +22,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Julia Diem Hum',
     role: 'Co-Founder & Co-President',
+    category: 'Presidents',
     yearOfStudy: 3,
     program: 'Translational Molecular Medicine - TMM',
     funFact: 'Has met a mermaid',
@@ -46,6 +48,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Peter Han',
     role: 'Co-Founder & Co-President',
+    category: 'Presidents',
     yearOfStudy: 3,
     program: 'Translational Molecular Medicine - TMM',
     funFact: 'Loves Nigerian Jollof',
@@ -71,36 +74,99 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Sarah Chen',
     role: 'Secretary & Treasurer',
+    category: 'Finance',
     yearOfStudy: 2,
     program: 'Biomedical Sciences',
     funFact: 'Has a collection of 50+ houseplants',
   },
   {
+    name: 'Alyssa Park',
+    role: 'Finance Coordinator',
+    category: 'Finance',
+    yearOfStudy: 3,
+    program: 'Accounting',
+    funFact: 'Collects vintage postcards',
+  },
+  {
     name: 'Michael Torres',
     role: 'Workshop Director',
+    category: 'Events',
     yearOfStudy: 4,
     program: 'Social Work',
     funFact: 'Can solve a Rubik\'s cube in under 2 minutes',
   },
   {
+    name: 'Noah Patel',
+    role: 'Events Coordinator',
+    category: 'Events',
+    yearOfStudy: 2,
+    program: 'Health Sciences',
+    funFact: 'Loves night hikes',
+  },
+  {
     name: 'Emma Miller',
     role: 'Volunteer Coordinator',
+    category: 'Internal',
     yearOfStudy: 2,
     program: 'Psychology',
     funFact: 'Once hiked 20km in one day',
   },
   {
+    name: 'Liam Nguyen',
+    role: 'Internal Coordinator',
+    category: 'Internal',
+    yearOfStudy: 3,
+    program: 'Sociology',
+    funFact: 'Can bake sourdough from scratch',
+  },
+  {
     name: 'David Kim',
     role: 'Social Media Manager',
+    category: 'Marketing',
     yearOfStudy: 3,
     program: 'Communications',
     funFact: 'Plays 3 different musical instruments',
+  },
+  {
+    name: 'Sofia Alvarez',
+    role: 'Marketing Lead',
+    category: 'Marketing',
+    yearOfStudy: 4,
+    program: 'Digital Media',
+    funFact: 'Runs a film photography page',
+  },
+  {
+    name: 'Riley Thompson',
+    role: 'External Relations Lead',
+    category: 'External',
+    yearOfStudy: 4,
+    program: 'Public Relations',
+    funFact: 'Volunteers at community gardens',
+  },
+  {
+    name: 'Marcus Adeyemi',
+    role: 'External Outreach Coordinator',
+    category: 'External',
+    yearOfStudy: 2,
+    program: 'Political Science',
+    funFact: 'Speaks three languages',
   },
 ]
 
 export default function Team() {
   const [titleVisible, setTitleVisible] = useState(false)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
+  const teamGroups: TeamMember['category'][] = [
+    'Presidents',
+    'Internal',
+    'External',
+    'Finance',
+    'Marketing',
+    'Events'
+  ]
+
+  const getGroupMembers = (category: TeamMember['category']) =>
+    teamMembers.filter((member) => member.category === category)
 
   useEffect(() => {
     let titleTimer: NodeJS.Timeout
@@ -179,14 +245,38 @@ export default function Team() {
           </p>
         </div>
 
-        {/* Team Members Grid - Grouped by Rows */}
-        <div className="space-y-16 md:space-y-24">
-          {Array.from({ length: Math.ceil(teamMembers.length / 3) }, (_, rowIndex) => (
-            <TeamRow 
-              key={rowIndex} 
-              members={teamMembers.slice(rowIndex * 3, rowIndex * 3 + 3)} 
-            />
-          ))}
+        {/* Team Members Grid - Grouped by Section */}
+        <div className="space-y-32 md:space-y-40">
+          {teamGroups.map((group) => {
+            const members = getGroupMembers(group)
+            return (
+              <div key={group}>
+                <h2
+                  className="text-3xl md:text-4xl font-bold mb-6 text-center"
+                  style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+                >
+                  {group}
+                </h2>
+                {members.length > 0 ? (
+                  <div className="space-y-16 md:space-y-24">
+                    {Array.from({ length: Math.ceil(members.length / 3) }, (_, rowIndex) => (
+                      <TeamRow
+                        key={`${group}-${rowIndex}`}
+                        members={members.slice(rowIndex * 3, rowIndex * 3 + 3)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p
+                    className="text-center text-base md:text-lg"
+                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)' }}
+                  >
+                    Team members coming soon.
+                  </p>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
     </main>
@@ -224,20 +314,24 @@ function TeamRow({ members }: { members: TeamMember[] }) {
     }
   }, [])
 
+  const useCenteredLayout = members.length < 3
+  const gridCols = members.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'
+
   return (
-    <div 
-      ref={ref}
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 md:gap-x-12 gap-y-16 md:gap-y-20"
-    >
-      {members.map((member, index) => (
-        <TeamMemberCard 
-          key={index} 
-          member={member} 
-          index={index} 
-          isVisible={isVisible}
-          cardDelay={index * 0.1}
-        />
-      ))}
+    <div ref={ref} className={useCenteredLayout ? 'md:flex md:justify-center' : ''}>
+      <div
+        className={`grid grid-cols-1 ${useCenteredLayout ? gridCols : 'md:grid-cols-2 lg:grid-cols-3'} gap-x-12 md:gap-x-24 gap-y-16 md:gap-y-20 justify-items-center w-full ${useCenteredLayout ? 'max-w-5xl' : ''}`}
+      >
+        {members.map((member, index) => (
+          <TeamMemberCard
+            key={index}
+            member={member}
+            index={index}
+            isVisible={isVisible}
+            cardDelay={index * 0.1}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -268,7 +362,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
 
   return (
     <div 
-      className={`flex flex-col items-center ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+      className={`flex flex-col items-center w-full max-w-sm mx-auto ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
       style={{
         animationDelay: isVisible ? `${cardDelay}s` : '0s',
         willChange: isVisible ? 'auto' : 'opacity, transform'
@@ -390,53 +484,6 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
         </div>
       </div>
 
-      {/* Individual Focus Section - Only for Julia and Peter */}
-      {member.focus && (
-        <div 
-          className="rounded-xl p-6 w-full mt-6"
-          style={{ 
-            background: 'rgba(188, 87, 39, 0.08)',
-            border: '2px solid rgba(188, 87, 39, 0.2)',
-            boxShadow: '0 4px 12px rgba(188, 87, 39, 0.15)',
-          }}
-        >
-          <h3 
-            className="text-lg font-bold mb-4 text-center"
-            style={{ 
-              fontFamily: 'var(--font-vintage-stylist)', 
-              color: 'var(--color-brown-dark)' 
-            }}
-          >
-            {member.focus.title}
-          </h3>
-          <div className="space-y-4">
-            {member.focus.points.map((point, index) => (
-              <div key={index} className={index > 0 ? 'pt-3 border-t' : ''} style={index > 0 ? { borderColor: 'rgba(188, 87, 39, 0.15)' } : {}}>
-                <div 
-                  className="font-semibold mb-1"
-                  style={{ 
-                    fontFamily: 'var(--font-kollektif)', 
-                    color: 'var(--color-brown-medium)',
-                    fontSize: '14px'
-                  }}
-                >
-                  {point.heading}
-                </div>
-                <p 
-                  className="text-sm leading-relaxed"
-                  style={{ 
-                    fontFamily: 'var(--font-kollektif)', 
-                    color: 'var(--color-brown-dark)',
-                    lineHeight: '1.6'
-                  }}
-                >
-                  {point.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
