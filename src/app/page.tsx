@@ -590,14 +590,14 @@ export default function Home() {
           <div className="max-w-3xl mx-auto text-center">
             <h2 
               className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-on-scroll slide-up ${visibleElements.has('get-involved-heading') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-dark)' }}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
               data-animate-id="get-involved-heading"
             >
               Want to Get Involved?
             </h2>
             <p 
               className={`text-lg md:text-xl mb-8 leading-relaxed animate-on-scroll fade ${visibleElements.has('get-involved-description') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)' }}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
               data-animate-id="get-involved-description"
             >
               Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
@@ -610,18 +610,18 @@ export default function Home() {
                 href="/join-us"
                 className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
                 style={{
-                  background: 'var(--color-olive)',
+                  background: 'var(--color-brown)',
                   color: 'white',
                   fontFamily: 'var(--font-kollektif)',
                   border: '2px solid transparent'
                 }}
                 onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.currentTarget.style.borderColor = 'var(--color-olive-dark)'
-                  e.currentTarget.style.background = 'var(--color-olive-dark)'
+                  e.currentTarget.style.borderColor = 'var(--color-brown-dark)'
+                  e.currentTarget.style.background = 'var(--color-brown-dark)'
                 }}
                 onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
                   e.currentTarget.style.borderColor = 'transparent'
-                  e.currentTarget.style.background = 'var(--color-olive)'
+                  e.currentTarget.style.background = 'var(--color-brown)'
                 }}
               >
                 LEARN MORE
@@ -966,10 +966,10 @@ export default function Home() {
                     style={{
                       transitionDelay: `${index * 0.1}s`,
                       background: update.hasCountdown 
-                        ? 'rgba(64, 83, 44, 0.15)' 
+                        ? 'rgba(211, 165, 165, 0.18)' 
                         : 'var(--color-cream)',
                       border: update.hasCountdown
-                        ? '2px solid var(--color-olive)'
+                        ? '2px solid var(--color-pink-medium)'
                         : '2px solid rgba(73, 47, 30, 0.2)'
                     }}
                   >
@@ -1156,9 +1156,9 @@ export default function Home() {
             className={`relative rounded-2xl p-5 md:p-8 animate-on-scroll slide-up ${visibleElements.has('impact-quote') ? 'visible' : ''}`}
             data-animate-id="impact-quote"
             style={{
-              background: 'rgba(103, 105, 48, 0.15)',
-              border: '2px dashed rgba(103, 105, 48, 0.3)',
-              boxShadow: '0 4px 16px rgba(103, 105, 48, 0.1)'
+              background: 'rgba(211, 165, 165, 0.18)',
+              border: '2px dashed rgba(175, 121, 120, 0.35)',
+              boxShadow: '0 4px 16px rgba(175, 121, 120, 0.12)'
             }}
           >
             {/* Decorative quote mark - top left */}
@@ -1166,7 +1166,7 @@ export default function Home() {
               className="absolute top-1 left-3 md:left-4 text-4xl md:text-5xl opacity-25"
               style={{ 
                 fontFamily: 'var(--font-vintage-stylist)',
-                color: 'var(--color-olive)',
+                color: 'var(--color-pink-medium)',
                 lineHeight: 1
               }}
             >
@@ -1188,7 +1188,7 @@ export default function Home() {
               className="text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed text-center relative z-10 px-4"
               style={{ 
                 fontFamily: 'var(--font-leiko)',
-                color: 'var(--color-olive-dark)',
+                color: 'var(--color-brown-dark)',
                 fontStyle: 'italic'
               }}
             >

@@ -15,24 +15,41 @@ export default function NavigationBar() {
   const pathname = usePathname()
   const isJoinUsPage = pathname === '/join-us'
   const isHomePage = pathname === '/'
+  const isContactPage = pathname === '/contact'
 
   // Determine navbar color scheme based on page
   const getNavbarColors = () => {
     if (isJoinUsPage) {
-      // Join-us page: Green background with green accents
+      // Join-us page: Pink background with pink accents
       return {
-        background: 'var(--color-olive)',
+        background: 'var(--color-pink-medium)',
         text: 'var(--color-cream)',
-        border: 'var(--color-olive-dark)',
-        hover: 'var(--color-olive-dark)', // Darker green for hover
-        shadow: 'rgba(103, 105, 48, 0.15)',
-        mobileBackground: 'var(--color-olive)',
-        mobileBorder: 'var(--color-olive-dark)',
+        border: 'var(--color-pink-dark)',
+        hover: 'var(--color-pink-dark)',
+        shadow: 'rgba(175, 121, 120, 0.2)',
+        mobileBackground: 'var(--color-pink-medium)',
+        mobileBorder: 'var(--color-pink-dark)',
         dropdownBackground: 'var(--color-cream)',
-        dropdownBorder: 'var(--color-olive-dark)',
-        dropdownText: 'var(--color-olive-dark)',
-        dropdownHover: 'rgba(103, 105, 48, 0.1)',
-        dropdownHoverText: 'var(--color-olive)'
+        dropdownBorder: 'var(--color-pink-dark)',
+        dropdownText: 'var(--color-pink-dark)',
+        dropdownHover: 'rgba(175, 121, 120, 0.1)',
+        dropdownHoverText: 'var(--color-pink-medium)'
+      }
+    } else if (isContactPage) {
+      // Contact page: Pink background with pink accents
+      return {
+        background: 'var(--color-pink-medium)',
+        text: 'var(--color-cream)',
+        border: 'none',
+        hover: 'rgba(234, 212, 196, 0.8)', // Lighter cream for hover
+        shadow: 'rgba(175, 121, 120, 0.2)',
+        mobileBackground: 'var(--color-pink-medium)',
+        mobileBorder: 'none',
+        dropdownBackground: 'var(--color-cream)',
+        dropdownBorder: 'var(--color-pink-medium)',
+        dropdownText: 'var(--color-pink-medium)',
+        dropdownHover: 'rgba(175, 121, 120, 0.1)',
+        dropdownHoverText: 'var(--color-pink-medium)'
       }
     } else if (isHomePage) {
       // Homepage: Brown background with brown accents

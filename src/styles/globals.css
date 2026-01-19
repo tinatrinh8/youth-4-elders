@@ -7,26 +7,27 @@
   /* ============================================
      MAIN COLOR PALETTE - Youth 4 Elders Theme
      ============================================
-     Color Priority: Brown (main) > Cream > Green > Pink shades
+    Color Priority: Brown (main) > Cream > Pink shades
      Use these variables throughout the site for consistent theming.
   */
   
   /* BROWN - Main/Primary Color */
   --color-brown-dark: #492F1E;
   --color-brown-medium: #AF7978;
+  --color-brown: #6D4A33;
   
   /* CREAM - Secondary/Background Color */
   --color-cream: #EAD4C4;
   
-  /* GREEN/OLIVE - Accent Color */
-  --color-olive: #40532C;
-  --color-olive-light: #4F6A3A;
-  --color-olive-dark: #314021;
-  
-  /* PINK SHADES - Tertiary Accents */
-  --color-pink-light: #D3A5A5;
+  /* PINK SHADES - Accent Colors */
+  --color-pink-light: #d8b4ad;
   --color-pink-medium: #AF7978;
-  --color-pink-dark: #AF7978;
+  --color-pink-dark: #8F5F5E;
+
+  /* Legacy olive variables map to pinks */
+  --color-olive: var(--color-pink-medium);
+  --color-olive-light: var(--color-pink-light);
+  --color-olive-dark: var(--color-pink-dark);
   
   /* Dynamic page background - updated by components for smooth transitions */
   --page-background: var(--color-cream);
@@ -36,8 +37,8 @@
   --aura-brown: rgba(73, 47, 30, 0.4); 
   /* Cream */
   --aura-cream: rgba(234, 212, 196, 0.5); 
-  /* Green/Olive */
-  --aura-green: rgba(64, 83, 44, 0.476);
+  /* Pink accent */
+  --aura-green: rgba(211, 165, 165, 0.5);
   /* Pink shades */
   --aura-pink: rgba(211, 165, 165, 0.5);
   --aura-pink-medium: rgba(175, 121, 120, 0.5);

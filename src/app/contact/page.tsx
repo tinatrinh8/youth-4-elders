@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 
 export default function Contact() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null)
@@ -76,48 +75,6 @@ export default function Contact() {
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
-      {/* Header Banner Section */}
-      <section className="relative h-[250px] md:h-[300px] flex items-center justify-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: 'url(/assets/header.jpg)',
-            filter: 'blur(2px)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        />
-        <div className="absolute inset-0" style={{ background: 'rgba(0, 0, 0, 0.4)' }} />
-        <div className="relative z-10 text-center">
-          <h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3"
-            style={{ 
-              fontFamily: 'var(--font-vintage-stylist)', 
-              color: 'white',
-              textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)'
-            }}
-          >
-            Contact Us
-          </h1>
-          <div className="flex items-center justify-center gap-2 text-xs md:text-sm">
-            <Link 
-              href="/" 
-              className="hover:opacity-80 transition-opacity"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'white' }}
-            >
-              HOME
-            </Link>
-            <span style={{ color: 'white', opacity: 0.7 }}> • </span>
-            <span 
-              className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'white' }}
-            >
-              CONTACT
-            </span>
-          </div>
-        </div>
-      </section>
-
       {/* Get in Touch Section */}
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">

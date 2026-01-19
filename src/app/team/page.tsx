@@ -11,6 +11,10 @@ interface TeamMember {
   funFact: string
   imageUrl?: string // Optional image URL, will use placeholder if not provided
   email?: string // Optional email
+  focus?: {
+    title: string
+    points: Array<{ heading: string; description: string }>
+  }
 }
 
 const teamMembers: TeamMember[] = [
@@ -21,6 +25,23 @@ const teamMembers: TeamMember[] = [
     program: 'Translational Molecular Medicine - TMM',
     funFact: 'Has met a mermaid',
     imageUrl: '/assets/team/julia.png',
+    focus: {
+      title: "Julia's Focus",
+      points: [
+        {
+          heading: 'Creative connection.',
+          description: 'Designing activities that feel welcoming, calm, and easy to join.'
+        },
+        {
+          heading: 'Volunteer experience.',
+          description: 'Making sure students feel prepared, supported, and confident with seniors.'
+        },
+        {
+          heading: 'Community storytelling.',
+          description: 'Sharing impact stories that highlight the relationships we build.'
+        }
+      ]
+    }
   },
   {
     name: 'Peter Han',
@@ -29,6 +50,23 @@ const teamMembers: TeamMember[] = [
     program: 'Translational Molecular Medicine - TMM',
     funFact: 'Loves Nigerian Jollof',
     imageUrl: '/assets/team/peter.png',
+    focus: {
+      title: "Peter's Focus",
+      points: [
+        {
+          heading: 'Partnerships & outreach.',
+          description: 'Building relationships with community spaces and campus partners.'
+        },
+        {
+          heading: 'Program structure.',
+          description: 'Keeping sessions organized, consistent, and easy to access.'
+        },
+        {
+          heading: 'Long-term growth.',
+          description: 'Planning sustainable initiatives that expand our reach responsibly.'
+        }
+      ]
+    }
   },
   {
     name: 'Sarah Chen',
@@ -351,6 +389,54 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
           </div>
         </div>
       </div>
+
+      {/* Individual Focus Section - Only for Julia and Peter */}
+      {member.focus && (
+        <div 
+          className="rounded-xl p-6 w-full mt-6"
+          style={{ 
+            background: 'rgba(188, 87, 39, 0.08)',
+            border: '2px solid rgba(188, 87, 39, 0.2)',
+            boxShadow: '0 4px 12px rgba(188, 87, 39, 0.15)',
+          }}
+        >
+          <h3 
+            className="text-lg font-bold mb-4 text-center"
+            style={{ 
+              fontFamily: 'var(--font-vintage-stylist)', 
+              color: 'var(--color-brown-dark)' 
+            }}
+          >
+            {member.focus.title}
+          </h3>
+          <div className="space-y-4">
+            {member.focus.points.map((point, index) => (
+              <div key={index} className={index > 0 ? 'pt-3 border-t' : ''} style={index > 0 ? { borderColor: 'rgba(188, 87, 39, 0.15)' } : {}}>
+                <div 
+                  className="font-semibold mb-1"
+                  style={{ 
+                    fontFamily: 'var(--font-kollektif)', 
+                    color: 'var(--color-brown-medium)',
+                    fontSize: '14px'
+                  }}
+                >
+                  {point.heading}
+                </div>
+                <p 
+                  className="text-sm leading-relaxed"
+                  style={{ 
+                    fontFamily: 'var(--font-kollektif)', 
+                    color: 'var(--color-brown-dark)',
+                    lineHeight: '1.6'
+                  }}
+                >
+                  {point.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
