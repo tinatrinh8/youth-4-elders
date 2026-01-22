@@ -10,6 +10,7 @@ export default function NavigationBar() {
   const [closingDropdown, setClosingDropdown] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false)
+  const [mobileEventsOpen, setMobileEventsOpen] = useState(false)
   const [language, setLanguage] = useState<'en' | 'fr'>('en')
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const pathname = usePathname()
@@ -128,10 +129,21 @@ export default function NavigationBar() {
     // Note: join-us page manages its own background with animation
   }, [isJoinUsPage])
 
+  useEffect(() => {
+    if (!mobileMenuOpen) {
+      setMobileDropdownOpen(false)
+      setMobileEventsOpen(false)
+    }
+  }, [mobileMenuOpen])
+
   const whoWeAreSubmenu = [
     { href: '/club-info', label: 'Club Info' },
     { href: '/partner', label: 'Partner Page' },
     { href: '/team', label: 'Meet the Team' },
+  ]
+  const eventsSubmenu = [
+    { href: '/events#upcoming', label: 'Upcoming Events' },
+    { href: '/events#past', label: 'Past Events' }
   ]
   
   return (
@@ -687,7 +699,7 @@ export default function NavigationBar() {
                 href="/"
                 className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
                 style={{ 
-                  color: isJoinUsPage ? 'var(--color-olive-dark)' : 'var(--color-cream)',
+                  color: navColors.text,
                   fontFamily: 'var(--font-kollektif)',
                   background: 'transparent'
                 }}
@@ -759,18 +771,55 @@ export default function NavigationBar() {
                 Get Involved
               </Link>
               
-              <Link 
-                href="/events"
-                className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
-                style={{ 
-                  color: 'var(--color-cream)',
-                  fontFamily: 'var(--font-kollektif)',
-                  background: 'transparent'
-                }}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Events
-              </Link>
+              <div className="flex flex-col">
+                <button
+                  onClick={() => setMobileEventsOpen(!mobileEventsOpen)}
+                  className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between"
+                  style={{ 
+                    color: navColors.text,
+                    fontFamily: 'var(--font-kollektif)',
+                    background: 'transparent'
+                  }}
+                >
+                  <span>Events</span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-200 ${mobileEventsOpen ? 'rotate-180' : ''}`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div 
+                  className="overflow-hidden transition-all duration-300 ease-in-out"
+                  style={{
+                    maxHeight: mobileEventsOpen ? '500px' : '0',
+                    opacity: mobileEventsOpen ? 1 : 0
+                  }}
+                >
+                  <div className="ml-4 mt-2 flex flex-col gap-1">
+                    {eventsSubmenu.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="text-sm px-4 py-2 transition-all duration-200"
+                        style={{ 
+                          color: navColors.text,
+                          fontFamily: 'var(--font-kollektif)',
+                          background: 'transparent'
+                        }}
+                        onClick={() => {
+                          setMobileMenuOpen(false)
+                          setMobileEventsOpen(false)
+                        }}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
               
               <Link 
                 href="/contact"

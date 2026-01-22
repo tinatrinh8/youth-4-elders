@@ -370,9 +370,6 @@ export default function ClubInfo() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
                 <div className="pr-0 md:pr-10 md:border-r" style={{ borderColor: 'rgba(175, 121, 120, 0.25)' }}>
-                  <p className="text-sm uppercase tracking-widest mb-4" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                    No. 1
-                  </p>
                   <h3 className="text-4xl md:text-5xl font-semibold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
                     Julia
                   </h3>
@@ -385,9 +382,6 @@ export default function ClubInfo() {
                 </div>
 
                 <div className="pl-0 md:pl-10">
-                  <p className="text-sm uppercase tracking-widest mb-4" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                    No. 2
-                  </p>
                   <h3 className="text-4xl md:text-5xl font-semibold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
                     Peter
                   </h3>
@@ -427,84 +421,103 @@ export default function ClubInfo() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
-            <div className="rounded-2xl border p-6 md:p-8" style={{ background: 'var(--color-cream)', borderColor: 'rgba(175, 121, 120, 0.18)', boxShadow: '0 10px 30px rgba(175, 121, 120, 0.08)' }}>
-              <h3
-                className="text-2xl md:text-3xl font-bold mb-4"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-              >
-                Regular Weekly Sessions
-              </h3>
-              <p
-                className="text-base md:text-lg leading-relaxed mb-4"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
-              >
-                Consistent meet-ups every week for conversation, activities, and connection. Same time, same place—so you always know where to find us.
-              </p>
-              <ul className="list-disc pl-5 space-y-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                <li>Tech help drop-ins</li>
-                <li>Social coffee hours</li>
-                <li>Activity workshops</li>
-              </ul>
+          <div className="rounded-2xl border overflow-hidden" style={{ borderColor: 'rgba(175, 121, 120, 0.25)', background: 'rgba(234, 212, 196, 0.18)' }}>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8">
+              <div className="md:col-span-7">
+                <p className="text-xs uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  Ongoing
+                </p>
+                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                  Regular Weekly Sessions
+                </h3>
+                <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}>
+                  Consistent meet-ups every week for conversation, activities, and connection. Same time, same place—so you always know where to find us.
+                </p>
+              </div>
+              <div className="md:col-span-5">
+                <div className="flex flex-wrap gap-2">
+                  {['Tech help drop-ins', 'Social coffee hours', 'Activity workshops'].map((item) => (
+                    <span key={item} className="px-3 py-1 rounded-full text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'var(--color-cream)' }}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="rounded-2xl border p-6 md:p-8" style={{ background: 'var(--color-cream)', borderColor: 'rgba(175, 121, 120, 0.18)', boxShadow: '0 10px 30px rgba(175, 121, 120, 0.08)' }}>
-              <h3
-                className="text-2xl md:text-3xl font-bold mb-4"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-              >
-                Special Events & Programs
-              </h3>
-              <p 
-                className="text-base md:text-lg leading-relaxed mb-4"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
-              >
-                Monthly and seasonal events that bring the community together for celebration, learning, and shared experiences.
-              </p>
-              <ul className="list-disc pl-5 space-y-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                <li>Holiday celebrations</li>
-                <li>Educational seminars</li>
-                <li>Community outings</li>
-              </ul>
+            <div className="border-t" style={{ borderColor: 'rgba(175, 121, 120, 0.25)' }} />
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8" style={{ background: 'rgba(234, 212, 196, 0.3)' }}>
+              <div className="md:col-span-7">
+                <p className="text-xs uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  Seasonal
+                </p>
+                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                  Special Events & Programs
+                </h3>
+                <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}>
+                  Monthly and seasonal events that bring the community together for celebration, learning, and shared experiences.
+                </p>
+              </div>
+              <div className="md:col-span-5">
+                <div className="flex flex-wrap gap-2">
+                  {['Holiday celebrations', 'Educational seminars', 'Community outings'].map((item) => (
+                    <span key={item} className="px-3 py-1 rounded-full text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'var(--color-cream)' }}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="rounded-2xl border p-6 md:p-8" style={{ background: 'var(--color-cream)', borderColor: 'rgba(175, 121, 120, 0.18)', boxShadow: '0 10px 30px rgba(175, 121, 120, 0.08)' }}>
-              <h3 
-                className="text-2xl md:text-3xl font-bold mb-4"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-              >
-                Partnership Programs
-              </h3>
-              <p 
-                className="text-base md:text-lg leading-relaxed mb-4"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
-              >
-                Collaborating with schools, senior centers, and community organizations to create meaningful intergenerational experiences.
-              </p>
-              <ul className="list-disc pl-5 space-y-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                <li>School partnerships</li>
-                <li>Senior center visits</li>
-                <li>Community collaborations</li>
-              </ul>
+            <div className="border-t" style={{ borderColor: 'rgba(175, 121, 120, 0.25)' }} />
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8">
+              <div className="md:col-span-7">
+                <p className="text-xs uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  Community
+                </p>
+                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                  Partnership Programs
+                </h3>
+                <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}>
+                  Collaborating with schools, senior centers, and community organizations to create meaningful intergenerational experiences.
+                </p>
+              </div>
+              <div className="md:col-span-5">
+                <div className="flex flex-wrap gap-2">
+                  {['School partnerships', 'Senior center visits', 'Community collaborations'].map((item) => (
+                    <span key={item} className="px-3 py-1 rounded-full text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'var(--color-cream)' }}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="rounded-2xl border p-6 md:p-8" style={{ background: 'var(--color-cream)', borderColor: 'rgba(175, 121, 120, 0.18)', boxShadow: '0 10px 30px rgba(175, 121, 120, 0.08)' }}>
-              <h3 
-                className="text-2xl md:text-3xl font-bold mb-4"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-              >
-                Volunteer Training
-              </h3>
-              <p 
-                className="text-base md:text-lg leading-relaxed mb-4"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
-              >
-                Comprehensive training for student volunteers to ensure they&apos;re prepared, confident, and ready to make a positive impact.
-              </p>
-              <ul className="list-disc pl-5 space-y-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                <li>Orientation sessions</li>
-                <li>Skill-building workshops</li>
-              </ul>
+            <div className="border-t" style={{ borderColor: 'rgba(175, 121, 120, 0.25)' }} />
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8" style={{ background: 'rgba(234, 212, 196, 0.3)' }}>
+              <div className="md:col-span-7">
+                <p className="text-xs uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
+                  Training
+                </p>
+                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                  Volunteer Training
+                </h3>
+                <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}>
+                  Comprehensive training for student volunteers to ensure they&apos;re prepared, confident, and ready to make a positive impact.
+                </p>
+              </div>
+              <div className="md:col-span-5">
+                <div className="flex flex-wrap gap-2">
+                  {['Orientation sessions', 'Skill-building workshops'].map((item) => (
+                    <span key={item} className="px-3 py-1 rounded-full text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'var(--color-cream)' }}>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -761,7 +774,98 @@ export default function ClubInfo() {
         </div>
       </section>
 
-      <section className="py-12 md:py-16 pb-32 md:pb-40" style={{ background: 'var(--color-cream)' }}>
+      <section
+        className="relative py-20 md:py-28"
+        style={{
+          minHeight: '105vh',
+          backgroundImage:
+            "linear-gradient(rgba(91, 59, 30, 0.72), rgba(91, 59, 30, 0.72)), url('/assets/sip.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-10 lg:px-12">
+          <div className="sticky top-[85%]" style={{ transform: 'translateY(30%)' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+              <div className="lg:col-span-5">
+              <p
+                className="text-xs md:text-sm uppercase tracking-widest mb-4"
+                style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(234, 225, 203, 0.85)', letterSpacing: '0.2em' }}
+              >
+                Why join
+              </p>
+              <h2
+                className="text-4xl md:text-5xl lg:text-6xl font-bold italic mb-4"
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+              >
+                Meet your community.
+              </h2>
+              <p
+                className="text-base md:text-lg leading-relaxed"
+                style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
+              >
+                Connect with seniors, grow as a leader, and make a lasting impact in our Ottawa community.
+              </p>
+              <div className="mt-6">
+                <Link
+                  href="/join-us"
+                  className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm md:text-base font-semibold transition-all duration-300"
+                  style={{
+                    background: 'var(--color-cream)',
+                    color: 'var(--color-brown-dark)',
+                    fontFamily: 'var(--font-kollektif)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  Get involved
+                  <span aria-hidden>→</span>
+                </Link>
+              </div>
+              </div>
+
+              <div className="lg:col-span-7">
+              <p
+                className="text-xs md:text-sm uppercase tracking-widest mb-6"
+                style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(234, 225, 203, 0.85)', letterSpacing: '0.2em' }}
+              >
+                What to expect
+              </p>
+              <div className="space-y-6">
+                {[
+                  'Join a welcoming, low-pressure session.',
+                  'Build real friendships through weekly connection.',
+                  'Gain leadership experience by helping facilitate.',
+                  'Grow with a supportive, purpose-driven community.'
+                ].map((item, index) => (
+                  <div key={item} className="flex items-start gap-6 pb-6" style={{ borderBottom: index === 3 ? 'none' : '1px solid rgba(234, 225, 203, 0.35)' }}>
+                    <div
+                      className="text-2xl md:text-3xl"
+                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+                    >
+                      {`0${index + 1} /`}
+                    </div>
+                    <p
+                      className="text-base md:text-lg leading-relaxed"
+                      style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
+                    >
+                      {item}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="pt-20 md:pt-28 pb-32 md:pb-40" style={{ background: 'var(--color-cream)' }}>
         <div className="max-w-5xl mx-auto px-6 md:px-10 lg:px-12">
           <div className="text-center">
             <p 
@@ -823,93 +927,6 @@ export default function ClubInfo() {
               <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
                 — Sarah, Student Volunteer
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="py-20 md:py-28"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(91, 59, 30, 0.72), rgba(91, 59, 30, 0.72)), url('/assets/sip.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            <div className="lg:col-span-5">
-              <p
-                className="text-xs md:text-sm uppercase tracking-widest mb-4"
-                style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(234, 225, 203, 0.85)', letterSpacing: '0.2em' }}
-              >
-                Why join
-              </p>
-              <h2
-                className="text-4xl md:text-5xl lg:text-6xl font-bold italic mb-4"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
-              >
-                Meet your community.
-              </h2>
-              <p
-                className="text-base md:text-lg leading-relaxed"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
-              >
-                Connect with seniors, grow as a leader, and make a lasting impact in our Ottawa community.
-              </p>
-              <div className="mt-6">
-                <Link
-                  href="/join-us"
-                  className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm md:text-base font-semibold transition-all duration-300"
-                  style={{
-                    background: 'var(--color-cream)',
-                    color: 'var(--color-brown-dark)',
-                    fontFamily: 'var(--font-kollektif)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }}
-                >
-                  Get involved
-                  <span aria-hidden>→</span>
-                </Link>
-              </div>
-            </div>
-
-            <div className="lg:col-span-7">
-              <p
-                className="text-xs md:text-sm uppercase tracking-widest mb-6"
-                style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(234, 225, 203, 0.85)', letterSpacing: '0.2em' }}
-              >
-                What to expect
-              </p>
-              <div className="space-y-6">
-                {[
-                  'Join a welcoming, low-pressure session.',
-                  'Build real friendships through weekly connection.',
-                  'Gain leadership experience by helping facilitate.',
-                  'Grow with a supportive, purpose-driven community.'
-                ].map((item, index) => (
-                  <div key={item} className="flex items-start gap-6 pb-6" style={{ borderBottom: index === 3 ? 'none' : '1px solid rgba(234, 225, 203, 0.35)' }}>
-                    <div
-                      className="text-2xl md:text-3xl"
-                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
-                    >
-                      {`0${index + 1} /`}
-                    </div>
-                    <p
-                      className="text-base md:text-lg leading-relaxed"
-                      style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
-                    >
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
