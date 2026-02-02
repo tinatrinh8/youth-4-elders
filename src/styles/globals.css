@@ -11,37 +11,45 @@
      Use these variables throughout the site for consistent theming.
   */
   
-  /* BROWN - Main/Primary Color */
-  --color-brown-dark: #492F1E;
-  --color-brown-medium: #AF7978;
-  --color-brown: #6D4A33;
+  /* MAIN/PRIMARY COLOR - Dusty merlot */
+  --color-brown-dark: #62202F;
+  --color-brown-medium: #62202F;
+  --color-brown: #62202F;
   
-  /* CREAM - Secondary/Background Color */
-  --color-cream: #EAD4C4;
+  /* BASE - Warm white */
+  --color-cream: #FBF7E8;
   
-  /* PINK SHADES - Accent Colors */
-  --color-pink-light: #d8b4ad;
-  --color-pink-medium: #AF7978;
-  --color-pink-dark: #8F5F5E;
+  /* PINK SHADES - Accent Colors (Pink Panther) */
+  --color-pink-light: #F5D0C6;
+  --color-pink-medium: #F5D0C6;
+  --color-pink-dark: #F5D0C6;
 
-  /* Legacy olive variables map to pinks */
-  --color-olive: var(--color-pink-medium);
-  --color-olive-light: var(--color-pink-light);
-  --color-olive-dark: var(--color-pink-dark);
+  /* FOREST GREEN - mapped to brown scheme */
+  --color-forest-light: var(--color-brown-medium);
+  --color-forest: var(--color-brown);
+  --color-forest-dark: var(--color-brown-dark);
+
+  /* Green accents */
+  --color-olive: #6f6509;
+  --color-olive-light: #C9DAA8;
+  --color-olive-dark: #6f6509;
   
   /* Dynamic page background - updated by components for smooth transitions */
   --page-background: var(--color-cream);
 
   /* --- AURA COLORS - Following color priority --- */
-  /* Brown (main) */
-  --aura-brown: rgba(73, 47, 30, 0.4); 
-  /* Cream */
-  --aura-cream: rgba(234, 212, 196, 0.5); 
-  /* Pink accent */
-  --aura-green: rgba(211, 165, 165, 0.5);
+  /* Main aura (dusty merlot) */
+  --aura-brown: rgba(98, 32, 47, 0.45); 
+  /* Base (warm white) */
+  --aura-cream: rgba(251, 247, 232, 0.6); 
+  /* Green accents */
+  --aura-green: rgba(201, 218, 168, 0.5);
   /* Pink shades */
-  --aura-pink: rgba(211, 165, 165, 0.5);
-  --aura-pink-medium: rgba(175, 121, 120, 0.5);
+  --aura-pink: rgba(245, 208, 198, 0.6);
+  --aura-pink-medium: rgba(245, 208, 198, 0.6);
+
+  /* Forest green aura */
+  --aura-forest: var(--aura-brown);
   
   
   --aura-size: 300%; 

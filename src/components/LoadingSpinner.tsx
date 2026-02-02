@@ -47,22 +47,6 @@ export default function LoadingSpinner({ message = 'Loading...' }: { message?: s
           {message}
         </p>
         
-        {/* Subtle dots animation */}
-        <div className="flex justify-center gap-2 mt-4">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="rounded-full animate-pulse"
-              style={{
-                width: '8px',
-                height: '8px',
-                background: 'var(--color-pink-medium)',
-                animationDelay: `${i * 0.2}s`,
-                animationDuration: '1.4s'
-              }}
-            />
-          ))}
-        </div>
       </div>
     </div>
   )

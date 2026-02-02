@@ -79,12 +79,19 @@ export default function Home() {
       if (parallaxSectionRef.current && parallaxBgRef.current) {
         const section = parallaxSectionRef.current
         const rect = section.getBoundingClientRect()
+        const footer = document.querySelector('footer')
+
+        let height = rect.height
+        if (footer) {
+          const footerRect = footer.getBoundingClientRect()
+          height = Math.max(height, footerRect.bottom - rect.top)
+        }
         
         // Set fixed position to match section's viewport position
         parallaxBgRef.current.style.top = `${rect.top}px`
         parallaxBgRef.current.style.left = `${rect.left}px`
         parallaxBgRef.current.style.width = `${rect.width}px`
-        parallaxBgRef.current.style.height = `${rect.height}px`
+        parallaxBgRef.current.style.height = `${height}px`
       }
     }
 
@@ -217,13 +224,13 @@ export default function Home() {
       {(showModal && !showSuccess) || (isClosing && !showSuccess) ? (
         <div 
           className={`fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
-          style={{ background: 'rgba(73, 47, 30, 0.75)' }}
+          style={{ background: 'rgba(98, 32, 47, 0.7)' }}
         >
           <div 
             className={`relative max-w-md w-full rounded-lg p-8 shadow-2xl ${isClosing ? 'animate-fadeOut' : 'animate-popup'}`}
             style={{ 
               background: 'var(--color-cream)',
-              border: '2px solid var(--color-brown-dark)'
+              border: '2px solid var(--color-olive)'
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -252,8 +259,8 @@ export default function Home() {
                     background: 'white'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = 'var(--color-brown-medium)'
-                    e.target.style.boxShadow = '0 0 0 3px rgba(175, 121, 120, 0.1)'
+                    e.target.style.borderColor = 'var(--color-olive)'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(201, 218, 168, 0.35)'
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = 'var(--color-brown-dark)'
@@ -264,14 +271,16 @@ export default function Home() {
                   type="submit"
                   className="w-12 h-12 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-110"
                   style={{ 
-                    background: 'var(--color-brown-dark)',
-                    color: 'white'
+                    background: 'var(--color-olive)',
+                    color: 'var(--color-brown-dark)'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'var(--color-brown-medium)'
+                    e.currentTarget.style.background = 'var(--color-brown-dark)'
+                    e.currentTarget.style.color = 'var(--color-cream)'
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'var(--color-brown-dark)'
+                    e.currentTarget.style.background = 'var(--color-olive)'
+                    e.currentTarget.style.color = 'var(--color-brown-dark)'
                   }}
                   aria-label="Submit"
                 >
@@ -311,14 +320,14 @@ export default function Home() {
       {(showModal && showSuccess) || (isClosing && showSuccess) ? (
         <div 
           className={`fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
-          style={{ background: 'rgba(73, 47, 30, 0.75)' }}
+          style={{ background: 'rgba(98, 32, 47, 0.7)' }}
           onClick={handleClose}
         >
           <div 
             className={`relative max-w-md w-full rounded-lg p-8 shadow-2xl ${isClosing ? 'animate-fadeOut' : 'animate-popup'}`}
             style={{ 
               background: 'var(--color-cream)',
-              border: '2px solid var(--color-brown-dark)'
+              border: '2px solid var(--color-olive)'
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -326,7 +335,7 @@ export default function Home() {
             <div className="flex justify-center mb-6">
               <div 
                 className="w-20 h-20 rounded-full flex items-center justify-center"
-                style={{ background: 'var(--color-brown-medium)' }}
+                style={{ background: 'var(--color-olive)' }}
               >
                 <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -408,7 +417,7 @@ export default function Home() {
         >
           <p className="text-lg md:text-xl lg:text-2xl font-bold leading-tight tracking-tight" style={{ 
             fontFamily: 'var(--font-leiko)', 
-            color: 'var(--color-pink-medium)',
+            color: 'var(--color-olive)',
             textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
           }}>
             ... is now live !
@@ -424,7 +433,7 @@ export default function Home() {
             className="text-[10rem] md:text-[12rem] lg:text-[16rem] font-bold italic leading-none"
             style={{ 
               fontFamily: 'var(--font-vintage-stylist)', 
-              color: 'var(--color-pink-medium)',
+              color: 'var(--color-olive)',
               mixBlendMode: 'normal',
               position: 'relative',
               zIndex: 50,
@@ -441,12 +450,12 @@ export default function Home() {
       </section>
 
       {/* "Nothing great is built alone" Section */}
-      <section className="relative z-10 py-32 md:py-48" style={{ background: 'var(--color-brown-medium)' }}>
+      <section className="relative z-10 py-32 md:py-48" style={{ background: 'var(--color-olive)' }}>
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-20 md:mb-28">
             <h2 
               className={`text-6xl md:text-8xl lg:text-9xl font-bold mb-12 animate-on-scroll scale ${visibleElements.has('mission-headline') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
               data-animate-id="mission-headline"
             >
               Nothing great is built alone.
@@ -456,13 +465,584 @@ export default function Home() {
           {/* Description */}
           <p 
             className={`text-xl md:text-2xl lg:text-3xl max-w-5xl mx-auto leading-relaxed text-left md:text-center animate-on-scroll fade ${visibleElements.has('mission-description') ? 'visible' : ''}`}
-            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}
+            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)' }}
             data-animate-id="mission-description"
           >
             A student-led club dedicated to bridging the gap between elders and youth in a fast-moving society. Created by passionate uOttawa students and community members, Youth 4 Elders connects generations through volunteering, workshops, and meaningful relationships.
           </p>
         </div>
       </section>
+
+      {/* Current Club Updates and Countdown Section - Connected to Events */}
+      <section className="relative z-20 pt-20 md:pt-24 pb-28 md:pb-32" style={{ background: 'var(--color-cream)' }}>
+        <div className="max-w-6xl mx-auto px-8 md:px-10">
+        <h3 
+          className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-10 text-left animate-on-scroll slide-right ${visibleElements.has('club-updates-heading') ? 'visible' : ''}`}
+          style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+          data-animate-id="club-updates-heading"
+        >
+          Current Club{' '}
+          <span style={{ fontFamily: 'var(--font-leiko)', fontStyle: 'italic' }}>
+            Updates
+          </span>
+        </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-28 items-start">
+            {/* Left Side - Current Club Updates */}
+            <div className="flex flex-col justify-center items-start lg:items-start order-2 lg:order-1">
+              {/* Dynamic Updates Container - Automatically adjusts height based on number of updates */}
+              <div className="w-full max-w-lg space-y-8 mb-8">
+                {clubUpdates.map((update, index) => (
+                  <div 
+                    key={update.id}
+                    className={`p-6 rounded-lg animate-on-scroll slide-up ${visibleElements.has(`club-update-${update.id}`) ? 'visible' : ''}`}
+                    data-animate-id={`club-update-${update.id}`}
+                    style={{
+                      transitionDelay: `${index * 0.1}s`,
+                      background: update.hasCountdown 
+                        ? 'rgba(251, 247, 232, 0.85)' 
+                        : 'rgba(251, 247, 232, 0.7)',
+                      border: update.hasCountdown
+                        ? '2px solid var(--color-brown-dark)'
+                        : '2px solid var(--color-brown-dark)'
+                    }}
+                  >
+                    <div className="flex items-start gap-3 mb-2">
+                      <div 
+                        className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                        style={{
+                          background: 'var(--color-brown-dark)',
+                          color: 'var(--color-cream)',
+                          fontFamily: 'var(--font-kollektif)'
+                        }}
+                      >
+                        {update.icon}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                          {update.title}
+                        </h4>
+                        <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.9 }}>
+                          {update.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Side - Countdown Timer */}
+            <div 
+              className={`flex justify-center lg:justify-end order-1 lg:order-2 mt-6 md:mt-8 animate-on-scroll scale self-start ${visibleElements.has('countdown-timer') ? 'visible' : ''}`}
+              data-animate-id="countdown-timer"
+            >
+              <div className="relative">
+                {/* Shadow Box Layer - Full opacity, offset */}
+                <div 
+                  ref={countdownShadowRef}
+                  className="absolute max-w-md px-10 md:px-16 text-center"
+                style={{
+                    background: 'var(--color-brown-dark)',
+                    borderRadius: '60px',
+                    top: '12px',
+                    left: 'calc(50% + 8px)',
+                    transform: 'translateX(-50%)',
+                    width: '100%',
+                    maxWidth: '28rem',
+                    paddingTop: '5.5rem',
+                    paddingBottom: '5.5rem',
+                    minHeight: '520px',
+                    opacity: 1,
+                    zIndex: 0
+                  }}
+                />
+                <div 
+                  ref={countdownBoxRef}
+                  className="mx-auto px-10 md:px-16 text-center relative z-10"
+                  style={{
+                    background: 'var(--color-cream)',
+                    borderRadius: '60px',
+                    border: '2px solid var(--color-brown-dark)',
+                    boxShadow: '0 8px 32px rgba(98, 32, 47, 0.25)',
+                    paddingTop: '4.5rem',
+                    paddingBottom: '4.5rem',
+                    minHeight: '520px',
+                    width: '100%',
+                    maxWidth: '100rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: '2rem'
+                  }}
+                >
+                {timeLeft.days > 0 ? (
+                  <>
+                    {/* Single Cream Block with Number */}
+                    <div className="mb-8 flex justify-center">
+                      <div 
+                        className="rounded-3xl px-12 md:px-16 py-10 md:py-14 flex items-center justify-center relative"
+                        style={{
+                          background: 'var(--color-brown-dark)',
+                          minWidth: '140px',
+                          minHeight: '200px',
+                          boxShadow: '0 4px 16px rgba(98, 32, 47, 0.2)'
+                        }}
+                      >
+                        <div 
+                          className="text-7xl md:text-8xl lg:text-9xl font-bold relative z-10 animate-pulse-subtle"
+                          style={{
+                            fontFamily: 'var(--font-kollektif)',
+                            color: 'var(--color-cream)'
+                          }}
+                        >
+                          {timeLeft.days}
+                        </div>
+                        {/* Flip clock divider line */}
+                        <div 
+                          className="absolute left-0 right-0 z-20"
+                          style={{
+                            top: '50%',
+                            height: '2px',
+                            background: 'var(--color-brown-dark)',
+                            transform: 'translateY(-50%)'
+                          }}
+                />
+                </div>
+          </div>
+
+                    {/* Text Below */}
+                    <div className="space-y-1">
+                      <p 
+                        className="text-sm md:text-base uppercase tracking-wider"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          color: 'var(--color-brown-dark)',
+                          letterSpacing: '0.1em'
+                        }}
+                      >
+                        DAYS LEFT UNTIL
+                      </p>
+                      <p 
+                        className="text-xl md:text-2xl lg:text-3xl font-bold"
+                        style={{
+                          fontFamily: 'var(--font-vintage-stylist)',
+                          color: 'var(--color-brown-dark)'
+                        }}
+                      >
+                        SPIKEBALL EVENT
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Today's Event Message */}
+                    <div className="mb-8 flex justify-center">
+                      <div 
+                        className="rounded-3xl px-8 md:px-12 py-10 md:py-14 flex items-center justify-center"
+                        style={{
+                          background: 'var(--color-brown-dark)',
+                          minWidth: '140px',
+                          minHeight: '190px',
+                          boxShadow: '0 4px 16px rgba(98, 32, 47, 0.2)'
+                        }}
+                      >
+                        <div 
+                          className="text-4xl md:text-5xl lg:text-6xl font-bold text-center"
+                style={{
+                  fontFamily: 'var(--font-kollektif)',
+                            color: 'var(--color-cream)'
+                          }}
+                        >
+                          TODAY
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Text Below */}
+                    <div className="space-y-1">
+                      <p 
+                        className="text-xl md:text-2xl lg:text-3xl font-bold"
+                        style={{
+                          fontFamily: 'var(--font-vintage-stylist)',
+                          color: 'var(--color-brown-dark)'
+                        }}
+                      >
+                        Today is the
+                      </p>
+                      <p 
+                        className="text-2xl md:text-3xl lg:text-4xl font-bold"
+                        style={{
+                          fontFamily: 'var(--font-vintage-stylist)',
+                          color: 'var(--color-brown-dark)'
+                        }}
+                      >
+                        Spikeball Event
+                      </p>
+                    </div>
+                  </>
+                )}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Quote box moved below updates */}
+          <div
+            className={`relative rounded-2xl p-5 md:p-8 mt-12 md:mt-16 max-w-4xl mx-auto animate-on-scroll slide-up ${visibleElements.has('impact-quote') ? 'visible' : ''}`}
+            data-animate-id="impact-quote"
+            style={{
+              background: 'var(--color-olive)',
+              border: '2px dashed var(--color-olive-light)',
+              boxShadow: '0 4px 16px rgba(251, 247, 232, 0.3)'
+            }}
+          >
+            {/* Decorative quote mark - top left */}
+            <div 
+              className="absolute top-1 left-3 md:left-4 text-4xl md:text-5xl opacity-25"
+              style={{ 
+                fontFamily: 'var(--font-vintage-stylist)',
+                color: 'var(--color-olive-light)',
+                lineHeight: 1
+              }}
+            >
+              &ldquo;
+            </div>
+            {/* Decorative quote mark - bottom right */}
+            <div 
+              className="absolute bottom-1 right-3 md:right-4 text-4xl md:text-5xl opacity-25"
+              style={{ 
+                fontFamily: 'var(--font-vintage-stylist)',
+                color: 'var(--color-olive-light)',
+                lineHeight: 1,
+                transform: 'rotate(180deg)'
+              }}
+            >
+              &ldquo;
+            </div>
+            <p 
+              className="text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed text-center relative z-10 px-4"
+              style={{ 
+                fontFamily: 'var(--font-leiko)',
+                color: 'var(--color-olive-light)',
+                fontStyle: 'italic'
+              }}
+            >
+              Bridging generations, one connection at a time.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Events Section */}
+      <section className="relative z-10 py-32 md:py-48 lg:py-64 overflow-hidden" style={{ background: 'var(--color-pink-medium)' }}>
+        {/* Large Background Text - Scrolling */}
+        <div className="absolute inset-0 flex items-start pointer-events-none overflow-hidden" style={{ top: '10%' }}>
+          {/* Scrolling Text Container - Left to Right */}
+          <div className="flex whitespace-nowrap animate-scroll-text" style={{ width: '200%' }}>
+            <h2 
+              className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
+              style={{ 
+                fontFamily: 'var(--font-vintage-stylist)', 
+                color: 'var(--color-brown-dark)',
+                display: 'inline-block'
+              }}
+            >
+              Our Events
+            </h2>
+            <h2 
+              className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
+              style={{ 
+                fontFamily: 'var(--font-vintage-stylist)', 
+                color: 'var(--color-brown-dark)',
+                display: 'inline-block'
+              }}
+            >
+              Our Events
+            </h2>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-8 relative z-10 -mt-2 md:mt-2 lg:mt-4">
+          {/* Event Cards Grid */}
+          <div className="flex flex-col md:flex-row gap-2 md:gap-3 mb-16 md:mb-20" style={{ minHeight: '500px', overflowX: 'hidden' }}>
+            {/* Event Card 1 - Left Card */}
+            <div 
+              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-left ${visibleElements.has('event-card-1') ? 'visible' : ''}`}
+              data-animate-id="event-card-1"
+              style={{ 
+                background: 'var(--color-cream)',
+                minHeight: '500px',
+                width: '100%',
+                flexBasis: '33.333%'
+              }}
+              onMouseEnter={(e) => {
+                const container = e.currentTarget.parentElement
+                if (container) {
+                  e.currentTarget.style.flexBasis = '50%'
+                  e.currentTarget.style.zIndex = '20'
+                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
+                  // Make other two cards smaller and equal size
+                  const siblings = Array.from(container.children) as HTMLElement[]
+                  siblings.forEach((sibling) => {
+                    if (sibling !== e.currentTarget) {
+                      sibling.style.flexBasis = '25%'
+                      sibling.style.transition = 'flex-basis 500ms ease-out'
+                    }
+                  })
+                  // Show date and description
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
+                  if (textContainer) {
+                    textContainer.style.maxHeight = '120px'
+                    textContainer.style.opacity = '1'
+                  }
+                }
+              }}
+              onMouseLeave={(e) => {
+                const container = e.currentTarget.parentElement
+                if (container) {
+                  e.currentTarget.style.flexBasis = '33.333%'
+                  e.currentTarget.style.zIndex = '1'
+                  e.currentTarget.style.boxShadow = 'none'
+                  // Reset other cards to equal size
+                  const siblings = Array.from(container.children) as HTMLElement[]
+                  siblings.forEach((sibling) => {
+                    if (sibling !== e.currentTarget) {
+                      sibling.style.flexBasis = '33.333%'
+                    }
+                  })
+                  // Hide date and description
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
+                  if (textContainer) {
+                    textContainer.style.maxHeight = '0'
+                    textContainer.style.opacity = '0'
+                  }
+                }
+              }}
+            >
+              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
+                <Image
+                  src="/assets/workshop series.jpg"
+                  alt="Workshop Series"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
+                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                  Workshop Series
+                </h3>
+                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                    Started Sept 16, 2025 • Weekly
+                  </p>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                    A 6-week weekly workshop series teaching and helping with technology. Will resume again shortly.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Event Card 2 - Middle Card */}
+            <div 
+              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-up ${visibleElements.has('event-card-2') ? 'visible' : ''}`}
+              data-animate-id="event-card-2"
+              style={{ 
+                background: 'var(--color-cream)',
+                minHeight: '500px',
+                width: '100%',
+                flexBasis: '33.333%'
+              }}
+              onMouseEnter={(e) => {
+                const container = e.currentTarget.parentElement
+                if (container) {
+                  e.currentTarget.style.flexBasis = '50%'
+                  e.currentTarget.style.zIndex = '20'
+                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
+                  // Make left and right cards smaller and equal size
+                  const siblings = Array.from(container.children) as HTMLElement[]
+                  siblings.forEach((sibling) => {
+                    if (sibling !== e.currentTarget) {
+                      sibling.style.flexBasis = '25%'
+                      sibling.style.transition = 'flex-basis 500ms ease-out'
+                    }
+                  })
+                  // Show date and description
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
+                  if (textContainer) {
+                    textContainer.style.maxHeight = '120px'
+                    textContainer.style.opacity = '1'
+                  }
+                }
+              }}
+              onMouseLeave={(e) => {
+                const container = e.currentTarget.parentElement
+                if (container) {
+                  e.currentTarget.style.flexBasis = '33.333%'
+                  e.currentTarget.style.zIndex = '1'
+                  e.currentTarget.style.boxShadow = 'none'
+                  // Reset other cards to equal size
+                  const siblings = Array.from(container.children) as HTMLElement[]
+                  siblings.forEach((sibling) => {
+                    if (sibling !== e.currentTarget) {
+                      sibling.style.flexBasis = '33.333%'
+                    }
+                  })
+                  // Hide date and description
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
+                  if (textContainer) {
+                    textContainer.style.maxHeight = '0'
+                    textContainer.style.opacity = '0'
+                  }
+                }
+              }}
+            >
+              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
+                <Image
+                  src="/assets/club fair.jpg"
+                  alt="Club Fair at uOttawa UCU"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
+                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                  School Club Fair
+                </h3>
+                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                    Sept 3rd, 2025
+                  </p>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                    At the beginning of the school year, we joined the club fair to connect with students and share our mission.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Event Card 3 - Right Card */}
+            <div 
+              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-right ${visibleElements.has('event-card-3') ? 'visible' : ''}`}
+              data-animate-id="event-card-3"
+              style={{ 
+                background: 'var(--color-cream)',
+                minHeight: '500px',
+                width: '100%',
+                flexBasis: '33.333%'
+              }}
+              onMouseEnter={(e) => {
+                const container = e.currentTarget.parentElement
+                if (container) {
+                  e.currentTarget.style.flexBasis = '50%'
+                  e.currentTarget.style.zIndex = '20'
+                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
+                  // Make other two cards smaller and equal size
+                  const siblings = Array.from(container.children) as HTMLElement[]
+                  siblings.forEach((sibling) => {
+                    if (sibling !== e.currentTarget) {
+                      sibling.style.flexBasis = '25%'
+                      sibling.style.transition = 'flex-basis 500ms ease-out'
+                    }
+                  })
+                  // Show date and description
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
+                  if (textContainer) {
+                    textContainer.style.maxHeight = '120px'
+                    textContainer.style.opacity = '1'
+                  }
+                }
+              }}
+              onMouseLeave={(e) => {
+                const container = e.currentTarget.parentElement
+                if (container) {
+                  e.currentTarget.style.flexBasis = '33.333%'
+                  e.currentTarget.style.zIndex = '1'
+                  e.currentTarget.style.boxShadow = 'none'
+                  // Reset other cards to equal size
+                  const siblings = Array.from(container.children) as HTMLElement[]
+                  siblings.forEach((sibling) => {
+                    if (sibling !== e.currentTarget) {
+                      sibling.style.flexBasis = '33.333%'
+                    }
+                  })
+                  // Hide date and description
+                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
+                  if (textContainer) {
+                    textContainer.style.maxHeight = '0'
+                    textContainer.style.opacity = '0'
+                  }
+                }
+              }}
+            >
+              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
+                <Image
+                  src="/assets/sip.jpg"
+                  alt="Sips, Samples, Social"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
+                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                  Sips, Samples, Social
+                </h3>
+                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                    Nov 10th, 2025
+                  </p>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                    Sample delicious goodies from our favourite local vendors at Abbotsford Seniors Centre.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Section - Categories and View More */}
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+            <div 
+              className={`animate-on-scroll slide-left ${visibleElements.has('event-types') ? 'visible' : ''}`}
+              data-animate-id="event-types"
+            >
+              <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                Event Types
+              </p>
+              <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+                Workshops / Community / Volunteering / Social
+              </p>
+            </div>
+            <a
+              href="/events"
+              className={`group font-semibold text-lg transition-all duration-300 flex items-center gap-2 relative animate-on-scroll slide-right ${visibleElements.has('event-view-more') ? 'visible' : ''}`}
+              data-animate-id="event-view-more"
+              style={{
+                color: 'var(--color-brown-dark)',
+                fontFamily: 'var(--font-kollektif)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-brown-dark)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--color-brown-dark)'
+              }}
+            >
+              <span>VIEW MORE</span>
+              <svg 
+                className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              {/* Animated underline on hover */}
+              <span 
+                className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full"
+                style={{ background: 'var(--color-brown-dark)' }}
+              />
+            </a>
+          </div>
+          </div>
+        </section>
 
       {/* How to Get Involved Section */}
       <section ref={parallaxSectionRef} className="relative z-10 pt-32 md:pt-48 pb-20 md:pb-32 overflow-hidden" style={{ background: 'var(--color-cream)' }}>
@@ -566,7 +1146,7 @@ export default function Home() {
               <div
                 key={i}
                 className="absolute"
-                style={{
+                  style={{
                   ...pos,
                   opacity: opacity,
                   transform: `rotate(${(i * 23) % 360}deg)`,
@@ -579,25 +1159,25 @@ export default function Home() {
                   width={100}
                   height={100}
                   className={size}
-                />
-                </div>
+                        />
+                      </div>
               )
             })}
-          </div>
+                    </div>
 
         {/* Content - Scrolls normally */}
         <div className="relative z-10 max-w-7xl mx-auto px-8">
           <div className="max-w-3xl mx-auto text-center">
             <h2 
               className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-on-scroll slide-up ${visibleElements.has('get-involved-heading') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}
               data-animate-id="get-involved-heading"
             >
               Want to Get Involved?
             </h2>
             <p 
               className={`text-lg md:text-xl mb-8 leading-relaxed animate-on-scroll fade ${visibleElements.has('get-involved-description') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)' }}
               data-animate-id="get-involved-description"
             >
               Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
@@ -610,18 +1190,20 @@ export default function Home() {
                 href="/join-us"
                 className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
                 style={{
-                  background: 'var(--color-brown)',
-                  color: 'white',
+                  background: 'var(--color-olive)',
+                  color: 'var(--color-olive-light)',
                   fontFamily: 'var(--font-kollektif)',
-                  border: '2px solid transparent'
+                  border: '2px solid var(--color-olive)'
                 }}
                 onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.currentTarget.style.borderColor = 'var(--color-brown-dark)'
-                  e.currentTarget.style.background = 'var(--color-brown-dark)'
+                  e.currentTarget.style.borderColor = 'var(--color-olive-light)'
+                  e.currentTarget.style.background = 'var(--color-olive-light)'
+                  e.currentTarget.style.color = 'var(--color-olive)'
                 }}
                 onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.currentTarget.style.borderColor = 'transparent'
-                  e.currentTarget.style.background = 'var(--color-brown)'
+                  e.currentTarget.style.borderColor = 'var(--color-olive)'
+                  e.currentTarget.style.background = 'var(--color-olive)'
+                  e.currentTarget.style.color = 'var(--color-olive-light)'
                 }}
               >
                 LEARN MORE
@@ -631,572 +1213,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Events Section */}
-      <section className="relative z-10 py-32 md:py-48 lg:py-64 overflow-hidden" style={{ background: 'var(--color-brown-dark)' }}>
-        {/* Large Background Text - Scrolling */}
-        <div className="absolute inset-0 flex items-start pointer-events-none overflow-hidden" style={{ top: '10%' }}>
-          {/* Scrolling Text Container - Left to Right */}
-          <div className="flex whitespace-nowrap animate-scroll-text" style={{ width: '200%' }}>
-            <h2 
-              className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
-              style={{ 
-                fontFamily: 'var(--font-vintage-stylist)', 
-                color: 'var(--color-cream)',
-                display: 'inline-block'
-              }}
-            >
-              Our Events
-            </h2>
-            <h2 
-              className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
-              style={{ 
-                fontFamily: 'var(--font-vintage-stylist)', 
-                color: 'var(--color-cream)',
-                display: 'inline-block'
-              }}
-            >
-              Our Events
-            </h2>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-8 relative z-10 -mt-2 md:mt-2 lg:mt-4">
-          {/* Event Cards Grid */}
-          <div className="flex flex-col md:flex-row gap-2 md:gap-3 mb-16 md:mb-20" style={{ minHeight: '500px', overflowX: 'hidden' }}>
-            {/* Event Card 1 - Left Card */}
-            <div 
-              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-left ${visibleElements.has('event-card-1') ? 'visible' : ''}`}
-              data-animate-id="event-card-1"
-              style={{ 
-                background: 'var(--color-cream)',
-                minHeight: '500px',
-                width: '100%',
-                flexBasis: '33.333%'
-              }}
-              onMouseEnter={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '50%'
-                  e.currentTarget.style.zIndex = '20'
-                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  // Make other two cards smaller and equal size
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '25%'
-                      sibling.style.transition = 'flex-basis 500ms ease-out'
-                    }
-                  })
-                  // Show date and description
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '120px'
-                    textContainer.style.opacity = '1'
-                  }
-                }
-              }}
-              onMouseLeave={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '33.333%'
-                  e.currentTarget.style.zIndex = '1'
-                  e.currentTarget.style.boxShadow = 'none'
-                  // Reset other cards to equal size
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '33.333%'
-                    }
-                  })
-                  // Hide date and description
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '0'
-                    textContainer.style.opacity = '0'
-                  }
-                }
-              }}
-            >
-              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
-                <Image
-                  src="/assets/workshop series.jpg"
-                  alt="Workshop Series"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-medium)', padding: '1.5rem' }}>
-                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                  Workshop Series
-                </h3>
-                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                    Started Sept 16, 2025 • Weekly
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                    A 6-week weekly workshop series teaching and helping with technology. Will resume again shortly.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Event Card 2 - Middle Card */}
-            <div 
-              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-up ${visibleElements.has('event-card-2') ? 'visible' : ''}`}
-              data-animate-id="event-card-2"
-              style={{ 
-                background: 'var(--color-cream)',
-                minHeight: '500px',
-                width: '100%',
-                flexBasis: '33.333%'
-              }}
-              onMouseEnter={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '50%'
-                  e.currentTarget.style.zIndex = '20'
-                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  // Make left and right cards smaller and equal size
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '25%'
-                      sibling.style.transition = 'flex-basis 500ms ease-out'
-                    }
-                  })
-                  // Show date and description
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '120px'
-                    textContainer.style.opacity = '1'
-                  }
-                }
-              }}
-              onMouseLeave={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '33.333%'
-                  e.currentTarget.style.zIndex = '1'
-                  e.currentTarget.style.boxShadow = 'none'
-                  // Reset other cards to equal size
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '33.333%'
-                    }
-                  })
-                  // Hide date and description
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '0'
-                    textContainer.style.opacity = '0'
-                  }
-                }
-              }}
-            >
-              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
-                <Image
-                  src="/assets/club fair.jpg"
-                  alt="Club Fair at uOttawa UCU"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-medium)', padding: '1.5rem' }}>
-                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                  School Club Fair
-                </h3>
-                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                    Sept 3rd, 2025
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                    At the beginning of the school year, we joined the club fair to connect with students and share our mission.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Event Card 3 - Right Card */}
-            <div 
-              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-right ${visibleElements.has('event-card-3') ? 'visible' : ''}`}
-              data-animate-id="event-card-3"
-              style={{ 
-                background: 'var(--color-cream)',
-                minHeight: '500px',
-                width: '100%',
-                flexBasis: '33.333%'
-              }}
-              onMouseEnter={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '50%'
-                  e.currentTarget.style.zIndex = '20'
-                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  // Make other two cards smaller and equal size
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '25%'
-                      sibling.style.transition = 'flex-basis 500ms ease-out'
-                    }
-                  })
-                  // Show date and description
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '120px'
-                    textContainer.style.opacity = '1'
-                  }
-                }
-              }}
-              onMouseLeave={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '33.333%'
-                  e.currentTarget.style.zIndex = '1'
-                  e.currentTarget.style.boxShadow = 'none'
-                  // Reset other cards to equal size
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '33.333%'
-                    }
-                  })
-                  // Hide date and description
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '0'
-                    textContainer.style.opacity = '0'
-                  }
-                }
-              }}
-            >
-              <div className="relative h-full w-full min-h-[500px] overflow-hidden">
-                <Image
-                  src="/assets/sip.jpg"
-                  alt="Sips, Samples, Social"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-medium)', padding: '1.5rem' }}>
-                <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                  Sips, Samples, Social
-                </h3>
-                <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                    Nov 10th, 2025
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                    Sample delicious goodies from our favourite local vendors at Abbotsford Seniors Centre.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Section - Categories and View More */}
-          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
-            <div 
-              className={`animate-on-scroll slide-left ${visibleElements.has('event-types') ? 'visible' : ''}`}
-              data-animate-id="event-types"
-            >
-              <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-light)' }}>
-                Event Types
-              </p>
-              <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-light)' }}>
-                Workshops / Community / Volunteering / Social
-              </p>
-            </div>
-            <a
-              href="/events"
-              className={`group font-semibold text-lg transition-all duration-300 flex items-center gap-2 relative animate-on-scroll slide-right ${visibleElements.has('event-view-more') ? 'visible' : ''}`}
-              data-animate-id="event-view-more"
-              style={{
-                color: 'var(--color-pink-light)',
-                fontFamily: 'var(--font-kollektif)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-pink-medium)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'var(--color-pink-light)'
-              }}
-            >
-              <span>VIEW MORE</span>
-              <svg 
-                className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-              {/* Animated underline on hover */}
-              <span 
-                className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full"
-                style={{ background: 'var(--color-olive)' }}
-              />
-            </a>
-          </div>
-          </div>
-        </section>
-
-      {/* Current Club Updates and Countdown Section - Connected to Events */}
-      <section className="relative z-20 pt-20 md:pt-24 pb-8 md:pb-10" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            {/* Left Side - Current Club Updates */}
-            <div className="flex flex-col justify-center items-center lg:items-end order-2 lg:order-1">
-              <h3 
-                className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-8 mt-8 text-center lg:text-right animate-on-scroll slide-right ${visibleElements.has('club-updates-heading') ? 'visible' : ''}`}
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-                data-animate-id="club-updates-heading"
-              >
-                Current Club Updates
-              </h3>
-              
-              {/* Dynamic Updates Container - Automatically adjusts height based on number of updates */}
-              <div className="w-full max-w-md space-y-6 mb-8">
-                {clubUpdates.map((update, index) => (
-                  <div 
-                    key={update.id}
-                    className={`p-6 rounded-lg animate-on-scroll slide-up ${visibleElements.has(`club-update-${update.id}`) ? 'visible' : ''}`}
-                    data-animate-id={`club-update-${update.id}`}
-                    style={{
-                      transitionDelay: `${index * 0.1}s`,
-                      background: update.hasCountdown 
-                        ? 'rgba(211, 165, 165, 0.18)' 
-                        : 'var(--color-cream)',
-                      border: update.hasCountdown
-                        ? '2px solid var(--color-pink-medium)'
-                        : '2px solid rgba(73, 47, 30, 0.2)'
-                    }}
-                  >
-                    <div className="flex items-start gap-3 mb-2">
-                      <div 
-                        className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
-                        style={{
-                          background: 'var(--color-brown-medium)',
-                          color: 'white',
-                          fontFamily: 'var(--font-kollektif)'
-                        }}
-                      >
-                        {update.icon}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-                          {update.title}
-                        </h4>
-                        <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
-                          {update.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Side - Countdown Timer */}
-            <div 
-              className={`flex justify-center lg:justify-start order-1 lg:order-2 animate-on-scroll scale ${visibleElements.has('countdown-timer') ? 'visible' : ''}`}
-              data-animate-id="countdown-timer"
-            >
-              <div className="relative">
-                {/* Shadow Box Layer - Full opacity, offset */}
-                <div 
-                  ref={countdownShadowRef}
-                  className="absolute max-w-md px-10 md:px-16 text-center"
-                  style={{
-                    background: 'var(--color-brown-medium)',
-                    borderRadius: '60px',
-                    top: '12px',
-                    left: 'calc(50% + 8px)',
-                    transform: 'translateX(-50%)',
-                    width: '100%',
-                    maxWidth: '25rem',
-                    paddingTop: '3rem',
-                    paddingBottom: '3rem',
-                    opacity: 1,
-                    zIndex: 0
-                  }}
-                />
-                <div 
-                  ref={countdownBoxRef}
-                  className="mx-auto px-10 md:px-16 text-center relative z-10"
-                  style={{
-                    background: 'var(--color-cream)',
-                    borderRadius: '60px',
-                    border: '2px solid var(--color-brown-medium)',
-                    boxShadow: '0 8px 32px rgba(244, 142, 184, 0.3)',
-                    paddingTop: '3rem',
-                    paddingBottom: '3rem',
-                    width: '100%',
-                    maxWidth: '25rem'
-                  }}
-                >
-                {timeLeft.days > 0 ? (
-                  <>
-                    {/* Single Cream Block with Number */}
-                    <div className="mb-8 flex justify-center">
-                      <div 
-                        className="rounded-3xl px-12 md:px-16 py-10 md:py-14 flex items-center justify-center relative"
-                        style={{
-                          background: 'var(--color-brown-medium)',
-                          minWidth: '140px',
-                          minHeight: '140px',
-                          boxShadow: '0 4px 16px rgba(244, 142, 184, 0.4)'
-                        }}
-                      >
-                        <div 
-                          className="text-7xl md:text-8xl lg:text-9xl font-bold relative z-10 animate-pulse-subtle"
-                          style={{
-                            fontFamily: 'var(--font-kollektif)',
-                            color: 'white'
-                          }}
-                        >
-                          {timeLeft.days}
-                        </div>
-                        {/* Flip clock divider line */}
-                        <div 
-                          className="absolute left-0 right-0 z-20"
-                          style={{
-                            top: '50%',
-                            height: '2px',
-                            background: 'white',
-                            transform: 'translateY(-50%)'
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Text Below */}
-                    <div className="space-y-1">
-                      <p 
-                        className="text-sm md:text-base uppercase tracking-wider"
-                        style={{
-                          fontFamily: 'var(--font-kollektif)',
-                          color: 'var(--color-brown-dark)',
-                          letterSpacing: '0.1em'
-                        }}
-                      >
-                        DAYS LEFT UNTIL
-                      </p>
-                      <p 
-                        className="text-xl md:text-2xl lg:text-3xl font-bold"
-                        style={{
-                          fontFamily: 'var(--font-vintage-stylist)',
-                          color: 'var(--color-brown-dark)'
-                        }}
-                      >
-                        SPIKEBALL EVENT
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Today's Event Message */}
-                    <div className="mb-8 flex justify-center">
-                      <div 
-                        className="rounded-3xl px-8 md:px-12 py-10 md:py-14 flex items-center justify-center"
-                        style={{
-                          background: 'var(--color-brown-medium)',
-                          minWidth: '140px',
-                          minHeight: '140px',
-                          boxShadow: '0 4px 16px rgba(244, 142, 184, 0.4)'
-                        }}
-                      >
-                        <div 
-                          className="text-4xl md:text-5xl lg:text-6xl font-bold text-center"
-                          style={{
-                            fontFamily: 'var(--font-kollektif)',
-                            color: 'white'
-                          }}
-                        >
-                          🎉
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Text Below */}
-                    <div className="space-y-1">
-                      <p 
-                        className="text-xl md:text-2xl lg:text-3xl font-bold"
-                        style={{
-                          fontFamily: 'var(--font-vintage-stylist)',
-                          color: 'var(--color-brown-dark)'
-                        }}
-                      >
-                        Today is the
-                      </p>
-                      <p 
-                        className="text-2xl md:text-3xl lg:text-4xl font-bold"
-                        style={{
-                          fontFamily: 'var(--font-vintage-stylist)',
-                          color: 'var(--color-brown-dark)'
-                        }}
-                      >
-                        Spikeball Event
-                      </p>
-                    </div>
-                  </>
-                )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Impact Statement Section - Redesigned */}
-      <section className="relative z-10 pt-4 pb-16 md:pt-6 md:pb-20" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-6xl mx-auto px-8">
-          <div 
-            className={`relative rounded-2xl p-5 md:p-8 animate-on-scroll slide-up ${visibleElements.has('impact-quote') ? 'visible' : ''}`}
-            data-animate-id="impact-quote"
-            style={{
-              background: 'rgba(211, 165, 165, 0.18)',
-              border: '2px dashed rgba(175, 121, 120, 0.35)',
-              boxShadow: '0 4px 16px rgba(175, 121, 120, 0.12)'
-            }}
-          >
-            {/* Decorative quote mark - top left */}
-            <div 
-              className="absolute top-1 left-3 md:left-4 text-4xl md:text-5xl opacity-25"
-              style={{ 
-                fontFamily: 'var(--font-vintage-stylist)',
-                color: 'var(--color-pink-medium)',
-                lineHeight: 1
-              }}
-            >
-              &ldquo;
-            </div>
-            {/* Decorative quote mark - bottom right */}
-            <div 
-              className="absolute bottom-1 right-3 md:right-4 text-4xl md:text-5xl opacity-25"
-              style={{ 
-                fontFamily: 'var(--font-vintage-stylist)',
-                color: 'var(--color-brown-medium)',
-                lineHeight: 1,
-                transform: 'rotate(180deg)'
-              }}
-            >
-              &ldquo;
-            </div>
-            <p 
-              className="text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed text-center relative z-10 px-4"
-              style={{ 
-                fontFamily: 'var(--font-leiko)',
-                color: 'var(--color-brown-dark)',
-                fontStyle: 'italic'
-              }}
-            >
-              Bridging generations, one connection at a time.
-            </p>
-          </div>
-        </div>
-      </section>
 
     </div>
   )

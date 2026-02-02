@@ -2,16 +2,24 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 
 export default function Footer() {
+  const pathname = usePathname()
+  const isHome = pathname === '/'
+  const footerBackground = isHome ? 'var(--color-brown-dark)' : 'var(--color-brown-dark)'
+  const footerTextColor = isHome ? 'var(--color-cream)' : 'var(--color-cream)'
+  const footerHoverColor = isHome ? 'var(--color-olive)' : 'var(--color-olive)'
+  const footerBorderColor = isHome ? 'rgba(247, 240, 227, 0.2)' : 'rgba(247, 240, 227, 0.2)'
+
   return (
-    <footer className="mt-auto relative" style={{ background: 'var(--color-brown-dark)' }}>
+    <footer className="mt-auto relative" style={{ background: footerBackground }}>
       <div className="max-w-7xl mx-auto px-8 py-16 md:py-20">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 mb-12">
           {/* Left Side - Call to Action */}
           <div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: footerTextColor }}>
               Ready to Make a Difference?
             </h2>
           </div>
@@ -20,7 +28,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
             {/* Get Around Section */}
             <div>
-              <h3 className="text-sm font-black uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
+              <h3 className="text-sm font-black uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
                 GET AROUND
               </h3>
               <ul className="space-y-3">
@@ -28,15 +36,15 @@ export default function Footer() {
                   <Link
                     href="/"
                     className="text-base italic transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
+                    style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.color = footerHoverColor
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.opacity = '0.9'
-                      e.currentTarget.style.color = 'var(--color-cream)'
+                      e.currentTarget.style.color = footerTextColor
                       e.currentTarget.style.transform = 'translateX(0)'
                     }}
                   >
@@ -47,15 +55,15 @@ export default function Footer() {
                   <Link
                     href="/club-info"
                     className="text-base italic transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
+                    style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.color = footerHoverColor
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.opacity = '0.9'
-                      e.currentTarget.style.color = 'var(--color-cream)'
+                      e.currentTarget.style.color = footerTextColor
                       e.currentTarget.style.transform = 'translateX(0)'
                     }}
                   >
@@ -66,15 +74,15 @@ export default function Footer() {
                   <Link
                     href="/events"
                     className="text-base italic transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
+                    style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.color = footerHoverColor
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.opacity = '0.9'
-                      e.currentTarget.style.color = 'var(--color-cream)'
+                      e.currentTarget.style.color = footerTextColor
                       e.currentTarget.style.transform = 'translateX(0)'
                     }}
                   >
@@ -85,15 +93,15 @@ export default function Footer() {
                   <Link
                     href="/join-us"
                     className="text-base italic transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
+                    style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.color = footerHoverColor
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.opacity = '0.9'
-                      e.currentTarget.style.color = 'var(--color-cream)'
+                      e.currentTarget.style.color = footerTextColor
                       e.currentTarget.style.transform = 'translateX(0)'
                     }}
                   >
@@ -105,7 +113,7 @@ export default function Footer() {
 
             {/* Connect Section */}
             <div>
-              <h3 className="text-sm font-black uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
+              <h3 className="text-sm font-black uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
                 CONNECT
               </h3>
               <ul className="space-y-3">
@@ -115,15 +123,15 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-base italic transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
+                    style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.color = footerHoverColor
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.opacity = '0.9'
-                      e.currentTarget.style.color = 'var(--color-cream)'
+                      e.currentTarget.style.color = footerTextColor
                       e.currentTarget.style.transform = 'translateX(0)'
                     }}
                   >
@@ -136,15 +144,15 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-base italic transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
+                    style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.color = footerHoverColor
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.opacity = '0.9'
-                      e.currentTarget.style.color = 'var(--color-cream)'
+                      e.currentTarget.style.color = footerTextColor
                       e.currentTarget.style.transform = 'translateX(0)'
                     }}
                   >
@@ -155,15 +163,15 @@ export default function Footer() {
                   <a
                     href="mailto:youth4elders@gmail.com"
                     className="text-base italic transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
+                    style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.color = footerHoverColor
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.opacity = '0.9'
-                      e.currentTarget.style.color = 'var(--color-cream)'
+                      e.currentTarget.style.color = footerTextColor
                       e.currentTarget.style.transform = 'translateX(0)'
                     }}
                   >
@@ -174,15 +182,15 @@ export default function Footer() {
                   <Link
                     href="/contact"
                     className="text-base italic transition-all duration-300"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.9 }}
+                    style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
-                      e.currentTarget.style.color = 'var(--color-olive)'
+                      e.currentTarget.style.color = footerHoverColor
                       e.currentTarget.style.transform = 'translateX(4px)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.opacity = '0.9'
-                      e.currentTarget.style.color = 'var(--color-cream)'
+                      e.currentTarget.style.color = footerTextColor
                       e.currentTarget.style.transform = 'translateX(0)'
                     }}
                   >
@@ -195,11 +203,11 @@ export default function Footer() {
         </div>
 
         {/* Footer Bottom - Copyright and Logo */}
-        <div className="pt-8 border-t" style={{ borderColor: 'rgba(247, 240, 227, 0.2)' }}>
+        <div className="pt-8 border-t" style={{ borderColor: footerBorderColor }}>
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Copyright */}
             <div className="text-center md:text-left">
-              <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.8 }}>
+              <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: footerTextColor, opacity: 0.8 }}>
                 © 2025 Youth 4 Elders. All rights reserved.
               </p>
             </div>
