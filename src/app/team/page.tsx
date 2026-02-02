@@ -236,7 +236,9 @@ export default function Team() {
             className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${descriptionVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
             style={{ 
               fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-brown-dark)',
+              color: 'var(--color-pink-medium)',
+              WebkitTextStroke: '0.6px var(--color-brown-dark)',
+              textShadow: '0 1px 0 rgba(98, 32, 47, 0.45)',
               marginBottom: '250px',
               animationDelay: descriptionVisible ? '0s' : '0s'
             }}
@@ -420,7 +422,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
 
       {/* Name */}
       <h2 
-        className="text-xl md:text-2xl font-bold mb-2 text-center"
+        className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 text-center"
         style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
       >
         {member.name}
@@ -428,61 +430,23 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
 
       {/* Role */}
       <p 
-        className="text-sm md:text-base mb-3 text-center italic"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+        className="text-base md:text-lg mb-4 text-center italic"
+        style={{ 
+          fontFamily: 'var(--font-kollektif)', 
+          color: 'var(--color-pink-medium)',
+          WebkitTextStroke: '0.6px var(--color-brown-dark)',
+          textShadow: '0 1px 0 rgba(98, 32, 47, 0.45)'
+        }}
       >
         {member.role}
       </p>
 
-      {/* Email (if provided) */}
-      {member.email && (
-        <a
-          href={`mailto:${member.email}`}
-          className="text-sm mb-4 block hover:opacity-70 transition-opacity text-center"
-          style={{ 
-            fontFamily: 'var(--font-kollektif)', 
-            color: 'var(--color-brown-medium)' 
-          }}
-        >
-          {member.email}
-        </a>
-      )}
-
-      {/* Info Block - Elegant Card Style */}
-      <div 
-        className="rounded-xl p-5 w-full mt-2 text-left"
-        style={{ 
-          background: 'rgba(211, 165, 165, 0.15)', // Light pink background - slightly more visible
-          border: '2px solid var(--color-pink-light)', // Light pink border
-          boxShadow: '0 4px 12px rgba(211, 165, 165, 0.2)',
-        }}
+      <p
+        className="text-sm md:text-base text-center"
+        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
       >
-        <div className="space-y-3 text-sm">
-          <div>
-            <span 
-              className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
-            >
-              Year {member.yearOfStudy}
-            </span>
-            {' • '}
-            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-              {member.program}
-            </span>
-          </div>
-          <div className="pt-2 border-t" style={{ borderColor: 'rgba(211, 165, 165, 0.2)' }}>
-            <span 
-              className="font-semibold"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
-            >
-              Fun Fact:{' '}
-            </span>
-            <span style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-              {member.funFact}
-            </span>
-          </div>
-        </div>
-      </div>
+        {member.program}
+      </p>
 
     </div>
   )

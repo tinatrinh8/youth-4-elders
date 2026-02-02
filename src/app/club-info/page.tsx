@@ -133,108 +133,89 @@ export default function ClubInfo() {
             zIndex: 2,          
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'flex-start',
+            justifyContent: 'center',
             alignItems: 'center',
             boxSizing: 'border-box',
-            paddingTop: 'clamp(10px, 1vh, 20px)',
-            paddingBottom: 'clamp(20px, 2vh, 40px)',
+            paddingTop: 'clamp(12px, 2vh, 28px)',
+            paddingBottom: 'clamp(16px, 3vh, 36px)',
             background: 'var(--color-cream)', 
           }}
         >
-          <div className="max-w-screen-2xl mx-auto px-6 md:px-10 w-full h-full flex flex-col justify-start items-center" style={{ paddingTop: 'clamp(30px, 4vh, 60px)' }}>
-            {/* Image in the middle */}
-            <div 
-              className="relative w-full max-w-3xl mb-4 md:mb-6 transition-all duration-1000"
-              style={{
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? 'translateY(0)' : 'translateY(-30px)',
-                transitionDelay: '200ms'
-              }}
-            >
-              <div 
-                className="relative w-full h-[40vh] sm:h-[45vh] md:h-[48vh] lg:h-[52vh] rounded-3xl overflow-hidden border"
-                style={{
-                  boxShadow: '0 10px 28px rgba(73, 47, 30, 0.16)',
-                  borderColor: 'rgba(91, 59, 30, 0.18)',
-                }}
-              >
-                  <Image
-                  src="/assets/club-info/signing.jpg"
-                  alt="Members signing up at a Youth 4 Elders event"
-                    fill
-                    priority
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                  style={{ objectFit: 'cover', objectPosition: 'center 30%' }}
-                />
-                <div
-                  aria-hidden
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      'linear-gradient(to top, rgba(91, 59, 30, 0.30) 0%, rgba(91, 59, 30, 0.0) 60%)',
-                  }}
-                />
-                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
-                  <div>
-                    <p
-                      className="text-xs uppercase tracking-widest"
-                      style={{
-                        fontFamily: 'var(--font-kollektif)',
-                        color: 'rgba(234, 225, 203, 0.92)',
-                        letterSpacing: '0.2em',
-                      }}
-                    >
-                      Club life
-                    </p>
-                    <p
-                      className="text-lg md:text-xl leading-tight"
-                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'rgba(234, 225, 203, 0.98)' }}
-                    >
-                      Real people, real connection.
-                    </p>
-                  </div>
-                  </div>
-                </div>
-              </div>
+          <div className="max-w-screen-2xl mx-auto px-4 md:px-6 w-full h-full flex flex-col justify-center items-center" style={{ paddingTop: 'clamp(10px, 2vh, 20px)' }}>
 
             {/* Text at the bottom */}
             <div 
-              className="relative w-full text-center transition-all duration-1000"
+              className="relative w-full text-center transition-all duration-1000 max-w-4xl mx-auto"
               style={{
                 opacity: isVisible ? 1 : 0,
                 transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
                 transitionDelay: '400ms',
-                marginTop: 'clamp(20px, 4vh, 60px)',
-                paddingLeft: 'clamp(20px, 4vw, 60px)',
-                paddingRight: 'clamp(20px, 4vw, 60px)'
+                marginTop: 'clamp(6px, 1.5vh, 18px)',
+                paddingLeft: 'clamp(12px, 2vw, 36px)',
+                paddingRight: 'clamp(12px, 2vw, 36px)'
               }}
             >
-              <blockquote
-                className="text-2xl md:text-3xl lg:text-4xl leading-[1.05] mb-3 md:mb-4"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-              >
-                <span style={{ opacity: 0.9 }}>&ldquo;</span>
-                <span className="font-bold italic">
-                  We&apos;re not just a club , we&apos;re your community partners.
-                </span>
-                <span style={{ opacity: 0.9 }}>&rdquo;</span>
-              </blockquote>
-                
-              <div className="w-20 h-[2px] mx-auto my-6 md:my-8" style={{ background: 'rgba(91, 59, 30, 0.25)' }} />
+              <div className="mx-auto max-w-screen-2xl">
+                <blockquote
+                  className="text-4xl md:text-6xl lg:text-7xl leading-[1.02] mb-6 md:mb-8 text-center flex justify-center"
+                  style={{ 
+                    fontFamily: 'var(--font-vintage-stylist)', 
+                    color: 'var(--color-brown-dark)',
+                    textShadow: '0 14px 30px rgba(98, 32, 47, 0.2)',
+                    letterSpacing: '0.01em',
+                    textAlign: 'center',
+                    width: '100%'
+                  }}
+                >
+                  <span className="font-bold italic md:whitespace-nowrap text-center">
+                    &ldquo;Not just a club. A community.&rdquo;
+                  </span>
+                </blockquote>
 
-              <p 
-                className="text-lg md:text-xl lg:text-2xl leading-relaxed text-center"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92, whiteSpace: 'nowrap', textAlign: 'center', width: '100%' }}
-              >
-                We bring youth and elders together through welcoming programs that make connection feel easy and meaningful.
-                  </p>
+                <div className="flex items-center justify-center gap-4 md:gap-6 mb-6 md:mb-8">
+                  <div className="h-[2px] w-16 md:w-24" style={{ background: 'rgba(98, 32, 47, 0.35)' }} />
+                  <div className="h-[6px] w-[6px] rounded-full" style={{ background: 'var(--color-pink-medium)' }} />
+                  <div className="h-[2px] w-16 md:w-24" style={{ background: 'rgba(98, 32, 47, 0.35)' }} />
+                </div>
 
-                  <p 
-                className="mt-3 md:mt-4 text-base md:text-lg leading-relaxed italic text-center"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.82, fontStyle: 'italic' }}
-              >
-                A student-led club focused on connection,<br />community, and care.
-                  </p>
+                <p 
+                  className="text-xl md:text-2xl lg:text-3xl leading-relaxed text-center"
+                  style={{
+                    fontFamily: 'var(--font-leiko)',
+                    color: 'var(--color-pink-medium)',
+                    opacity: 0.92,
+                    textAlign: 'center',
+                    WebkitTextStroke: '0.5px var(--color-brown-dark)',
+                    textShadow: '0 1px 0 rgba(98, 32, 47, 0.5)'
+                  }}
+                >
+                  We connect youth and elders through meaningful, welcoming programs.
+                </p>
+
+                <p 
+                  className="mt-4 md:mt-5 text-base md:text-lg leading-relaxed italic text-center"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.85, fontStyle: 'italic' }}
+                >
+                  Student-led. Heart-led.
+                </p>
+
+                <div className="mt-8 md:mt-10 flex flex-wrap justify-center gap-2 md:gap-3">
+                  {['Community', 'Workshops', 'Volunteering', 'Connection'].map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-4 py-2 rounded-full text-xs md:text-sm uppercase tracking-[0.18em]"
+                      style={{
+                        fontFamily: 'var(--font-kollektif)',
+                        color: 'var(--color-brown-dark)',
+                        background: 'rgba(245, 208, 198, 0.55)',
+                        border: '1px solid rgba(98, 32, 47, 0.2)'
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>

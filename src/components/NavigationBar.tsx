@@ -17,6 +17,8 @@ export default function NavigationBar() {
   const isJoinUsPage = pathname === '/join-us'
   const isHomePage = pathname === '/'
   const isContactPage = pathname === '/contact'
+  const isClubInfoPage = pathname === '/club-info'
+  const isPartnerPage = pathname === '/partner'
 
   // Determine navbar color scheme based on page
   const getNavbarColors = () => {
@@ -51,6 +53,38 @@ export default function NavigationBar() {
         dropdownText: 'var(--color-pink-medium)',
         dropdownHover: 'rgba(175, 121, 120, 0.1)',
         dropdownHoverText: 'var(--color-pink-medium)'
+      }
+    } else if (isClubInfoPage) {
+      // Club info: Pink panther background with merlot text
+      return {
+        background: 'var(--color-pink-medium)',
+        text: 'var(--color-brown-dark)',
+        border: 'none',
+        hover: 'rgba(98, 32, 47, 0.85)',
+        shadow: 'rgba(98, 32, 47, 0.2)',
+        mobileBackground: 'var(--color-pink-medium)',
+        mobileBorder: 'none',
+        dropdownBackground: 'var(--color-cream)',
+        dropdownBorder: 'var(--color-brown-dark)',
+        dropdownText: 'var(--color-brown-dark)',
+        dropdownHover: 'rgba(98, 32, 47, 0.08)',
+        dropdownHoverText: 'var(--color-brown-dark)'
+      }
+    } else if (isPartnerPage) {
+      // Partner page: Chartreuse + seafoam + cream
+      return {
+        background: 'var(--color-olive)',
+        text: 'var(--color-cream)',
+        border: 'none',
+        hover: 'var(--color-olive-light)',
+        shadow: 'rgba(111, 101, 9, 0.25)',
+        mobileBackground: 'var(--color-olive)',
+        mobileBorder: 'none',
+        dropdownBackground: 'var(--color-cream)',
+        dropdownBorder: 'var(--color-olive-light)',
+        dropdownText: 'var(--color-olive)',
+        dropdownHover: 'rgba(201, 218, 168, 0.35)',
+        dropdownHoverText: 'var(--color-olive)'
       }
     } else if (isHomePage) {
       // Homepage: Brown background with brown accents
