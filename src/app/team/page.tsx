@@ -236,9 +236,8 @@ export default function Team() {
             className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${descriptionVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
             style={{ 
               fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-pink-medium)',
-              WebkitTextStroke: '0.6px var(--color-brown-dark)',
-              textShadow: '0 1px 0 rgba(98, 32, 47, 0.45)',
+              color: 'var(--color-brown-dark)',
+              textShadow: '0 1px 4px rgba(245, 208, 198, 0.6)',
               marginBottom: '250px',
               animationDelay: descriptionVisible ? '0s' : '0s'
             }}
@@ -254,7 +253,7 @@ export default function Team() {
             return (
               <div key={group}>
                 <h2
-                  className="text-3xl md:text-4xl font-bold mb-6 text-center"
+                  className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-center"
                   style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
                 >
                   {group}
@@ -429,16 +428,18 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
       </h2>
 
       {/* Role */}
-      <p 
-        className="text-base md:text-lg mb-4 text-center italic"
-        style={{ 
-          fontFamily: 'var(--font-kollektif)', 
-          color: 'var(--color-pink-medium)',
-          WebkitTextStroke: '0.6px var(--color-brown-dark)',
-          textShadow: '0 1px 0 rgba(98, 32, 47, 0.45)'
-        }}
-      >
-        {member.role}
+      <p className="mb-4 text-center">
+        <span
+          className="inline-block text-base md:text-lg italic px-4 py-2 rounded-full"
+          style={{ 
+            fontFamily: 'var(--font-kollektif)', 
+            color: 'var(--color-brown-dark)',
+            background: 'var(--color-pink-medium)',
+            textShadow: '0 1px 4px rgba(245, 208, 198, 0.6)'
+          }}
+        >
+          {member.role}
+        </span>
       </p>
 
       <p

@@ -17,10 +17,24 @@ export default function ClubInfo() {
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
   const [isClosingError, setIsClosingError] = useState(false)
   const [isClosingFieldErrors, setIsClosingFieldErrors] = useState(false)
+  const [founderStoryOpen, setFounderStoryOpen] = useState<'julia' | 'peter' | null>(null)
+  const [isClosingFounderStory, setIsClosingFounderStory] = useState(false)
 
   useEffect(() => {
     setIsVisible(true)
   }, [])
+
+  useEffect(() => {
+    if (!founderStoryOpen) return
+    const originalOverflow = document.body.style.overflow
+    const originalHtmlOverflow = document.documentElement.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = originalOverflow
+      document.documentElement.style.overflow = originalHtmlOverflow
+    }
+  }, [founderStoryOpen])
 
   const handleIdeaInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -110,9 +124,23 @@ export default function ClubInfo() {
 
   // Sticky + reveal scroll distances (vh).
   const HERO_SCROLL_VH = 100
-  const SECOND_SECTION_SCROLL_VH = 230
+  const SECOND_SECTION_SCROLL_VH = 300
   const SECOND_SECTION_OFFSET = 60
   const SCROLL_WRAPPER_HEIGHT_VH = HERO_SCROLL_VH + SECOND_SECTION_OFFSET + SECOND_SECTION_SCROLL_VH
+  const founderStories = [
+    {
+      key: 'julia' as const,
+      name: 'Julia',
+      sample:
+        '“My connection to senior care began at an early age through time spent in long-term care homes, where I visited family members and formed relationships with residents through music, games, and conversation.\n\nWhile volunteering in community centres during the COVID-19 pandemic, as social isolation deepened for many older adults, it became increasingly clear to me that many seniors were left without consistent support. This experience revealed a meaningful gap and a powerful opportunity for youth to engage, contribute, and help build more equitable and accessible care for older adults.”'
+    },
+    {
+      key: 'peter' as const,
+      name: 'Peter',
+      sample:
+        '“Youth4Elders began for me with a simple video call with my grandparents. They were struggling with a few issues with their phones and tablets, so I spent about an hour helping them adjust phone settings and learn how to better use their device. What started as a small act of support quickly became something more meaningful.\n\nThat call made me realize that many older adults face unique challenges in today’s fast-moving society. Too often, they are left without the guidance or education needed to navigate everyday tools we take for granted. Reflecting on my own community, I began to wonder how many other elders had the same questions as my grandparents but felt hesitant to ask, didn’t know who to turn to, or lacked access to help altogether.\n\nEventually this reflection inspired me to take the steps in the creation of Youth4Elders with my co-president Julia. In hopes to organize change with our peers and create something that had a long-lasting interpersonal impact on the local communities in Ottawa.”'
+    }
+  ]
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
@@ -167,7 +195,10 @@ export default function ClubInfo() {
                     width: '100%'
                   }}
                 >
-                  <span className="font-bold italic md:whitespace-nowrap text-center">
+                  <span
+                    className="font-bold italic md:whitespace-nowrap text-center float-in-up"
+                    style={{ animationDelay: '100ms' }}
+                  >
                     &ldquo;Not just a club. A community.&rdquo;
                   </span>
                 </blockquote>
@@ -179,36 +210,44 @@ export default function ClubInfo() {
                 </div>
 
                 <p 
-                  className="text-xl md:text-2xl lg:text-3xl leading-relaxed text-center"
+                  className="text-xl md:text-2xl lg:text-3xl leading-relaxed text-center float-in-up"
                   style={{
                     fontFamily: 'var(--font-leiko)',
-                    color: 'var(--color-pink-medium)',
+                    color: 'var(--color-brown-dark)',
                     opacity: 0.92,
                     textAlign: 'center',
                     WebkitTextStroke: '0.5px var(--color-brown-dark)',
-                    textShadow: '0 1px 0 rgba(98, 32, 47, 0.5)'
+                    textShadow: '0 1px 0 rgba(98, 32, 47, 0.5)',
+                    animationDelay: '250ms'
                   }}
                 >
                   We connect youth and elders through meaningful, welcoming programs.
                 </p>
 
                 <p 
-                  className="mt-4 md:mt-5 text-base md:text-lg leading-relaxed italic text-center"
-                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.85, fontStyle: 'italic' }}
+                  className="mt-4 md:mt-5 text-base md:text-lg leading-relaxed italic text-center float-in-up"
+                  style={{ 
+                    fontFamily: 'var(--font-leiko)', 
+                    color: 'var(--color-brown-dark)', 
+                    opacity: 0.85, 
+                    fontStyle: 'italic',
+                    animationDelay: '400ms'
+                  }}
                 >
                   Student-led. Heart-led.
                 </p>
 
                 <div className="mt-8 md:mt-10 flex flex-wrap justify-center gap-2 md:gap-3">
-                  {['Community', 'Workshops', 'Volunteering', 'Connection'].map((tag) => (
+                  {['Community', 'Workshops', 'Volunteering', 'Connection'].map((tag, index) => (
                     <span
                       key={tag}
-                      className="px-4 py-2 rounded-full text-xs md:text-sm uppercase tracking-[0.18em]"
+                      className="px-4 py-2 rounded-full text-xs md:text-sm uppercase tracking-[0.18em] float-in-up"
                       style={{
                         fontFamily: 'var(--font-kollektif)',
                         color: 'var(--color-brown-dark)',
                         background: 'rgba(245, 208, 198, 0.55)',
-                        border: '1px solid rgba(98, 32, 47, 0.2)'
+                        border: '1px solid rgba(98, 32, 47, 0.2)',
+                        animationDelay: `${520 + index * 140}ms`
                       }}
                     >
                       {tag}
@@ -230,7 +269,7 @@ export default function ClubInfo() {
             right: 0,
             width: '100%',
             height: `${SECOND_SECTION_SCROLL_VH}vh`,
-            background: 'var(--color-pink-light)',
+            background: 'var(--color-olive)',
             zIndex: 3,
             pointerEvents: 'auto',
             overflow: 'visible',
@@ -242,15 +281,15 @@ export default function ClubInfo() {
                 className="text-sm md:text-base uppercase tracking-widest mb-3"
                 style={{ 
                   fontFamily: 'var(--font-kollektif)', 
-                  color: 'var(--color-brown-dark)',
+                  color: 'var(--color-cream)',
                   letterSpacing: '0.2em',
                 }}
               >
-                <span style={{ color: 'var(--color-brown-dark)' }}>Our story</span>
+                <span style={{ color: 'var(--color-cream)' }}>Our story</span>
               </p>
               <h2 
                 className="text-4xl md:text-5xl lg:text-6xl font-bold italic"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
               >
                 Founders
               </h2>
@@ -259,20 +298,16 @@ export default function ClubInfo() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
               {/* Text - Now on the left */}
               <div className="pt-2 md:pt-4 order-2 lg:order-1">
-                  <blockquote 
+                <blockquote 
                   className="text-lg md:text-xl leading-relaxed italic mb-16 md:mb-18"
-                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92, fontStyle: 'italic', borderLeft: '3px solid var(--color-pink-medium)', paddingLeft: '20px' }}
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.92, fontStyle: 'italic', borderLeft: '3px solid var(--color-cream)', paddingLeft: '20px' }}
                   >
                   <p className="mb-4">
-                    &ldquo;Youth 4 Elders started when we noticed the same thing everywhere: youth wanted ways to give back, and elders wanted connection that felt warm,
-                    consistent, and genuinely two-way. We saw how much stronger a community becomes when people of different generations spend time together in ways that
-                    feel respectful, relaxed, and real.
+                    Youth 4 Elders was founded through a shared passion for intergenerational connection and community care, guided by a strong commitment to equity and accessibility.
                   </p>
 
                   <p>
-                    We began with small meet-ups and simple activities, listening closely to what made people feel at ease. Over time, we shaped a repeatable format that
-                    centers care and conversation, so volunteers can lead confidently and every visit feels comfortable, familiar, and welcoming. That steady rhythm lets
-                    relationships grow naturally, and it keeps the experience meaningful for everyone involved.&rdquo;
+                    Julia’s connection to senior care began at an early age, through time spent in long-term care homes visiting family and forming relationships with residents through music, games, and conversation. While volunteering in community centres during the COVID-19 pandemic, as social isolation deepened for many older adults, it became increasingly clear to Julia that many seniors were left without consistent support. This experience revealed a meaningful gap and a powerful opportunity for youth to engage, contribute, and help build more equitable and accessible care for older adults.
                   </p>
                 </blockquote>
 
@@ -286,7 +321,7 @@ export default function ClubInfo() {
                   style={{
                     width: '420px',
                     height: '420px',
-                    background: 'rgba(73, 47, 30, 1)', // Dark brown full opacity
+                    background: '#C9DAA8', // Seafoam light
                     borderRadius: '45% 55% 60% 40% / 55% 45% 55% 45%',
                     zIndex: 0,
                     top: '-10%',
@@ -299,7 +334,7 @@ export default function ClubInfo() {
                   style={{
                     width: '300px',
                     height: '300px',
-                    background: 'rgba(91, 59, 30, 1)', // Different shade of dark brown full opacity
+                    background: '#A9C98A', // Seafoam deep
                     borderRadius: '55% 45% 50% 50% / 45% 55% 45% 55%',
                     zIndex: 0,
                     bottom: '2%',
@@ -342,39 +377,194 @@ export default function ClubInfo() {
               <div className="flex flex-col gap-3 mb-12">
                 <p
                   className="text-sm md:text-base uppercase tracking-widest"
-                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', letterSpacing: '0.2em' }}
+                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', letterSpacing: '0.2em' }}
                 >
                   Founder goals
                 </p>
-                <div className="h-[2px] w-20 mt-4" style={{ background: 'rgba(175, 121, 120, 0.45)' }} />
+                <div className="h-[2px] w-20 mt-4" style={{ background: 'rgba(251, 247, 232, 0.6)' }} />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-                <div className="pr-0 md:pr-10 md:border-r" style={{ borderColor: 'rgba(175, 121, 120, 0.25)' }}>
-                  <h3 className="text-4xl md:text-5xl font-semibold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                    Julia
-                  </h3>
-                  <p className="text-lg md:text-xl leading-relaxed mb-5" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-                    <span style={{ fontWeight: 700 }}>Design welcoming activities.</span> Creative connection that feels calm, friendly, and easy to join.
-                  </p>
-                  <p className="text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-                    <span style={{ fontWeight: 700 }}>Support volunteers and share impact.</span> Prepare students with care and highlight the relationships we build.
-                  </p>
-                </div>
+              <p
+                className="text-lg md:text-xl leading-relaxed w-full pr-0"
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}
+              >
+                Our goal with Youth4Elders is to positively impact as many lives as possible by connecting youth and seniors in meaningful ways. Within the senior community, we provide hands-on support through technology assistance, educational initiatives, and one-on-one engagement to promote confidence and independence. At the same time, Youth4Elders empowers youth by fostering collaboration, leadership, and a strong sense of community responsibility.
+              </p>
 
-                <div className="pl-0 md:pl-10">
-                  <h3 className="text-4xl md:text-5xl font-semibold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                    Peter
-                  </h3>
-                  <p className="text-lg md:text-xl leading-relaxed mb-5" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-                    <span style={{ fontWeight: 700 }}>Build partnerships and outreach.</span> Connect with community spaces and campus partners.
-                  </p>
-                  <p className="text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-                    <span style={{ fontWeight: 700 }}>Strengthen structure and sustainability.</span> Keep sessions organized and grow the program responsibly.
-                  </p>
-                </div>
+            </div>
+
+            <div className="mt-36 md:mt-40">
+              <div className="flex flex-col gap-3 mb-8 text-center">
+                <p
+                  className="text-3xl md:text-4xl lg:text-5xl font-semibold italic"
+                  style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+                >
+                  Founder Perspectives
+                </p>
+                <p
+                  className="text-lg md:text-xl lg:text-2xl"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(251, 247, 232, 0.85)' }}
+                >
+                  Hear our founders in their own words.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 md:mt-16">
+                {founderStories.map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    className="group border p-10 text-center transition-all duration-300 hover:-translate-y-1 w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] mx-auto flex flex-col items-center justify-center relative"
+                    style={{
+                      borderColor: 'rgba(251, 247, 232, 0.45)',
+                      background: 'rgba(251, 247, 232, 0.04)',
+                      borderRadius:
+                        item.key === 'julia'
+                          ? '60% 40% 55% 45% / 55% 50% 50% 45%'
+                          : '55% 45% 50% 50% / 45% 55% 40% 60%'
+                    }}
+                    onClick={() => setFounderStoryOpen(item.key)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(173, 216, 230, 0.4)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(251, 247, 232, 0.04)'
+                    }}
+                  >
+                    <div
+                      className="mx-auto relative w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden"
+                      style={{ background: 'var(--color-olive-light)' }}
+                    >
+                      <Image
+                        src={
+                          item.key === 'julia'
+                            ? '/assets/club-info/julia.png'
+                            : '/assets/club-info/peter.png'
+                        }
+                        alt={`${item.name} illustration`}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <h3
+                      className="mt-4 text-4xl md:text-5xl font-semibold"
+                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+                    >
+                      {item.name}
+                    </h3>
+                    <div
+                      className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{
+                        background: 'rgba(201, 218, 168, 0.7)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        borderRadius:
+                          item.key === 'julia'
+                            ? '60% 40% 55% 45% / 55% 50% 50% 45%'
+                            : '55% 45% 50% 50% / 45% 55% 40% 60%'
+                      }}
+                    >
+                      <span
+                        className="text-xs md:text-sm uppercase tracking-widest"
+                        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
+                      >
+                        Open my story
+                      </span>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
+
+            {founderStoryOpen && (
+              <div
+                className={`fixed inset-0 z-[999] flex items-center justify-center px-6 py-10 ${
+                  isClosingFounderStory ? 'modal-overlay-fade-out' : 'modal-overlay-fade'
+                }`}
+                style={{ background: 'rgba(15, 31, 20, 0.65)' }}
+                onClick={() => {
+                  setIsClosingFounderStory(true)
+                  setTimeout(() => {
+                    setFounderStoryOpen(null)
+                    setIsClosingFounderStory(false)
+                  }, 280)
+                }}
+              >
+                <div
+                  className={`relative w-full max-w-4xl rounded-3xl border p-8 md:p-10 ${
+                    isClosingFounderStory ? 'modal-card-pop-out' : 'modal-card-pop'
+                  }`}
+                  style={{
+                    background: 'var(--color-pink-light)',
+                    borderColor: 'rgba(111, 101, 9, 0.35)',
+                    boxShadow: '0 24px 60px rgba(15, 31, 20, 0.25)',
+                    maxHeight: '80vh',
+                    overflowY: 'auto'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{
+                      background: 'var(--color-olive)',
+                      color: 'var(--color-pink-light)',
+                      border: '1px solid var(--color-pink-light)'
+                    }}
+                    onClick={() => {
+                      setIsClosingFounderStory(true)
+                      setTimeout(() => {
+                        setFounderStoryOpen(null)
+                        setIsClosingFounderStory(false)
+                      }, 280)
+                    }}
+                    aria-label="Close story"
+                  >
+                    ✕
+                  </button>
+                  <div>
+                    {founderStories
+                      .filter((item) => item.key === founderStoryOpen)
+                      .map((item) => (
+                        <div key={item.key}>
+                          <p
+                            className="text-xs md:text-sm uppercase tracking-widest mb-4"
+                            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                          >
+                            {item.name}&rsquo;s story
+                          </p>
+                          <div className="mb-4 flex justify-center">
+                          <div className="relative w-44 h-44 md:w-52 md:h-52 lg:w-60 lg:h-60">
+                              <Image
+                                src={
+                                  item.key === 'julia'
+                                    ? '/assets/club-info/heart.png'
+                                    : '/assets/club-info/hug.png'
+                                }
+                                alt={`${item.name} story illustration`}
+                                fill
+                                className="object-contain"
+                              />
+                            </div>
+                          </div>
+                          <h3
+                            className="text-3xl md:text-4xl font-semibold mb-5"
+                            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+                          >
+                            A personal perspective
+                          </h3>
+                          <p
+                            className="text-base md:text-lg leading-relaxed whitespace-pre-line"
+                            style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)' }}
+                          >
+                            {item.sample}
+                          </p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         </section>
