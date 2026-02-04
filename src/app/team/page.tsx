@@ -72,84 +72,119 @@ const teamMembers: TeamMember[] = [
     }
   },
   {
-    name: 'Sarah Chen',
-    role: 'Secretary & Treasurer',
+    name: 'Eamonn Deery',
+    role: 'VP Marketing',
+    category: 'Marketing',
+    yearOfStudy: 3,
+    program: 'Geology',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/eamonn.png',
+  },
+  {
+    name: 'Jenna Smith',
+    role: 'VP External Affairs',
+    category: 'External',
+    yearOfStudy: 3,
+    program: 'Health Sciences',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/jenna.png',
+  },
+  {
+    name: 'April Beaulieu',
+    role: 'VP Bilingual Affairs',
+    category: 'External',
+    yearOfStudy: 3,
+    program: 'Psychology',
+    funFact: 'TBD',
+  },
+  {
+    name: 'Lana Tran',
+    role: 'Junior VP Finance',
     category: 'Finance',
     yearOfStudy: 2,
     program: 'Biomedical Sciences',
-    funFact: 'Has a collection of 50+ houseplants',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/lana.png',
   },
   {
-    name: 'Alyssa Park',
-    role: 'Finance Coordinator',
+    name: 'Monica Mikhail',
+    role: 'VP Events',
+    category: 'Events',
+    yearOfStudy: 4,
+    program: 'Psychology',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/monica.png',
+  },
+  {
+    name: 'Cheyenne Hinds',
+    role: 'VP of Equity & Sustainability',
+    category: 'Internal',
+    yearOfStudy: 3,
+    program: 'Biomedical Sciences',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/cheyenne.png',
+  },
+  {
+    name: 'Santino Di Censo',
+    role: 'VP Events',
+    category: 'Events',
+    yearOfStudy: 3,
+    program: 'Biomedical Sciences',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/santino.png',
+  },
+  {
+    name: 'Leyna Trinh',
+    role: 'VP Internal',
+    category: 'Internal',
+    yearOfStudy: 2,
+    program: 'Biomedical Sciences',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/leyna.png',
+  },
+  {
+    name: 'Anwyn Friesen Kroeker',
+    role: 'Events Director',
+    category: 'Events',
+    yearOfStudy: 3,
+    program: 'Translational Molecular Medicine - TMM',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/anwyn.png',
+  },
+  {
+    name: 'Jakob Rogers',
+    role: 'VP Community Engagement',
+    category: 'External',
+    yearOfStudy: 3,
+    program: 'Health Sciences',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/jakob.png',
+  },
+  {
+    name: 'Karly Mikhail',
+    role: 'Events Director',
+    category: 'Events',
+    yearOfStudy: 3,
+    program: 'Translational Molecular Medicine - TMM',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/marly.png',
+  },
+  {
+    name: 'Ekin Atacan',
+    role: 'VP Internal',
+    category: 'Internal',
+    yearOfStudy: 3,
+    program: 'Translational Molecular Medicine - TMM',
+    funFact: 'TBD',
+  },
+  {
+    name: 'Bradley Dzimiri',
+    role: 'VP Finance',
     category: 'Finance',
     yearOfStudy: 3,
-    program: 'Accounting',
-    funFact: 'Collects vintage postcards',
-  },
-  {
-    name: 'Michael Torres',
-    role: 'Workshop Director',
-    category: 'Events',
-    yearOfStudy: 4,
-    program: 'Social Work',
-    funFact: 'Can solve a Rubik\'s cube in under 2 minutes',
-  },
-  {
-    name: 'Noah Patel',
-    role: 'Events Coordinator',
-    category: 'Events',
-    yearOfStudy: 2,
-    program: 'Health Sciences',
-    funFact: 'Loves night hikes',
-  },
-  {
-    name: 'Emma Miller',
-    role: 'Volunteer Coordinator',
-    category: 'Internal',
-    yearOfStudy: 2,
-    program: 'Psychology',
-    funFact: 'Once hiked 20km in one day',
-  },
-  {
-    name: 'Liam Nguyen',
-    role: 'Internal Coordinator',
-    category: 'Internal',
-    yearOfStudy: 3,
-    program: 'Sociology',
-    funFact: 'Can bake sourdough from scratch',
-  },
-  {
-    name: 'David Kim',
-    role: 'Social Media Manager',
-    category: 'Marketing',
-    yearOfStudy: 3,
-    program: 'Communications',
-    funFact: 'Plays 3 different musical instruments',
-  },
-  {
-    name: 'Sofia Alvarez',
-    role: 'Marketing Lead',
-    category: 'Marketing',
-    yearOfStudy: 4,
-    program: 'Digital Media',
-    funFact: 'Runs a film photography page',
-  },
-  {
-    name: 'Riley Thompson',
-    role: 'External Relations Lead',
-    category: 'External',
-    yearOfStudy: 4,
-    program: 'Public Relations',
-    funFact: 'Volunteers at community gardens',
-  },
-  {
-    name: 'Marcus Adeyemi',
-    role: 'External Outreach Coordinator',
-    category: 'External',
-    yearOfStudy: 2,
-    program: 'Political Science',
-    funFact: 'Speaks three languages',
+    program: 'Economics',
+    funFact: 'TBD',
+    imageUrl: '/assets/team/bradley.png',
   },
 ]
 
@@ -165,8 +200,47 @@ export default function Team() {
     'Events'
   ]
 
-  const getGroupMembers = (category: TeamMember['category']) =>
-    teamMembers.filter((member) => member.category === category)
+  const getGroupMembers = (category: TeamMember['category']) => {
+    const rolePriority = (role: string) => {
+      const normalized = role.toLowerCase()
+      if (normalized.includes('vp') && !normalized.includes('junior')) return 0
+      if (normalized.includes('junior')) return 1
+      if (normalized.includes('director')) return 2
+      return 3
+    }
+    const internalOrder: Record<string, number> = {
+      'leyna trinh': 0,
+      'ekin atacan': 1,
+      'cheyenne hinds': 2
+    }
+    const externalOrder: Record<string, number> = {
+      'jenna smith': 0,
+      'jakob rogers': 1,
+      'april beauileu': 2,
+      'april beaulieu': 2
+    }
+    return teamMembers
+      .filter((member) => member.category === category)
+      .sort((a, b) => {
+        if (category === 'Internal') {
+          const orderA = internalOrder[a.name.toLowerCase()]
+          const orderB = internalOrder[b.name.toLowerCase()]
+          if (orderA !== undefined || orderB !== undefined) {
+            return (orderA ?? 99) - (orderB ?? 99)
+          }
+        }
+        if (category === 'External') {
+          const orderA = externalOrder[a.name.toLowerCase()]
+          const orderB = externalOrder[b.name.toLowerCase()]
+          if (orderA !== undefined || orderB !== undefined) {
+            return (orderA ?? 99) - (orderB ?? 99)
+          }
+        }
+        const priorityDiff = rolePriority(a.role) - rolePriority(b.role)
+        if (priorityDiff !== 0) return priorityDiff
+        return a.name.localeCompare(b.name)
+      })
+  }
 
   useEffect(() => {
     let titleTimer: NodeJS.Timeout
@@ -260,12 +334,24 @@ export default function Team() {
                 </h2>
                 {members.length > 0 ? (
                   <div className="space-y-16 md:space-y-24">
-                    {Array.from({ length: Math.ceil(members.length / 3) }, (_, rowIndex) => (
-                      <TeamRow
-                        key={`${group}-${rowIndex}`}
-                        members={members.slice(rowIndex * 3, rowIndex * 3 + 3)}
-                      />
-                    ))}
+                    {group === 'External' ? (
+                      <>
+                        <TeamRow key={`${group}-lead`} members={members.slice(0, 1)} />
+                        {Array.from({ length: Math.ceil((members.length - 1) / 2) }, (_, rowIndex) => (
+                          <TeamRow
+                            key={`${group}-rest-${rowIndex}`}
+                            members={members.slice(1 + rowIndex * 2, 1 + rowIndex * 2 + 2)}
+                          />
+                        ))}
+                      </>
+                    ) : (
+                      Array.from({ length: Math.ceil(members.length / 2) }, (_, rowIndex) => (
+                        <TeamRow
+                          key={`${group}-${rowIndex}`}
+                          members={members.slice(rowIndex * 2, rowIndex * 2 + 2)}
+                        />
+                      ))
+                    )}
                   </div>
                 ) : (
                   <p
@@ -315,13 +401,13 @@ function TeamRow({ members }: { members: TeamMember[] }) {
     }
   }, [])
 
-  const useCenteredLayout = members.length < 3
+  const useCenteredLayout = members.length < 2
   const gridCols = members.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'
 
   return (
     <div ref={ref} className={useCenteredLayout ? 'md:flex md:justify-center' : ''}>
       <div
-        className={`grid grid-cols-1 ${useCenteredLayout ? gridCols : 'md:grid-cols-2 lg:grid-cols-3'} gap-x-12 md:gap-x-24 gap-y-16 md:gap-y-20 justify-items-center w-full ${useCenteredLayout ? 'max-w-5xl' : ''}`}
+        className={`grid grid-cols-1 ${useCenteredLayout ? gridCols : 'md:grid-cols-2'} gap-x-12 md:gap-x-24 gap-y-16 md:gap-y-20 justify-items-center w-full ${useCenteredLayout ? 'max-w-5xl' : ''}`}
       >
         {members.map((member, index) => (
           <TeamMemberCard
@@ -375,11 +461,11 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
         <div 
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
           style={{
-            width: '180px',
-            height: '180px',
+            width: member.name === 'Cheyenne Hinds' ? '200px' : '160px',
+            height: member.name === 'Cheyenne Hinds' ? '200px' : '160px',
             background: blobColor,
             borderRadius: blobShape,
-            opacity: 0.8,
+            opacity: 0.9,
             zIndex: 0,
           }}
         />
@@ -388,8 +474,8 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
         <div 
           className="relative z-10"
           style={{
-            width: '240px',
-            height: '240px',
+            width: member.name === 'Julia Diem Hum' || member.name === 'Peter Han' ? '260px' : '320px',
+            height: member.name === 'Julia Diem Hum' || member.name === 'Peter Han' ? '260px' : '320px',
             borderRadius: '50%',
             overflow: 'hidden',
             background: 'transparent',
@@ -401,7 +487,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
               alt={member.name}
               fill
               className="object-cover object-center"
-              style={{ objectFit: 'cover' }}
+              style={{ objectFit: 'cover', objectPosition: 'center' }}
             />
           ) : (
             <div 
@@ -446,7 +532,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
         className="text-sm md:text-base text-center"
         style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
       >
-        {member.program}
+        Year {member.yearOfStudy} • {member.program}
       </p>
 
     </div>

@@ -224,18 +224,7 @@ export default function ClubInfo() {
                   We connect youth and elders through meaningful, welcoming programs.
                 </p>
 
-                <p 
-                  className="mt-4 md:mt-5 text-base md:text-lg leading-relaxed italic text-center float-in-up"
-                  style={{ 
-                    fontFamily: 'var(--font-leiko)', 
-                    color: 'var(--color-brown-dark)', 
-                    opacity: 0.85, 
-                    fontStyle: 'italic',
-                    animationDelay: '400ms'
-                  }}
-                >
-                  Student-led. Heart-led.
-                </p>
+
 
                 <div className="mt-8 md:mt-10 flex flex-wrap justify-center gap-2 md:gap-3">
                   {['Community', 'Workshops', 'Volunteering', 'Connection'].map((tag, index) => (
@@ -448,7 +437,7 @@ export default function ClubInfo() {
                     </div>
                     <h3
                       className="mt-4 text-4xl md:text-5xl font-semibold"
-                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
                     >
                       {item.name}
                     </h3>
@@ -547,12 +536,12 @@ export default function ClubInfo() {
                               />
                             </div>
                           </div>
-                          <h3
-                            className="text-3xl md:text-4xl font-semibold mb-5"
-                            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-                          >
-                            A personal perspective
-                          </h3>
+                        <h3
+                          className="text-3xl md:text-4xl font-semibold mb-5"
+                          style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+                        >
+                          {item.key === 'julia' ? 'Music, Care, and Connection' : 'A Call That Sparked a Movement'}
+                        </h3>
                           <p
                             className="text-base md:text-lg leading-relaxed whitespace-pre-line"
                             style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)' }}
