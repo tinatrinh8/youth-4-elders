@@ -630,6 +630,31 @@ body::-webkit-scrollbar {
   }
 }
 
+@keyframes wordFadeInUpBlur {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.word-fade-in-up-blur {
+  display: inline-block;
+  animation: wordFadeInUpBlur 0.65s ease-out forwards;
+  animation-fill-mode: both;
+}
+
+.word-fade-in-up-blur-slow {
+  display: inline-block;
+  animation: wordFadeInUpBlur 1s ease-out forwards;
+  animation-fill-mode: both;
+}
+
 @keyframes testPulse {
   0%, 100% {
     opacity: 1;

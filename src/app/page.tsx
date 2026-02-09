@@ -22,6 +22,9 @@ export default function Home() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
   const [visibleElements, setVisibleElements] = useState<Set<string>>(new Set())
+  const [heroImageLoaded, setHeroImageLoaded] = useState(false)
+  const [heroBgRadius, setHeroBgRadius] = useState(24)
+  const heroSectionRef = useRef<HTMLElement>(null)
   const parallaxSectionRef = useRef<HTMLElement>(null)
   const parallaxBgRef = useRef<HTMLDivElement>(null)
   const countdownBoxRef = useRef<HTMLDivElement>(null)
@@ -57,9 +60,9 @@ export default function Home() {
     },
     {
       id: '3',
-      title: 'Happy Holidays!',
-      description: 'Wishing everyone a wonderful holiday season and good luck with exams! We\'ll see you in the new year with more exciting events.',
-      icon: '🎄',
+      title: 'Tech Literacy at Glebe',
+      description: 'Our tech literacy workshop series has started again at The Glebe Centre as of January 16.',
+      icon: '💻',
       type: 'standard',
       hasCountdown: false
     }
@@ -106,10 +109,31 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll)
     window.addEventListener('resize', handleResize)
     updateBackgroundPosition() // Initial call
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  // Hero background
+  useEffect(() => {
+    const updateHeroRadius = () => {
+      if (!heroSectionRef.current || typeof window === 'undefined') return
+      const rect = heroSectionRef.current.getBoundingClientRect()
+      const windowHeight = window.innerHeight
+      const windowWidth = window.innerWidth
+      const scrollProgress = Math.max(0, Math.min(1, -rect.top / (windowHeight * 0.5)))
+      const maxRadius = Math.round(windowWidth * 0.5)
+      const radius = 24 + Math.round(scrollProgress * maxRadius)
+      setHeroBgRadius(radius)
+    }
+    window.addEventListener('scroll', updateHeroRadius)
+    window.addEventListener('resize', updateHeroRadius)
+    updateHeroRadius()
+    return () => {
+      window.removeEventListener('scroll', updateHeroRadius)
+      window.removeEventListener('resize', updateHeroRadius)
     }
   }, [])
 
@@ -162,15 +186,7 @@ export default function Home() {
       setVisibleElements((prev) => new Set(prev).add('hero-bg'))
     }, 100)
     
-    // Main heading "Youth 4 Elders" - appears second (after image, which finishes at ~700ms)
-    setTimeout(() => {
-      setVisibleElements((prev) => new Set(prev).add('hero-heading'))
-    }, 1200)
-    
-    // Marketing text "... is now live" - appears last (after Youth 4 Elders animation)
-    setTimeout(() => {
-      setVisibleElements((prev) => new Set(prev).add('hero-marketing'))
-    }, 1600)
+    // "Youth 4 Elders" and "is now live" are triggered by hero image onLoad (see Image below)
 
     const observerOptions = {
       threshold: 0.1,
@@ -356,8 +372,9 @@ export default function Home() {
       ) : null}
       
       {/* Hero Section - Large Text Overlay Style */}
-      <section 
-        className="relative" 
+      <section
+        ref={heroSectionRef}
+        className="relative"
         style={{ 
           background: 'transparent',
           height: '120vh',
@@ -376,10 +393,10 @@ export default function Home() {
         }}
       >
         {/* Background Image */}
-        <div 
+        <div
           className="absolute inset-0 w-full h-full"
-          style={{ 
-            borderRadius: '24px',
+          style={{
+            borderRadius: `${heroBgRadius}px`,
             overflow: 'hidden',
             marginLeft: '16px',
             marginRight: '16px',
@@ -389,7 +406,7 @@ export default function Home() {
             height: 'calc(100% - 120px)',
             top: '0',
             opacity: visibleElements.has('hero-bg') ? 1 : 0,
-            transition: 'opacity 0.6s ease-out'
+            transition: 'opacity 0.6s ease-out, border-radius 1.1s ease-out'
           }}
           data-animate-id="hero-bg"
         >
@@ -400,18 +417,25 @@ export default function Home() {
             className="object-cover"
             priority
             style={{ objectPosition: 'center bottom' }}
+            onLoad={() => {
+              setHeroImageLoaded(true)
+              // "is now live" starts after Youth 4 Elders animation finishes (~3 words: 0.28s*2 + 1s duration = ~1.6s)
+              setTimeout(() => {
+                setVisibleElements((prev) => new Set(prev).add('hero-marketing'))
+              }, 1800)
+            }}
           />
           {/* Overlay for better text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
         </div>
 
-        {/* Large Marketing Text - Upper Right */}
+        {/* Large Marketing Text - Upper Right (slow fade-in after image loads) */}
         <div 
           className="absolute top-20 right-8 md:right-12 z-20 max-w-lg text-right"
           style={{
             opacity: visibleElements.has('hero-marketing') ? 1 : 0,
-            transform: visibleElements.has('hero-marketing') ? 'translateX(0)' : 'translateX(50px)',
-            transition: 'opacity 0.5s ease-out, transform 0.5s ease-out'
+            transform: visibleElements.has('hero-marketing') ? 'translateX(0)' : 'translateX(60px)',
+            transition: 'opacity 1.2s ease-out, transform 1.2s ease-out'
           }}
           data-animate-id="hero-marketing"
         >
@@ -424,7 +448,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Large Elegant Script "Youth 4 Elders" - Overlaying the images */}
+        {/* Large Elegant Script "Youth 4 Elders" - word-by-word fade-in-up-from-blur after image loads */}
         <div 
           className="absolute bottom-0 left-0 right-0 z-50 pointer-events-none"
           style={{ marginBottom: '-60px', overflow: 'visible' }}
@@ -437,13 +461,22 @@ export default function Home() {
               mixBlendMode: 'normal',
               position: 'relative',
               zIndex: 50,
-              opacity: 1,
-              visibility: 'visible',
-              transform: 'translateY(0)',
               textShadow: 'none'
             }}
           >
-            Youth 4 Elders
+            {['Youth', '4', 'Elders'].map((word, i) => (
+              <span
+                key={i}
+                className={heroImageLoaded ? 'word-fade-in-up-blur-slow' : ''}
+                style={{
+                  display: 'inline-block',
+                  animationDelay: heroImageLoaded ? `${i * 0.28}s` : undefined,
+                  opacity: heroImageLoaded ? undefined : 0,
+                }}
+              >
+                {word}{i < 2 ? '\u00A0' : ''}
+              </span>
+            ))}
           </h1>
         </div>
 
@@ -453,13 +486,24 @@ export default function Home() {
       <section className="relative z-10 py-32 md:py-48" style={{ background: 'var(--color-olive)' }}>
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-20 md:mb-28">
-            <h2 
-              className={`text-6xl md:text-8xl lg:text-9xl font-bold mb-12 animate-on-scroll scale ${visibleElements.has('mission-headline') ? 'visible' : ''}`}
+            <h2
+              className="text-6xl md:text-8xl lg:text-9xl font-bold mb-12"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
               data-animate-id="mission-headline"
             >
-              Nothing great is built alone.
-        </h2>
+              {['Nothing', 'great', 'is', 'built', 'alone.'].map((word, i) => (
+                <span
+                  key={i}
+                  className={visibleElements.has('mission-headline') ? 'word-fade-in-up-blur' : ''}
+                  style={{
+                    animationDelay: visibleElements.has('mission-headline') ? `${i * 0.12}s` : undefined,
+                    opacity: visibleElements.has('mission-headline') ? undefined : 0,
+                  }}
+                >
+                  {word}{i < 4 ? '\u00A0' : ''}
+                </span>
+              ))}
+            </h2>
           </div>
 
           {/* Description */}
@@ -476,14 +520,40 @@ export default function Home() {
       {/* Current Club Updates and Countdown Section - Connected to Events */}
       <section className="relative z-20 pt-20 md:pt-24 pb-28 md:pb-32" style={{ background: 'var(--color-cream)' }}>
         <div className="max-w-6xl mx-auto px-8 md:px-10">
-        <h3 
-          className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-10 text-left animate-on-scroll slide-right ${visibleElements.has('club-updates-heading') ? 'visible' : ''}`}
+        <h3
+          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-10 text-left"
           style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
           data-animate-id="club-updates-heading"
         >
-          Current Club{' '}
+          {['Current', 'Club'].map((word, wi) => (
+            <span key={wi}>
+              <span
+                className={visibleElements.has('club-updates-heading') ? 'word-fade-in-up-blur' : ''}
+                style={{
+                  display: 'inline-block',
+                  animationDelay: visibleElements.has('club-updates-heading') ? `${wi * 0.45}s` : undefined,
+                  opacity: visibleElements.has('club-updates-heading') ? undefined : 0,
+                }}
+              >
+                {word}
+              </span>
+              {wi < 1 ? '\u00A0' : '\u00A0'}
+            </span>
+          ))}
           <span style={{ fontFamily: 'var(--font-leiko)', fontStyle: 'italic' }}>
-            Updates
+            {'Updates'.split('').map((letter, i) => (
+              <span
+                key={i}
+                className={visibleElements.has('club-updates-heading') ? 'word-fade-in-up-blur' : ''}
+                style={{
+                  display: 'inline-block',
+                  animationDelay: visibleElements.has('club-updates-heading') ? `${1.05 + i * 0.055}s` : undefined,
+                  opacity: visibleElements.has('club-updates-heading') ? undefined : 0,
+                }}
+              >
+                {letter}
+              </span>
+            ))}
           </span>
         </h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-28 items-start">
@@ -833,10 +903,10 @@ export default function Home() {
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
                   <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    Started Sept 16, 2025 • Weekly
+                    Started again Jan 16
                   </p>
                   <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    A 6-week weekly workshop series teaching and helping with technology. Will resume again shortly.
+                    A 6-week weekly workshop series teaching and helping with technology. Now running at The Glebe Centre.
                   </p>
                 </div>
               </div>
@@ -1045,7 +1115,7 @@ export default function Home() {
         </section>
 
       {/* How to Get Involved Section */}
-      <section ref={parallaxSectionRef} className="relative z-10 pt-32 md:pt-48 pb-20 md:pb-32 overflow-hidden" style={{ background: 'var(--color-cream)' }}>
+      <section ref={parallaxSectionRef} className="relative z-10 pt-20 md:pt-28 pb-14 md:pb-20 overflow-hidden" style={{ background: 'var(--color-cream)' }}>
         {/* Fixed Background Images - Parallax Effect */}
         <div ref={parallaxBgRef} className="absolute inset-0 pointer-events-none parallax-bg" style={{ zIndex: 0 }}>
           {/* Create a grid of small decorative images */}
@@ -1165,48 +1235,73 @@ export default function Home() {
             })}
                     </div>
 
-        {/* Content - Scrolls normally */}
+        {/* Content - Scrolls normally; overlapping title + parallax kept */}
         <div className="relative z-10 max-w-7xl mx-auto px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 
-              className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-on-scroll slide-up ${visibleElements.has('get-involved-heading') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}
+          <div className="max-w-3xl text-left">
+            <h2
+              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tight"
+              style={{ color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
               data-animate-id="get-involved-heading"
             >
-              Want to Get Involved?
+              <span className="block">
+                {['Want', 'to', 'Get'].map((word, i) => (
+                  <span key={i}>
+                    <span
+                      className={visibleElements.has('get-involved-heading') ? 'word-fade-in-up-blur' : ''}
+                      style={{
+                        display: 'inline-block',
+                        animationDelay: visibleElements.has('get-involved-heading') ? `${i * 0.12}s` : undefined,
+                        opacity: visibleElements.has('get-involved-heading') ? undefined : 0,
+                      }}
+                    >
+                      {word}
+                    </span>
+                    {i < 2 ? '\u00A0' : ''}
+                  </span>
+                ))}
+              </span>
+              <span className="block text-6xl md:text-7xl lg:text-8xl font-bold italic leading-[0.90] tracking-tight mt-[-0.2em] ml-[0.18em] md:ml-[0.24em]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
+                <span
+                  className={visibleElements.has('get-involved-heading') ? 'word-fade-in-up-blur' : ''}
+                  style={{
+                    display: 'inline-block',
+                    animationDelay: visibleElements.has('get-involved-heading') ? '0.36s' : undefined,
+                    opacity: visibleElements.has('get-involved-heading') ? undefined : 0,
+                  }}
+                >
+                  Involved?
+                </span>
+              </span>
             </h2>
-            <p 
-              className={`text-lg md:text-xl mb-8 leading-relaxed animate-on-scroll fade ${visibleElements.has('get-involved-description') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)' }}
+            <p
+              className={`text-lg md:text-xl lg:text-2xl mt-6 mb-6 leading-relaxed animate-on-scroll fade ${visibleElements.has('get-involved-description') ? 'visible' : ''}`}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.92 }}
               data-animate-id="get-involved-description"
             >
               Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
             </p>
-            <div 
-              className={`flex justify-center items-center animate-on-scroll scale ${visibleElements.has('get-involved-button') ? 'visible' : ''}`}
+            <div
+              className={`animate-on-scroll scale ${visibleElements.has('get-involved-button') ? 'visible' : ''}`}
               data-animate-id="get-involved-button"
             >
               <a
                 href="/join-us"
-                className="px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+                className="inline-block px-6 py-3 rounded-lg font-semibold text-sm md:text-base uppercase tracking-widest transition-all duration-300 hover:scale-[1.02]"
                 style={{
                   background: 'var(--color-olive)',
                   color: 'var(--color-olive-light)',
                   fontFamily: 'var(--font-kollektif)',
-                  border: '2px solid var(--color-olive)'
                 }}
                 onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.currentTarget.style.borderColor = 'var(--color-olive-light)'
-                  e.currentTarget.style.background = 'var(--color-olive-light)'
-                  e.currentTarget.style.color = 'var(--color-olive)'
+                  e.currentTarget.style.background = 'var(--color-olive-dark)'
+                  e.currentTarget.style.color = 'var(--color-cream)'
                 }}
                 onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.currentTarget.style.borderColor = 'var(--color-olive)'
                   e.currentTarget.style.background = 'var(--color-olive)'
                   e.currentTarget.style.color = 'var(--color-olive-light)'
                 }}
               >
-                LEARN MORE
+                Learn more
               </a>
             </div>
           </div>

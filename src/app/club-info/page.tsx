@@ -124,7 +124,7 @@ export default function ClubInfo() {
 
   // Sticky + reveal scroll distances (vh).
   const HERO_SCROLL_VH = 100
-  const SECOND_SECTION_SCROLL_VH = 300
+  const SECOND_SECTION_SCROLL_VH = 310
   const SECOND_SECTION_OFFSET = 60
   const SCROLL_WRAPPER_HEIGHT_VH = HERO_SCROLL_VH + SECOND_SECTION_OFFSET + SECOND_SECTION_SCROLL_VH
   const founderStories = [
@@ -153,98 +153,42 @@ export default function ClubInfo() {
         }}
       >
         <section 
-          className="relative"
+          className="relative flex flex-col justify-center items-center px-6 md:px-8 py-12"
           style={{
             position: 'sticky', 
             top: 0,
             height: `${HERO_SCROLL_VH}vh`,
             zIndex: 2,          
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            boxSizing: 'border-box',
-            paddingTop: 'clamp(12px, 2vh, 28px)',
-            paddingBottom: 'clamp(16px, 3vh, 36px)',
             background: 'var(--color-cream)', 
           }}
         >
-          <div className="max-w-screen-2xl mx-auto px-4 md:px-6 w-full h-full flex flex-col justify-center items-center" style={{ paddingTop: 'clamp(10px, 2vh, 20px)' }}>
-
-            {/* Text at the bottom */}
             <div 
-              className="relative w-full text-center transition-all duration-1000 max-w-4xl mx-auto"
+            className="w-full max-w-3xl text-center transition-all duration-1000"
               style={{
                 opacity: isVisible ? 1 : 0,
-                transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-                transitionDelay: '400ms',
-                marginTop: 'clamp(6px, 1.5vh, 18px)',
-                paddingLeft: 'clamp(12px, 2vw, 36px)',
-                paddingRight: 'clamp(12px, 2vw, 36px)'
-              }}
+              transform: isVisible ? 'translateY(0)' : 'translateY(12px)',
+              transitionDelay: '300ms',
+            }}
+          >
+            <h2
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8"
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
             >
-              <div className="mx-auto max-w-screen-2xl">
-                <blockquote
-                  className="text-4xl md:text-6xl lg:text-7xl leading-[1.02] mb-6 md:mb-8 text-center flex justify-center"
-                  style={{ 
-                    fontFamily: 'var(--font-vintage-stylist)', 
-                    color: 'var(--color-brown-dark)',
-                    textShadow: '0 14px 30px rgba(98, 32, 47, 0.2)',
-                    letterSpacing: '0.01em',
-                    textAlign: 'center',
-                    width: '100%'
-                  }}
-                >
-                  <span
-                    className="font-bold italic md:whitespace-nowrap text-center float-in-up"
-                    style={{ animationDelay: '100ms' }}
-                  >
-                    &ldquo;Not just a club. A community.&rdquo;
-                  </span>
-                </blockquote>
-
-                <div className="flex items-center justify-center gap-4 md:gap-6 mb-6 md:mb-8">
-                  <div className="h-[2px] w-16 md:w-24" style={{ background: 'rgba(98, 32, 47, 0.35)' }} />
-                  <div className="h-[6px] w-[6px] rounded-full" style={{ background: 'var(--color-pink-medium)' }} />
-                  <div className="h-[2px] w-16 md:w-24" style={{ background: 'rgba(98, 32, 47, 0.35)' }} />
-                </div>
-
-                <p 
-                  className="text-xl md:text-2xl lg:text-3xl leading-relaxed text-center float-in-up"
-                  style={{
-                    fontFamily: 'var(--font-leiko)',
-                    color: 'var(--color-brown-dark)',
-                    opacity: 0.92,
-                    textAlign: 'center',
-                    WebkitTextStroke: '0.5px var(--color-brown-dark)',
-                    textShadow: '0 1px 0 rgba(98, 32, 47, 0.5)',
-                    animationDelay: '250ms'
-                  }}
-                >
-                  We connect youth and elders through meaningful, welcoming programs.
-                </p>
-
-
-
-                <div className="mt-8 md:mt-10 flex flex-wrap justify-center gap-2 md:gap-3">
-                  {['Community', 'Workshops', 'Volunteering', 'Connection'].map((tag, index) => (
-                    <span
-                      key={tag}
-                      className="px-4 py-2 rounded-full text-xs md:text-sm uppercase tracking-[0.18em] float-in-up"
-                      style={{
-                        fontFamily: 'var(--font-kollektif)',
-                        color: 'var(--color-brown-dark)',
-                        background: 'rgba(245, 208, 198, 0.55)',
-                        border: '1px solid rgba(98, 32, 47, 0.2)',
-                        animationDelay: `${520 + index * 140}ms`
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+              About Us
+            </h2>
+            <p
+              className="text-xl md:text-2xl leading-relaxed mb-14"
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+            >
+              Youth 4 Elders is a student-led organization from the University of Ottawa, dedicated to supporting the senior community through meaningful volunteerism.
+            </p>
+            <p
+              className="text-lg italic text-[var(--color-brown-dark)] opacity-75"
+              style={{ fontFamily: 'var(--font-leiko)' }}
+            >
+              Scroll to find out more
+            </p>
+            <span className="inline-block animate-bounce text-base mt-2 text-[var(--color-brown-dark)] opacity-70" aria-hidden>↓</span>
           </div>
         </section>
 
@@ -264,8 +208,8 @@ export default function ClubInfo() {
             overflow: 'visible',
           }}
         >
-          <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-12 relative" style={{ overflow: 'visible' }}>
-            <div className="mb-12 md:mb-16 pt-20 md:pt-32">
+          <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-12 relative pt-[12vh] md:pt-[18vh]" style={{ overflow: 'visible' }}>
+            <div className="mb-8 md:mb-12">
               <p 
                 className="text-sm md:text-base uppercase tracking-widest mb-3"
                 style={{ 
@@ -284,11 +228,11 @@ export default function ClubInfo() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-              {/* Text - Now on the left */}
-              <div className="pt-2 md:pt-4 order-2 lg:order-1">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 xl:gap-28 items-start">
+              {/* Text - narrower column for more space before image */}
+              <div className="pt-2 md:pt-4 order-2 lg:order-1 max-w-xl lg:max-w-none lg:pr-4 xl:pr-8">
                 <blockquote 
-                  className="text-lg md:text-xl leading-relaxed italic mb-16 md:mb-18"
+                  className="text-lg md:text-xl leading-relaxed italic mb-16 md:mb-18 max-w-xl"
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.92, fontStyle: 'italic', borderLeft: '3px solid var(--color-cream)', paddingLeft: '20px' }}
                   >
                   <p className="mb-4">
@@ -362,10 +306,10 @@ export default function ClubInfo() {
               </div>
             </div>
 
-            <div className="mt-16 md:mt-20 pt-6">
+            <div className="mt-24 md:mt-32 pt-6">
               <div className="flex flex-col gap-3 mb-12">
                 <p
-                  className="text-sm md:text-base uppercase tracking-widest"
+                  className="text-sm md:text-base uppercase tracking-widest mb-2"
                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', letterSpacing: '0.2em' }}
                 >
                   Founder goals
@@ -377,12 +321,12 @@ export default function ClubInfo() {
                 className="text-lg md:text-xl leading-relaxed w-full pr-0"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}
               >
-                Our goal with Youth4Elders is to positively impact as many lives as possible by connecting youth and seniors in meaningful ways. Within the senior community, we provide hands-on support through technology assistance, educational initiatives, and one-on-one engagement to promote confidence and independence. At the same time, Youth4Elders empowers youth by fostering collaboration, leadership, and a strong sense of community responsibility.
+                Youth4Elders connects youth and seniors through meaningful support—tech help, education, and one‑on‑one engagement that builds confidence. We also empower youth with collaboration, leadership, and community responsibility.
               </p>
 
             </div>
 
-            <div className="mt-36 md:mt-40">
+            <div className="mt-44 md:mt-52">
               <div className="flex flex-col gap-3 mb-8 text-center">
                 <p
                   className="text-3xl md:text-4xl lg:text-5xl font-semibold italic"
@@ -559,157 +503,171 @@ export default function ClubInfo() {
         </section>
       </div>
 
-      {/* Programs & Services Section */}
-      <section className="py-16 md:py-24" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-12">
-          <div className="mb-12 md:mb-16 text-center">
-            <p 
-              className="text-sm md:text-base uppercase tracking-widest mb-3"
+      {/* Wrapper so Youth 4 Elders bar sticks through General club info + Programs, then scrolls away before Ideas Welcome */}
+      <div>
+        <div
+          style={{
+            position: 'sticky',
+            top: 0,
+            height: 'auto',
+            minHeight: 'clamp(36px, 6vh, 48px)',
+            background: 'var(--color-olive)',
+            zIndex: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'clamp(6px, 1vh, 10px) clamp(12px, 2vw, 20px)',
+          }}
+        >
+          <span
+            className="font-bold italic text-center whitespace-nowrap"
               style={{ 
-                fontFamily: 'var(--font-kollektif)', 
-                color: 'var(--color-brown-dark)',
-                letterSpacing: '0.2em',
-              }}
-            >
-              Programs & Services
+              fontFamily: 'var(--font-vintage-stylist)',
+              color: 'var(--color-cream)',
+              fontStyle: 'italic',
+              fontSize: 'clamp(1rem, 2vw, 1.35rem)',
+              lineHeight: 1.02,
+              letterSpacing: '0.02em',
+            }}
+          >
+            Youth 4 Elders
+          </span>
+        </div>
+
+      {/* What we do (left) — Why get involved (right), with light design */}
+      <section className="py-20 md:py-28" style={{ background: 'var(--color-cream)' }}>
+        <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-12 space-y-20 md:space-y-24">
+          {/* What we do — left */}
+          <div
+            className="w-full max-w-xl mr-auto ml-0 rounded-xl pl-6 pr-6 py-6 border-l-4"
+            style={{
+              borderColor: 'var(--color-olive)',
+              background: 'linear-gradient(to right, rgba(245, 208, 198, 0.12) 0%, rgba(251, 247, 232, 0.4) 60%, transparent 100%)',
+            }}
+          >
+            <p className="text-xs uppercase tracking-[0.18em] mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+              The club
             </p>
-            <h2 
-              className="text-4xl md:text-5xl lg:text-6xl font-bold italic"
+            <h2
+              className="text-2xl md:text-3xl font-bold mb-4"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
             >
-              Programs & Services we offer
+              What we do
             </h2>
+            <div className="h-0.5 w-10 mb-5 rounded-full" style={{ background: 'var(--color-olive)' }} aria-hidden />
+            <p
+              className="text-base md:text-lg leading-relaxed"
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+            >
+              Youth 4 Elders is a student-based, youth-led organization shaped by the interests and values of its executive team and dedicated to supporting the senior community through meaningful volunteerism. The club delivers a wide range of initiatives, including workshops, events, programs, and fundraisers, all designed to provide direct support to older adults while raising awareness about issues that affect seniors. Equity and accessibility are central pillars that guide the development of all programs and services, ensuring opportunities for connection and support are inclusive and responsive to the diverse needs of older adults.
+            </p>
           </div>
 
-          <div className="rounded-2xl border overflow-hidden" style={{ borderColor: 'rgba(175, 121, 120, 0.25)', background: 'rgba(234, 212, 196, 0.18)' }}>
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8">
-              <div className="md:col-span-7">
-                <p className="text-xs uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                  Ongoing
-                </p>
-                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                  Regular Weekly Sessions
-                </h3>
-                <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}>
-                  Consistent meet-ups every week for conversation, activities, and connection. Same time, same place—so you always know where to find us.
-                </p>
-              </div>
-              <div className="md:col-span-5">
-                <div className="flex flex-wrap gap-2">
-                  {['Tech help drop-ins', 'Social coffee hours', 'Activity workshops'].map((item) => (
-                    <span key={item} className="px-3 py-1 rounded-full text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'var(--color-cream)' }}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t" style={{ borderColor: 'rgba(175, 121, 120, 0.25)' }} />
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8" style={{ background: 'rgba(234, 212, 196, 0.3)' }}>
-              <div className="md:col-span-7">
-                <p className="text-xs uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                  Seasonal
-                </p>
-                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                  Special Events & Programs
-                </h3>
-                <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}>
-                  Monthly and seasonal events that bring the community together for celebration, learning, and shared experiences.
-                </p>
-              </div>
-              <div className="md:col-span-5">
-                <div className="flex flex-wrap gap-2">
-                  {['Holiday celebrations', 'Educational seminars', 'Community outings'].map((item) => (
-                    <span key={item} className="px-3 py-1 rounded-full text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'var(--color-cream)' }}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t" style={{ borderColor: 'rgba(175, 121, 120, 0.25)' }} />
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8">
-              <div className="md:col-span-7">
-                <p className="text-xs uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                  Community
-                </p>
-                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                  Partnership Programs
-                </h3>
-                <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}>
-                  Collaborating with schools, senior centers, and community organizations to create meaningful intergenerational experiences.
-                </p>
-              </div>
-              <div className="md:col-span-5">
-                <div className="flex flex-wrap gap-2">
-                  {['School partnerships', 'Senior center visits', 'Community collaborations'].map((item) => (
-                    <span key={item} className="px-3 py-1 rounded-full text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'var(--color-cream)' }}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t" style={{ borderColor: 'rgba(175, 121, 120, 0.25)' }} />
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 md:p-8" style={{ background: 'rgba(234, 212, 196, 0.3)' }}>
-              <div className="md:col-span-7">
-                <p className="text-xs uppercase tracking-widest mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                  Training
-                </p>
-                <h3 className="text-2xl md:text-3xl font-bold mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                  Volunteer Training
-                </h3>
-                <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}>
-                  Comprehensive training for student volunteers to ensure they&apos;re prepared, confident, and ready to make a positive impact.
-                </p>
-              </div>
-              <div className="md:col-span-5">
-                <div className="flex flex-wrap gap-2">
-                  {['Orientation sessions', 'Skill-building workshops'].map((item) => (
-                    <span key={item} className="px-3 py-1 rounded-full text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'var(--color-cream)' }}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
+          {/* Why get involved — right */}
+          <div
+            className="w-full max-w-xl ml-auto mr-0 text-right rounded-xl pl-6 pr-6 py-6 border-r-4"
+            style={{
+              borderColor: 'var(--color-olive)',
+              background: 'linear-gradient(to left, rgba(111, 101, 9, 0.08) 0%, rgba(251, 247, 232, 0.35) 60%, transparent 100%)',
+            }}
+          >
+            <p className="text-xs uppercase tracking-[0.18em] mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+              Join us
+            </p>
+            <h2
+              className="text-2xl md:text-3xl font-bold mb-4"
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+            >
+              Why get involved
+            </h2>
+            <div className="h-0.5 w-10 ml-auto mr-0 mb-5 rounded-full" style={{ background: 'var(--color-olive)' }} aria-hidden />
+            <p
+              className="text-base md:text-lg leading-relaxed mb-6"
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+            >
+              Through involvement with Youth 4 Elders, members gain valuable transferable skills such as communication, leadership, collaboration, empathy, and compassion, while also earning volunteer hours, reference letters, and opportunities to build lasting professional relationships.
+            </p>
+            <Link
+              href="/join-us"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm border-2 transition-all duration-300"
+              style={{
+                fontFamily: 'var(--font-kollektif)',
+                background: 'var(--color-olive)',
+                color: 'var(--color-cream)',
+                borderColor: 'var(--color-olive)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--color-olive-light)'
+                e.currentTarget.style.color = 'var(--color-olive)'
+                e.currentTarget.style.borderColor = 'var(--color-olive)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'var(--color-olive)'
+                e.currentTarget.style.color = 'var(--color-cream)'
+                e.currentTarget.style.borderColor = 'var(--color-olive)'
+              }}
+            >
+              Get involved
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
-
         </div>
       </section>
 
-      {/* Services Message Box */}
-      <section className="py-12 md:py-16 pb-16 md:pb-36" style={{ background: 'var(--color-cream)' }}>
-        <div className="w-full mx-auto px-6 lg:px-20">
-          <div
-            className="rounded-3xl border-2 p-6 md:p-10"
-            style={{
-              background: 'var(--color-pink-light)',
-              borderColor: 'var(--color-pink-dark)',
-              boxShadow: '0 12px 30px rgba(64, 83, 44, 0.12)'
-            }}
+      {/* Programs we offer — cream, pill tags + note */}
+      <section
+        id="programs"
+        className="py-20 md:py-28"
+        style={{ background: 'var(--color-cream)' }}
+      >
+        <div className="max-w-4xl mx-auto px-6 md:px-10">
+          <h2
+            className="text-2xl md:text-3xl font-bold text-center mb-3"
+            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-20 items-center">
-            {/* Left Side - Heading and Paragraph */}
-            <div 
-              className="rounded-2xl border-2 p-6 md:p-8"
-              style={{ 
-                background: 'var(--color-pink-medium)',
-                borderColor: 'var(--color-pink-dark)',
-                borderStyle: 'dashed',
-                boxShadow: '0 10px 30px rgba(64, 83, 44, 0.15)'
-              }}
-            >
-              <div className="flex items-start gap-3 mb-4">
+            Programs we offer
+          </h2>
+          <p className="text-center text-base mb-10" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.9 }}>
+            Programs may include:
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {[
+              'Technology literacy support (one-on-one or group)',
+              'Social engagement & companionship',
+              'Educational workshops (digital safety, communication tools)',
+              'Health and wellness workshops',
+              'Community events & intergenerational activities',
+              'Youth-led active living programs',
+            ].map((label) => (
+              <span
+                key={label}
+                className="px-4 py-2 rounded-full text-sm"
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', background: 'rgba(111, 101, 9, 0.12)', border: '1px solid rgba(111, 101, 9, 0.3)' }}
+              >
+                {label}
+                    </span>
+                  ))}
+                </div>
+          <p className="text-center text-sm md:text-base max-w-xl mx-auto" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.88 }}>
+            Programs are adaptable to meet the specific needs of each partner organization.
+                </p>
+              </div>
+      </section>
+
+        </div>
+
+      {/* Ideas Welcome — on merlot (bar scrolls away before this) */}
+      <section id="ideas" className="py-12 md:py-16 pb-16 md:pb-36 scroll-mt-6" style={{ background: 'var(--color-brown-dark)' }}>
+        <div className="w-full mx-auto px-6 lg:px-20 max-w-6xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Left — Ideas welcome text on merlot (no white box) */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
                 <div 
                   className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                  style={{ background: 'rgba(234, 212, 196, 0.2)' }}
+                  style={{ background: 'rgba(251, 247, 232, 0.2)' }}
                 >
                   <svg className="w-5 h-5" style={{ color: 'var(--color-cream)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -724,28 +682,32 @@ export default function ClubInfo() {
               </div>
               <p 
                 className="text-base md:text-lg leading-relaxed"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.95 }}
+                style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(251, 247, 232, 0.92)' }}
               >
                 We&apos;re always looking to expand our services and seminars. Have an idea for a workshop, topic, or activity that would benefit our community? We&apos;d love to hear from you. Your suggestions help us grow and serve better.
               </p>
             </div>
 
-            {/* Right Side - Form */}
-            <div style={{ paddingTop: 'clamp(64px, 8vh, 88px)', position: 'relative', minHeight: '350px' }}>
+            {/* Right — Form in one cream card */}
+                <div 
+              className="rounded-2xl p-6 md:p-8"
+                  style={{
+                background: 'var(--color-cream)',
+                boxShadow: '0 16px 40px rgba(0, 0, 0, 0.2)',
+              }}
+            >
+            <div style={{ position: 'relative', minHeight: '280px' }}>
               {/* Success Message */}
               {ideaSubmitSuccess && (
-                <div 
-                  className="flex flex-col items-center justify-center min-h-[350px] animate-fadeInUp"
-                  style={{
-                    animation: 'fadeInUp 0.6s ease-out forwards',
-                  }}
+                <div
+                  className="flex flex-col items-center justify-center min-h-[280px] animate-fadeInUp"
+                  style={{ animation: 'fadeInUp 0.6s ease-out forwards' }}
                 >
-                  <p 
-                    className="text-3xl md:text-4xl lg:text-5xl font-semibold" 
+                  <p
+                    className="text-2xl md:text-3xl font-semibold text-center"
                 style={{ 
                   fontFamily: 'var(--font-leiko)', 
-                      color: 'var(--color-cream)',
-                      textAlign: 'center',
+                      color: 'var(--color-brown-dark)',
                     }}
                   >
                     Thank you! Your idea has been sent successfully.
