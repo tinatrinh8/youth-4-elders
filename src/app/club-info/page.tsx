@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 export default function ClubInfo() {
   const [isVisible, setIsVisible] = useState(false)
@@ -19,9 +19,40 @@ export default function ClubInfo() {
   const [isClosingFieldErrors, setIsClosingFieldErrors] = useState(false)
   const [founderStoryOpen, setFounderStoryOpen] = useState<'julia' | 'peter' | null>(null)
   const [isClosingFounderStory, setIsClosingFounderStory] = useState(false)
+  const aboutUsTitleRef = useRef<HTMLDivElement>(null)
+  const [cursorMask, setCursorMask] = useState<{ x: number; y: number } | null>(null)
+  const lastCursorRef = useRef<{ x: number; y: number } | null>(null)
+  const [contentVisible, setContentVisible] = useState(false)
+  const missionLeftRef = useRef<HTMLDivElement>(null)
+  const missionRightRef = useRef<HTMLDivElement>(null)
+  const [missionLeftInView, setMissionLeftInView] = useState(false)
+  const [missionRightInView, setMissionRightInView] = useState(false)
 
   useEffect(() => {
-    setIsVisible(true)
+    const leftEl = missionLeftRef.current
+    const rightEl = missionRightRef.current
+    if (!leftEl || !rightEl) return
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === leftEl) setMissionLeftInView(entry.isIntersecting)
+          if (entry.target === rightEl) setMissionRightInView(entry.isIntersecting)
+        })
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -60px 0px' }
+    )
+    obs.observe(leftEl)
+    obs.observe(rightEl)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const startTitle = setTimeout(() => setIsVisible(true), 500)
+    const startContent = setTimeout(() => setContentVisible(true), 1200)
+    return () => {
+      clearTimeout(startTitle)
+      clearTimeout(startContent)
+    }
   }, [])
 
   useEffect(() => {
@@ -153,42 +184,114 @@ export default function ClubInfo() {
         }}
       >
         <section 
-          className="relative flex flex-col justify-center items-center px-6 md:px-8 py-12"
+          className="relative flex flex-col justify-center items-center px-6 md:px-8 py-12 overflow-visible"
           style={{
             position: 'sticky', 
             top: 0,
             height: `${HERO_SCROLL_VH}vh`,
             zIndex: 2,          
-            background: 'var(--color-cream)', 
+            background: 'var(--color-cream)',
           }}
         >
-            <div 
-            className="w-full max-w-3xl text-center transition-all duration-1000"
-              style={{
-                opacity: isVisible ? 1 : 0,
-              transform: isVisible ? 'translateY(0)' : 'translateY(12px)',
-              transitionDelay: '300ms',
-            }}
-          >
-            <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8"
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-            >
-              About Us
+            <div className="w-full max-w-3xl text-center">
+            <h2 className="text-7xl md:text-8xl lg:text-9xl font-bold mb-8" style={{ fontFamily: 'var(--font-vintage-ligatures)' }}>
+              <div
+                ref={aboutUsTitleRef}
+                className="relative inline-block cursor-default select-none"
+                onMouseMove={(e) => {
+                  const el = aboutUsTitleRef.current
+                  if (!el) return
+                  const rect = el.getBoundingClientRect()
+                  const pos = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+                  lastCursorRef.current = pos
+                  setCursorMask(pos)
+                }}
+                onMouseLeave={() => setCursorMask(null)}
+                style={(cursorMask || lastCursorRef.current)
+                  ? {
+                      ['--cursor-x' as string]: `${(cursorMask || lastCursorRef.current)!.x}px`,
+                      ['--cursor-y' as string]: `${(cursorMask || lastCursorRef.current)!.y}px`,
+                    }
+                  : undefined
+                }
+              >
+                <span className="block">
+                  {['ABOUT', 'US'].map((word, i) => (
+                    <span key={i}>
+                      <span
+                        className={isVisible ? 'word-fade-in-up-blur-slow' : ''}
+                        style={{
+                          display: 'inline-block',
+                          color: 'var(--color-brown-dark)',
+                          animationDelay: isVisible ? `${i * 0.7}s` : undefined,
+                          opacity: isVisible ? undefined : 0,
+                        }}
+                      >
+                        {word}
+                      </span>
+                      {i < 1 ? '\u00A0' : ''}
+                    </span>
+                  ))}
+                </span>
+                <span
+                  aria-hidden
+                  className="about-us-pink-mask absolute inset-0 block pointer-events-none transition-opacity duration-150 ease-out"
+                  style={{
+                    fontFamily: 'var(--font-vintage-ligatures)',
+                    color: 'var(--color-pink-medium)',
+                    opacity: cursorMask ? 1 : 0,
+                    maskImage: (cursorMask || lastCursorRef.current)
+                      ? `radial-gradient(circle 16px at var(--cursor-x) var(--cursor-y), black 0%, black 100%, transparent 100%)`
+                      : 'none',
+                    WebkitMaskImage: (cursorMask || lastCursorRef.current)
+                      ? `radial-gradient(circle 16px at var(--cursor-x) var(--cursor-y), black 0%, black 100%, transparent 100%)`
+                      : 'none',
+                    maskSize: (cursorMask || lastCursorRef.current) ? '100% 100%' : undefined,
+                    maskRepeat: (cursorMask || lastCursorRef.current) ? 'no-repeat' : undefined,
+                    WebkitMaskSize: (cursorMask || lastCursorRef.current) ? '100% 100%' : undefined,
+                    WebkitMaskRepeat: (cursorMask || lastCursorRef.current) ? 'no-repeat' : undefined,
+                  }}
+                >
+                  {['ABOUT', 'US'].map((word, i) => (
+                    <span key={i}>
+                      <span
+                        className={isVisible ? 'word-fade-in-up-blur-slow' : ''}
+                        style={{
+                          display: 'inline-block',
+                          animationDelay: isVisible ? `${i * 0.7}s` : undefined,
+                          opacity: isVisible ? undefined : 0,
+                        }}
+                      >
+                        {word}
+                      </span>
+                      {i < 1 ? '\u00A0' : ''}
+                    </span>
+                  ))}
+                </span>
+              </div>
             </h2>
-            <p
-              className="text-xl md:text-2xl leading-relaxed mb-14"
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+            <div
+              className="transition-all duration-1000 ease-out"
+              style={{
+                opacity: contentVisible ? 1 : 0,
+                transform: contentVisible ? 'translateY(0)' : 'translateY(14px)',
+                transitionDelay: contentVisible ? '300ms' : '0ms',
+              }}
             >
-              Youth 4 Elders is a student-led organization from the University of Ottawa, dedicated to supporting the senior community through meaningful volunteerism.
-            </p>
-            <p
-              className="text-lg italic text-[var(--color-brown-dark)] opacity-75"
-              style={{ fontFamily: 'var(--font-leiko)' }}
-            >
-              Scroll to find out more
-            </p>
-            <span className="inline-block animate-bounce text-base mt-2 text-[var(--color-brown-dark)] opacity-70" aria-hidden>↓</span>
+              <p
+                className="text-xl md:text-2xl leading-relaxed mb-14"
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
+              >
+                Youth 4 Elders is a student-led organization from the University of Ottawa, dedicated to supporting the senior community through meaningful volunteerism.
+              </p>
+              <p
+                className="text-lg italic opacity-90"
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
+              >
+                Scroll to find out more
+              </p>
+              <span className="inline-block animate-bounce text-base mt-2 opacity-90" style={{ color: 'var(--color-brown-dark)' }} aria-hidden>↓</span>
+            </div>
           </div>
         </section>
 
@@ -310,16 +413,16 @@ export default function ClubInfo() {
               <div className="flex flex-col gap-3 mb-12">
                 <p
                   className="text-sm md:text-base uppercase tracking-widest mb-2"
-                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', letterSpacing: '0.2em' }}
+                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', letterSpacing: '0.2em' }}
                 >
                   Founder goals
                 </p>
-                <div className="h-[2px] w-20 mt-4" style={{ background: 'rgba(251, 247, 232, 0.6)' }} />
+                <div className="h-[2px] w-20 mt-4" style={{ background: 'var(--color-pink-medium)' }} />
               </div>
 
               <p
                 className="text-lg md:text-xl leading-relaxed w-full pr-0"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-medium)' }}
               >
                 Youth4Elders connects youth and seniors through meaningful support—tech help, education, and one‑on‑one engagement that builds confidence. We also empower youth with collaboration, leadership, and community responsibility.
               </p>
@@ -429,7 +532,7 @@ export default function ClubInfo() {
                   }`}
                   style={{
                     background: 'var(--color-pink-light)',
-                    borderColor: 'rgba(111, 101, 9, 0.35)',
+                    borderColor: 'rgba(98, 32, 47, 0.35)',
                     boxShadow: '0 24px 60px rgba(15, 31, 20, 0.25)',
                     maxHeight: '80vh',
                     overflowY: 'auto'
@@ -440,7 +543,7 @@ export default function ClubInfo() {
                     type="button"
                     className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center"
                     style={{
-                      background: 'var(--color-olive)',
+                      background: 'var(--color-brown-dark)',
                       color: 'var(--color-pink-light)',
                       border: '1px solid var(--color-pink-light)'
                     }}
@@ -488,7 +591,7 @@ export default function ClubInfo() {
                         </h3>
                           <p
                             className="text-base md:text-lg leading-relaxed whitespace-pre-line"
-                            style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)' }}
+                            style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
                           >
                             {item.sample}
                           </p>
@@ -511,7 +614,7 @@ export default function ClubInfo() {
             top: 0,
             height: 'auto',
             minHeight: 'clamp(36px, 6vh, 48px)',
-            background: 'var(--color-olive)',
+            background: 'var(--color-pink-light)',
             zIndex: 2,
             display: 'flex',
             alignItems: 'center',
@@ -523,7 +626,7 @@ export default function ClubInfo() {
             className="font-bold italic text-center whitespace-nowrap"
               style={{ 
               fontFamily: 'var(--font-vintage-stylist)',
-              color: 'var(--color-cream)',
+              color: 'var(--color-olive)',
               fontStyle: 'italic',
               fontSize: 'clamp(1rem, 2vw, 1.35rem)',
               lineHeight: 1.02,
@@ -534,84 +637,109 @@ export default function ClubInfo() {
           </span>
         </div>
 
-      {/* What we do (left) — Why get involved (right), with light design */}
+      {/* Our Mission — inspo: centered headline + overlapping image & soft pink card per block */}
       <section className="py-20 md:py-28" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-12 space-y-20 md:space-y-24">
-          {/* What we do — left */}
-          <div
-            className="w-full max-w-xl mr-auto ml-0 rounded-xl pl-6 pr-6 py-6 border-l-4"
-            style={{
-              borderColor: 'var(--color-olive)',
-              background: 'linear-gradient(to right, rgba(245, 208, 198, 0.12) 0%, rgba(251, 247, 232, 0.4) 60%, transparent 100%)',
-            }}
-          >
-            <p className="text-xs uppercase tracking-[0.18em] mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
-              The club
-            </p>
-            <h2
-              className="text-2xl md:text-3xl font-bold mb-4"
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-            >
-              What we do
+        <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-5">
+          <header className="text-center mb-16 md:mb-20">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold max-w-4xl mx-auto leading-tight mb-6 md:mb-8" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
+              The work we do. The <span className="px-2 py-0.5 rounded-full" style={{ background: 'var(--color-pink-light)', boxShadow: '0 0 0 2px var(--color-pink-medium)' }}>difference</span> you can make.
             </h2>
-            <div className="h-0.5 w-10 mb-5 rounded-full" style={{ background: 'var(--color-olive)' }} aria-hidden />
-            <p
-              className="text-base md:text-lg leading-relaxed"
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
-            >
-              Youth 4 Elders is a student-based, youth-led organization shaped by the interests and values of its executive team and dedicated to supporting the senior community through meaningful volunteerism. The club delivers a wide range of initiatives, including workshops, events, programs, and fundraisers, all designed to provide direct support to older adults while raising awareness about issues that affect seniors. Equity and accessibility are central pillars that guide the development of all programs and services, ensuring opportunities for connection and support are inclusive and responsive to the diverse needs of older adults.
+            <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.88 }}>
+              To inspire passion among their peers —
+              all the while mobilizing youth, raising awareness, and creating meaningful impact.
             </p>
-          </div>
+          </header>
 
-          {/* Why get involved — right */}
-          <div
-            className="w-full max-w-xl ml-auto mr-0 text-right rounded-xl pl-6 pr-6 py-6 border-r-4"
-            style={{
-              borderColor: 'var(--color-olive)',
-              background: 'linear-gradient(to left, rgba(111, 101, 9, 0.08) 0%, rgba(251, 247, 232, 0.35) 60%, transparent 100%)',
-            }}
-          >
-            <p className="text-xs uppercase tracking-[0.18em] mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
-              Join us
-            </p>
-            <h2
-              className="text-2xl md:text-3xl font-bold mb-4"
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-            >
-              Why get involved
-            </h2>
-            <div className="h-0.5 w-10 ml-auto mr-0 mb-5 rounded-full" style={{ background: 'var(--color-olive)' }} aria-hidden />
-            <p
-              className="text-base md:text-lg leading-relaxed mb-6"
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
-            >
-              Through involvement with Youth 4 Elders, members gain valuable transferable skills such as communication, leadership, collaboration, empathy, and compassion, while also earning volunteer hours, reference letters, and opportunities to build lasting professional relationships.
-            </p>
-            <Link
-              href="/join-us"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-sm border-2 transition-all duration-300"
+          <div className="space-y-28 md:space-y-36 lg:space-y-40">
+            {/* Block 1: image on left, wider, shifted right to overlap the box */}
+            <div
+              ref={missionLeftRef}
+              className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-0"
               style={{
-                fontFamily: 'var(--font-kollektif)',
-                background: 'var(--color-olive)',
-                color: 'var(--color-cream)',
-                borderColor: 'var(--color-olive)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'var(--color-olive-light)'
-                e.currentTarget.style.color = 'var(--color-olive)'
-                e.currentTarget.style.borderColor = 'var(--color-olive)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--color-olive)'
-                e.currentTarget.style.color = 'var(--color-cream)'
-                e.currentTarget.style.borderColor = 'var(--color-olive)'
+                transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
+                opacity: missionLeftInView ? 1 : 0.6,
+                transform: missionLeftInView ? 'translateX(0)' : 'translateX(-32px)',
               }}
             >
-              Get involved
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
+              {/* Image — overlaps the pink box more (larger negative margin) */}
+              <div className="relative w-full lg:w-96 xl:w-[26rem] flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto lg:mx-0 lg:mr-[-7rem] lg:z-10 max-w-lg">
+                <Image
+                  src="/assets/club-info/signing3.jpg"
+                  alt="Youth 4 Elders community and volunteers"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 416px"
+                />
+              </div>
+              {/* Box: MERLOT background. Text: label = cream, title + body = pink */}
+              <div
+                className="flex-1 min-h-[440px] md:min-h-[520px] lg:min-h-[600px] rounded-2xl md:rounded-3xl py-5 md:py-6 lg:py-8 pl-24 md:pl-32 lg:pl-40 pr-6 md:pr-8 flex flex-col justify-center text-left"
+                style={{
+                  background: 'var(--color-brown-dark)',
+                  boxShadow: '0 24px 48px rgba(98, 32, 47, 0.25), 0 12px 24px rgba(98, 32, 47, 0.15)',
+                }}
+              >
+                <div className="max-w-2xl">
+                  <p className="text-base md:text-lg uppercase tracking-[0.2em] mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                    What we do
+                  </p>
+                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}>
+                    Support that reaches every generation
+                  </h3>
+                  <p className="text-lg md:text-xl leading-relaxed mb-5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
+                    Support the senior community through meaningful volunteerism and intergenerational connection.
+                  </p>
+                  <p className="text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
+                    Youth 4 Elders delivers workshops, events, programs, and fundraisers designed to provide direct support to older adults while raising awareness about issues that affect seniors. Equity and accessibility guide all our programs and services.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Block 2: same as block 1 — merlot box, pink label/title/body, image on right */}
+            <div
+              ref={missionRightRef}
+              className="flex flex-col lg:flex-row-reverse lg:items-center gap-6 lg:gap-0"
+              style={{
+                transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
+                opacity: missionRightInView ? 1 : 0.6,
+                transform: missionRightInView ? 'translateX(0)' : 'translateX(32px)',
+              }}
+            >
+              {/* Image — on right, overlaps the box (mirror of block 1) */}
+              <div className="relative w-full lg:w-96 xl:w-[26rem] flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto lg:mx-0 lg:ml-[-7rem] lg:z-10 max-w-lg order-1 lg:order-1">
+                <Image
+                  src="/assets/club-info/founders.jpg"
+                  alt="Youth 4 Elders team and programs"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 416px"
+                />
+              </div>
+              {/* Box: same as block 1 — MERLOT, text shifted left (less left padding) */}
+              <div
+                className="flex-1 min-h-[440px] md:min-h-[520px] lg:min-h-[600px] rounded-2xl md:rounded-3xl py-5 md:py-6 lg:py-8 pl-12 md:pl-16 lg:pl-20 pr-6 md:pr-8 flex flex-col justify-center text-left order-2 lg:order-2"
+                style={{
+                  background: 'var(--color-brown-dark)',
+                  boxShadow: '0 24px 48px rgba(98, 32, 47, 0.25), 0 12px 24px rgba(98, 32, 47, 0.15)',
+                }}
+              >
+                <div className="max-w-2xl">
+                  <p className="text-base md:text-lg uppercase tracking-[0.2em] mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                    Why get involved
+                  </p>
+                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}>
+                    Grow your skills. Make a real impact.
+                  </h3>
+                  <p className="text-lg md:text-xl leading-relaxed mb-5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
+                    Grow your skills and make a real impact alongside peers who share your mission.
+                  </p>
+                  <p className="text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
+                    Through involvement with Youth 4 Elders, you&apos;ll gain valuable transferable skills—communication, leadership, collaboration, empathy, and compassion—while earning volunteer hours, reference letters, and opportunities to build lasting professional relationships. This isn&apos;t just volunteering—it&apos;s the beginning of a path built on purpose.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

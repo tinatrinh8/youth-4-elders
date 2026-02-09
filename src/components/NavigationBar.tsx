@@ -55,9 +55,9 @@ export default function NavigationBar() {
         dropdownHoverText: 'var(--color-pink-medium)'
       }
     } else if (isClubInfoPage) {
-      // Club info: Pink panther background with merlot text
+      // Club info: Pink panther background with merlot text + pink gradient at bottom
       return {
-        background: 'var(--color-pink-medium)',
+        background: 'linear-gradient(to bottom, var(--color-pink-medium) 0%, var(--color-pink-medium) 55%, var(--color-pink-light) 100%)',
         text: 'var(--color-brown-dark)',
         border: 'none',
         hover: 'rgba(98, 32, 47, 0.85)',

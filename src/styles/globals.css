@@ -111,6 +111,29 @@ body::-webkit-scrollbar {
   /* --font-playfair now uses Vintage Stylist for all large headings */
 }
 
+/* Variable font for "breathe" title animation (weight 100 ↔ 900) */
+@font-face {
+  font-family: 'TFMix';
+  src: url('https://garet.typeforward.com/assets/fonts/shared/TFMixVF.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* Breathe animation: variable font weight pulses for title */
+@keyframes title-breathe {
+  from,
+  to {
+    font-variation-settings: 'wght' 100;
+  }
+  50% {
+    font-variation-settings: 'wght' 900;
+  }
+}
+
+.title-breathe {
+  font-family: 'TFMix', var(--font-kollektif), system-ui, sans-serif;
+  animation: title-breathe 3s ease-in-out infinite;
+}
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 

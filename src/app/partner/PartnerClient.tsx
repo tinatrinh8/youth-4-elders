@@ -346,9 +346,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             className="text-sm md:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed text-center transition-all duration-1000 ease-out" 
             style={{ 
               fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-olive-light)',
-              WebkitTextStroke: '0.6px var(--color-olive)',
-              textShadow: '0 1px 0 rgba(111, 101, 9, 0.45)',
+              color: 'var(--color-olive)',
               opacity: heroVisible ? 1 : 0,
               transform: heroVisible ? 'translateY(0)' : 'translateY(20px)',
               transitionDelay: '600ms'
