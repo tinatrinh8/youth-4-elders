@@ -25,8 +25,25 @@ export default function ClubInfo() {
   const [contentVisible, setContentVisible] = useState(false)
   const missionLeftRef = useRef<HTMLDivElement>(null)
   const missionRightRef = useRef<HTMLDivElement>(null)
+  const missionHeaderRef = useRef<HTMLHeadingElement>(null)
   const [missionLeftInView, setMissionLeftInView] = useState(false)
   const [missionRightInView, setMissionRightInView] = useState(false)
+  const [missionTitleVisible, setMissionTitleVisible] = useState(false)
+
+  useEffect(() => {
+    const headerEl = missionHeaderRef.current
+    if (!headerEl) return
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === headerEl && entry.isIntersecting) setMissionTitleVisible(true)
+        })
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -40px 0px' }
+    )
+    obs.observe(headerEl)
+    return () => obs.disconnect()
+  }, [])
 
   useEffect(() => {
     const leftEl = missionLeftRef.current
@@ -339,7 +356,7 @@ export default function ClubInfo() {
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.92, fontStyle: 'italic', borderLeft: '3px solid var(--color-cream)', paddingLeft: '20px' }}
                   >
                   <p className="mb-4">
-                    Youth 4 Elders was founded through a shared passion for intergenerational connection and community care, guided by a strong commitment to equity and accessibility.
+                    Youth 4 Elders was founded through a shared passion for intergenerational connection and community care.
                   </p>
 
                   <p>
@@ -638,19 +655,51 @@ export default function ClubInfo() {
         </div>
 
       {/* Our Mission — inspo: centered headline + overlapping image & soft pink card per block */}
-      <section className="py-20 md:py-28" style={{ background: 'var(--color-cream)' }}>
+      <section className="pt-28 pb-20 md:pt-36 md:pb-28" style={{ background: 'var(--color-cream)' }}>
         <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-5">
-          <header className="text-center mb-16 md:mb-20">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold max-w-4xl mx-auto leading-tight mb-6 md:mb-8" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-              The work we do. The <span className="px-2 py-0.5 rounded-full" style={{ background: 'var(--color-pink-light)', boxShadow: '0 0 0 2px var(--color-pink-medium)' }}>difference</span> you can make.
+          <header className="text-center mb-28 md:mb-40 pt-4 md:pt-6">
+            <h2
+              ref={missionHeaderRef}
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold max-w-4xl mx-auto leading-tight mb-6 md:mb-8"
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+            >
+              {['The work we do. The ', 'difference', ' you can make.'].map((part, i) => (
+                <span key={i}>
+                  {part === 'difference' ? (
+                    <span
+                      className={missionTitleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                      style={{
+                        display: 'inline-block',
+                        animationDelay: missionTitleVisible ? `${i * 0.5}s` : undefined,
+                        opacity: missionTitleVisible ? undefined : 0,
+                      }}
+                    >
+                      <span className="px-2 py-0.5 rounded-full" style={{ background: 'var(--color-pink-light)', boxShadow: '0 0 0 2px var(--color-pink-medium)' }}>
+                        difference
+                      </span>
+                    </span>
+                  ) : (
+                    <span
+                      className={missionTitleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                      style={{
+                        display: 'inline-block',
+                        animationDelay: missionTitleVisible ? `${i * 0.5}s` : undefined,
+                        opacity: missionTitleVisible ? undefined : 0,
+                      }}
+                    >
+                      {part}
+                    </span>
+                  )}
+                </span>
+              ))}
             </h2>
-            <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.88 }}>
+            <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed mb-12 md:mb-16" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.88 }}>
               To inspire passion among their peers —
               all the while mobilizing youth, raising awareness, and creating meaningful impact.
             </p>
           </header>
 
-          <div className="space-y-28 md:space-y-36 lg:space-y-40">
+          <div className="space-y-40 md:space-y-52 lg:space-y-64">
             {/* Block 1: image on left, wider, shifted right to overlap the box */}
             <div
               ref={missionLeftRef}
@@ -676,21 +725,18 @@ export default function ClubInfo() {
                 className="flex-1 min-h-[440px] md:min-h-[520px] lg:min-h-[600px] rounded-2xl md:rounded-3xl py-5 md:py-6 lg:py-8 pl-24 md:pl-32 lg:pl-40 pr-6 md:pr-8 flex flex-col justify-center text-left"
                 style={{
                   background: 'var(--color-brown-dark)',
-                  boxShadow: '0 24px 48px rgba(98, 32, 47, 0.25), 0 12px 24px rgba(98, 32, 47, 0.15)',
+                  boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.12)',
                 }}
               >
                 <div className="max-w-2xl">
-                  <p className="text-base md:text-lg uppercase tracking-[0.2em] mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                  <p className="text-base md:text-lg uppercase tracking-[0.2em] mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}>
                     What we do
                   </p>
-                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}>
-                    Support that reaches every generation
+                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
+                    Support that reaches every generation.
                   </h3>
                   <p className="text-lg md:text-xl leading-relaxed mb-5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
-                    Support the senior community through meaningful volunteerism and intergenerational connection.
-                  </p>
-                  <p className="text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
-                    Youth 4 Elders delivers workshops, events, programs, and fundraisers designed to provide direct support to older adults while raising awareness about issues that affect seniors. Equity and accessibility guide all our programs and services.
+                    The club delivers <strong>workshops, events, programs, and fundraisers</strong> designed to provide <strong>direct support</strong> to older adults and raise awareness about issues that affect seniors. Our programs and services are built on a commitment to <strong>equity and accessibility</strong>, ensuring that opportunities for connection and support remain <strong>inclusive and responsive</strong> to the diverse needs of older adults.
                   </p>
                 </div>
               </div>
@@ -721,22 +767,20 @@ export default function ClubInfo() {
                 className="flex-1 min-h-[440px] md:min-h-[520px] lg:min-h-[600px] rounded-2xl md:rounded-3xl py-5 md:py-6 lg:py-8 pl-12 md:pl-16 lg:pl-20 pr-6 md:pr-8 flex flex-col justify-center text-left order-2 lg:order-2"
                 style={{
                   background: 'var(--color-brown-dark)',
-                  boxShadow: '0 24px 48px rgba(98, 32, 47, 0.25), 0 12px 24px rgba(98, 32, 47, 0.15)',
+                  boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.12)',
                 }}
               >
                 <div className="max-w-2xl">
-                  <p className="text-base md:text-lg uppercase tracking-[0.2em] mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
+                  <p className="text-base md:text-lg uppercase tracking-[0.2em] mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}>
                     Why get involved
                   </p>
-                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}>
+                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
                     Grow your skills. Make a real impact.
                   </h3>
-                  <p className="text-lg md:text-xl leading-relaxed mb-5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
-                    Grow your skills and make a real impact alongside peers who share your mission.
-                  </p>
-                  <p className="text-lg md:text-xl leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
-                    Through involvement with Youth 4 Elders, you&apos;ll gain valuable transferable skills—communication, leadership, collaboration, empathy, and compassion—while earning volunteer hours, reference letters, and opportunities to build lasting professional relationships. This isn&apos;t just volunteering—it&apos;s the beginning of a path built on purpose.
-                  </p>
+                  <ul className="text-lg md:text-xl leading-relaxed space-y-4 list-disc pl-5 md:pl-6" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
+                    <li>Support older adults while building <strong>transferable skills</strong>—communication, leadership, collaboration, empathy, and compassion—and form <strong>meaningful connections</strong> along the way. Skills you can use in school, work, and beyond.</li>
+                    <li>Gain <strong>professional experience</strong> that counts: <strong>volunteer hours and reference letters</strong> for school or your career, plus opportunities to build lasting <strong>professional relationships</strong> and expand your network.</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -744,201 +788,55 @@ export default function ClubInfo() {
         </div>
       </section>
 
-      {/* Programs we offer — cream, pill tags + note */}
-      <section
-        id="programs"
-        className="py-20 md:py-28"
-        style={{ background: 'var(--color-cream)' }}
-      >
-        <div className="max-w-4xl mx-auto px-6 md:px-10">
-          <h2
-            className="text-2xl md:text-3xl font-bold text-center mb-3"
-            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-          >
-            Programs we offer
-          </h2>
-          <p className="text-center text-base mb-10" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.9 }}>
-            Programs may include:
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {[
-              'Technology literacy support (one-on-one or group)',
-              'Social engagement & companionship',
-              'Educational workshops (digital safety, communication tools)',
-              'Health and wellness workshops',
-              'Community events & intergenerational activities',
-              'Youth-led active living programs',
-            ].map((label) => (
-              <span
-                key={label}
-                className="px-4 py-2 rounded-full text-sm"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', background: 'rgba(111, 101, 9, 0.12)', border: '1px solid rgba(111, 101, 9, 0.3)' }}
-              >
-                {label}
-                    </span>
-                  ))}
-                </div>
-          <p className="text-center text-sm md:text-base max-w-xl mx-auto" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.88 }}>
-            Programs are adaptable to meet the specific needs of each partner organization.
-                </p>
-              </div>
-      </section>
-
         </div>
 
-      {/* Ideas Welcome — on merlot (bar scrolls away before this) */}
-      <section id="ideas" className="py-12 md:py-16 pb-16 md:pb-36 scroll-mt-6" style={{ background: 'var(--color-brown-dark)' }}>
-        <div className="w-full mx-auto px-6 lg:px-20 max-w-6xl">
+      {/* Ideas Welcome — pink section, one form card only */}
+      <section id="ideas" className="py-12 md:py-16 pb-14 md:pb-20 scroll-mt-6" style={{ background: 'var(--color-pink-light)' }}>
+        <div className="w-full mx-auto px-6 lg:px-16 max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left — Ideas welcome text on merlot (no white box) */}
+            {/* Left — Text on pink, no box */}
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div 
-                  className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                  style={{ background: 'rgba(251, 247, 232, 0.2)' }}
-                >
-                  <svg className="w-5 h-5" style={{ color: 'var(--color-cream)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <h3 
-                  className="text-2xl md:text-3xl font-bold"
-                  style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
-                >
-                  Ideas Welcome
-                </h3>
-              </div>
-              <p 
-                className="text-base md:text-lg leading-relaxed"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(251, 247, 232, 0.92)' }}
+              <h3 
+                className="text-3xl md:text-4xl font-bold mb-4 leading-tight"
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
               >
-                We&apos;re always looking to expand our services and seminars. Have an idea for a workshop, topic, or activity that would benefit our community? We&apos;d love to hear from you. Your suggestions help us grow and serve better.
+                Ideas Welcome
+              </h3>
+              <p 
+                className="text-base md:text-lg leading-relaxed max-w-xl"
+                style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.9 }}
+              >
+                Youth4Elders welcomes formal program or event requests. We work collaboratively with partners to design tailored initiatives that align with organizational goals, resident interests, and logistical requirements.
               </p>
             </div>
 
-            {/* Right — Form in one cream card */}
-                <div 
+            {/* Right — Single form card */}
+            <div 
               className="rounded-2xl p-6 md:p-8"
-                  style={{
+              style={{
                 background: 'var(--color-cream)',
-                boxShadow: '0 16px 40px rgba(0, 0, 0, 0.2)',
+                border: '1px solid rgba(98, 32, 47, 0.15)',
+                boxShadow: '0 20px 56px rgba(0, 0, 0, 0.18), 0 8px 24px rgba(98, 32, 47, 0.08)',
               }}
             >
-            <div style={{ position: 'relative', minHeight: '280px' }}>
-              {/* Success Message */}
-              {ideaSubmitSuccess && (
-                <div
-                  className="flex flex-col items-center justify-center min-h-[280px] animate-fadeInUp"
-                  style={{ animation: 'fadeInUp 0.6s ease-out forwards' }}
-                >
-                  <p
-                    className="text-2xl md:text-3xl font-semibold text-center"
-                style={{ 
-                  fontFamily: 'var(--font-leiko)', 
-                      color: 'var(--color-brown-dark)',
-                    }}
+              <div style={{ position: 'relative', minHeight: '280px' }}>
+                {/* Success Message */}
+                {ideaSubmitSuccess && (
+                  <div
+                    className="flex flex-col items-center justify-center min-h-[280px] animate-fadeInUp"
+                    style={{ animation: 'fadeInUp 0.6s ease-out forwards' }}
                   >
-                    Thank you! Your idea has been sent successfully.
-                  </p>
-                </div>
-              )}
-
-              {/* Error Message Popup */}
-              {(ideaSubmitError || isClosingError) && !ideaSubmitSuccess && (
-                <div 
-                  className="absolute inset-0 flex items-center justify-center z-50"
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    pointerEvents: 'none',
-                    animation: isClosingError ? 'fadeOut 0.3s ease-in forwards' : 'fadeIn 0.3s ease-out forwards',
-                  }}
-                >
-                  <div 
-                    className="p-4 rounded-lg shadow-lg"
-                    style={{ 
-                      background: 'var(--color-brown-dark)', 
-                      border: '2px solid var(--color-brown-dark)',
-                      maxWidth: '400px',
-                      width: '90%',
-                      pointerEvents: 'auto',
-                      animation: isClosingError ? 'fadeOutScale 0.3s ease-in forwards' : 'fadeInScale 0.3s ease-out forwards',
-                }}
-              >
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
-                        {ideaSubmitError}
-                      </p>
-                      <button
-                        onClick={handleCloseError}
-                        className="flex-shrink-0 text-lg leading-none hover:opacity-100 transition-opacity"
-                        style={{ color: 'var(--color-cream)', opacity: 0.7 }}
-                        aria-label="Close error message"
-                      >
-                        ×
-                      </button>
-                    </div>
+                    <p
+                      className="text-xl md:text-2xl font-semibold text-center"
+                      style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                    >
+                      Thank you! Your request has been sent successfully.
+                    </p>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Form - Hide when success is shown */}
-              {!ideaSubmitSuccess && (
-                <form onSubmit={handleIdeaSubmit} className="space-y-3 relative" noValidate>
-                <div>
-                  <input
-                    type="text"
-                    name="name"
-                    value={ideaFormData.name}
-                    onChange={handleIdeaInputChange}
-                    placeholder="Your name"
-                    className="w-full px-4 py-2.5 rounded-lg focus:outline-none placeholder:opacity-70"
-                    style={{
-                      background: 'rgba(234, 212, 196, 0.3)',
-                      border: 'none',
-                      color: 'var(--color-brown-dark)',
-                      fontFamily: 'var(--font-kollektif)',
-                    }}
-                  />
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    name="email"
-                    value={ideaFormData.email}
-                    onChange={handleIdeaInputChange}
-                    placeholder="Your email"
-                    className="w-full px-4 py-2.5 rounded-lg focus:outline-none placeholder:opacity-70"
-                    style={{
-                      background: 'rgba(234, 212, 196, 0.3)',
-                      border: 'none',
-                      color: 'var(--color-brown-dark)',
-                      fontFamily: 'var(--font-kollektif)',
-                    }}
-                  />
-                </div>
-                <div>
-                  <textarea
-                    name="message"
-                    value={ideaFormData.message}
-                    onChange={handleIdeaInputChange}
-                    placeholder="Share your idea..."
-                    rows={4}
-                    className="w-full px-4 py-2.5 rounded-lg focus:outline-none resize-none placeholder:opacity-70"
-                    style={{
-                      background: 'rgba(234, 212, 196, 0.3)',
-                      border: 'none',
-                      color: 'var(--color-brown-dark)',
-                      fontFamily: 'var(--font-kollektif)',
-                    }}
-                  />
-                </div>
-                
-                {/* Field Errors Popup */}
-                {((fieldErrors.name || fieldErrors.email || fieldErrors.message) || isClosingFieldErrors) && (
+                {/* Error Message Popup */}
+                {(ideaSubmitError || isClosingError) && !ideaSubmitSuccess && (
                   <div 
                     className="absolute inset-0 flex items-center justify-center z-50"
                     style={{
@@ -948,7 +846,7 @@ export default function ClubInfo() {
                       right: 0,
                       bottom: 0,
                       pointerEvents: 'none',
-                      animation: isClosingFieldErrors ? 'fadeOut 0.3s ease-in forwards' : 'fadeIn 0.3s ease-out forwards',
+                      animation: isClosingError ? 'fadeOut 0.3s ease-in forwards' : 'fadeIn 0.3s ease-out forwards',
                     }}
                   >
                     <div 
@@ -959,15 +857,15 @@ export default function ClubInfo() {
                         maxWidth: '400px',
                         width: '90%',
                         pointerEvents: 'auto',
-                        animation: isClosingFieldErrors ? 'fadeOutScale 0.3s ease-in forwards' : 'fadeInScale 0.3s ease-out forwards',
+                        animation: isClosingError ? 'fadeOutScale 0.3s ease-in forwards' : 'fadeInScale 0.3s ease-out forwards',
                       }}
                     >
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
-                          Please fill in all fields:
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+                          {ideaSubmitError}
                         </p>
                         <button
-                          onClick={handleCloseFieldErrors}
+                          onClick={handleCloseError}
                           className="flex-shrink-0 text-lg leading-none hover:opacity-100 transition-opacity"
                           style={{ color: 'var(--color-cream)', opacity: 0.7 }}
                           aria-label="Close error message"
@@ -975,140 +873,152 @@ export default function ClubInfo() {
                           ×
                         </button>
                       </div>
-                      <ul className="space-y-1">
-                        {fieldErrors.name && (
-                          <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                            • {fieldErrors.name}
-                          </li>
-                        )}
-                        {fieldErrors.email && (
-                          <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                            • {fieldErrors.email}
-                          </li>
-                        )}
-                        {fieldErrors.message && (
-                          <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                            • {fieldErrors.message}
-                          </li>
-                        )}
-                      </ul>
                     </div>
                   </div>
                 )}
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={isSubmittingIdea}
-                    className="px-6 py-2 rounded-full font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      background: 'var(--color-pink-medium)',
-                      color: 'var(--color-cream)',
-                      fontFamily: 'var(--font-kollektif)',
-                      border: '2px solid transparent',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)'
-                    }}
-                  >
-                    {isSubmittingIdea ? 'Sending...' : 'Send Idea'}
-                  </button>
-                </div>
-              </form>
-              )}
-            </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section
-        className="relative py-20 md:py-28"
-        style={{
-          minHeight: '105vh',
-          backgroundImage:
-            "linear-gradient(rgba(91, 59, 30, 0.72), rgba(91, 59, 30, 0.72)), url('/assets/sip.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-10 lg:px-12">
-          <div className="sticky top-[85%]" style={{ transform: 'translateY(30%)' }}>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-              <div className="lg:col-span-5">
-              <p
-                className="text-xs md:text-sm uppercase tracking-widest mb-4"
-                style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(234, 225, 203, 0.85)', letterSpacing: '0.2em' }}
-              >
-                Why join
-              </p>
-              <h2
-                className="text-4xl md:text-5xl lg:text-6xl font-bold italic mb-4"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
-              >
-                Meet your community.
-              </h2>
-              <p
-                className="text-base md:text-lg leading-relaxed"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
-              >
-                Connect with seniors, grow as a leader, and make a lasting impact in our Ottawa community.
-              </p>
-              <div className="mt-6">
-                <Link
-                  href="/join-us"
-                  className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm md:text-base font-semibold transition-all duration-300"
-                  style={{
-                    background: 'var(--color-cream)',
-                    color: 'var(--color-brown-dark)',
-                    fontFamily: 'var(--font-kollektif)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }}
-                >
-                  Get involved
-                  <span aria-hidden>→</span>
-                </Link>
-              </div>
-              </div>
-
-              <div className="lg:col-span-7">
-              <p
-                className="text-xs md:text-sm uppercase tracking-widest mb-6"
-                style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(234, 225, 203, 0.85)', letterSpacing: '0.2em' }}
-              >
-                What to expect
-              </p>
-              <div className="space-y-6">
-                {[
-                  'Join a welcoming, low-pressure session.',
-                  'Build real friendships through weekly connection.',
-                  'Gain leadership experience by helping facilitate.',
-                  'Grow with a supportive, purpose-driven community.'
-                ].map((item, index) => (
-                  <div key={item} className="flex items-start gap-6 pb-6" style={{ borderBottom: index === 3 ? 'none' : '1px solid rgba(234, 225, 203, 0.35)' }}>
-                    <div
-                      className="text-2xl md:text-3xl"
-                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
-                    >
-                      {`0${index + 1} /`}
+                {/* Form - Hide when success is shown */}
+                {!ideaSubmitSuccess && (
+                  <form onSubmit={handleIdeaSubmit} className="space-y-4 relative" noValidate>
+                    <div>
+                      <label htmlFor="idea-name" className="sr-only">Your name</label>
+                      <input
+                        id="idea-name"
+                        type="text"
+                        name="name"
+                        value={ideaFormData.name}
+                        onChange={handleIdeaInputChange}
+                        placeholder="Your name"
+                        className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-1 placeholder:opacity-55"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.9)',
+                          border: '1px solid rgba(98, 32, 47, 0.2)',
+                          color: 'var(--color-brown-dark)',
+                          fontFamily: 'var(--font-kollektif)',
+                        }}
+                      />
                     </div>
-                    <p
-                      className="text-base md:text-lg leading-relaxed"
-                      style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
-                    >
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
+                    <div>
+                      <label htmlFor="idea-email" className="sr-only">Your email</label>
+                      <input
+                        id="idea-email"
+                        type="email"
+                        name="email"
+                        value={ideaFormData.email}
+                        onChange={handleIdeaInputChange}
+                        placeholder="Your email"
+                        className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-1 placeholder:opacity-55"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.9)',
+                          border: '1px solid rgba(98, 32, 47, 0.2)',
+                          color: 'var(--color-brown-dark)',
+                          fontFamily: 'var(--font-kollektif)',
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="idea-message" className="sr-only">Your program or event request</label>
+                      <textarea
+                        id="idea-message"
+                        name="message"
+                        value={ideaFormData.message}
+                        onChange={handleIdeaInputChange}
+                        placeholder="Tell us about your program or event request..."
+                        rows={4}
+                        className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-1 resize-none placeholder:opacity-55"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.9)',
+                          border: '1px solid rgba(98, 32, 47, 0.2)',
+                          color: 'var(--color-brown-dark)',
+                          fontFamily: 'var(--font-kollektif)',
+                        }}
+                      />
+                    </div>
+
+                    {/* Field Errors Popup */}
+                    {((fieldErrors.name || fieldErrors.email || fieldErrors.message) || isClosingFieldErrors) && (
+                      <div 
+                        className="absolute inset-0 flex items-center justify-center z-50"
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          pointerEvents: 'none',
+                          animation: isClosingFieldErrors ? 'fadeOut 0.3s ease-in forwards' : 'fadeIn 0.3s ease-out forwards',
+                        }}
+                      >
+                        <div 
+                          className="p-4 rounded-lg shadow-lg"
+                          style={{ 
+                            background: 'var(--color-brown-dark)', 
+                            border: '2px solid var(--color-brown-dark)',
+                            maxWidth: '400px',
+                            width: '90%',
+                            pointerEvents: 'auto',
+                            animation: isClosingFieldErrors ? 'fadeOutScale 0.3s ease-in forwards' : 'fadeInScale 0.3s ease-out forwards',
+                          }}
+                        >
+                          <div className="flex items-start justify-between gap-3 mb-2">
+                            <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+                              Please fill in all fields:
+                            </p>
+                            <button
+                              onClick={handleCloseFieldErrors}
+                              className="flex-shrink-0 text-lg leading-none hover:opacity-100 transition-opacity"
+                              style={{ color: 'var(--color-cream)', opacity: 0.7 }}
+                              aria-label="Close error message"
+                            >
+                              ×
+                            </button>
+                          </div>
+                          <ul className="space-y-1">
+                            {fieldErrors.name && (
+                              <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+                                • {fieldErrors.name}
+                              </li>
+                            )}
+                            {fieldErrors.email && (
+                              <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+                                • {fieldErrors.email}
+                              </li>
+                            )}
+                            {fieldErrors.message && (
+                              <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+                                • {fieldErrors.message}
+                              </li>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex justify-end pt-1">
+                      <button
+                        type="submit"
+                        disabled={isSubmittingIdea}
+                        className="px-8 py-3.5 rounded-full font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        style={{
+                          background: 'var(--color-brown-dark)',
+                          color: 'var(--color-cream)',
+                          fontFamily: 'var(--font-kollektif)',
+                          border: '2px solid var(--color-brown-dark)',
+                          boxShadow: '0 4px 14px rgba(98, 32, 47, 0.25)',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-2px)'
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(98, 32, 47, 0.35)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)'
+                          e.currentTarget.style.boxShadow = '0 4px 14px rgba(98, 32, 47, 0.25)'
+                        }}
+                      >
+                        {isSubmittingIdea ? 'Sending...' : 'Send Request'}
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
           </div>
@@ -1177,6 +1087,108 @@ export default function ClubInfo() {
               <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
                 — Sarah, Student Volunteer
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        className="relative py-20 md:py-28 flex flex-col justify-center"
+        style={{
+          minHeight: '105vh',
+          backgroundImage:
+            "linear-gradient(rgba(44, 35, 31, 0.3), rgba(55, 30, 36, 0.8)), url('/assets/club-info/programs%20background.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-10 lg:px-12 w-full">
+          <div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+              <div className="lg:col-span-5">
+                <h2
+                  className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold italic mb-4 leading-tight"
+                  style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+                >
+                  Programs & Services
+                </h2>
+                <p
+                  className="text-base md:text-lg leading-relaxed"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
+                >
+                  Programs may include the following. All programs are adaptable to meet the specific needs of each partner organization.
+                </p>
+                <p
+                  className="text-base md:text-lg leading-relaxed mt-4 mb-6"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
+                >
+                  We run new workshops, sessions, and community events throughout the year—see what&apos;s coming up on our events page.
+                </p>
+                <div className="mt-6">
+                  <Link
+                    href="/events"
+                    className="group inline-flex items-center gap-2 font-semibold text-base md:text-lg transition-all duration-300 relative"
+                    style={{
+                      color: 'var(--color-cream)',
+                      fontFamily: 'var(--font-kollektif)',
+                    }}
+                  >
+                    <span>See new events</span>
+                    <svg
+                      className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                    <span
+                      className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full"
+                      style={{ background: 'var(--color-cream)' }}
+                    />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7">
+                <p
+                  className="text-xs md:text-sm uppercase tracking-widest mb-6"
+                  style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(234, 225, 203, 0.85)', letterSpacing: '0.2em' }}
+                >
+                  Programs may include:
+                </p>
+                <div className="space-y-0">
+                  {[
+                    'One-on-one or group technology literacy support',
+                    'Social engagement and companionship initiatives',
+                    'Educational workshops (digital safety, communication tools)',
+                    'Health and Wellness workshops',
+                    'Community events and intergenerational activities',
+                    'Youth-led active living programs',
+                  ].map((item, index) => (
+                    <div
+                      key={item}
+                      className="flex items-start gap-6 py-6"
+                      style={{ borderBottom: index === 5 ? 'none' : '1px solid rgba(234, 225, 203, 0.35)' }}
+                    >
+                      <div
+                        className="text-2xl md:text-3xl flex-shrink-0 tabular-nums"
+                        style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+                      >
+                        {`0${index + 1} /`}
+                      </div>
+                      <p
+                        className="text-base md:text-lg leading-relaxed pt-0.5"
+                        style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
+                      >
+                        {item}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

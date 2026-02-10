@@ -3,6 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import { useState, useRef, useEffect } from 'react'
+
+const SCROLL_RANGE_PX = 420
 
 export default function Footer() {
   const pathname = usePathname()
@@ -12,14 +15,49 @@ export default function Footer() {
   const footerHoverColor = isHome ? 'var(--color-olive)' : 'var(--color-olive)'
   const footerBorderColor = isHome ? 'rgba(247, 240, 227, 0.2)' : 'rgba(247, 240, 227, 0.2)'
 
+  const footerRef = useRef<HTMLElement>(null)
+  const [scrollProgress, setScrollProgress] = useState(1)
+
+  useEffect(() => {
+    const footer = footerRef.current
+    if (!footer) return
+
+    const update = () => {
+      const rect = footer.getBoundingClientRect()
+      const vh = window.innerHeight
+      const progress = Math.max(0, Math.min(1, (vh - rect.top) / SCROLL_RANGE_PX))
+      setScrollProgress(progress)
+    }
+
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
+  const scale = 1 + 1.4 * (1 - scrollProgress)
+  const transition = 'transform 0.28s ease-out'
+
   return (
-    <footer className="mt-auto relative" style={{ background: footerBackground }}>
-      <div className="max-w-7xl mx-auto px-8 py-16 md:py-20">
+    <footer ref={footerRef} className="mt-auto relative overflow-visible" style={{ background: footerBackground }}>
+      <div className="max-w-7xl mx-auto px-8 py-16 md:py-20 overflow-visible">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 mb-12 overflow-visible">
           {/* Left Side - Call to Action */}
-          <div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6" style={{ fontFamily: 'var(--font-vintage-stylist)', color: footerTextColor }}>
+          <div className="overflow-visible min-w-0">
+            <h2
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 origin-left"
+              style={{
+                fontFamily: 'var(--font-vintage-stylist)',
+                color: footerTextColor,
+                transform: `scale(${scale})`,
+                transformOrigin: 'left top',
+                transition,
+              }}
+            >
               Ready to Make a Difference?
             </h2>
           </div>
