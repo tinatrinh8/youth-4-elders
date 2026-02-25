@@ -29,6 +29,49 @@ export default function ClubInfo() {
   const [missionLeftInView, setMissionLeftInView] = useState(false)
   const [missionRightInView, setMissionRightInView] = useState(false)
   const [missionTitleVisible, setMissionTitleVisible] = useState(false)
+  const impactStatsRef = useRef<HTMLDivElement>(null)
+  const collagePanelRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null, null, null])
+  const collageLinkRef = useRef<HTMLAnchorElement>(null)
+  const [collageRevealed, setCollageRevealed] = useState<boolean[]>([false, false, false, false, false, false])
+  const [collageLinkRevealed, setCollageLinkRevealed] = useState(false)
+  const [impactStatsInView, setImpactStatsInView] = useState(false)
+  const [statPrimary, setStatPrimary] = useState(0)
+  const [statCommunity, setStatCommunity] = useState(0)
+  const [statStudent, setStatStudent] = useState(0)
+
+  useEffect(() => {
+    const el = impactStatsRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === el && entry.isIntersecting) setImpactStatsInView(true)
+        })
+      },
+      { threshold: 0.25 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!impactStatsInView) return
+    const duration = 2000
+    const start = performance.now()
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
+    let rafId: number
+    const tick = (now: number) => {
+      const elapsed = now - start
+      const t = Math.min(elapsed / duration, 1)
+      const progress = easeOutCubic(t)
+      setStatPrimary(Math.round(5000 * progress))
+      setStatCommunity(Math.round(3000 * progress))
+      setStatStudent(Math.round(100 * progress))
+      if (t < 1) rafId = requestAnimationFrame(tick)
+    }
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [impactStatsInView])
 
   useEffect(() => {
     const headerEl = missionHeaderRef.current
@@ -60,6 +103,33 @@ export default function ClubInfo() {
     )
     obs.observe(leftEl)
     obs.observe(rightEl)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const refs = collagePanelRefs.current
+    const linkEl = collageLinkRef.current
+    const elements = [...refs, linkEl].filter(Boolean) as Element[]
+    if (elements.length === 0) return
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          const idx = refs.indexOf(entry.target as HTMLDivElement)
+          if (idx >= 0) {
+            setCollageRevealed((prev) => {
+              const next = [...prev]
+              next[idx] = true
+              return next
+            })
+          } else if (linkEl && entry.target === linkEl) {
+            setCollageLinkRevealed(true)
+          }
+        })
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -20px 0px' }
+    )
+    elements.forEach((el) => obs.observe(el))
     return () => obs.disconnect()
   }, [])
 
@@ -207,7 +277,7 @@ export default function ClubInfo() {
             top: 0,
             height: `${HERO_SCROLL_VH}vh`,
             zIndex: 2,          
-            background: 'var(--color-cream)',
+            background: 'var(--color-cream)', 
           }}
         >
             <div className="w-full max-w-3xl text-center">
@@ -237,15 +307,15 @@ export default function ClubInfo() {
                     <span key={i}>
                       <span
                         className={isVisible ? 'word-fade-in-up-blur-slow' : ''}
-                        style={{
+                  style={{ 
                           display: 'inline-block',
-                          color: 'var(--color-brown-dark)',
+                    color: 'var(--color-brown-dark)',
                           animationDelay: isVisible ? `${i * 0.7}s` : undefined,
                           opacity: isVisible ? undefined : 0,
                         }}
                       >
                         {word}
-                      </span>
+                  </span>
                       {i < 1 ? '\u00A0' : ''}
                     </span>
                   ))}
@@ -271,9 +341,9 @@ export default function ClubInfo() {
                 >
                   {['ABOUT', 'US'].map((word, i) => (
                     <span key={i}>
-                      <span
+                    <span
                         className={isVisible ? 'word-fade-in-up-blur-slow' : ''}
-                        style={{
+                      style={{
                           display: 'inline-block',
                           animationDelay: isVisible ? `${i * 0.7}s` : undefined,
                           opacity: isVisible ? undefined : 0,
@@ -285,7 +355,7 @@ export default function ClubInfo() {
                     </span>
                   ))}
                 </span>
-              </div>
+                </div>
             </h2>
             <div
               className="transition-all duration-1000 ease-out"
@@ -441,7 +511,7 @@ export default function ClubInfo() {
                 className="text-lg md:text-xl leading-relaxed w-full pr-0"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-medium)' }}
               >
-                Youth4Elders connects youth and seniors through meaningful support—tech help, education, and one‑on‑one engagement that builds confidence. We also empower youth with collaboration, leadership, and community responsibility.
+                We connect youth and seniors through tech help, education, and one‑on‑one engagement—building confidence on both sides and empowering youth with leadership and community responsibility. Our focus is older adults in senior homes and those facing isolation, through workshops, companionship, and support for care communities.
               </p>
 
             </div>
@@ -676,7 +746,7 @@ export default function ClubInfo() {
                     >
                       <span className="px-2 py-0.5 rounded-full" style={{ background: 'var(--color-pink-light)', boxShadow: '0 0 0 2px var(--color-pink-medium)' }}>
                         difference
-                      </span>
+                    </span>
                     </span>
                   ) : (
                     <span
@@ -690,16 +760,16 @@ export default function ClubInfo() {
                       {part}
                     </span>
                   )}
-                </span>
-              ))}
+                    </span>
+                  ))}
             </h2>
-            <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed mb-12 md:mb-16" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.88 }}>
+            <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed mb-12 md:mb-16" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.98 }}>
               To inspire passion among their peers —
               all the while mobilizing youth, raising awareness, and creating meaningful impact.
             </p>
           </header>
 
-          <div className="space-y-40 md:space-y-52 lg:space-y-64">
+          <div className="space-y-28 md:space-y-36 lg:space-y-44">
             {/* Block 1: image on left, wider, shifted right to overlap the box */}
             <div
               ref={missionLeftRef}
@@ -711,10 +781,10 @@ export default function ClubInfo() {
               }}
             >
               {/* Image — overlaps the pink box more (larger negative margin) */}
-              <div className="relative w-full lg:w-96 xl:w-[26rem] flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto lg:mx-0 lg:mr-[-7rem] lg:z-10 max-w-lg">
+              <div className="relative w-full lg:w-96 xl:w-[26rem] flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto lg:mx-0 lg:mr-[-7rem] lg:z-10 max-w-lg border-4 border-solid" style={{ borderColor: 'var(--color-olive)' }}>
                 <Image
-                  src="/assets/club-info/signing3.jpg"
-                  alt="Youth 4 Elders community and volunteers"
+                  src="/assets/club-info/table.jpg"
+                  alt="Support that reaches every generation — collaboration and programs"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 416px"
@@ -734,29 +804,29 @@ export default function ClubInfo() {
                   </p>
                   <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
                     Support that reaches every generation.
-                  </h3>
+                </h3>
                   <p className="text-lg md:text-xl leading-relaxed mb-5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
                     The club delivers <strong>workshops, events, programs, and fundraisers</strong> designed to provide <strong>direct support</strong> to older adults and raise awareness about issues that affect seniors. Our programs and services are built on a commitment to <strong>equity and accessibility</strong>, ensuring that opportunities for connection and support remain <strong>inclusive and responsive</strong> to the diverse needs of older adults.
-                  </p>
-                </div>
+                </p>
               </div>
             </div>
+          </div>
 
             {/* Block 2: same as block 1 — merlot box, pink label/title/body, image on right */}
             <div
               ref={missionRightRef}
               className="flex flex-col lg:flex-row-reverse lg:items-center gap-6 lg:gap-0"
-              style={{
+            style={{
                 transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
                 opacity: missionRightInView ? 1 : 0.6,
                 transform: missionRightInView ? 'translateX(0)' : 'translateX(32px)',
               }}
             >
               {/* Image — on right, overlaps the box (mirror of block 1) */}
-              <div className="relative w-full lg:w-96 xl:w-[26rem] flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto lg:mx-0 lg:ml-[-7rem] lg:z-10 max-w-lg order-1 lg:order-1">
+              <div className="relative w-full lg:w-96 xl:w-[26rem] flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto lg:mx-0 lg:ml-[-7rem] lg:z-10 max-w-lg order-1 lg:order-1 border-4 border-solid" style={{ borderColor: 'var(--color-olive)' }}>
                 <Image
-                  src="/assets/club-info/founders.jpg"
-                  alt="Youth 4 Elders team and programs"
+                  src="/assets/club-info/team.jpg"
+                  alt="Grow your skills. Make a real impact — Youth 4 Elders team"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 416px"
@@ -765,7 +835,7 @@ export default function ClubInfo() {
               {/* Box: same as block 1 — MERLOT, text shifted left (less left padding) */}
               <div
                 className="flex-1 min-h-[440px] md:min-h-[520px] lg:min-h-[600px] rounded-2xl md:rounded-3xl py-5 md:py-6 lg:py-8 pl-12 md:pl-16 lg:pl-20 pr-6 md:pr-8 flex flex-col justify-center text-left order-2 lg:order-2"
-                style={{
+              style={{ 
                   background: 'var(--color-brown-dark)',
                   boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.12)',
                 }}
@@ -790,310 +860,278 @@ export default function ClubInfo() {
 
         </div>
 
-      {/* Ideas Welcome — pink section, one form card only */}
-      <section id="ideas" className="py-12 md:py-16 pb-14 md:pb-20 scroll-mt-6" style={{ background: 'var(--color-pink-light)' }}>
-        <div className="w-full mx-auto px-6 lg:px-16 max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left — Text on pink, no box */}
-            <div>
-              <h3 
-                className="text-3xl md:text-4xl font-bold mb-4 leading-tight"
-                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-              >
-                Ideas Welcome
-              </h3>
-              <p 
-                className="text-base md:text-lg leading-relaxed max-w-xl"
-                style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.9 }}
-              >
-                Youth4Elders welcomes formal program or event requests. We work collaboratively with partners to design tailored initiatives that align with organizational goals, resident interests, and logistical requirements.
-              </p>
-            </div>
-
-            {/* Right — Single form card */}
-            <div 
-              className="rounded-2xl p-6 md:p-8"
-              style={{
-                background: 'var(--color-cream)',
-                border: '1px solid rgba(98, 32, 47, 0.15)',
-                boxShadow: '0 20px 56px rgba(0, 0, 0, 0.18), 0 8px 24px rgba(98, 32, 47, 0.08)',
-              }}
-            >
-              <div style={{ position: 'relative', minHeight: '280px' }}>
-                {/* Success Message */}
-                {ideaSubmitSuccess && (
-                  <div
-                    className="flex flex-col items-center justify-center min-h-[280px] animate-fadeInUp"
-                    style={{ animation: 'fadeInUp 0.6s ease-out forwards' }}
-                  >
-                    <p
-                      className="text-xl md:text-2xl font-semibold text-center"
-                      style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
-                    >
-                      Thank you! Your request has been sent successfully.
-                    </p>
-                  </div>
-                )}
-
-                {/* Error Message Popup */}
-                {(ideaSubmitError || isClosingError) && !ideaSubmitSuccess && (
-                  <div 
-                    className="absolute inset-0 flex items-center justify-center z-50"
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      pointerEvents: 'none',
-                      animation: isClosingError ? 'fadeOut 0.3s ease-in forwards' : 'fadeIn 0.3s ease-out forwards',
-                    }}
-                  >
-                    <div 
-                      className="p-4 rounded-lg shadow-lg"
-                      style={{ 
-                        background: 'var(--color-brown-dark)', 
-                        border: '2px solid var(--color-brown-dark)',
-                        maxWidth: '400px',
-                        width: '90%',
-                        pointerEvents: 'auto',
-                        animation: isClosingError ? 'fadeOutScale 0.3s ease-in forwards' : 'fadeInScale 0.3s ease-out forwards',
-                      }}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                          {ideaSubmitError}
-                        </p>
-                        <button
-                          onClick={handleCloseError}
-                          className="flex-shrink-0 text-lg leading-none hover:opacity-100 transition-opacity"
-                          style={{ color: 'var(--color-cream)', opacity: 0.7 }}
-                          aria-label="Close error message"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Form - Hide when success is shown */}
-                {!ideaSubmitSuccess && (
-                  <form onSubmit={handleIdeaSubmit} className="space-y-4 relative" noValidate>
-                    <div>
-                      <label htmlFor="idea-name" className="sr-only">Your name</label>
-                      <input
-                        id="idea-name"
-                        type="text"
-                        name="name"
-                        value={ideaFormData.name}
-                        onChange={handleIdeaInputChange}
-                        placeholder="Your name"
-                        className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-1 placeholder:opacity-55"
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.9)',
-                          border: '1px solid rgba(98, 32, 47, 0.2)',
-                          color: 'var(--color-brown-dark)',
-                          fontFamily: 'var(--font-kollektif)',
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="idea-email" className="sr-only">Your email</label>
-                      <input
-                        id="idea-email"
-                        type="email"
-                        name="email"
-                        value={ideaFormData.email}
-                        onChange={handleIdeaInputChange}
-                        placeholder="Your email"
-                        className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-1 placeholder:opacity-55"
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.9)',
-                          border: '1px solid rgba(98, 32, 47, 0.2)',
-                          color: 'var(--color-brown-dark)',
-                          fontFamily: 'var(--font-kollektif)',
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="idea-message" className="sr-only">Your program or event request</label>
-                      <textarea
-                        id="idea-message"
-                        name="message"
-                        value={ideaFormData.message}
-                        onChange={handleIdeaInputChange}
-                        placeholder="Tell us about your program or event request..."
-                        rows={4}
-                        className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-1 resize-none placeholder:opacity-55"
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.9)',
-                          border: '1px solid rgba(98, 32, 47, 0.2)',
-                          color: 'var(--color-brown-dark)',
-                          fontFamily: 'var(--font-kollektif)',
-                        }}
-                      />
-                    </div>
-
-                    {/* Field Errors Popup */}
-                    {((fieldErrors.name || fieldErrors.email || fieldErrors.message) || isClosingFieldErrors) && (
-                      <div 
-                        className="absolute inset-0 flex items-center justify-center z-50"
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          pointerEvents: 'none',
-                          animation: isClosingFieldErrors ? 'fadeOut 0.3s ease-in forwards' : 'fadeIn 0.3s ease-out forwards',
-                        }}
-                      >
-                        <div 
-                          className="p-4 rounded-lg shadow-lg"
-                          style={{ 
-                            background: 'var(--color-brown-dark)', 
-                            border: '2px solid var(--color-brown-dark)',
-                            maxWidth: '400px',
-                            width: '90%',
-                            pointerEvents: 'auto',
-                            animation: isClosingFieldErrors ? 'fadeOutScale 0.3s ease-in forwards' : 'fadeInScale 0.3s ease-out forwards',
-                          }}
-                        >
-                          <div className="flex items-start justify-between gap-3 mb-2">
-                            <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                              Please fill in all fields:
-                            </p>
-                            <button
-                              onClick={handleCloseFieldErrors}
-                              className="flex-shrink-0 text-lg leading-none hover:opacity-100 transition-opacity"
-                              style={{ color: 'var(--color-cream)', opacity: 0.7 }}
-                              aria-label="Close error message"
-                            >
-                              ×
-                            </button>
-                          </div>
-                          <ul className="space-y-1">
-                            {fieldErrors.name && (
-                              <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                                • {fieldErrors.name}
-                              </li>
-                            )}
-                            {fieldErrors.email && (
-                              <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                                • {fieldErrors.email}
-                              </li>
-                            )}
-                            {fieldErrors.message && (
-                              <li className="text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
-                                • {fieldErrors.message}
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex justify-end pt-1">
-                      <button
-                        type="submit"
-                        disabled={isSubmittingIdea}
-                        className="px-8 py-3.5 rounded-full font-semibold text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                        style={{
-                          background: 'var(--color-brown-dark)',
-                          color: 'var(--color-cream)',
-                          fontFamily: 'var(--font-kollektif)',
-                          border: '2px solid var(--color-brown-dark)',
-                          boxShadow: '0 4px 14px rgba(98, 32, 47, 0.25)',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)'
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(98, 32, 47, 0.35)'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)'
-                          e.currentTarget.style.boxShadow = '0 4px 14px rgba(98, 32, 47, 0.25)'
-                        }}
-                      >
-                        {isSubmittingIdea ? 'Sending...' : 'Send Request'}
-                      </button>
-                    </div>
-                  </form>
-                )}
-              </div>
-            </div>
+      {/* Impact stats — full-width strip with count-up */}
+      <section
+        ref={impactStatsRef}
+        className="py-6 md:py-8 mb-14 md:mb-24 border-y-4 md:border-y-[6px] border-dotted"
+        style={{
+          background: 'var(--color-pink-light)',
+          borderColor: 'var(--color-olive)',
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-6 md:px-10 grid grid-cols-1 sm:grid-cols-3 gap-10 md:gap-12 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
+              {statPrimary.toLocaleString()}+
+            </span>
+            <span className="text-sm md:text-base uppercase tracking-widest" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Primary participants</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
+              {statCommunity.toLocaleString()}+
+            </span>
+            <span className="text-sm md:text-base uppercase tracking-widest" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Community &amp; public impact</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
+              {statStudent}%
+            </span>
+            <span className="text-sm md:text-base uppercase tracking-widest" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Student-led</span>
           </div>
         </div>
       </section>
 
-      <section className="pt-20 md:pt-28 pb-32 md:pb-40" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-5xl mx-auto px-6 md:px-10 lg:px-12">
-          <div className="text-center">
-            <p 
-              className="text-xs md:text-sm uppercase tracking-widest mb-4"
-              style={{ 
-                fontFamily: 'var(--font-kollektif)', 
-                color: 'var(--color-brown-dark)',
-                letterSpacing: '0.2em',
-              }}
-            >
-              Voices from our community
+      {/* Photo collage — full viewport bleed, no side padding, images can cut off left/right */}
+      <section
+        className="relative pt-8 pb-0 md:pt-10 md:pb-0 overflow-hidden"
+        style={{
+          background: 'var(--color-cream)',
+          minHeight: 'clamp(540px, 60vw, 740px)',
+          width: '100vw',
+          marginLeft: 'calc(-50vw + 50%)',
+          marginRight: 'calc(-50vw + 50%)',
+        }}
+      >
+        <div className="relative w-full max-w-none px-0 origin-center" style={{ minHeight: 'clamp(500px, 56vw, 680px)', transform: 'scale(0.88)', width: '100%' }}>
+          {/* Left panel — vertical */}
+          <div
+            ref={(el) => { collagePanelRefs.current[0] = el }}
+            className={`absolute left-[-4%] md:left-[-10%] top-0 w-[34%] min-w-[180px] max-w-[340px] aspect-[3/4] rounded-lg overflow-hidden z-10 ${collageRevealed[0] ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: collageRevealed[0] ? undefined : 0 }}
+          >
+            <Image
+              src="/assets/club-info/carousel2.JPG"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="340px"
+            />
+          </div>
+
+          {/* Center panel — overlaps left, main focal */}
+          <div
+            ref={(el) => { collagePanelRefs.current[1] = el }}
+            className={`absolute left-[24%] md:left-[78%] top-[5%] w-[50%] min-w-[240px] max-w-[500px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed[1] ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: collageRevealed[1] ? undefined : 0 }}
+          >
+            <Image
+              src="/assets/club-info/carousel3.JPG"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="500px"
+            />
+          </div>
+
+          {/* Top-right card — overlaps center */}
+          <div
+            ref={(el) => { collagePanelRefs.current[2] = el }}
+            className={`absolute left-[52%] md:left-[60%] top-[62%] w-[20%] min-w-[140px] max-w-[280px] aspect-[4/5] rounded-lg overflow-hidden z-[6] ${collageRevealed[2] ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: collageRevealed[2] ? undefined : 0 }}
+          >
+            <Image
+              src="/assets/club-info/carousel1.JPG"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="280px"
+            />
+          </div>
+
+          {/* Meet the team — on top of images */}
+          <Link
+            ref={collageLinkRef}
+            href="/team"
+            className={`group absolute left-[16%] top-[22%] z-[20] inline-flex items-center gap-2 font-semibold text-sm md:text-base tracking-widest transition-all duration-300 ${collageLinkRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', letterSpacing: '0.15em', opacity: collageLinkRevealed ? undefined : 0 }}
+          >
+            <span>MEET THE TEAM</span>
+            <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full" style={{ background: 'var(--color-brown-dark)' }} />
+          </Link>
+
+          {/* Sixth photo — overlaps center/right (gym / community) */}
+          <div
+            ref={(el) => { collagePanelRefs.current[3] = el }}
+            className={`absolute left-[61%] md:left-[65%] top-[-10%] w-[30%] min-w-[140px] max-w-[300px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed[3] ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: collageRevealed[3] ? undefined : 0 }}
+          >
+            <Image
+              src="/assets/club-info/carousel4.JPG"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="300px"
+            />
+          </div>
+
+          {/* Check photo — horizontal frame to match landscape photo (no vertical crop) */}
+          <div
+            ref={(el) => { collagePanelRefs.current[4] = el }}
+            className={`absolute left-[52%] md:left-[5%] top-[30%] w-[50%] min-w-[320px] max-w-[660px] aspect-[4/3] rounded-lg overflow-hidden z-[6] ${collageRevealed[4] ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: collageRevealed[4] ? undefined : 0 }}
+          >
+            <Image
+              src="/assets/club-info/carousel.JPG"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="660px"
+            />
+          </div>
+
+          {/* Flowers (carousel5) — square container to match square image */}
+          <div
+            ref={(el) => { collagePanelRefs.current[5] = el }}
+            className={`absolute left-[53%] md:left-[40%] top-[10%] w-[38%] min-w-[200px] max-w-[400px] aspect-square rounded-lg overflow-hidden z-[7] ${collageRevealed[5] ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: collageRevealed[5] ? undefined : 0 }}
+          >
+            <Image
+              src="/assets/club-info/carousel5.JPG"
+              alt=""
+              fill
+              className="object-contain"
+              sizes="400px"
+            />
+          </div>
+        </div>
+        <div className="h-8 md:h-10" aria-hidden />
+        <div className="mt-20 md:mt-28 mx-auto max-w-3xl border-t-4 md:border-t-[6px] border-dashed" style={{ borderColor: 'var(--color-brown-dark)' }} aria-hidden />
+      </section>
+
+      {/* Ideas Welcome — inspired by clean two-column layout, intro label, highlighted CTA line */}
+      <section id="ideas" className="mt-12 md:mt-16 lg:mt-20 py-16 md:py-24 scroll-mt-6" style={{ background: 'var(--color-cream)' }}>
+        <div className="w-full mx-auto px-6 md:px-10 max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div>
+            <p className="text-sm italic mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', opacity: 0.85 }}>
+              Share with us
             </p>
-            <h2 
-              className="text-3xl md:text-4xl lg:text-5xl font-bold italic mb-4"
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-            >
-              Testimonies
-            </h2>
-            <p
-              className="text-base md:text-lg leading-relaxed mb-10 mx-auto"
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.85, maxWidth: '720px' }}
-            >
-              Short reflections from elders and volunteers—capturing the comfort, patience, and connection that define our sessions.
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight mb-6" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+              Ideas Welcome
+            </h3>
+            <p className="text-base md:text-lg leading-relaxed mb-4" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.9, lineHeight: 1.65 }}>
+              Got a program or event idea? We’d love to hear it. We team up with partners to shape initiatives that fit your goals, your residents’ interests, and what works on the ground.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: 1.65, textDecoration: 'underline', textUnderlineOffset: '0.2em' }}>
+              Drop your idea below and let’s make something great together.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            <div
-              className="rounded-2xl p-6 md:p-7 border"
-              style={{ background: 'rgba(234, 212, 196, 0.35)', borderColor: 'rgba(175, 121, 120, 0.25)' }}
-            >
-              <p className="text-xs uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                Elder
-              </p>
-              <blockquote
-                className="text-lg md:text-xl leading-relaxed italic mb-4"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
-              >
-                &ldquo;The tech support sessions have been a lifesaver. The students are so patient and kind, and I finally feel confident using my tablet.&rdquo;
-              </blockquote>
-              <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                — Margaret, 72
-              </p>
-            </div>
+          <div className="relative min-w-0 flex flex-col items-center lg:items-end">
+            {/* Subtle circular accent behind form (inspiration: circular graphic) */}
+            <div className="hidden lg:block absolute -right-8 top-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-[0.08]" style={{ background: 'var(--color-brown-dark)' }} aria-hidden />
+            <div className="relative w-full max-w-md">
+            {ideaSubmitSuccess && (
+              <div className="py-10 text-left">
+                <p className="text-base font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                  Thank you — your request has been sent. We’ll be in touch.
+                </p>
+              </div>
+            )}
 
-            <div
-              className="rounded-2xl p-6 md:p-7 border"
-              style={{ background: 'rgba(234, 212, 196, 0.35)', borderColor: 'rgba(175, 121, 120, 0.25)' }}
-            >
-              <p className="text-xs uppercase tracking-widest mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                Volunteer
-              </p>
-              <blockquote
-                className="text-lg md:text-xl leading-relaxed italic mb-4"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
-              >
-                &ldquo;Volunteering here has been one of the most rewarding experiences of my university years. The connections I&apos;ve made are genuine and meaningful.&rdquo;
-              </blockquote>
-              <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}>
-                — Sarah, Student Volunteer
-              </p>
+            {(ideaSubmitError || isClosingError) && !ideaSubmitSuccess && (
+              <div className="absolute inset-0 flex items-center justify-center z-50" style={{ background: 'var(--color-cream)' }}>
+                <div className="p-4 rounded-lg mx-2 max-w-md" style={{ background: 'var(--color-brown-dark)', color: 'var(--color-cream)', pointerEvents: 'auto' }}>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)' }}>{ideaSubmitError}</p>
+                    <button onClick={handleCloseError} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" aria-label="Close">×</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {!ideaSubmitSuccess && (
+              <form onSubmit={handleIdeaSubmit} className="relative" noValidate>
+                <div className="space-y-3">
+                  <div>
+                    <label htmlFor="idea-name" className="block text-xs font-medium mb-1 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                      Name
+                    </label>
+                    <input
+                      id="idea-name"
+                      type="text"
+                      name="name"
+                      value={ideaFormData.name}
+                      onChange={handleIdeaInputChange}
+                      placeholder="e.g. Jane Smith"
+                      className="w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-[var(--color-brown-dark)]/50 focus:ring-offset-0"
+                      style={{ background: 'white', borderColor: 'rgba(98, 32, 47, 0.2)', color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="idea-email" className="block text-xs font-medium mb-1 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                      Email
+                    </label>
+                    <input
+                      id="idea-email"
+                      type="email"
+                      name="email"
+                      value={ideaFormData.email}
+                      onChange={handleIdeaInputChange}
+                      placeholder="e.g. jane@example.com"
+                      className="w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-[var(--color-brown-dark)]/50 focus:ring-offset-0"
+                      style={{ background: 'white', borderColor: 'rgba(98, 32, 47, 0.2)', color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="idea-message" className="block text-xs font-medium mb-1 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
+                      Your idea
+                    </label>
+                    <textarea
+                      id="idea-message"
+                      name="message"
+                      value={ideaFormData.message}
+                      onChange={handleIdeaInputChange}
+                      placeholder="Tell us about your program or event idea..."
+                      rows={4}
+                      className="w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-[var(--color-brown-dark)]/50 focus:ring-offset-0 resize-none"
+                      style={{ background: 'white', borderColor: 'rgba(98, 32, 47, 0.2)', color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
+                    />
+                  </div>
+                </div>
+                {((fieldErrors.name || fieldErrors.email || fieldErrors.message) || isClosingFieldErrors) && (
+                  <div className="absolute inset-0 flex items-center justify-center z-50" style={{ background: 'var(--color-cream)' }}>
+                    <div className="p-4 rounded-lg mx-2 max-w-sm" style={{ background: 'var(--color-brown-dark)', color: 'var(--color-cream)', pointerEvents: 'auto' }}>
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)' }}>Please fill in all fields.</p>
+                        <button type="button" onClick={handleCloseFieldErrors} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" aria-label="Close">×</button>
+                      </div>
+                      <ul className="space-y-0.5 text-xs" style={{ fontFamily: 'var(--font-kollektif)', opacity: 0.9 }}>
+                        {fieldErrors.name && <li>• {fieldErrors.name}</li>}
+                        {fieldErrors.email && <li>• {fieldErrors.email}</li>}
+                        {fieldErrors.message && <li>• {fieldErrors.message}</li>}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={isSubmittingIdea}
+                  className="mt-6 w-full py-3.5 rounded-xl font-semibold text-sm uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'var(--color-brown-dark)', color: 'var(--color-cream)', fontFamily: 'var(--font-kollektif)', border: 'none' }}
+                >
+                  {isSubmittingIdea ? 'Sending...' : 'Send your idea'}
+                </button>
+              </form>
+            )}
             </div>
           </div>
         </div>
       </section>
 
       <section
-        className="relative py-20 md:py-28 flex flex-col justify-center"
+        id="programs"
+        className="relative py-20 md:py-28 flex flex-col justify-center scroll-mt-6"
         style={{
           minHeight: '105vh',
           backgroundImage:
@@ -1189,6 +1227,58 @@ export default function ClubInfo() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonies — dotted-border boxes, alternating brown/olive, reference style */}
+      <section className="pt-16 md:pt-24 pb-16 md:pb-24" style={{ background: 'var(--color-cream)' }}>
+        <div className="w-full mx-auto px-6 md:px-10 max-w-6xl">
+          <header className="mb-10 md:mb-12 text-center max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold italic tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+              Testimonies
+            </h2>
+            <p className="mt-3 text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.88 }}>
+              Voices from elders, volunteers, and partners—short reflections on the comfort, connection, and impact of our work, in their own words.
+            </p>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            <div
+              className="min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted"
+              style={{ background: 'var(--color-olive)', borderColor: 'var(--color-cream)' }}
+            >
+              <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
+                &ldquo;The tech support sessions have been a lifesaver. The students are so patient and kind, and I finally feel confident using my tablet.&rdquo;
+              </blockquote>
+              <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
+                — Margaret, 72 · Elder
+              </p>
+            </div>
+
+            <div
+              className="min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted"
+              style={{ background: 'var(--color-brown-dark)', borderColor: 'var(--color-cream)' }}
+            >
+              <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
+                &ldquo;Volunteering here has been one of the most rewarding experiences of my university years. The connections I&apos;ve made are genuine and meaningful.&rdquo;
+              </blockquote>
+              <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
+                — Sarah · Student Volunteer
+              </p>
+            </div>
+
+            <div
+              className="min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted"
+              style={{ background: 'var(--color-olive)', borderColor: 'var(--color-cream)' }}
+            >
+              <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
+                &ldquo;The workshops and visits have brought so much joy to our residents. Youth 4 Elders has become a highlight of our programming.&rdquo;
+              </blockquote>
+              <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
+                — Care home partner
+              </p>
             </div>
           </div>
         </div>

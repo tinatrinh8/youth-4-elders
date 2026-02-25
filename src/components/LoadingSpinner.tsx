@@ -16,7 +16,7 @@ export default function LoadingSpinner({ message = 'Loading...' }: { message?: s
             style={{
               width: '64px',
               height: '64px',
-              borderColor: 'var(--color-pink-medium)',
+              borderColor: 'var(--color-olive)',
               borderTopColor: 'transparent',
               borderRightColor: 'transparent',
               animation: 'spin 1s linear infinite'
@@ -28,7 +28,7 @@ export default function LoadingSpinner({ message = 'Loading...' }: { message?: s
             style={{
               width: '40px',
               height: '40px',
-              border: '3px solid var(--color-olive)',
+              border: '3px solid var(--color-olive-light)',
               borderTopColor: 'transparent',
               borderRightColor: 'transparent',
               animation: 'spin 0.8s linear infinite reverse'
@@ -41,7 +41,7 @@ export default function LoadingSpinner({ message = 'Loading...' }: { message?: s
           className="text-xl md:text-2xl font-semibold"
           style={{ 
             fontFamily: 'var(--font-leiko)', 
-            color: 'var(--color-brown-dark)'
+            color: 'var(--color-olive-light)'
           }}
         >
           {message}

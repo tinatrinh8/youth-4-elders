@@ -89,8 +89,7 @@ export default function Home() {
           const footerRect = footer.getBoundingClientRect()
           height = Math.max(height, footerRect.bottom - rect.top)
         }
-        
-        // Set fixed position to match section's viewport position
+
         parallaxBgRef.current.style.top = `${rect.top}px`
         parallaxBgRef.current.style.left = `${rect.left}px`
         parallaxBgRef.current.style.width = `${rect.width}px`
@@ -1117,8 +1116,9 @@ export default function Home() {
       {/* How to Get Involved Section */}
       <section ref={parallaxSectionRef} className="relative z-10 pt-20 md:pt-28 pb-14 md:pb-20 overflow-hidden" style={{ background: 'var(--color-cream)' }}>
         {/* Fixed Background Images - Parallax Effect */}
-        <div ref={parallaxBgRef} className="absolute inset-0 pointer-events-none parallax-bg" style={{ zIndex: 0 }}>
-          {/* Create a grid of small decorative images */}
+        <div ref={parallaxBgRef} className="absolute inset-0 pointer-events-none parallax-bg overflow-visible" style={{ zIndex: 0 }}>
+          {/* Wider spread: scale container so images extend further left/right */}
+          <div className="absolute inset-0 origin-center" style={{ transform: 'scale(1.45)', left: '-22.5%', top: 0, width: '145%', height: '100%' }}>
           {Array.from({ length: 60 }).map((_, i) => {
             const images = ['/assets/star.png', '/assets/swirl.png']
             const image = images[i % 2]
@@ -1233,11 +1233,19 @@ export default function Home() {
                       </div>
               )
             })}
+          </div>
                     </div>
 
-        {/* Content - Scrolls normally; overlapping title + parallax kept */}
-        <div className="relative z-10 max-w-7xl mx-auto px-8">
-          <div className="max-w-3xl text-left">
+        {/* Content - Scrolls normally; paragraph left, heading + button right */}
+        <div className="relative z-10 max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <p
+            className={`text-lg md:text-xl lg:text-2xl leading-relaxed animate-on-scroll fade text-left order-2 lg:order-1 ${visibleElements.has('get-involved-description') ? 'visible' : ''}`}
+            style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.92 }}
+            data-animate-id="get-involved-description"
+          >
+            Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
+          </p>
+          <div className="max-w-3xl text-right order-1 lg:order-2 lg:ml-auto">
             <h2
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tight"
               style={{ color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
@@ -1273,15 +1281,8 @@ export default function Home() {
                 </span>
               </span>
             </h2>
-            <p
-              className={`text-lg md:text-xl lg:text-2xl mt-6 mb-6 leading-relaxed animate-on-scroll fade ${visibleElements.has('get-involved-description') ? 'visible' : ''}`}
-              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.92 }}
-              data-animate-id="get-involved-description"
-            >
-              Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
-            </p>
             <div
-              className={`animate-on-scroll scale ${visibleElements.has('get-involved-button') ? 'visible' : ''}`}
+              className={`mt-6 animate-on-scroll scale ${visibleElements.has('get-involved-button') ? 'visible' : ''}`}
               data-animate-id="get-involved-button"
             >
               <a

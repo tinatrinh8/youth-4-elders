@@ -24,11 +24,6 @@
   --color-pink-medium: #F5D0C6;
   --color-pink-dark: #F5D0C6;
 
-  /* FOREST GREEN - mapped to brown scheme */
-  --color-forest-light: var(--color-brown-medium);
-  --color-forest: var(--color-brown);
-  --color-forest-dark: var(--color-brown-dark);
-
   /* Green accents */
   --color-olive: #6f6509;
   --color-olive-light: #C9DAA8;
@@ -833,6 +828,74 @@ body::-webkit-scrollbar {
 
 .animate-pulse-subtle {
   animation: pulse 2s ease-in-out infinite;
+}
+
+/* Collage staggered entrance — smoother, smaller motion */
+@keyframes collageSlideLeft {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes collageSlideRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes collageSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes collageSlideDown {
+  from { opacity: 0; transform: translateY(-24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes collageScaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes collageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.collage-animate-left {
+  animation: collageSlideLeft 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
+}
+.collage-animate-right {
+  animation: collageSlideRight 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
+}
+.collage-animate-up {
+  animation: collageSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
+}
+.collage-animate-down {
+  animation: collageSlideDown 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
+}
+.collage-animate-scale {
+  animation: collageScaleIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
+}
+.collage-animate-fade {
+  animation: collageFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity;
+}
+
+/* Per-panel scroll reveal — each photo reveals when it enters viewport */
+@keyframes collageScrollReveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.collage-scroll-reveal {
+  animation: collageScrollReveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
 }
 
 /* Intersection Observer Classes */
