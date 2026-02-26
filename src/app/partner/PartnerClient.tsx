@@ -189,7 +189,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             padding: '1rem'
           }}
         >
-          {/* Near Top Left - Horizontal (cane.jpg) - Behind */}
+          {/* Near Top Left - Horizontal (sign.JPG) - Behind */}
           <div 
             ref={(el) => { imageRefs.current[0] = el }}
             className="absolute transition-all duration-1000 ease-out" 
@@ -201,8 +201,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
               transform: imagesVisible[0] ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'
             }}
           >
-            <div className="relative w-56 h-40 md:w-72 md:h-52 lg:w-88 lg:h-64 rounded-lg overflow-hidden shadow-2xl animate-float" style={{ background: 'var(--color-cream)', border: '4px solid var(--color-olive-light)', animationDelay: '0s' }}>
-              <Image src="/assets/sponsors/cane.jpg" alt="Accessibility and support" fill className="object-cover" />
+            <div className="relative w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl animate-float border-4 inline-block" style={{ borderColor: 'var(--color-olive-light)', animationDelay: '0s' }}>
+              <Image src="/assets/sponsors/sign.JPG" alt="Collaboration and signing" width={2268} height={1815} className="block w-full h-auto" />
             </div>
           </div>
           
@@ -218,8 +218,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
               transform: imagesVisible[1] ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'
             }}
           >
-            <div className="relative w-48 h-36 md:w-64 md:h-48 lg:w-80 lg:h-56 rounded-lg overflow-hidden shadow-2xl animate-float" style={{ background: 'var(--color-cream)', border: '4px solid var(--color-olive-light)', animationDelay: '0.5s' }}>
-              <Image src="/assets/sponsors/teach.jpg" alt="Intergenerational learning" fill className="object-cover" />
+            <div className="relative w-48 md:w-64 lg:w-80 rounded-lg overflow-hidden shadow-2xl animate-float border-4 inline-block" style={{ borderColor: 'var(--color-olive-light)', animationDelay: '0.5s' }}>
+              <Image src="/assets/sponsors/cake.JPG" alt="Thank you students celebration" width={3769} height={3767} className="block w-full h-auto" />
             </div>
           </div>
           
@@ -234,8 +234,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
               transform: imagesVisible[2] ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'
             }}
           >
-            <div className="relative w-48 h-64 md:w-60 md:h-80 lg:w-72 lg:h-96 rounded-lg overflow-hidden shadow-2xl animate-float" style={{ background: 'var(--color-cream)', border: '4px solid var(--color-olive-light)', animationDelay: '1s' }}>
-              <Image src="/assets/sponsors/teach2.jpg" alt="Intergenerational connection" fill className="object-cover" />
+            <div className="relative w-48 md:w-60 lg:w-72 rounded-lg overflow-hidden shadow-2xl animate-float border-4 inline-block" style={{ borderColor: 'var(--color-olive-light)', animationDelay: '1s' }}>
+              <Image src="/assets/sponsors/bouquet.JPG" alt="Flowers and celebration" width={5712} height={4284} className="block w-full h-auto" />
             </div>
           </div>
           
@@ -244,14 +244,14 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             ref={(el) => { imageRefs.current[3] = el }}
             className="absolute transition-all duration-1000 ease-out" 
             style={{ 
-              top: '60%', 
-              left: '30%', 
+              top: '70%', 
+              left: '35%', 
               transform: imagesVisible[3] ? 'translateY(-50%) scale(1)' : 'translateY(calc(-50% + 30px)) scale(0.9)', 
               opacity: imagesVisible[3] ? 0.8 : 0
             }}
           >
-            <div className="relative w-48 h-64 md:w-60 md:h-80 lg:w-72 lg:h-96 rounded-lg overflow-hidden shadow-2xl animate-float" style={{ background: 'var(--color-cream)', border: '4px solid var(--color-olive-light)', animationDelay: '1.5s' }}>
-              <Image src="/assets/sponsors/book.jpg" alt="Books and learning" fill className="object-cover" />
+            <div className="relative w-48 md:w-60 lg:w-72 rounded-lg overflow-hidden shadow-2xl animate-float border-4 inline-block" style={{ borderColor: 'var(--color-olive-light)', animationDelay: '1.5s' }}>
+              <Image src="/assets/sponsors/flower.JPG" alt="Youth with bouquets" width={3019} height={2265} className="block w-full h-auto" />
             </div>
           </div>
           
@@ -260,14 +260,14 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             ref={(el) => { imageRefs.current[4] = el }}
             className="absolute transition-all duration-1000 ease-out" 
             style={{ 
-              top: '50%', 
-              right: '22%', 
+              top: '52%', 
+              right: '20%', 
               transform: imagesVisible[4] ? 'translateY(-50%) scale(1)' : 'translateY(calc(-50% + 30px)) scale(0.9)', 
               opacity: imagesVisible[4] ? 0.8 : 0
             }}
           >
-            <div className="relative w-48 h-64 md:w-60 md:h-80 lg:w-72 lg:h-96 rounded-lg overflow-hidden shadow-2xl animate-float" style={{ background: 'var(--color-cream)', border: '4px solid var(--color-olive-light)', animationDelay: '2s' }}>
-              <Image src="/assets/sponsors/phone.jpg" alt="Technology and connection" fill className="object-cover" />
+            <div className="relative w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl animate-float border-4 inline-block" style={{ borderColor: 'var(--color-olive-light)', animationDelay: '2s' }}>
+              <Image src="/assets/sponsors/elderhome.JPG" alt="Community event at Abbotsford House" width={2268} height={3024} className="block w-full h-auto" />
             </div>
           </div>
           
@@ -277,13 +277,13 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             className="absolute transition-all duration-1000 ease-out" 
             style={{ 
               bottom: '12%', 
-              left: '82%', 
+              left: '85%', 
               transform: imagesVisible[5] ? 'translateX(-50%) scale(1)' : 'translateX(calc(-50% + 30px)) scale(0.9)', 
               opacity: imagesVisible[5] ? 0.8 : 0
             }}
           >
-            <div className="relative w-80 h-56 md:w-96 md:h-64 lg:w-[500px] lg:h-[350px] rounded-lg overflow-hidden shadow-2xl animate-float" style={{ background: 'var(--color-cream)', border: '4px solid var(--color-olive-light)', animationDelay: '2.5s' }}>
-              <Image src="/assets/sponsors/old.jpg" alt="Elders with technology" fill className="object-cover" />
+            <div className="relative w-72 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl animate-float border-4 inline-block" style={{ borderColor: 'var(--color-olive-light)', animationDelay: '2.5s' }}>
+              <Image src="/assets/sponsors/win.JPG" alt="Team and community" width={4297} height={3223} className="block w-full h-auto" />
             </div>
           </div>
           
@@ -292,15 +292,15 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             ref={(el) => { imageRefs.current[6] = el }}
             className="absolute transition-all duration-1000 ease-out" 
             style={{ 
-              bottom: '-5%', 
+              bottom: '30%', 
               left: '3%', 
               opacity: imagesVisible[6] ? 0.8 : 0, 
               zIndex: 2,
               transform: imagesVisible[6] ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)'
             }}
           >
-            <div className="relative w-48 h-64 md:w-60 md:h-80 lg:w-72 lg:h-96 rounded-lg overflow-hidden shadow-2xl animate-float" style={{ background: 'var(--color-cream)', border: '4px solid var(--color-olive-light)', animationDelay: '3s' }}>
-              <Image src="/assets/sponsors/ipad.jpg" alt="Technology and digital connection" fill className="object-cover" />
+            <div className="relative w-64 md:w-80 lg:w-96 rounded-lg overflow-hidden shadow-2xl animate-float border-4 inline-block" style={{ borderColor: 'var(--color-olive-light)', animationDelay: '3s' }}>
+              <Image src="/assets/sponsors/teach.JPG" alt="Intergenerational learning and collaboration" width={3000} height={2250} className="block w-full h-auto" />
             </div>
           </div>
         </div>
@@ -320,7 +320,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
               className="text-xs md:text-sm uppercase tracking-widest mb-4 transition-all duration-1000 ease-out"
               style={{ 
                 fontFamily: 'var(--font-kollektif)', 
-                color: 'var(--color-olive)',
+                color: 'var(--color-pink-dark)',
                 letterSpacing: '0.2em',
                 opacity: heroVisible ? 1 : 0,
                 transform: heroVisible ? 'translateY(0)' : 'translateY(-10px)',
@@ -346,7 +346,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             className="text-sm md:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed text-center transition-all duration-1000 ease-out" 
             style={{ 
               fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-olive)',
+              color: 'var(--color-pink-dark)',
               opacity: heroVisible ? 1 : 0,
               transform: heroVisible ? 'translateY(0)' : 'translateY(20px)',
               transitionDelay: '600ms'
@@ -388,7 +388,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                           className="text-4xl md:text-5xl lg:text-6xl font-bold leading-none"
                           style={{ 
                             fontFamily: 'var(--font-vintage-stylist)', 
-                            color: 'var(--color-pink-medium)'
+                            color: 'var(--color-olive-light)'
                           }}
                         >
                           Our
@@ -397,7 +397,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                           className="text-4xl md:text-5xl lg:text-6xl font-bold leading-none"
                           style={{ 
                             fontFamily: 'var(--font-vintage-stylist)', 
-                            color: 'var(--color-pink-medium)'
+                            color: 'var(--color-olive-light)'
                           }}
                         >
                           Partner
@@ -419,7 +419,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                     {/* Divider Line */}
                     <div 
                       className="w-20 h-0.5 mb-5"
-                      style={{ background: 'var(--color-olive-light)' }}
+                      style={{ background: 'var(--color-pink-medium)' }}
                     />
                     
                     {/* Body Paragraph */}
@@ -427,7 +427,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                       className="text-base md:text-lg leading-relaxed mb-6 max-w-2xl"
                       style={{ 
                         fontFamily: 'var(--font-kollektif)', 
-                        color: 'var(--color-pink-medium)'
+                        color: 'var(--color-olive-light)'
                       }}
                     >
                       We are proud to partner with The Glebe Centre, a cornerstone of care for older residents in Ottawa for over 130 years. Together, we bridge generations through meaningful connections, bringing together passionate students and caring elders. Our partnership includes technology assistance, workshops, and intergenerational programs that enrich the lives of both youth and seniors in our community, reflecting shared values of compassion, respect, and innovation.
@@ -439,21 +439,21 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                       rel="noopener noreferrer"
                       className="inline-block px-6 py-3 rounded-full transition-all duration-300 hover:scale-105"
                       style={{ 
-                        background: 'var(--color-olive-light)',
-                        border: '2px solid var(--color-olive-light)',
-                        color: 'var(--color-olive)',
+                        background: 'var(--color-pink-medium)',
+                        border: '2px solid var(--color-pink-medium)',
+                        color: 'var(--color-cream)',
                         fontFamily: 'var(--font-kollektif)',
                         fontWeight: '600'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.color = 'var(--color-olive)'
-                        e.currentTarget.style.background = 'rgba(170, 200, 140, 1)'
-                        e.currentTarget.style.borderColor = 'rgba(170, 200, 140, 1)'
+                        e.currentTarget.style.color = 'var(--color-cream)'
+                        e.currentTarget.style.background = 'var(--color-pink-dark)'
+                        e.currentTarget.style.borderColor = 'var(--color-pink-dark)'
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.color = 'var(--color-olive)'
-                        e.currentTarget.style.background = 'var(--color-olive-light)'
-                        e.currentTarget.style.borderColor = 'var(--color-olive-light)'
+                        e.currentTarget.style.color = 'var(--color-cream)'
+                        e.currentTarget.style.background = 'var(--color-pink-medium)'
+                        e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
                       }}
                     >
                       Visit The Glebe Centre →
@@ -536,7 +536,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                       {/* Divider Line */}
                       <div 
                         className="w-20 h-0.5 mb-5"
-                        style={{ background: 'var(--color-olive-light)' }}
+                        style={{ background: 'var(--color-pink-medium)' }}
                       />
                       
                       {/* Body Paragraph */}
@@ -582,7 +582,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
         ref={sponsorsRef}
         className="relative z-20 pt-24 md:pt-32 lg:pt-40 pb-32 md:pb-48 lg:pb-64 mt-40 md:mt-52 lg:mt-64 transition-all duration-1000 ease-out" 
         style={{ 
-          background: 'var(--color-olive)',
+          background: 'var(--color-pink-medium)',
           opacity: sponsorsVisible ? 1 : 0,
           transform: sponsorsVisible ? 'translateY(0)' : 'translateY(50px)',
           position: 'relative'
@@ -597,11 +597,11 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
           }}
         />
 
-        {/* Decorative Top Border - Seafoam */}
+        {/* Decorative Top Border - Green */}
         <div 
           className="absolute top-0 left-0 right-0 h-1"
           style={{ 
-            background: 'var(--color-olive-light)'
+            background: 'var(--color-olive)'
           }}
         />
 
@@ -624,7 +624,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
               className="text-base md:text-lg mx-auto whitespace-nowrap transition-all duration-1000 ease-out"
               style={{ 
                 fontFamily: 'var(--font-kollektif)', 
-                color: 'var(--color-cream)',
+                color: 'var(--color-brown-dark)',
                 opacity: sponsorsVisible ? 1 : 0,
                 transform: sponsorsVisible ? 'translateY(0)' : 'translateY(20px)',
                 transitionDelay: '400ms'
@@ -648,8 +648,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                     key={sponsor.sys.id}
                     className="flex items-center justify-center h-40 md:h-48 lg:h-56 p-6 md:p-8 rounded-2xl transition-all duration-500 ease-out hover:scale-105"
                     style={{
-                      background: 'rgba(245, 208, 198, 0.25)',
-                      border: '2px solid var(--color-pink-medium)',
+                      background: 'var(--color-olive)',
+                      border: '2px solid var(--color-brown-dark)',
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                       opacity: sponsorsVisible ? 1 : 0,
                       transform: sponsorsVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)',
@@ -704,7 +704,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                   key={index}
                   className="flex items-center justify-center h-40 md:h-48 lg:h-56 p-6 md:p-8 rounded-2xl transition-all duration-500 ease-out hover:scale-105"
                   style={{
-                    background: 'rgba(201, 218, 168, 0.18)',
+                    background: 'var(--color-olive)',
                     border: '2px solid var(--color-brown-dark)',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                     opacity: sponsorsVisible ? 1 : 0,
@@ -746,7 +746,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
           )}
 
           {/* Become a Partner - Compact Note Style */}
-          <div className="mt-16 md:mt-20 pt-8 md:pt-10 border-t" style={{ borderColor: 'rgba(201, 218, 168, 0.45)' }}>
+          <div className="mt-16 md:mt-20 pt-8 md:pt-10 border-t" style={{ borderColor: 'var(--color-olive)' }}>
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 px-4">
               <div className="flex-1 text-center md:text-left">
                 <p 
@@ -757,30 +757,30 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                   }}
                 >
                   <span className="font-semibold uppercase" style={{ fontFamily: 'var(--font-freshwost), var(--font-kollektif), system-ui, Arial, sans-serif', color: 'var(--color-brown-dark)' }}>Become a Partner:</span>{' '}
-                  <span style={{ color: 'var(--color-cream)' }}>We&apos;re always looking for organizations and businesses that share our mission of bridging generations. Reach out to us to explore how we can work together.</span>
+                  <span style={{ color: 'var(--color-brown-dark)' }}>We&apos;re always looking for organizations and businesses that share our mission of bridging generations. Reach out to us to explore how we can work together.</span>
                 </p>
               </div>
               <a
                 href="/contact"
                 className="flex-shrink-0 px-6 py-3 rounded-full transition-all duration-300 hover:scale-105"
                 style={{ 
-                  background: 'var(--color-olive-light)',
-                  border: '2px solid var(--color-olive-light)',
-                  color: 'var(--color-olive)',
+                  background: 'var(--color-olive)',
+                  border: '2px solid var(--color-olive)',
+                  color: 'var(--color-cream)',
                   fontFamily: 'var(--font-kollektif)',
                   fontWeight: '600',
                   fontSize: '0.875rem',
                   whiteSpace: 'nowrap'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = 'var(--color-olive)'
-                  e.currentTarget.style.background = 'rgba(170, 200, 140, 1)'
-                  e.currentTarget.style.borderColor = 'rgba(170, 200, 140, 1)'
+                  e.currentTarget.style.color = 'var(--color-cream)'
+                  e.currentTarget.style.background = 'var(--color-olive-dark)'
+                  e.currentTarget.style.borderColor = 'var(--color-olive-dark)'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = 'var(--color-olive)'
-                  e.currentTarget.style.background = 'var(--color-olive-light)'
-                  e.currentTarget.style.borderColor = 'var(--color-olive-light)'
+                  e.currentTarget.style.color = 'var(--color-cream)'
+                  e.currentTarget.style.background = 'var(--color-olive)'
+                  e.currentTarget.style.borderColor = 'var(--color-olive)'
                 }}
               >
                 Get in Touch →
@@ -790,8 +790,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
         </div>
       </section>
 
-      {/* Seafoam line before footer - same thickness as top border */}
-      <div className="w-full h-1" style={{ background: 'var(--color-olive-light)' }} aria-hidden />
+      {/* Green line before footer - same thickness as top border */}
+      <div className="w-full h-1" style={{ background: 'var(--color-olive)' }} aria-hidden />
     </main>
   )
 }

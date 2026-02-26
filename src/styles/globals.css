@@ -42,7 +42,7 @@
   /* PINK SHADES - Accent Colors (Pink Panther) */
   --color-pink-light: #F5D0C6;
   --color-pink-medium: #F5D0C6;
-  --color-pink-dark: #F5D0C6;
+  --color-pink-dark: #b8867a; /* darker pink for readability on light backgrounds */
 
   /* Green accents */
   --color-olive: #6f6509;
