@@ -796,7 +796,7 @@ export default function NavigationBar() {
                 href="/join-us"
                 className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
                 style={{ 
-                  color: 'var(--color-cream)',
+                  color: navColors.text,
                   fontFamily: 'var(--font-kollektif)',
                   background: 'transparent'
                 }}
@@ -859,7 +859,7 @@ export default function NavigationBar() {
                 href="/contact"
                 className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
                 style={{ 
-                  color: 'var(--color-cream)',
+                  color: navColors.text,
                   fontFamily: 'var(--font-kollektif)',
                   background: 'transparent'
                 }}
@@ -869,7 +869,7 @@ export default function NavigationBar() {
               </Link>
 
               {/* Mobile Language Switcher */}
-              <div className="border-t border-opacity-20 mt-2 pt-2" style={{ borderColor: 'var(--color-cream)' }}>
+              <div className="border-t border-opacity-20 mt-2 pt-2" style={{ borderColor: navColors.text }}>
                 <div className="px-4 py-2 text-sm font-medium" style={{ 
                   color: navColors.text,
                   fontFamily: 'var(--font-kollektif)',

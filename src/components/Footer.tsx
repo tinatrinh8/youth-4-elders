@@ -43,13 +43,13 @@ export default function Footer() {
 
   return (
     <footer ref={footerRef} className="mt-auto relative overflow-visible" style={{ background: footerBackground }}>
-      <div className="max-w-7xl mx-auto px-8 py-16 md:py-20 overflow-visible">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pt-10 pb-8 md:py-16 lg:py-20 overflow-visible">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 mb-12 overflow-visible">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 mb-8 md:mb-12 overflow-visible">
           {/* Left Side - Call to Action */}
           <div className="overflow-visible min-w-0">
             <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 origin-left"
+              className="text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 md:mb-6 origin-left whitespace-nowrap md:whitespace-normal"
               style={{
                 fontFamily: 'var(--font-vintage-stylist)',
                 color: footerTextColor,
@@ -62,18 +62,18 @@ export default function Footer() {
             </h2>
           </div>
 
-          {/* Right Side - Quick Links */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
-            {/* Get Around Section */}
-            <div>
-              <h3 className="text-sm font-black uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
+          {/* Right Side - Quick Links: two columns on all screens, tighter on mobile */}
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-12">
+            {/* Get Around Section - centered on mobile */}
+            <div className="text-center md:text-left">
+              <h3 className="text-xs md:text-sm font-black uppercase tracking-wider mb-2 md:mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
                 GET AROUND
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2 md:space-y-3">
                 <li>
                   <Link
                     href="/"
-                    className="text-base italic transition-all duration-300"
+                    className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
@@ -92,7 +92,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="/club-info"
-                    className="text-base italic transition-all duration-300"
+                    className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
@@ -111,7 +111,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="/events"
-                    className="text-base italic transition-all duration-300"
+                    className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
@@ -130,7 +130,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="/join-us"
-                    className="text-base italic transition-all duration-300"
+                    className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
@@ -149,18 +149,18 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* Connect Section */}
-            <div>
-              <h3 className="text-sm font-black uppercase tracking-wider mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
+            {/* Connect Section - centered on mobile only, left-aligned on desktop */}
+            <div className="text-center md:text-left">
+              <h3 className="text-xs md:text-sm font-black uppercase tracking-wider mb-2 md:mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
                 CONNECT
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2 md:space-y-3">
                 <li>
                   <a
                     href="https://www.instagram.com/youth4elders/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base italic transition-all duration-300"
+                    className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
@@ -181,7 +181,7 @@ export default function Footer() {
                     href="https://www.linkedin.com/company/youth4elders/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base italic transition-all duration-300"
+                    className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
@@ -200,7 +200,7 @@ export default function Footer() {
                 <li>
                   <a
                     href="mailto:youth4elders@gmail.com"
-                    className="text-base italic transition-all duration-300"
+                    className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
@@ -219,7 +219,7 @@ export default function Footer() {
                 <li>
                   <Link
                     href="/contact"
-                    className="text-base italic transition-all duration-300"
+                    className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '1'
@@ -241,11 +241,11 @@ export default function Footer() {
         </div>
 
         {/* Footer Bottom - Copyright and Logo */}
-        <div className="pt-8 border-t" style={{ borderColor: footerBorderColor }}>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="pt-6 md:pt-8 border-t" style={{ borderColor: footerBorderColor }}>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
             {/* Copyright */}
             <div className="text-center md:text-left">
-              <p className="text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: footerTextColor, opacity: 0.8 }}>
+              <p className="text-xs md:text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: footerTextColor, opacity: 0.8 }}>
                 © 2025 Youth 4 Elders. All rights reserved.
               </p>
             </div>
@@ -257,7 +257,7 @@ export default function Footer() {
                 alt="Youth 4 Elders Logo"
                 width={80}
                 height={80}
-                className="object-contain opacity-80 hover:opacity-100 transition-opacity duration-300"
+                className="object-contain opacity-80 hover:opacity-100 transition-opacity duration-300 w-14 h-14 md:w-20 md:h-20"
               />
             </div>
           </div>

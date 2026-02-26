@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 export default function ClubInfo() {
   const [isVisible, setIsVisible] = useState(false)
@@ -30,14 +31,18 @@ export default function ClubInfo() {
   const [missionRightInView, setMissionRightInView] = useState(false)
   const [missionTitleVisible, setMissionTitleVisible] = useState(false)
   const impactStatsRef = useRef<HTMLDivElement>(null)
-  const collagePanelRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null, null, null])
-  const collageLinkRef = useRef<HTMLAnchorElement>(null)
-  const [collageRevealed, setCollageRevealed] = useState<boolean[]>([false, false, false, false, false, false])
-  const [collageLinkRevealed, setCollageLinkRevealed] = useState(false)
+  const collageSectionRef = useRef<HTMLElement>(null)
+  const collageFirstCheck = useRef(true)
+  const [collageRevealed, setCollageRevealed] = useState(false)
+  const COLLAGE_DELAYS = [0, 0.12, 0.24, 0.36, 0.48, 0.6, 0.35]
   const [impactStatsInView, setImpactStatsInView] = useState(false)
   const [statPrimary, setStatPrimary] = useState(0)
   const [statCommunity, setStatCommunity] = useState(0)
   const [statStudent, setStatStudent] = useState(0)
+  const ideasSectionRef = useRef<HTMLElement>(null)
+  const [ideasInView, setIdeasInView] = useState(false)
+  const testimoniesSectionRef = useRef<HTMLElement>(null)
+  const [testimoniesInView, setTestimoniesInView] = useState(false)
 
   useEffect(() => {
     const el = impactStatsRef.current
@@ -107,29 +112,58 @@ export default function ClubInfo() {
   }, [])
 
   useEffect(() => {
-    const refs = collagePanelRefs.current
-    const linkEl = collageLinkRef.current
-    const elements = [...refs, linkEl].filter(Boolean) as Element[]
-    if (elements.length === 0) return
+    const section = collageSectionRef.current
+    if (!section) return
+    let delayedRevealId: ReturnType<typeof setTimeout> | null = null
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        const isFirst = collageFirstCheck.current
+        collageFirstCheck.current = false
+        if (!entry?.isIntersecting) return
+        if (isFirst) {
+          delayedRevealId = setTimeout(() => setCollageRevealed(true), 450)
+          obs.disconnect()
+          return
+        }
+        setCollageRevealed(true)
+        obs.disconnect()
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -80px 0px' }
+    )
+    obs.observe(section)
+    return () => {
+      obs.disconnect()
+      if (delayedRevealId) clearTimeout(delayedRevealId)
+    }
+  }, [])
+
+  useEffect(() => {
+    const el = ideasSectionRef.current
+    if (!el) return
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) return
-          const idx = refs.indexOf(entry.target as HTMLDivElement)
-          if (idx >= 0) {
-            setCollageRevealed((prev) => {
-              const next = [...prev]
-              next[idx] = true
-              return next
-            })
-          } else if (linkEl && entry.target === linkEl) {
-            setCollageLinkRevealed(true)
-          }
+          if (entry.target === el && entry.isIntersecting) setIdeasInView(true)
         })
       },
-      { threshold: 0.2, rootMargin: '0px 0px -20px 0px' }
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
     )
-    elements.forEach((el) => obs.observe(el))
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const el = testimoniesSectionRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.target === el && entry.isIntersecting) setTestimoniesInView(true)
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    )
+    obs.observe(el)
     return () => obs.disconnect()
   }, [])
 
@@ -176,7 +210,7 @@ export default function ClubInfo() {
     setTimeout(() => {
       setIdeaSubmitError('')
       setIsClosingError(false)
-    }, 300)
+    }, 280)
   }
 
   const handleCloseFieldErrors = () => {
@@ -184,7 +218,7 @@ export default function ClubInfo() {
     setTimeout(() => {
       setFieldErrors({})
       setIsClosingFieldErrors(false)
-    }, 300)
+    }, 280)
   }
 
   const handleIdeaSubmit = async (e: React.FormEvent) => {
@@ -500,16 +534,16 @@ export default function ClubInfo() {
               <div className="flex flex-col gap-3 mb-12">
                 <p
                   className="text-sm md:text-base uppercase tracking-widest mb-2"
-                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', letterSpacing: '0.2em' }}
+                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)', letterSpacing: '0.2em' }}
                 >
                   Founder goals
                 </p>
-                <div className="h-[2px] w-20 mt-4" style={{ background: 'var(--color-pink-medium)' }} />
+                <div className="h-[2px] w-20 mt-4" style={{ background: 'var(--color-olive-light)' }} />
               </div>
 
               <p
                 className="text-lg md:text-xl leading-relaxed w-full pr-0"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-medium)' }}
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)' }}
               >
                 We connect youth and seniors through tech help, education, and one‑on‑one engagement—building confidence on both sides and empowering youth with leadership and community responsibility. Our focus is older adults in senior homes and those facing isolation, through workshops, companionship, and support for care communities.
               </p>
@@ -599,9 +633,9 @@ export default function ClubInfo() {
               </div>
             </div>
 
-            {founderStoryOpen && (
+            {founderStoryOpen && typeof document !== 'undefined' && createPortal(
               <div
-                className={`fixed inset-0 z-[999] flex items-center justify-center px-6 py-10 ${
+                className={`fixed inset-0 z-[9999] flex items-center justify-center px-6 py-10 backdrop-blur-md ${
                   isClosingFounderStory ? 'modal-overlay-fade-out' : 'modal-overlay-fade'
                 }`}
                 style={{ background: 'rgba(15, 31, 20, 0.65)' }}
@@ -621,7 +655,7 @@ export default function ClubInfo() {
                     background: 'var(--color-pink-light)',
                     borderColor: 'rgba(98, 32, 47, 0.35)',
                     boxShadow: '0 24px 60px rgba(15, 31, 20, 0.25)',
-                    maxHeight: '80vh',
+                    maxHeight: '85vh',
                     overflowY: 'auto'
                   }}
                   onClick={(e) => e.stopPropagation()}
@@ -656,8 +690,8 @@ export default function ClubInfo() {
                           >
                             {item.name}&rsquo;s story
                           </p>
-                          <div className="mb-4 flex justify-center">
-                          <div className="relative w-44 h-44 md:w-52 md:h-52 lg:w-60 lg:h-60">
+                          <div className="mb-6 flex justify-center">
+                            <div className="relative w-44 h-44 md:w-52 md:h-52">
                               <Image
                                 src={
                                   item.key === 'julia'
@@ -670,12 +704,12 @@ export default function ClubInfo() {
                               />
                             </div>
                           </div>
-                        <h3
-                          className="text-3xl md:text-4xl font-semibold mb-5"
-                          style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-                        >
-                          {item.key === 'julia' ? 'Music, Care, and Connection' : 'A Call That Sparked a Movement'}
-                        </h3>
+                          <h3
+                            className="text-3xl md:text-4xl font-semibold mb-5"
+                            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+                          >
+                            {item.key === 'julia' ? 'Music, Care, and Connection' : 'A Call That Sparked a Movement'}
+                          </h3>
                           <p
                             className="text-base md:text-lg leading-relaxed whitespace-pre-line"
                             style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
@@ -686,7 +720,8 @@ export default function ClubInfo() {
                       ))}
                   </div>
                 </div>
-              </div>
+              </div>,
+              document.body
             )}
 
           </div>
@@ -696,12 +731,14 @@ export default function ClubInfo() {
       {/* Wrapper so Youth 4 Elders bar sticks through General club info + Programs, then scrolls away before Ideas Welcome */}
       <div>
         <div
+          className="border-t-4 md:border-t-[6px] border-dotted"
           style={{
             position: 'sticky',
             top: 0,
             height: 'auto',
             minHeight: 'clamp(36px, 6vh, 48px)',
             background: 'var(--color-pink-light)',
+            borderTopColor: 'var(--color-olive)',
             zIndex: 2,
             display: 'flex',
             alignItems: 'center',
@@ -893,6 +930,7 @@ export default function ClubInfo() {
 
       {/* Photo collage — full viewport bleed, no side padding, images can cut off left/right */}
       <section
+        ref={collageSectionRef}
         className="relative pt-8 pb-0 md:pt-10 md:pb-0 overflow-hidden"
         style={{
           background: 'var(--color-cream)',
@@ -905,9 +943,8 @@ export default function ClubInfo() {
         <div className="relative w-full max-w-none px-0 origin-center" style={{ minHeight: 'clamp(500px, 56vw, 680px)', transform: 'scale(0.88)', width: '100%' }}>
           {/* Left panel — vertical */}
           <div
-            ref={(el) => { collagePanelRefs.current[0] = el }}
-            className={`absolute left-[-4%] md:left-[-10%] top-0 w-[34%] min-w-[180px] max-w-[340px] aspect-[3/4] rounded-lg overflow-hidden z-10 ${collageRevealed[0] ? 'collage-scroll-reveal' : ''}`}
-            style={{ opacity: collageRevealed[0] ? undefined : 0 }}
+            className={`absolute left-[-4%] md:left-[-10%] top-0 w-[34%] min-w-[180px] max-w-[340px] aspect-[3/4] rounded-lg overflow-hidden z-10 ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[0]}s` : undefined }}
           >
             <Image
               src="/assets/club-info/carousel2.JPG"
@@ -920,9 +957,8 @@ export default function ClubInfo() {
 
           {/* Center panel — overlaps left, main focal */}
           <div
-            ref={(el) => { collagePanelRefs.current[1] = el }}
-            className={`absolute left-[24%] md:left-[78%] top-[5%] w-[50%] min-w-[240px] max-w-[500px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed[1] ? 'collage-scroll-reveal' : ''}`}
-            style={{ opacity: collageRevealed[1] ? undefined : 0 }}
+            className={`absolute left-[24%] md:left-[78%] top-[5%] w-[50%] min-w-[240px] max-w-[500px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[1]}s` : undefined }}
           >
             <Image
               src="/assets/club-info/carousel3.JPG"
@@ -935,9 +971,8 @@ export default function ClubInfo() {
 
           {/* Top-right card — overlaps center */}
           <div
-            ref={(el) => { collagePanelRefs.current[2] = el }}
-            className={`absolute left-[52%] md:left-[60%] top-[62%] w-[20%] min-w-[140px] max-w-[280px] aspect-[4/5] rounded-lg overflow-hidden z-[6] ${collageRevealed[2] ? 'collage-scroll-reveal' : ''}`}
-            style={{ opacity: collageRevealed[2] ? undefined : 0 }}
+            className={`absolute left-[52%] md:left-[60%] top-[62%] w-[20%] min-w-[140px] max-w-[280px] aspect-[4/5] rounded-lg overflow-hidden z-[6] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[2]}s` : undefined }}
           >
             <Image
               src="/assets/club-info/carousel1.JPG"
@@ -950,10 +985,9 @@ export default function ClubInfo() {
 
           {/* Meet the team — on top of images */}
           <Link
-            ref={collageLinkRef}
             href="/team"
-            className={`group absolute left-[16%] top-[22%] z-[20] inline-flex items-center gap-2 font-semibold text-sm md:text-base tracking-widest transition-all duration-300 ${collageLinkRevealed ? 'collage-scroll-reveal' : ''}`}
-            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', letterSpacing: '0.15em', opacity: collageLinkRevealed ? undefined : 0 }}
+            className={`group absolute left-[16%] top-[22%] z-[20] inline-flex items-center gap-2 font-semibold text-sm md:text-base tracking-widest transition-all duration-300 ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', letterSpacing: '0.15em', opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[6]}s` : undefined }}
           >
             <span>MEET THE TEAM</span>
             <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
@@ -962,9 +996,8 @@ export default function ClubInfo() {
 
           {/* Sixth photo — overlaps center/right (gym / community) */}
           <div
-            ref={(el) => { collagePanelRefs.current[3] = el }}
-            className={`absolute left-[61%] md:left-[65%] top-[-10%] w-[30%] min-w-[140px] max-w-[300px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed[3] ? 'collage-scroll-reveal' : ''}`}
-            style={{ opacity: collageRevealed[3] ? undefined : 0 }}
+            className={`absolute left-[61%] md:left-[65%] top-[-10%] w-[30%] min-w-[140px] max-w-[300px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[3]}s` : undefined }}
           >
             <Image
               src="/assets/club-info/carousel4.JPG"
@@ -977,9 +1010,8 @@ export default function ClubInfo() {
 
           {/* Check photo — horizontal frame to match landscape photo (no vertical crop) */}
           <div
-            ref={(el) => { collagePanelRefs.current[4] = el }}
-            className={`absolute left-[52%] md:left-[5%] top-[30%] w-[50%] min-w-[320px] max-w-[660px] aspect-[4/3] rounded-lg overflow-hidden z-[6] ${collageRevealed[4] ? 'collage-scroll-reveal' : ''}`}
-            style={{ opacity: collageRevealed[4] ? undefined : 0 }}
+            className={`absolute left-[52%] md:left-[5%] top-[30%] w-[50%] min-w-[320px] max-w-[660px] aspect-[4/3] rounded-lg overflow-hidden z-[6] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[4]}s` : undefined }}
           >
             <Image
               src="/assets/club-info/carousel.JPG"
@@ -992,9 +1024,8 @@ export default function ClubInfo() {
 
           {/* Flowers (carousel5) — square container to match square image */}
           <div
-            ref={(el) => { collagePanelRefs.current[5] = el }}
-            className={`absolute left-[53%] md:left-[40%] top-[10%] w-[38%] min-w-[200px] max-w-[400px] aspect-square rounded-lg overflow-hidden z-[7] ${collageRevealed[5] ? 'collage-scroll-reveal' : ''}`}
-            style={{ opacity: collageRevealed[5] ? undefined : 0 }}
+            className={`absolute left-[53%] md:left-[40%] top-[10%] w-[38%] min-w-[200px] max-w-[400px] aspect-square rounded-lg overflow-hidden z-[7] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[5]}s` : undefined }}
           >
             <Image
               src="/assets/club-info/carousel5.JPG"
@@ -1009,122 +1040,164 @@ export default function ClubInfo() {
         <div className="mt-20 md:mt-28 mx-auto max-w-3xl border-t-4 md:border-t-[6px] border-dashed" style={{ borderColor: 'var(--color-brown-dark)' }} aria-hidden />
       </section>
 
-      {/* Ideas Welcome — inspired by clean two-column layout, intro label, highlighted CTA line */}
-      <section id="ideas" className="mt-12 md:mt-16 lg:mt-20 py-16 md:py-24 scroll-mt-6" style={{ background: 'var(--color-cream)' }}>
-        <div className="w-full mx-auto px-6 md:px-10 max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div>
-            <p className="text-sm italic mb-2" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', opacity: 0.85 }}>
-              Share with us
-            </p>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight mb-6" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-              Ideas Welcome
-            </h3>
-            <p className="text-base md:text-lg leading-relaxed mb-4" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.9, lineHeight: 1.65 }}>
-              Got a program or event idea? We’d love to hear it. We team up with partners to shape initiatives that fit your goals, your residents’ interests, and what works on the ground.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: 1.65, textDecoration: 'underline', textUnderlineOffset: '0.2em' }}>
-              Drop your idea below and let’s make something great together.
-            </p>
-          </div>
-
-          <div className="relative min-w-0 flex flex-col items-center lg:items-end">
-            {/* Subtle circular accent behind form (inspiration: circular graphic) */}
-            <div className="hidden lg:block absolute -right-8 top-1/2 -translate-y-1/2 w-64 h-64 rounded-full opacity-[0.08]" style={{ background: 'var(--color-brown-dark)' }} aria-hidden />
-            <div className="relative w-full max-w-md">
-            {ideaSubmitSuccess && (
-              <div className="py-10 text-left">
-                <p className="text-base font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                  Thank you — your request has been sent. We’ll be in touch.
-                </p>
-              </div>
-            )}
-
-            {(ideaSubmitError || isClosingError) && !ideaSubmitSuccess && (
-              <div className="absolute inset-0 flex items-center justify-center z-50" style={{ background: 'var(--color-cream)' }}>
-                <div className="p-4 rounded-lg mx-2 max-w-md" style={{ background: 'var(--color-brown-dark)', color: 'var(--color-cream)', pointerEvents: 'auto' }}>
-                  <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)' }}>{ideaSubmitError}</p>
-                    <button onClick={handleCloseError} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" aria-label="Close">×</button>
-                  </div>
+      {/* Ideas Welcome — form left, copy right; green & pink colour scheme */}
+      <section ref={ideasSectionRef} id="ideas" className="mt-0 py-16 md:py-20 lg:py-28 scroll-mt-6" style={{ background: 'var(--color-cream)' }}>
+        <div className={`w-full mx-auto px-6 md:px-10 lg:px-12 max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center animate-on-scroll fade-up ${ideasInView ? 'visible' : ''}`} style={{ transitionDuration: '0.6s', transitionDelay: '0.2s' }}>
+          {/* Form — left */}
+          <div className="relative min-w-0 flex flex-col items-center lg:items-start order-2 lg:order-1">
+            <div
+              key={ideaSubmitSuccess ? 'success' : 'form'}
+              className={`relative w-full max-w-lg rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg ${ideaSubmitSuccess ? 'idea-success-box-in' : ''}`}
+              style={{ background: 'var(--color-pink-light)', border: '2px solid var(--color-olive)' }}
+            >
+              {ideaSubmitSuccess && (
+                <div className="py-10 text-left">
+                  <p className="text-lg font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+                    Got it — we got your idea and we We’ll be in touch!
+                  </p>
                 </div>
-              </div>
-            )}
+              )}
 
-            {!ideaSubmitSuccess && (
-              <form onSubmit={handleIdeaSubmit} className="relative" noValidate>
-                <div className="space-y-3">
-                  <div>
-                    <label htmlFor="idea-name" className="block text-xs font-medium mb-1 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
-                      Name
-                    </label>
-                    <input
-                      id="idea-name"
-                      type="text"
-                      name="name"
-                      value={ideaFormData.name}
-                      onChange={handleIdeaInputChange}
-                      placeholder="e.g. Jane Smith"
-                      className="w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-[var(--color-brown-dark)]/50 focus:ring-offset-0"
-                      style={{ background: 'white', borderColor: 'rgba(98, 32, 47, 0.2)', color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="idea-email" className="block text-xs font-medium mb-1 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
-                      Email
-                    </label>
-                    <input
-                      id="idea-email"
-                      type="email"
-                      name="email"
-                      value={ideaFormData.email}
-                      onChange={handleIdeaInputChange}
-                      placeholder="e.g. jane@example.com"
-                      className="w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-[var(--color-brown-dark)]/50 focus:ring-offset-0"
-                      style={{ background: 'white', borderColor: 'rgba(98, 32, 47, 0.2)', color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="idea-message" className="block text-xs font-medium mb-1 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.8 }}>
-                      Your idea
-                    </label>
-                    <textarea
-                      id="idea-message"
-                      name="message"
-                      value={ideaFormData.message}
-                      onChange={handleIdeaInputChange}
-                      placeholder="Tell us about your program or event idea..."
-                      rows={4}
-                      className="w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-1 focus:ring-[var(--color-brown-dark)]/50 focus:ring-offset-0 resize-none"
-                      style={{ background: 'white', borderColor: 'rgba(98, 32, 47, 0.2)', color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
-                    />
-                  </div>
-                </div>
-                {((fieldErrors.name || fieldErrors.email || fieldErrors.message) || isClosingFieldErrors) && (
-                  <div className="absolute inset-0 flex items-center justify-center z-50" style={{ background: 'var(--color-cream)' }}>
-                    <div className="p-4 rounded-lg mx-2 max-w-sm" style={{ background: 'var(--color-brown-dark)', color: 'var(--color-cream)', pointerEvents: 'auto' }}>
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)' }}>Please fill in all fields.</p>
-                        <button type="button" onClick={handleCloseFieldErrors} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" aria-label="Close">×</button>
-                      </div>
-                      <ul className="space-y-0.5 text-xs" style={{ fontFamily: 'var(--font-kollektif)', opacity: 0.9 }}>
-                        {fieldErrors.name && <li>• {fieldErrors.name}</li>}
-                        {fieldErrors.email && <li>• {fieldErrors.email}</li>}
-                        {fieldErrors.message && <li>• {fieldErrors.message}</li>}
-                      </ul>
+              {(ideaSubmitError || isClosingError) && !ideaSubmitSuccess && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleCloseError}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCloseError()}
+                  className={`absolute inset-0 flex items-center justify-center z-50 rounded-2xl backdrop-blur-[6px] cursor-pointer ${isClosingError ? 'modal-overlay-fade-out' : 'modal-overlay-fade'}`}
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
+                  aria-label="Close"
+                >
+                  <div
+                    role="dialog"
+                    aria-modal="true"
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    className={`p-4 rounded-xl mx-4 max-w-md border-2 shadow-xl cursor-default ${isClosingError ? 'modal-card-pop-out' : 'modal-card-pop'}`}
+                    style={{ background: 'var(--color-olive)', borderColor: 'var(--color-olive)', color: 'var(--color-cream)' }}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>{ideaSubmitError}</p>
+                      <button onClick={handleCloseError} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
                     </div>
                   </div>
-                )}
-                <button
-                  type="submit"
-                  disabled={isSubmittingIdea}
-                  className="mt-6 w-full py-3.5 rounded-xl font-semibold text-sm uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ background: 'var(--color-brown-dark)', color: 'var(--color-cream)', fontFamily: 'var(--font-kollektif)', border: 'none' }}
+                </div>
+              )}
+
+              {((fieldErrors.name || fieldErrors.email || fieldErrors.message) || isClosingFieldErrors) && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleCloseFieldErrors}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCloseFieldErrors()}
+                  className={`absolute inset-0 flex items-center justify-center z-50 rounded-2xl backdrop-blur-[6px] cursor-pointer ${isClosingFieldErrors ? 'modal-overlay-fade-out' : 'modal-overlay-fade'}`}
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
+                  aria-label="Close"
                 >
-                  {isSubmittingIdea ? 'Sending...' : 'Send your idea'}
-                </button>
-              </form>
-            )}
+                  <div
+                    role="dialog"
+                    aria-modal="true"
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    className={`p-4 rounded-xl mx-4 max-w-sm border-2 shadow-xl cursor-default ${isClosingFieldErrors ? 'modal-card-pop-out' : 'modal-card-pop'}`}
+                    style={{ background: 'var(--color-olive)', borderColor: 'var(--color-olive)', color: 'var(--color-cream)' }}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>Please fill in all fields.</p>
+                      <button type="button" onClick={handleCloseFieldErrors} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
+                    </div>
+                    <ul className="space-y-0.5 text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.95 }}>
+                      {fieldErrors.name && <li>• {fieldErrors.name}</li>}
+                      {fieldErrors.email && <li>• {fieldErrors.email}</li>}
+                      {fieldErrors.message && <li>• {fieldErrors.message}</li>}
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {!ideaSubmitSuccess && (
+                <form onSubmit={handleIdeaSubmit} className="relative" noValidate>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="idea-name" className="block text-sm font-semibold mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+                        Name
+                      </label>
+                      <input
+                        id="idea-name"
+                        type="text"
+                        name="name"
+                        value={ideaFormData.name}
+                        onChange={handleIdeaInputChange}
+                        placeholder="e.g. Jane Smith"
+                        className="w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
+                        style={{ background: 'var(--color-cream)', borderColor: 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="idea-email" className="block text-sm font-semibold mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+                        Email
+                      </label>
+                      <input
+                        id="idea-email"
+                        type="email"
+                        name="email"
+                        value={ideaFormData.email}
+                        onChange={handleIdeaInputChange}
+                        placeholder="e.g. jane@example.com"
+                        className="w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
+                        style={{ background: 'var(--color-cream)', borderColor: 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="idea-message" className="block text-sm font-semibold mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+                        Your idea
+                      </label>
+                      <textarea
+                        id="idea-message"
+                        name="message"
+                        value={ideaFormData.message}
+                        onChange={handleIdeaInputChange}
+                        placeholder="Tell us about your program or event idea..."
+                        rows={5}
+                        className="w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors resize-none"
+                        style={{ background: 'var(--color-cream)', borderColor: 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isSubmittingIdea}
+                    className="mt-6 w-full py-3.5 rounded-xl font-semibold text-base uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed border-2 transition-colors hover:opacity-90"
+                    style={{ background: 'var(--color-olive)', color: 'var(--color-cream)', fontFamily: 'var(--font-kollektif)', borderColor: 'var(--color-olive)' }}
+                  >
+                    {isSubmittingIdea ? 'Sending...' : 'Send your idea'}
+                  </button>
+                </form>
+              )}
             </div>
+          </div>
+
+          {/* Copy — right */}
+          <div className="order-1 lg:order-2 text-right">
+            <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase mb-10 flex flex-wrap items-center justify-end gap-x-3 gap-y-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', letterSpacing: '0.08em' }}>
+              Ideas Welcome
+            </h3>
+            <p className="text-lg md:text-xl leading-relaxed mb-6" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.9, lineHeight: 1.7 }}>
+              Got a program or event idea? We’d love to hear it. We team up with partners to shape initiatives that fit your goals, your residents’ interests, and what works on the ground.
+            </p>
+            <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: 1.7 }}>
+              <span
+                className="px-1.5 -mx-1.5 inline whitespace-nowrap"
+                style={{
+                  fontFamily: 'var(--font-kollektif)',
+                  backgroundImage: 'linear-gradient(transparent 25%, var(--color-pink-light) 25%, var(--color-pink-light) 75%, transparent 75%)',
+                  boxDecorationBreak: 'clone',
+                  WebkitBoxDecorationBreak: 'clone',
+                }}
+              >
+                Drop your idea below and let’s make something great.
+              </span>
+            </p>
           </div>
         </div>
       </section>
@@ -1232,10 +1305,10 @@ export default function ClubInfo() {
         </div>
       </section>
 
-      {/* Testimonies — dotted-border boxes, alternating brown/olive, reference style */}
-      <section className="pt-16 md:pt-24 pb-16 md:pb-24" style={{ background: 'var(--color-cream)' }}>
+      {/* Testimonies */}
+      <section ref={testimoniesSectionRef} className="pt-16 md:pt-24 pb-16 md:pb-24" style={{ background: 'var(--color-cream)' }}>
         <div className="w-full mx-auto px-6 md:px-10 max-w-6xl">
-          <header className="mb-10 md:mb-12 text-center max-w-2xl mx-auto">
+          <header className={`mb-10 md:mb-12 text-center max-w-2xl mx-auto animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`} style={{ transitionDuration: '0.6s' }}>
             <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold italic tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
               Testimonies
             </h2>
@@ -1246,8 +1319,8 @@ export default function ClubInfo() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div
-              className="min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted"
-              style={{ background: 'var(--color-olive)', borderColor: 'var(--color-cream)' }}
+              className={`min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
+              style={{ background: 'var(--color-olive)', borderColor: 'var(--color-cream)', transitionDuration: '0.6s', transitionDelay: '0.25s' }}
             >
               <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
                 &ldquo;The tech support sessions have been a lifesaver. The students are so patient and kind, and I finally feel confident using my tablet.&rdquo;
@@ -1258,8 +1331,8 @@ export default function ClubInfo() {
             </div>
 
             <div
-              className="min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted"
-              style={{ background: 'var(--color-brown-dark)', borderColor: 'var(--color-cream)' }}
+              className={`min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
+              style={{ background: 'var(--color-brown-dark)', borderColor: 'var(--color-cream)', transitionDuration: '0.6s', transitionDelay: '0.4s' }}
             >
               <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
                 &ldquo;Volunteering here has been one of the most rewarding experiences of my university years. The connections I&apos;ve made are genuine and meaningful.&rdquo;
@@ -1270,8 +1343,8 @@ export default function ClubInfo() {
             </div>
 
             <div
-              className="min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted"
-              style={{ background: 'var(--color-olive)', borderColor: 'var(--color-cream)' }}
+              className={`min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
+              style={{ background: 'var(--color-olive)', borderColor: 'var(--color-cream)', transitionDuration: '0.6s', transitionDelay: '0.55s' }}
             >
               <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
                 &ldquo;The workshops and visits have brought so much joy to our residents. Youth 4 Elders has become a highlight of our programming.&rdquo;

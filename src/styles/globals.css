@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/*
+ * =============================================================================
+ * GLOBALS.CSS — Table of contents
+ * =============================================================================
+ * 1. GLOBAL: Design tokens (colors, fonts, aura) — used everywhere
+ * 2. GLOBAL: Base (html, body, scrollbar) — layout root
+ * 3. SHARED: Navigation (dropdown, mobile margins) — NavigationBar
+ * 4. SHARED: Modals (fade, popup, overlay) — Home + Club info
+ * 5. SHARED: Intersection Observer (animate-on-scroll)
+ * 6. SHARED: Loading & word-fade (spinner, headings)
+ * 7. PAGE: Home (/) — parallax, scroll text, pulse, sponsor logos
+ * 8. PAGE: Team (/team) — fadeInUp, fadeInScale
+ * 9. PAGE: Join us (/join-us) — slide-in, important note, success, progress
+ * 10. PAGE: Club info (/club-info) — collage scroll reveal
+ * 11. PAGE: Partner (/partner) — float, sponsor logos
+ * (Contact uses no global classes)
+ * =============================================================================
+ */
+
+/* ========== 1. GLOBAL: Design tokens (colors, fonts, aura) ========== */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -51,6 +71,7 @@
   --aura-speed: 30s; 
 }
 
+/* ========== 2. GLOBAL: Base (html, body, scrollbar) ========== */
 /* Force light mode for now */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -63,7 +84,6 @@ html {
   background: var(--color-cream);
   min-height: 100%;
   transition: background 0.8s ease-in-out;
-  /* Hide scrollbar for webkit browsers (Chrome, Safari, Edge) */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
 }
@@ -80,116 +100,22 @@ body {
   position: relative; 
   overflow-x: hidden;
   transition: background 0.8s ease-in-out;
-  /* Hide scrollbar */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 body::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
 }
 
 /* Font variables - 4 font variations available throughout the site */
 :root {
-  /* Font 1: Vintage Stylist - MAIN FONT for large headings and elegant text */
-  /* This is mapped to --font-playfair for backward compatibility */
-  /* Font 2: Vintage Stylist Ligatures - Special ligatures version (for decorative text) */
-  /* Font 3: Kollektif - Clean sans-serif (for body text, navigation) */
-  /* Font 4: Leiko - Modern sans-serif (alternative body text) */
-  
-  /* Legacy font variables for backward compatibility */
   --font-noah: 'Noah', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-georgia: Georgia, 'Times New Roman', serif;
-  
-  /* Note: --font-vintage-stylist, --font-vintage-ligatures, --font-kollektif, --font-leiko */
-  /* are automatically available via Next.js font variables in layout.tsx */
-  /* --font-playfair now uses Vintage Stylist for all large headings */
+  /* --font-vintage-stylist, --font-vintage-ligatures, --font-kollektif, --font-leiko from layout.tsx */
 }
 
-/* Variable font for "breathe" title animation (weight 100 ↔ 900) */
-@font-face {
-  font-family: 'TFMix';
-  src: url('https://garet.typeforward.com/assets/fonts/shared/TFMixVF.woff2') format('woff2');
-  font-display: swap;
-}
-
-/* Breathe animation: variable font weight pulses for title */
-@keyframes title-breathe {
-  from,
-  to {
-    font-variation-settings: 'wght' 100;
-  }
-  50% {
-    font-variation-settings: 'wght' 900;
-  }
-}
-
-.title-breathe {
-  font-family: 'TFMix', var(--font-kollektif), system-ui, sans-serif;
-  animation: title-breathe 3s ease-in-out infinite;
-}
-
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Hide scrollbar for menu */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* 🌋 Lava Lamp Aura Class */
-.animate-lava-aura {
-  background-size: var(--aura-size) var(--aura-size);
-  animation: lava-aura-flow var(--aura-speed) linear infinite;
-  
-  /* Initial background gradient setup (6 overlapping bubbles) - Following color priority */
-  background-image: 
-    /* Bubble 1: Brown (main) */
-    radial-gradient(at 10% 20%, var(--aura-brown) 0px, transparent 50%),
-    /* Bubble 2: Cream */
-    radial-gradient(at 90% 80%, var(--aura-cream) 0px, transparent 50%),
-    /* Bubble 3: Green/Olive */
-    radial-gradient(at 40% 70%, var(--aura-green) 0px, transparent 50%),
-    /* Bubble 4: Cream (for depth) */
-    radial-gradient(at 75% 30%, var(--aura-cream) 0px, transparent 50%),
-    /* Bubble 5: Pink Light */
-    radial-gradient(at 20% 95%, var(--aura-pink) 0px, transparent 50%),
-    /* Bubble 6: Pink Medium */
-    radial-gradient(at 85% 50%, var(--aura-pink-medium) 0px, transparent 50%);
-}
-
-@keyframes lava-aura-flow {
-  /* Shifts the position of the 6 background bubbles simultaneously for a fluid flow */
-  0% {
-    background-position: 0% 0%, 100% 100%, 0% 100%, 50% 50%, 80% 20%, 30% 70%;
-  }
-  33.333% {
-    background-position: 10% 90%, 90% 10%, 100% 0%, 25% 75%, 60% 80%, 10% 10%;
-  }
-  66.666% {
-    background-position: 90% 10%, 10% 90%, 0% 0%, 75% 25%, 20% 60%, 80% 80%;
-  }
-  100% {
-    /* Returns to 0% state for a seamless loop */
-    background-position: 0% 0%, 100% 100%, 0% 100%, 50% 50%, 80% 20%, 30% 70%;
-  }
-}
-
-@keyframes dropdownFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
+/* ========== 3. SHARED: Navigation (NavigationBar) ========== */
 @keyframes dropdownRollOut {
   from {
     opacity: 0;
@@ -224,25 +150,20 @@ body::-webkit-scrollbar {
   animation: dropdownRollIn 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
 }
 
-@keyframes dropdownFadeOut {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
+/* Mobile Navigation Margins */
+@media (max-width: 767px) {
+  .nav-mobile-margins {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
   }
 }
 
-/* Modal animations */
+/* ========== 4. SHARED: Modals (Home + Club info) ========== */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes popup {
@@ -250,39 +171,17 @@ body::-webkit-scrollbar {
     opacity: 0;
     transform: scale(0.5) translateY(20px);
   }
-  50% {
-    transform: scale(1.05) translateY(-5px);
-  }
-  70% {
-    transform: scale(0.98) translateY(2px);
-  }
+  50% { transform: scale(1.05) translateY(-5px); }
+  70% { transform: scale(0.98) translateY(2px); }
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes popout {
-  0% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  50% {
-    transform: scale(1.05) translateY(-10px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.8) translateY(100px);
   }
 }
 
 @keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .animate-fadeIn {
@@ -293,612 +192,70 @@ body::-webkit-scrollbar {
   animation: popup 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.animate-popout {
-  animation: popout 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19);
-}
-
 .animate-fadeOut {
   animation: fadeOut 0.4s ease-in;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Team page animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes fadeOutScale {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-}
-
-.animate-fadeInUp {
-  opacity: 0;
-  animation: fadeInUp 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-.animate-fadeInScale {
-  opacity: 0;
-  animation: fadeInScale 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-/* Footer social link hover effect */
-.footer-social-link {
-  color: var(--color-brown-medium);
-  transition: color 0.3s ease;
-}
-
-.footer-social-link:hover {
-  color: var(--color-pink-medium);
-}
-
-/* Torn Paper Edge Effect */
-.torn-edge-bottom {
-  clip-path: polygon(
-    0% 0%,
-    2% 98%,
-    5% 95%,
-    8% 99%,
-    12% 94%,
-    15% 100%,
-    18% 96%,
-    22% 99%,
-    25% 95%,
-    28% 98%,
-    32% 94%,
-    35% 100%,
-    38% 96%,
-    42% 99%,
-    45% 94%,
-    48% 98%,
-    52% 95%,
-    55% 100%,
-    58% 96%,
-    62% 99%,
-    65% 94%,
-    68% 98%,
-    72% 95%,
-    75% 100%,
-    78% 96%,
-    82% 99%,
-    85% 94%,
-    88% 98%,
-    92% 95%,
-    95% 100%,
-    98% 96%,
-    100% 0%
-  );
-}
-
-.torn-edge-top {
-  clip-path: polygon(
-    0% 100%,
-    2% 2%,
-    5% 5%,
-    8% 1%,
-    12% 6%,
-    15% 0%,
-    18% 4%,
-    22% 1%,
-    25% 5%,
-    28% 2%,
-    32% 6%,
-    35% 0%,
-    38% 4%,
-    42% 1%,
-    45% 6%,
-    48% 2%,
-    52% 5%,
-    55% 0%,
-    58% 4%,
-    62% 1%,
-    65% 6%,
-    68% 2%,
-    72% 5%,
-    75% 0%,
-    78% 4%,
-    82% 1%,
-    85% 6%,
-    88% 2%,
-    92% 5%,
-    95% 0%,
-    98% 4%,
-    100% 100%
-  );
-}
-
-/* Paper Swinging Animation - Flapping from bottom */
-@keyframes paperSwing {
-  0% { 
-    transform: rotateZ(3deg); 
-  }
-  100% { 
-    transform: rotateZ(-3deg); 
-  }
-}
-
-.paper-swing {
-  transform-origin: 50% 0%;
-  transform: rotateZ(0deg);
-  animation: paperSwing var(--swing-duration, 1s) ease-in-out infinite alternate;
-  animation-play-state: paused;
-  will-change: transform;
-}
-
-.paper-swing:hover {
-  --swing-duration: 1s;
-  animation-play-state: running;
-}
-
-/* Scrolling Background Text Animation */
-@keyframes scrollText {
+/* Modal overlay/card (Club info founder story) */
+@keyframes modalFadeIn {
   0% {
-    transform: translateX(0);
+    opacity: 0;
+    transform: translateY(12px) scale(0.92);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0) scale(1.03);
   }
   100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-scroll-text {
-  animation: scrollText 30s linear infinite;
-  will-change: transform;
-}
-
-/* Slide Animations for Join Us Page */
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(100px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-100px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.slide-in-right {
-  animation: slideInRight 0.5s ease-out;
-}
-
-.slide-in-left {
-  animation: slideInLeft 0.5s ease-out;
-}
-
-/* Important Note Infinite Animation */
-@keyframes importantNoteFloat {
-  0%, 100% {
-    transform: translateY(0px) rotate(-1deg);
-  }
-  50% {
-    transform: translateY(-8px) rotate(-1.5deg);
-  }
-}
-
-@keyframes importantNotePulseLight {
-  0%, 100% {
-    box-shadow: 0 6px 24px rgba(237, 162, 195, 0.4), 0 2px 8px rgba(237, 162, 195, 0.3);
-  }
-  50% {
-    box-shadow: 0 8px 32px rgba(237, 162, 195, 0.6), 0 4px 12px rgba(237, 162, 195, 0.5);
-  }
-}
-
-@keyframes importantNotePulseDark {
-  0%, 100% {
-    box-shadow: 0 6px 24px rgba(73, 47, 30, 0.4), 0 2px 8px rgba(73, 47, 30, 0.3);
-  }
-  50% {
-    box-shadow: 0 8px 32px rgba(73, 47, 30, 0.6), 0 4px 12px rgba(73, 47, 30, 0.5);
-  }
-}
-
-.important-note-container {
-  animation: importantNoteFloat 3s ease-in-out infinite;
-}
-
-.important-note-box[data-light-mode="true"] {
-  animation: importantNoteFloat 3s ease-in-out infinite, importantNotePulseLight 2s ease-in-out infinite;
-}
-
-.important-note-box[data-light-mode="false"] {
-  animation: importantNoteFloat 3s ease-in-out infinite, importantNotePulseDark 2s ease-in-out infinite;
-}
-
-/* Success Page Animations */
-@keyframes successFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes successTitle {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes successText {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes successButton {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.9);
-  }
-  to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
 
-.animate-success-fade-in {
-  animation: successFadeIn 0.6s ease-out;
+@keyframes modalOverlayFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
-.animate-success-title {
-  animation: successTitle 0.8s ease-out 0.2s both;
-}
-
-.animate-success-text {
-  animation: successText 0.8s ease-out 0.4s both;
-}
-
-.animate-success-button {
-  animation: successButton 0.8s ease-out 0.6s both;
-}
-
-/* Progress Bar Animation */
-@keyframes progressFadeIn {
-  from {
+@keyframes modalFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0) scale(1.03);
+  }
+  100% {
     opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: translateY(12px) scale(0.92);
   }
 }
 
-.animate-progress-fade-in {
-  animation: progressFadeIn 0.5s ease-out;
+@keyframes modalOverlayFadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
-/* Loading Spinner Animation */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.modal-overlay-fade {
+  animation: modalOverlayFadeIn 280ms ease-out;
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+.modal-card-pop {
+  animation: modalFadeIn 280ms ease-out;
+  will-change: transform, opacity;
 }
 
-@keyframes wordFadeInUpBlur {
-  from {
-    opacity: 0;
-    transform: translateY(0.4em);
-    filter: blur(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
+.modal-overlay-fade-out {
+  animation: modalOverlayFadeOut 280ms ease-in forwards;
 }
 
-.word-fade-in-up-blur {
-  display: inline-block;
-  animation: wordFadeInUpBlur 0.65s ease-out forwards;
-  animation-fill-mode: both;
+.modal-card-pop-out {
+  animation: modalFadeOut 280ms ease-in forwards;
+  will-change: transform, opacity;
 }
 
-.word-fade-in-up-blur-slow {
-  display: inline-block;
-  animation: wordFadeInUpBlur 1s ease-out forwards;
-  animation-fill-mode: both;
-}
-
-@keyframes testPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
-}
-
-/* Parallax Background Effect */
-.parallax-bg {
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* Homepage Scroll Animations */
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes fadeInSlow {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes heroTitleFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes heroTitleGlow {
-  0%, 100% {
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-  }
-  50% {
-    text-shadow: 2px 2px 12px rgba(0,0,0,0.15), 0 0 25px rgba(73, 47, 30, 0.25);
-  }
-}
-
-.hero-title-hidden {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.animate-hero-title {
-  opacity: 0;
-  transform: translateY(40px);
-  animation: heroTitleFadeIn 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  will-change: opacity, transform;
-}
-
-.animate-hero-title-glow {
-  animation: heroTitleGlow 5s ease-in-out infinite;
-  animation-delay: 3s;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.animate-slideInLeft {
-  animation: slideInLeft 0.8s ease-out forwards;
-}
-
-.animate-slideInRight {
-  animation: slideInRight 0.8s ease-out forwards;
-}
-
-.animate-slideInUp {
-  animation: slideInUp 0.8s ease-out forwards;
-}
-
-.animate-slideInDown {
-  animation: slideInDown 0.8s ease-out forwards;
-}
-
-.animate-scaleIn {
-  animation: scaleIn 0.6s ease-out forwards;
-}
-
-.animate-fadeInSlow {
-  animation: fadeInSlow 1s ease-out forwards;
-}
-
-.animate-pulse-subtle {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-/* Collage staggered entrance — smoother, smaller motion */
-@keyframes collageSlideLeft {
-  from { opacity: 0; transform: translateX(-24px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes collageSlideRight {
-  from { opacity: 0; transform: translateX(24px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes collageSlideUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes collageSlideDown {
-  from { opacity: 0; transform: translateY(-24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes collageScaleIn {
-  from { opacity: 0; transform: scale(0.94); }
-  to { opacity: 1; transform: scale(1); }
-}
-@keyframes collageFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.collage-animate-left {
-  animation: collageSlideLeft 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: opacity, transform;
-}
-.collage-animate-right {
-  animation: collageSlideRight 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: opacity, transform;
-}
-.collage-animate-up {
-  animation: collageSlideUp 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: opacity, transform;
-}
-.collage-animate-down {
-  animation: collageSlideDown 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: opacity, transform;
-}
-.collage-animate-scale {
-  animation: collageScaleIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: opacity, transform;
-}
-.collage-animate-fade {
-  animation: collageFadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: opacity;
-}
-
-/* Per-panel scroll reveal — each photo reveals when it enters viewport */
-@keyframes collageScrollReveal {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.collage-scroll-reveal {
-  animation: collageScrollReveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: opacity, transform;
-}
-
-/* Intersection Observer Classes */
+/* ========== 5. SHARED: Intersection Observer (animate-on-scroll) ========== */
 .animate-on-scroll {
   opacity: 0;
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
@@ -958,17 +315,65 @@ body::-webkit-scrollbar {
   transform: translateY(0);
 }
 
-/* Mobile Navigation Margins - Only applies on mobile devices */
-@media (max-width: 767px) {
-  .nav-mobile-margins {
-    margin-left: 1rem !important;
-    margin-right: 1rem !important;
-    margin-top: 1rem !important;
-    margin-bottom: 1rem !important;
+/* ========== 6. SHARED: Loading & word-fade ========== */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Word fade-in (Home + Club info headings) */
+@keyframes wordFadeInUpBlur {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
   }
 }
 
-/* Sponsor Logo Responsive Sizing */
+.word-fade-in-up-blur {
+  display: inline-block;
+  animation: wordFadeInUpBlur 0.65s ease-out forwards;
+  animation-fill-mode: both;
+}
+
+.word-fade-in-up-blur-slow {
+  display: inline-block;
+  animation: wordFadeInUpBlur 1s ease-out forwards;
+  animation-fill-mode: both;
+}
+
+/* ========== 7. PAGE: Home (/) ========== */
+.parallax-bg {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@keyframes scrollText {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll-text {
+  animation: scrollText 30s linear infinite;
+  will-change: transform;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Sponsor logos (Home + Partner) */
 .sponsor-logo[data-sponsor-index="0"] {
   max-width: 450px;
 }
@@ -1055,132 +460,193 @@ body::-webkit-scrollbar {
   }
 }
 
-@keyframes modalFadeIn {
-  0% {
+/* ========== 8. PAGE: Team (/team) ========== */
+@keyframes fadeInUp {
+  from {
     opacity: 0;
-    transform: translateY(12px) scale(0.92);
+    transform: translateY(20px);
   }
-  70% {
-    opacity: 1;
-    transform: translateY(0) scale(1.03);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes modalOverlayFadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.modal-overlay-fade {
-  animation: modalOverlayFadeIn 280ms ease-out;
-}
-
-.modal-card-pop {
-  animation: modalFadeIn 280ms ease-out;
-  will-change: transform, opacity;
-}
-
-@keyframes modalFadeOut {
-  0% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  30% {
-    opacity: 1;
-    transform: translateY(0) scale(1.03);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(12px) scale(0.92);
-  }
-}
-
-@keyframes modalOverlayFadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.modal-overlay-fade-out {
-  animation: modalOverlayFadeOut 280ms ease-in forwards;
-}
-
-.modal-card-pop-out {
-  animation: modalFadeOut 280ms ease-in forwards;
-  will-change: transform, opacity;
-}
-
-@keyframes floatInLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(-40px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes floatInRight {
-  0% {
-    opacity: 0;
-    transform: translateX(40px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes floatInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes floatInDown {
-  0% {
+@keyframes fadeInScale {
+  from {
     opacity: 0;
-    transform: translateY(-30px);
+    transform: scale(0.95);
   }
-  100% {
+  to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
 
-.float-in-left {
+.animate-fadeInUp {
   opacity: 0;
-  animation: floatInLeft 1800ms ease-out forwards;
+  animation: fadeInUp 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.float-in-right {
+.animate-fadeInScale {
   opacity: 0;
-  animation: floatInRight 1800ms ease-out forwards;
+  animation: fadeInScale 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.float-in-up {
-  opacity: 0;
-  animation: floatInUp 1800ms ease-out forwards;
+/* ========== 9. PAGE: Join us (/join-us) ========== */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.float-in-down {
-  opacity: 0;
-  animation: floatInDown 1800ms ease-out forwards;
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.5s ease-out;
+}
+
+/* Important note */
+@keyframes importantNoteFloat {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  50% { transform: translateY(-8px) rotate(-1.5deg); }
+}
+
+@keyframes importantNotePulseLight {
+  0%, 100% {
+    box-shadow: 0 6px 24px rgba(237, 162, 195, 0.4), 0 2px 8px rgba(237, 162, 195, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(237, 162, 195, 0.6), 0 4px 12px rgba(237, 162, 195, 0.5);
+  }
+}
+
+@keyframes importantNotePulseDark {
+  0%, 100% {
+    box-shadow: 0 6px 24px rgba(73, 47, 30, 0.4), 0 2px 8px rgba(73, 47, 30, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 32px rgba(73, 47, 30, 0.6), 0 4px 12px rgba(73, 47, 30, 0.5);
+  }
+}
+
+.important-note-container {
+  animation: importantNoteFloat 3s ease-in-out infinite;
+}
+
+.important-note-box[data-light-mode="true"] {
+  animation: importantNoteFloat 3s ease-in-out infinite, importantNotePulseLight 2s ease-in-out infinite;
+}
+
+.important-note-box[data-light-mode="false"] {
+  animation: importantNoteFloat 3s ease-in-out infinite, importantNotePulseDark 2s ease-in-out infinite;
+}
+
+/* Success page */
+@keyframes successFadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes successTitle {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes successText {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes successButton {
+  from { opacity: 0; transform: translateY(20px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-success-fade-in {
+  animation: successFadeIn 0.6s ease-out;
+}
+
+.animate-success-title {
+  animation: successTitle 0.8s ease-out 0.2s both;
+}
+
+.animate-success-text {
+  animation: successText 0.8s ease-out 0.4s both;
+}
+
+.animate-success-button {
+  animation: successButton 0.8s ease-out 0.6s both;
+}
+
+/* Ideas form: entire success box animates as one */
+@keyframes ideaSuccessBoxIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.idea-success-box-in {
+  animation: ideaSuccessBoxIn 0.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+  transform-origin: center center;
+}
+
+/* Progress bar */
+@keyframes progressFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-progress-fade-in {
+  animation: progressFadeIn 0.5s ease-out;
+}
+
+/* ========== 10. PAGE: Club info (/club-info) ========== */
+@keyframes collageScrollReveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.collage-scroll-reveal {
+  animation: collageScrollReveal 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  backface-visibility: hidden;
+}
+
+/* ========== 11. PAGE: Partner (/partner) ========== */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
