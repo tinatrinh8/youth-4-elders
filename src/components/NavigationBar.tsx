@@ -602,7 +602,7 @@ export default function NavigationBar() {
             {/* Dropdown Menu */}
             {(hoveredDropdown === 'language' || closingDropdown === 'language') && (
               <div 
-                className="absolute top-full right-0 w-40 rounded-2xl shadow-xl z-[110] overflow-hidden"
+                className="absolute top-full left-0 w-40 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
                   background: navColors.dropdownBackground || 'var(--color-cream)', 
                   border: `1px solid ${navColors.dropdownBorder || 'var(--color-brown-dark)'}`,

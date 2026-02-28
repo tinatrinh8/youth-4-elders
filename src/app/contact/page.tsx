@@ -1,9 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
+
+const EVENTS_LINK_TEXT = 'View the events and programs we offer here'
 
 export default function Contact() {
-  const [openFAQ, setOpenFAQ] = useState<number | null>(null)
+  const [openFAQs, setOpenFAQs] = useState<number[]>([])
+  const [faqInView, setFaqInView] = useState(false)
+  const [faqScrollY, setFaqScrollY] = useState(0)
+  const faqSectionRef = useRef<HTMLElement>(null)
+  const rafRef = useRef<number | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,43 +20,118 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
-  const faqs = [
+  const faqSections: { title: string; faqs: { question: string; answer: string }[] }[] = [
     {
-      question: "Who can join Youth 4 Elders?",
-      answer: "We welcome all uOttawa students who are passionate about bridging generational gaps and making a positive impact in our community. Whether you're an undergraduate, graduate student, or alumni, there's a place for you. We also welcome elders from the community to participate in our programs and activities. No prior experience is necessary - just enthusiasm and a willingness to connect across generations!"
+      title: 'For Interested Members',
+      faqs: [
+        {
+          question: 'What time commitment is expected from members?',
+          answer: 'Youth4Elders is designed to be flexible. Most members commit minimally to a 1 hour monthly meeting to stay engaged with club events and planning! Depending on their availability, general members are free to volunteer their time in one-time events, or be involved in one-time events, short-term initiatives, or ongoing placements.'
+        },
+        {
+          question: 'How are volunteering schedules determined?',
+          answer: 'Scheduling is managed on a signup basis. Members indicate their preferred shifts or events, and placements are assigned accordingly. We prioritize academic balance, flexibility, and consistency to ensure a positive experience for both volunteers and community partners.'
+        },
+        {
+          question: 'Are there opportunities to join the executive team?',
+          answer: 'Yes. Youth4Elders actively recruits motivated members into leadership and executive roles throughout the year. Positions are filled through an application and interview process, with opportunities to contribute to program development, partnerships, and organizational strategy.'
+        },
+        {
+          question: 'Do I need specific vaccines or immunizations?',
+          answer: 'Some community partner sites may require standard immunizations depending on their internal policies. Youth4Elders will communicate any health or immunization requirements in advance of placements, and alternatives will be offered when possible.'
+        },
+        {
+          question: 'Is a Vulnerable Sector Check (VSC) required?',
+          answer: 'A Vulnerable Sector Check (VSC) is generally not required for members of Youth4Elders. However, some community partners require it for volunteer placements. Members who wish to volunteer with these partners will need to obtain a VSC, and Youth4Elders will provide the necessary documentation to support the process.'
+        },
+        {
+          question: 'Do I need certifications or prior training to volunteer?',
+          answer: 'No prior certifications are required. All volunteers receive orientation and role-specific training provided by Youth4Elders. For specialized programs, additional training may be offered in collaboration with partner organizations. For our knowledge, please indicate in your application if you do have standard first aid or any relevant first responder certifications.'
+        },
+        {
+          question: 'Will I have the opportunity to create and lead my own initiative or event?',
+          answer: 'Absolutely. Youth4Elders strongly encourages member-led innovation. Volunteers are welcome to design, propose, and lead their own programs, workshops, or events, with mentorship and organizational support from the executive team.'
+        }
+      ]
     },
     {
-      question: "How do I join as a community member/volunteer?",
-      answer: "To join as a community volunteer, simply fill out the form on our 'Join Us' page! We welcome all uOttawa students who want to volunteer and participate in our events. You can also reach out to us via email or Instagram, or attend one of our events to meet the team and learn more. As a community member, you'll receive updates about upcoming events and can participate as your schedule allows."
-    },
-    {
-      question: "How do I join the executive team?",
-      answer: "Applications to join the executive team are currently closed. Applications will open in 2026, typically at the end of the school year or during the summer. When applications reopen, we'll post information on our Instagram and website. Executive team positions typically involve an application process and interview. If you're interested in joining the exec team, follow us on Instagram @youth4elders to stay updated on when applications open again."
-    },
-    {
-      question: "What activities do you organize?",
-      answer: "We organize workshops, storytelling sessions, technology help sessions, craft fairs, and various intergenerational activities that bring youth and elders together. Our events range from one-time workshops to ongoing programs throughout the semester. Community volunteers can help facilitate these activities and engage with participants."
-    },
-    {
-      question: "Do I need special skills to join as a volunteer?",
-      answer: "Not at all! We value enthusiasm, empathy, and a willingness to learn. Whether you're tech-savvy, crafty, or just great at listening, there's a place for you here. We provide training and support for all our volunteers. As a community member, you can contribute in whatever way feels comfortable to you."
-    },
-    {
-      question: "How often do you meet?",
-      answer: "We organize events throughout the semester and meet regularly for planning sessions. Community volunteers can participate in events as their schedule allows - there's no mandatory meeting requirement. Executive team members have regular planning meetings. Follow us on Instagram for the latest updates on upcoming events and meetings."
-    },
-    {
-      question: "Can elders participate in your programs?",
-      answer: "Absolutely! Our programs are designed to bring youth and elders together. If you're an elder interested in participating, please reach out to us via email or Instagram, and we'll be happy to include you in our upcoming activities."
-    },
-    {
-      question: "How can I stay updated on events?",
-      answer: "The best way to stay updated is to follow us on Instagram @youth4elders. We post regular updates about upcoming events, meeting times, and opportunities to get involved. You can also reach out via email to be added to our mailing list, or fill out the 'Join Us' form to receive updates."
+      title: 'For Interested Community Partners',
+      faqs: [
+        {
+          question: 'What does Youth4Elders offer as an organization?',
+          answer: `Youth4Elders provides trained, reliable student volunteers who support older adults through volunteerism. Our model emphasizes intergenerational connection, respect, and meaningful impact.\n\n${EVENTS_LINK_TEXT}`
+        },
+        {
+          question: 'Is there any cost associated with partnering with Youth4Elders?',
+          answer: 'No. Youth4Elders operates as a non-profit, volunteer-based organization. We do not expect payment for our services, as our mission is rooted in community service and accessibility.'
+        },
+        {
+          question: 'How flexible is Youth4Elders\' scheduling and availability?',
+          answer: 'We offer highly flexible scheduling. Programming can be delivered during weekdays, evenings, or weekends, depending on mutual availability. Schedules are coordinated to align with both partner needs and volunteer capacity.'
+        },
+        {
+          question: 'Can organizations request specific events or customized programs?',
+          answer: 'Yes. Youth4Elders welcomes formal program or event requests. We work collaboratively with partners to design tailored initiatives that align with organizational goals, resident interests, and logistical requirements.'
+        }
+      ]
     }
   ]
 
   const toggleFAQ = (index: number) => {
-    setOpenFAQ(openFAQ === index ? null : index)
+    setOpenFAQs((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    )
+  }
+
+  useEffect(() => {
+    const el = faqSectionRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setFaqInView(true)
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const section = faqSectionRef.current
+    if (!section) return
+    const onScroll = () => {
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(() => {
+        setFaqScrollY(typeof window !== 'undefined' ? window.scrollY : 0)
+        rafRef.current = null
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (rafRef.current != null) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  const renderAnswer = (answer: string) => {
+    if (!answer.includes(EVENTS_LINK_TEXT)) {
+      return answer
+    }
+    const parts = answer.split(EVENTS_LINK_TEXT)
+    return (
+      <>
+        {parts[0]}
+        <Link
+          href="/events"
+          className="underline font-medium hover:opacity-80 transition-opacity"
+          style={{ color: 'var(--color-brown-dark)' }}
+        >
+          {EVENTS_LINK_TEXT}
+        </Link>
+        {parts[1] || ''}
+      </>
+    )
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -155,8 +237,49 @@ export default function Contact() {
         </div>
       </section>
 
+      {/* Next Steps */}
+      <section className="py-16 md:py-20" style={{ background: 'var(--color-cream)' }}>
+        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
+          <h2 
+            className="text-3xl md:text-4xl font-bold mb-12 text-center"
+            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+          >
+            Next Steps
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <div 
+              className="p-6 md:p-8 rounded-xl"
+              style={{ background: 'var(--color-olive)', color: 'var(--color-cream)' }}
+            >
+              <p className="text-sm font-semibold uppercase tracking-wider mb-3 opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>One</p>
+              <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
+                Fill out the form below with your name, email, and message. Click &quot;Send Message&quot; to submit.
+              </p>
+            </div>
+            <div 
+              className="p-6 md:p-8 rounded-xl"
+              style={{ background: 'var(--color-olive)', color: 'var(--color-cream)' }}
+            >
+              <p className="text-sm font-semibold uppercase tracking-wider mb-3 opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>Two</p>
+              <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
+                We&apos;ll get back to you within 24–48 hours to answer your questions or discuss how you can get involved.
+              </p>
+            </div>
+            <div 
+              className="p-6 md:p-8 rounded-xl"
+              style={{ background: 'var(--color-brown-dark)', color: 'var(--color-cream)' }}
+            >
+              <p className="text-sm font-semibold uppercase tracking-wider mb-3 opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>Three</p>
+              <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
+                Join our community—attend events, volunteer, or partner with us to connect generations.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Send Us a Message Section */}
-      <section className="py-16 md:py-24">
+      <section id="contact-form" className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Left Column - Contact Form (Dark Green Background) */}
@@ -369,101 +492,119 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Left Column - FAQ Introduction */}
-            <div>
-              <div className="mb-3">
-                <span 
-                  className="text-xs font-semibold tracking-wider uppercase"
-                  style={{
-                    fontFamily: 'var(--font-kollektif)',
-                    color: 'var(--color-brown-medium)',
-                    letterSpacing: '0.15em'
-                  }}
-                >
-                  FAQS
-                </span>
-              </div>
-              <h2 
-                className="text-4xl md:text-5xl font-bold mb-6"
-                style={{ 
-                  fontFamily: 'var(--font-vintage-stylist)', 
-                  color: 'var(--color-brown-dark)'
-                }}
-              >
-                Frequently Asked Questions
-              </h2>
-              <p 
-                className="text-base md:text-lg leading-relaxed"
-                style={{ 
-                  fontFamily: 'var(--font-kollektif)', 
-                  color: 'var(--color-brown-medium)',
-                  lineHeight: '1.7'
-                }}
-              >
-                Find answers to common questions about Youth 4 Elders, our programs, and how to get involved. If you have additional questions, feel free to reach out to us.
-              </p>
-            </div>
-
-            {/* Right Column - FAQ Accordion */}
-            <div className="space-y-0">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="border-b transition-all"
-                  style={{ borderColor: 'rgba(175, 121, 120, 0.2)' }}
-                >
-                  <button
-                    onClick={() => toggleFAQ(index)}
-                    className="w-full py-6 flex items-center justify-between text-left group"
-                  >
-                    <h3 
-                      className="text-lg font-semibold pr-8 flex-1"
-                      style={{
-                        fontFamily: 'var(--font-vintage-stylist)',
-                        color: 'var(--color-brown-dark)'
-                      }}
-                    >
-                      {faq.question}
-                    </h3>
-                    <svg
-                      className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ${
-                        openFAQ === index ? 'rotate-45' : 'rotate-0'
-                      }`}
-                      style={{ color: 'var(--color-brown-medium)' }}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-                    </svg>
-                  </button>
-                  <div
-                    className="overflow-hidden transition-all duration-500 ease-in-out"
+      {/* FAQ Section - fade-up + bubble wobble on scroll */}
+      <section
+        id="faq"
+        ref={faqSectionRef}
+        className={`relative overflow-hidden py-16 md:py-24 animate-on-scroll fade-up ${faqInView ? 'visible' : ''}`}
+        style={{ background: 'var(--color-olive)', transitionDuration: '0.6s' }}
+      >
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
+          <div className="mb-10">
+            <h2
+              className="text-3xl md:text-4xl font-bold"
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
+            >
+              Got Any Questions?
+            </h2>
+            <p
+              className="text-lg md:text-xl mt-1"
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}
+            >
+              We&apos;ve got answers.
+            </p>
+          </div>
+          <div className="space-y-12">
+            {faqSections.map((section, sectionIdx) => {
+              const globalOffset = faqSections
+                .slice(0, sectionIdx)
+                .reduce((acc, s) => acc + s.faqs.length, 0)
+              return (
+                <div key={section.title}>
+                  <h3
+                    className="text-xl font-bold mb-6"
                     style={{
-                      maxHeight: openFAQ === index ? '500px' : '0',
-                      opacity: openFAQ === index ? 1 : 0
+                      fontFamily: 'var(--font-freshwost)',
+                      color: 'var(--color-cream)',
+                      opacity: 0.95
                     }}
                   >
-                    <div className="pb-6">
-                      <p
-                        className="text-base leading-relaxed"
-                        style={{
-                          fontFamily: 'var(--font-kollektif)',
-                          color: 'var(--color-brown-medium)',
-                          lineHeight: '1.7'
-                        }}
-                      >
-                        {faq.answer}
-                      </p>
-                    </div>
+                    {section.title}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                    {section.faqs.map((faq, faqIdx) => {
+                      const globalIndex = globalOffset + faqIdx
+                      const isOpen = openFAQs.includes(globalIndex)
+                      const t = faqScrollY * 0.02 + globalIndex * 0.6
+                      const i = globalIndex
+                      const floatX = 0
+                      const floatY =
+                        Math.cos(t * 0.18 + i * 0.9) * 18 +
+                        Math.sin(t * 0.1 + i * 1.3) * 10
+                      const floatRotate = Math.sin(t * 0.12 + i * 1.2) * 0.8
+                      return (
+                        <div
+                          key={`${section.title}-${faqIdx}`}
+                          className="rounded-2xl overflow-hidden will-change-transform"
+                          style={{
+                            background: 'var(--color-cream)',
+                            boxShadow: '0 2px 12px rgba(98, 32, 47, 0.08)',
+                            transform: `translate(${floatX}px, ${floatY}px) rotate(${floatRotate}deg)`,
+                            transition: 'transform 0.06s ease-out'
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => toggleFAQ(globalIndex)}
+                            className="w-full px-5 py-4 flex items-center justify-between text-left gap-4"
+                          >
+                            <span
+                              className="text-base font-semibold flex-1 min-w-0"
+                              style={{
+                                fontFamily: 'var(--font-leiko)',
+                                color: 'var(--color-brown-dark)'
+                              }}
+                            >
+                              {faq.question}
+                            </span>
+                            <span
+                              className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-lg font-light rounded-full transition-colors"
+                              style={{
+                                color: 'var(--color-brown-dark)',
+                                background: isOpen ? 'rgba(98, 32, 47, 0.08)' : 'transparent'
+                              }}
+                              aria-hidden
+                            >
+                              {isOpen ? '×' : '+'}
+                            </span>
+                          </button>
+                          <div
+                            className="overflow-hidden transition-all duration-500 ease-in-out"
+                            style={{
+                              maxHeight: isOpen ? '800px' : '0',
+                              opacity: isOpen ? 1 : 0
+                            }}
+                          >
+                            <div className="px-5 pb-5 pt-0">
+                              <p
+                                className="text-sm md:text-base leading-relaxed whitespace-pre-line"
+                                style={{
+                                  fontFamily: 'var(--font-kollektif)',
+                                  color: 'var(--color-brown-medium)',
+                                  lineHeight: '1.7'
+                                }}
+                              >
+                                {renderAnswer(faq.answer)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
-              ))}
-            </div>
+              )
+            })}
           </div>
         </div>
       </section>
