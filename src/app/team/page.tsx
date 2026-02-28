@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface TeamMember {
   name: string
@@ -12,6 +12,7 @@ interface TeamMember {
   funFact: string
   imageUrl?: string // Optional image URL, will use placeholder if not provided
   email?: string // Optional email
+  linkedInUrl?: string // Optional LinkedIn profile URL
   focus?: {
     title: string
     points: Array<{ heading: string; description: string }>
@@ -26,7 +27,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Translational Molecular Medicine - TMM',
     funFact: 'Has met a mermaid',
-    imageUrl: '/assets/team/julia.png',
+    imageUrl: '/assets/team/julia.jpg',
     focus: {
       title: "Julia's Focus",
       points: [
@@ -52,7 +53,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Translational Molecular Medicine - TMM',
     funFact: 'Loves Nigerian Jollof',
-    imageUrl: '/assets/team/peter.png',
+    imageUrl: '/assets/team/peter.jpg',
     focus: {
       title: "Peter's Focus",
       points: [
@@ -78,7 +79,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Geology',
     funFact: 'TBD',
-    imageUrl: '/assets/team/eamonn.png',
+    imageUrl: '/assets/team/eamonn.jpg',
   },
   {
     name: 'Jenna Smith',
@@ -87,7 +88,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Health Sciences',
     funFact: 'TBD',
-    imageUrl: '/assets/team/jenna.png',
+    imageUrl: '/assets/team/jenna.jpg',
   },
   {
     name: 'April Beaulieu',
@@ -104,7 +105,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 2,
     program: 'Biomedical Sciences',
     funFact: 'TBD',
-    imageUrl: '/assets/team/lana.png',
+    imageUrl: '/assets/team/lana.jpg',
   },
   {
     name: 'Monica Mikhail',
@@ -113,7 +114,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 4,
     program: 'Psychology',
     funFact: 'TBD',
-    imageUrl: '/assets/team/monica.png',
+    imageUrl: '/assets/team/monica.jpg',
   },
   {
     name: 'Cheyenne Hinds',
@@ -122,7 +123,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Biomedical Sciences',
     funFact: 'TBD',
-    imageUrl: '/assets/team/cheyenne.png',
+    imageUrl: '/assets/team/cheyenne.jpg',
   },
   {
     name: 'Santino Di Censo',
@@ -131,7 +132,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Biomedical Sciences',
     funFact: 'TBD',
-    imageUrl: '/assets/team/santino.png',
+    imageUrl: '/assets/team/santino.jpg',
   },
   {
     name: 'Leyna Trinh',
@@ -140,7 +141,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 2,
     program: 'Biomedical Sciences',
     funFact: 'TBD',
-    imageUrl: '/assets/team/leyna.png',
+    imageUrl: '/assets/team/leyna.jpg',
   },
   {
     name: 'Anwyn Friesen Kroeker',
@@ -149,7 +150,7 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Translational Molecular Medicine - TMM',
     funFact: 'TBD',
-    imageUrl: '/assets/team/anwyn.png',
+    imageUrl: '/assets/team/anwyn.jpg',
   },
   {
     name: 'Jakob Rogers',
@@ -158,16 +159,16 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Health Sciences',
     funFact: 'TBD',
-    imageUrl: '/assets/team/jakob.png',
+    imageUrl: '/assets/team/jakob.jpg',
   },
   {
-    name: 'Karly Mikhail',
+    name: 'Marly Mikhail',
     role: 'Events Director',
     category: 'Events',
     yearOfStudy: 3,
     program: 'Translational Molecular Medicine - TMM',
     funFact: 'TBD',
-    imageUrl: '/assets/team/marly.png',
+    imageUrl: '/assets/team/marly.jpg',
   },
   {
     name: 'Ekin Atacan',
@@ -184,357 +185,184 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Economics',
     funFact: 'TBD',
-    imageUrl: '/assets/team/bradley.png',
+    imageUrl: '/assets/team/bradley.jpg',
   },
 ]
 
-export default function Team() {
-  const [titleVisible, setTitleVisible] = useState(false)
-  const [descriptionVisible, setDescriptionVisible] = useState(false)
-  const teamGroups: TeamMember['category'][] = [
-    'Presidents',
-    'Internal',
-    'External',
-    'Finance',
-    'Marketing',
-    'Events'
-  ]
-
-  const getGroupMembers = (category: TeamMember['category']) => {
-    const rolePriority = (role: string) => {
-      const normalized = role.toLowerCase()
-      if (normalized.includes('vp') && !normalized.includes('junior')) return 0
-      if (normalized.includes('junior')) return 1
-      if (normalized.includes('director')) return 2
-      return 3
-    }
-    const internalOrder: Record<string, number> = {
-      'leyna trinh': 0,
-      'ekin atacan': 1,
-      'cheyenne hinds': 2
-    }
-    const externalOrder: Record<string, number> = {
-      'jenna smith': 0,
-      'jakob rogers': 1,
-      'april beauileu': 2,
-      'april beaulieu': 2
-    }
-    return teamMembers
-      .filter((member) => member.category === category)
-      .sort((a, b) => {
-        if (category === 'Internal') {
-          const orderA = internalOrder[a.name.toLowerCase()]
-          const orderB = internalOrder[b.name.toLowerCase()]
-          if (orderA !== undefined || orderB !== undefined) {
-            return (orderA ?? 99) - (orderB ?? 99)
-          }
-        }
-        if (category === 'External') {
-          const orderA = externalOrder[a.name.toLowerCase()]
-          const orderB = externalOrder[b.name.toLowerCase()]
-          if (orderA !== undefined || orderB !== undefined) {
-            return (orderA ?? 99) - (orderB ?? 99)
-          }
-        }
-        const priorityDiff = rolePriority(a.role) - rolePriority(b.role)
-        if (priorityDiff !== 0) return priorityDiff
-        return a.name.localeCompare(b.name)
-      })
+// Display order (hierarchy): Founders → Presidents → VPs → Junior VPs → Directors → Others (A–Z within each tier)
+const sortedTeamMembers = [...teamMembers].sort((a, b) => {
+  const rank = (role: string) => {
+    const r = role.toLowerCase()
+    if (r.includes('founder')) return 0
+    if (r.includes('president')) return 1 // includes co-president
+    if (r.includes('vp') && !r.includes('junior')) return 2
+    if (r.includes('junior') && r.includes('vp')) return 3
+    if (r.includes('director')) return 4
+    return 5
   }
 
+  const rankDiff = rank(a.role) - rank(b.role)
+  if (rankDiff !== 0) return rankDiff
+  return a.name.localeCompare(b.name)
+})
+
+export default function Team() {
+  const [titleVisible, setTitleVisible] = useState(false)
+  const [descVisible, setDescVisible] = useState(false)
+  const [cardsVisible, setCardsVisible] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+
   useEffect(() => {
-    let titleTimer: NodeJS.Timeout
-    let descTimer: NodeJS.Timeout
-    
-    // Use requestAnimationFrame to ensure DOM is ready
-    requestAnimationFrame(() => {
-      // Small delay to ensure page is ready, then start title animation
-      titleTimer = setTimeout(() => {
-        setTitleVisible(true)
-      }, 200)
-      
-      // Description animation with delay
-      descTimer = setTimeout(() => {
-        setDescriptionVisible(true)
-      }, 700)
-    })
-    
+    const t1 = setTimeout(() => setTitleVisible(true), 100)
+    const t2 = setTimeout(() => setDescVisible(true), 450)
     return () => {
-      clearTimeout(titleTimer)
-      clearTimeout(descTimer)
+      clearTimeout(t1)
+      clearTimeout(t2)
     }
   }, [])
 
-  return (
-    <main className="min-h-screen pt-[140px] pb-32 md:pb-40" style={{ background: 'var(--color-cream)' }}>
-      <div className="max-w-7xl mx-auto px-8 py-16">
-        {/* Page Header */}
-        <div className="text-center mb-20">
-          <div 
-            className={`flex items-center justify-center gap-4 md:gap-8 mb-6 ${titleVisible ? 'animate-fadeInScale' : 'opacity-0'}`}
-            style={{ 
-              animationDelay: titleVisible ? '0s' : '0s',
-              willChange: titleVisible ? 'auto' : 'opacity, transform'
-            }}
-          >
-            {/* Flower decoration - left */}
-            <div className="flex-shrink-0">
-              <Image
-                src="/assets/team/flower.png"
-                alt=""
-                width={400}
-                height={400}
-                className="w-20 h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56"
-              />
-            </div>
-            
-            <h1 
-              className="text-5xl md:text-7xl lg:text-8xl font-bold" 
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-            >
-              Meet the Team
-            </h1>
-            
-            {/* Star decoration - right */}
-            <div className="flex-shrink-0">
-              <Image
-                src="/assets/team/star.png"
-                alt=""
-                width={400}
-                height={400}
-                className="w-20 h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56"
-              />
-            </div>
-          </div>
-          <p 
-            className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${descriptionVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
-            style={{ 
-              fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-brown-dark)',
-              textShadow: '0 1px 4px rgba(245, 208, 198, 0.6)',
-              marginBottom: '250px',
-              animationDelay: descriptionVisible ? '0s' : '0s'
-            }}
-          >
-            Get to know the passionate students who make Youth 4 Elders possible! From organizing workshops to building connections, our team brings creativity and dedication to everything we do.
-          </p>
-        </div>
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setCardsVisible(true)
+        })
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
-        {/* Team Members Grid - Grouped by Section */}
-        <div className="space-y-32 md:space-y-40">
-          {teamGroups.map((group) => {
-            const members = getGroupMembers(group)
-            return (
-              <div key={group}>
-                <h2
-                  className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-center"
-                  style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-                >
-                  {group}
-                </h2>
-                {members.length > 0 ? (
-                  <div className="space-y-16 md:space-y-24">
-                    {group === 'External' ? (
-                      <>
-                        <TeamRow key={`${group}-lead`} members={members.slice(0, 1)} />
-                        {Array.from({ length: Math.ceil((members.length - 1) / 2) }, (_, rowIndex) => (
-                          <TeamRow
-                            key={`${group}-rest-${rowIndex}`}
-                            members={members.slice(1 + rowIndex * 2, 1 + rowIndex * 2 + 2)}
-                          />
-                        ))}
-                      </>
-                    ) : (
-                      Array.from({ length: Math.ceil(members.length / 2) }, (_, rowIndex) => (
-                        <TeamRow
-                          key={`${group}-${rowIndex}`}
-                          members={members.slice(rowIndex * 2, rowIndex * 2 + 2)}
-                        />
-                      ))
-                    )}
-                  </div>
-                ) : (
-                  <p
-                    className="text-center text-base md:text-lg"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)' }}
+  return (
+    <main className="min-h-screen pt-[120px] pb-24 md:pb-32" style={{ background: 'var(--color-cream)' }}>
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
+        <header className="text-left pt-0 pb-14 md:pb-20">
+          <h1
+            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-none"
+            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+          >
+            <span className="block">
+              {['OUR', 'TEAM'].map((word, i) => (
+                <span key={i}>
+                  <span
+                    className={titleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                    style={{
+                      display: 'inline-block',
+                      animationDelay: titleVisible ? `${i * 0.5}s` : undefined,
+                      opacity: titleVisible ? undefined : 0
+                    }}
                   >
-                    Team members coming soon.
-                  </p>
-                )}
-              </div>
-            )
-          })}
-        </div>
+                    {word}
+                  </span>
+                  {i < 1 ? '\u00A0' : ''}
+                </span>
+              ))}
+            </span>
+            <span className="block">
+              {['BEHIND', 'THE', 'VISION'].map((word, i) => (
+                <span key={i}>
+                  <span
+                    className={titleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                    style={{
+                      display: 'inline-block',
+                      animationDelay: titleVisible ? `${2 * 0.5 + i * 0.5}s` : undefined,
+                      opacity: titleVisible ? undefined : 0
+                    }}
+                  >
+                    {word}
+                  </span>
+                  {i < 2 ? '\u00A0' : ''}
+                </span>
+              ))}
+            </span>
+          </h1>
+          <p
+            className={`text-lg md:text-xl max-w-5xl mt-8 md:mt-10 leading-snug font-normal ${descVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+            style={{
+              fontFamily: 'var(--font-leiko)',
+              color: 'var(--color-pink-dark)',
+              animationDelay: descVisible ? '0.15s' : '0s'
+            }}
+          >
+            Get to know the passionate students who make Youth 4 Elders possible! From organizing workshops to building connections, our team brings creativity and dedication to everything we&nbsp;do.
+          </p>
+        </header>
+
+        <section ref={sectionRef} className="pt-4" aria-label="Team members">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14 md:gap-x-10 md:gap-y-20 lg:[&>*:nth-child(3n+1)]:justify-self-start lg:[&>*:nth-child(3n+2)]:justify-self-center lg:[&>*:nth-child(3n)]:justify-self-end">
+            {sortedTeamMembers.map((member, index) => {
+              const cols = 3
+              const row = Math.floor(index / cols)
+              const col = index % cols
+              const cardDelay = row * 1.6 + col * 0.1
+              return (
+                <TeamMemberCard
+                  key={member.name}
+                  member={member}
+                  index={index}
+                  isVisible={cardsVisible}
+                  cardDelay={cardDelay}
+                />
+              )
+            })}
+          </div>
+        </section>
       </div>
     </main>
   )
 }
 
-function TeamRow({ members }: { members: TeamMember[] }) {
-  const [isVisible, setIsVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-  const hasAnimated = useRef(false)
-
-  useEffect(() => {
-    if (!ref.current || hasAnimated.current) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated.current) {
-            hasAnimated.current = true
-            setIsVisible(true)
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      {
-        threshold: 0.15,
-        rootMargin: '0px 0px -50px 0px'
-      }
-    )
-
-    observer.observe(ref.current)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [])
-
-  const useCenteredLayout = members.length < 2
-  const gridCols = members.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'
-
-  return (
-    <div ref={ref} className={useCenteredLayout ? 'md:flex md:justify-center' : ''}>
-      <div
-        className={`grid grid-cols-1 ${useCenteredLayout ? gridCols : 'md:grid-cols-2'} gap-x-12 md:gap-x-24 gap-y-16 md:gap-y-20 justify-items-center w-full ${useCenteredLayout ? 'max-w-5xl' : ''}`}
-      >
-        {members.map((member, index) => (
-          <TeamMemberCard
-            key={index}
-            member={member}
-            index={index}
-            isVisible={isVisible}
-            cardDelay={index * 0.1}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- index used by parent for cardDelay
 function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamMember; index: number; isVisible: boolean; cardDelay: number }) {
-  // Generate unique blob shape for each card
-  const blobShapes = [
-    '60% 40% 30% 70% / 60% 30% 70% 40%',
-    '30% 60% 70% 40% / 50% 60% 30% 60%',
-    '40% 60% 60% 40% / 60% 30% 70% 40%',
-    '50% 50% 50% 50% / 60% 60% 40% 40%',
-    '70% 30% 50% 50% / 40% 70% 30% 60%',
-    '45% 55% 55% 45% / 55% 45% 55% 45%',
-  ]
-  
-  const blobShape = blobShapes[index % blobShapes.length]
-  
-  // Different pink shades for each person
-  const blobColors = [
-    'var(--color-pink-light)',      // Light pink
-    'var(--color-pink-medium)',     // Medium pink
-    'rgba(211, 165, 165, 0.8)',     // Pink light with opacity
-    'var(--color-pink-dark)',       // Dark pink
-    'rgba(175, 121, 120, 0.7)',     // Pink medium with opacity
-    'rgba(211, 165, 165, 0.9)',     // Pink light more opaque
-  ]
-  const blobColor = blobColors[index % blobColors.length]
-
   return (
-    <div 
-      className={`flex flex-col items-center w-full max-w-sm mx-auto ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+    <div
+      className={`w-full max-w-[340px] ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
       style={{
         animationDelay: isVisible ? `${cardDelay}s` : '0s',
         willChange: isVisible ? 'auto' : 'opacity, transform'
       }}
     >
-      {/* Image with Blob Background */}
-      <div className="relative mb-6 w-full flex justify-center">
-        {/* Organic Blob Shape Behind Image */}
-        <div 
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-          style={{
-            width: member.name === 'Cheyenne Hinds' ? '200px' : '160px',
-            height: member.name === 'Cheyenne Hinds' ? '200px' : '160px',
-            background: blobColor,
-            borderRadius: blobShape,
-            opacity: 0.9,
-            zIndex: 0,
-          }}
-        />
-        
-        {/* Person Image - Will be cut out/transparent background */}
-        <div 
-          className="relative z-10"
-          style={{
-            width: member.name === 'Julia Diem Hum' || member.name === 'Peter Han' ? '260px' : '320px',
-            height: member.name === 'Julia Diem Hum' || member.name === 'Peter Han' ? '260px' : '320px',
-            borderRadius: '50%',
-            overflow: 'hidden',
-            background: 'transparent',
-          }}
-        >
-          {member.imageUrl ? (
-            <Image
-              src={member.imageUrl}
-              alt={member.name}
-              fill
-              className="object-cover object-center"
-              style={{ objectFit: 'cover', objectPosition: 'center' }}
-            />
-          ) : (
-            <div 
-              className="w-full h-full flex items-center justify-center"
-              style={{ background: 'var(--color-cream)' }}
-            >
-              <div 
-                className="text-5xl"
-                style={{ color: 'var(--color-brown-medium)', opacity: 0.3 }}
-              >
-                👤
-              </div>
-            </div>
-          )}
-        </div>
+      <div
+        className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl mb-3"
+        style={{ background: 'var(--color-pink-light)' }}
+      >
+        {member.imageUrl ? (
+          <Image
+            src={member.imageUrl}
+            alt={member.name}
+            fill
+            className="object-cover object-top"
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{ background: 'var(--color-pink-light)' }}
+          >
+            <span className="text-5xl opacity-40" style={{ color: 'var(--color-brown-medium)' }}>👤</span>
+          </div>
+        )}
       </div>
-
-      {/* Name */}
-      <h2 
-        className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 text-center"
+      <p
+        className="font-bold text-xl md:text-2xl leading-tight mt-3"
         style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
       >
         {member.name}
-      </h2>
-
-      {/* Role */}
-      <p className="mb-4 text-center">
-        <span
-          className="inline-block text-base md:text-lg italic px-4 py-2 rounded-full"
-          style={{ 
-            fontFamily: 'var(--font-kollektif)', 
-            color: 'var(--color-brown-dark)',
-            background: 'var(--color-pink-medium)',
-            textShadow: '0 1px 4px rgba(245, 208, 198, 0.6)'
-          }}
-        >
-          {member.role}
-        </span>
       </p>
-
       <p
-        className="text-sm md:text-base text-center"
+        className="text-base md:text-lg leading-snug mt-1 font-normal"
+        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-dark)' }}
+      >
+        {member.role}
+      </p>
+      <p
+        className="text-sm md:text-base leading-snug mt-1 font-normal italic"
         style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
       >
         Year {member.yearOfStudy} • {member.program}
       </p>
-
     </div>
   )
 }

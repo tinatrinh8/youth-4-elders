@@ -341,15 +341,15 @@ export default function ClubInfo() {
                     <span key={i}>
                       <span
                         className={isVisible ? 'word-fade-in-up-blur-slow' : ''}
-                  style={{ 
+                        style={{
                           display: 'inline-block',
-                    color: 'var(--color-brown-dark)',
+                          color: 'var(--color-brown-dark)',
                           animationDelay: isVisible ? `${i * 0.7}s` : undefined,
-                          opacity: isVisible ? undefined : 0,
+                          opacity: isVisible ? undefined : 0
                         }}
                       >
                         {word}
-                  </span>
+                      </span>
                       {i < 1 ? '\u00A0' : ''}
                     </span>
                   ))}
@@ -375,12 +375,12 @@ export default function ClubInfo() {
                 >
                   {['ABOUT', 'US'].map((word, i) => (
                     <span key={i}>
-                    <span
+                      <span
                         className={isVisible ? 'word-fade-in-up-blur-slow' : ''}
-                      style={{
+                        style={{
                           display: 'inline-block',
                           animationDelay: isVisible ? `${i * 0.7}s` : undefined,
-                          opacity: isVisible ? undefined : 0,
+                          opacity: isVisible ? undefined : 0
                         }}
                       >
                         {word}
@@ -389,15 +389,11 @@ export default function ClubInfo() {
                     </span>
                   ))}
                 </span>
-                </div>
+              </div>
             </h2>
             <div
-              className="transition-all duration-1000 ease-out"
-              style={{
-                opacity: contentVisible ? 1 : 0,
-                transform: contentVisible ? 'translateY(0)' : 'translateY(14px)',
-                transitionDelay: contentVisible ? '300ms' : '0ms',
-              }}
+              className={contentVisible ? 'animate-fadeInUp' : 'opacity-0'}
+              style={{ animationDelay: contentVisible ? '0.15s' : '0s' }}
             >
               <p
                 className="text-xl md:text-2xl leading-relaxed mb-14"
