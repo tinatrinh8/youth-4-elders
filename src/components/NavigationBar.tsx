@@ -39,20 +39,20 @@ export default function NavigationBar() {
         dropdownHoverText: 'var(--color-pink-medium)'
       }
     } else if (isContactPage) {
-      // Contact page: Pink background with pink accents
+      // Contact page: Merlot (brown-dark) to match page
       return {
-        background: 'var(--color-pink-medium)',
+        background: 'var(--color-brown-dark)',
         text: 'var(--color-cream)',
         border: 'none',
-        hover: 'rgba(234, 212, 196, 0.8)', // Lighter cream for hover
-        shadow: 'rgba(175, 121, 120, 0.2)',
-        mobileBackground: 'var(--color-pink-medium)',
+        hover: 'rgba(234, 212, 196, 0.65)',
+        shadow: 'rgba(73, 47, 30, 0.15)',
+        mobileBackground: 'var(--color-brown-dark)',
         mobileBorder: 'none',
         dropdownBackground: 'var(--color-cream)',
-        dropdownBorder: 'var(--color-pink-medium)',
-        dropdownText: 'var(--color-pink-medium)',
-        dropdownHover: 'rgba(175, 121, 120, 0.1)',
-        dropdownHoverText: 'var(--color-pink-medium)'
+        dropdownBorder: 'var(--color-brown-dark)',
+        dropdownText: 'var(--color-brown-dark)',
+        dropdownHover: 'rgba(73, 47, 30, 0.1)',
+        dropdownHoverText: 'var(--color-brown-dark)'
       }
     } else if (isClubInfoPage) {
       // Club info: Pink panther background with merlot text + pink gradient at bottom

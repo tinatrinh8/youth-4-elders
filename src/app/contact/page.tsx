@@ -12,13 +12,36 @@ export default function Contact() {
   const faqSectionRef = useRef<HTMLElement>(null)
   const rafRef = useRef<number | null>(null)
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
+    service: '',
     email: '',
     phone: '',
-    message: ''
+    projectDescription: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false)
+  const serviceDropdownRef = useRef<HTMLDivElement>(null)
+
+  const serviceOptions = [
+    { value: '', label: 'Select...' },
+    { value: 'volunteer', label: 'Volunteering' },
+    { value: 'partnership', label: 'Partnership' },
+    { value: 'general', label: 'General inquiry' }
+  ]
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (serviceDropdownRef.current && !serviceDropdownRef.current.contains(e.target as Node)) {
+        setServiceDropdownOpen(false)
+      }
+    }
+    if (serviceDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [serviceDropdownOpen])
 
   const faqSections: { title: string; faqs: { question: string; answer: string }[] }[] = [
     {
@@ -134,8 +157,10 @@ export default function Contact() {
     )
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const target = e.target
+    const name = target.name
+    const value = target.type === 'checkbox' ? (target as HTMLInputElement).checked : target.value
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -145,354 +170,260 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
     // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false)
       setSubmitSuccess(true)
-      setFormData({ name: '', email: '', phone: '', message: '' })
+      setFormData({ firstName: '', lastName: '', service: '', email: '', phone: '', projectDescription: '' })
       setTimeout(() => setSubmitSuccess(false), 5000)
     }, 1000)
   }
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
-      {/* Get in Touch Section */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
+      {/* Contact - Two columns: heading (left), form with underline fields (right) */}
+      <section id="contact-form" className="py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left Column - Contact Info */}
-            <div>
-              <h2 
-                className="text-4xl md:text-5xl font-bold mb-6"
-                style={{ 
-                  fontFamily: 'var(--font-vintage-stylist)', 
+            {/* Left Column - heading left-aligned, vertically centered with form, shifted up a bit */}
+            <div className="flex flex-col items-start justify-center -mt-10 lg:-mt-14">
+              <h1
+                className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight text-left"
+                style={{
+                  fontFamily: 'var(--font-vintage-stylist)',
                   color: 'var(--color-brown-dark)'
                 }}
               >
-                Get in Touch
-              </h2>
-              <p 
-                className="text-base md:text-lg mb-8 leading-relaxed"
-                style={{ 
-                  fontFamily: 'var(--font-kollektif)', 
-                  color: 'var(--color-brown-medium)',
-                  lineHeight: '1.7'
-                }}
-              >
-                We&apos;d love to hear from you! Whether you&apos;re interested in joining our community, volunteering, or have questions about our programs, feel free to reach out.
-              </p>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <svg className="w-6 h-6 flex-shrink-0 mt-1" style={{ color: 'var(--color-brown-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <div>
-                    <p 
-                      className="text-base leading-relaxed"
-                      style={{ 
-                        fontFamily: 'var(--font-kollektif)', 
-                        color: 'var(--color-brown-dark)'
+                Let&apos;s build the future together
+              </h1>
+            </div>
+
+            {/* Right Column - minimal form: underline inputs, First/Last name, Service, Email, newsletter, Project description, Submit */}
+            <div className="w-full">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div>
+                  <label
+                    htmlFor="contact-first-name"
+                    className="block text-sm font-medium mb-1"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                  >
+                    Name (required)
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      id="contact-first-name"
+                      type="text"
+                      name="firstName"
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full py-2 bg-transparent border-0 border-b-2 focus:outline-none focus:ring-0 transition-colors"
+                      style={{
+                        borderColor: 'rgba(0,0,0,0.2)',
+                        fontFamily: 'var(--font-kollektif)',
+                        color: 'var(--color-brown-dark)',
+                        fontSize: '15px'
                       }}
-                    >
-                      University of Ottawa<br />
-                      75 Laurier Ave E<br />
-                      Ottawa, ON K1N 6N5, Canada
-                    </p>
+                      onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-brown-dark)' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)' }}
+                    />
+                    <input
+                      id="contact-last-name"
+                      type="text"
+                      name="lastName"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full py-2 bg-transparent border-0 border-b-2 focus:outline-none focus:ring-0 transition-colors"
+                      style={{
+                        borderColor: 'rgba(0,0,0,0.2)',
+                        fontFamily: 'var(--font-kollektif)',
+                        color: 'var(--color-brown-dark)',
+                        fontSize: '15px'
+                      }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-brown-dark)' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)' }}
+                    />
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <svg className="w-6 h-6 flex-shrink-0 mt-1" style={{ color: 'var(--color-brown-medium)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <div>
-                    <a 
-                      href="mailto:youth4elders@gmail.com"
-                      className="text-base hover:opacity-80 transition-opacity"
-                      style={{ 
-                        fontFamily: 'var(--font-kollektif)', 
-                        color: 'var(--color-brown-dark)'
+                <div>
+                  <label
+                    htmlFor="contact-service-trigger"
+                    className="block text-sm font-medium mb-1"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                  >
+                    Service
+                  </label>
+                  <div className="relative w-full" ref={serviceDropdownRef}>
+                    <button
+                      type="button"
+                      id="contact-service-trigger"
+                      onClick={() => setServiceDropdownOpen((o) => !o)}
+                      className="w-full flex items-center justify-between py-2 pr-8 bg-transparent border-0 border-b-2 focus:outline-none focus:ring-0 transition-colors cursor-pointer text-left"
+                      style={{
+                        borderColor: serviceDropdownOpen ? 'var(--color-brown-dark)' : 'rgba(0,0,0,0.2)',
+                        fontFamily: 'var(--font-kollektif)',
+                        color: formData.service ? 'var(--color-brown-dark)' : 'rgba(98, 32, 47, 0.5)',
+                        fontSize: '15px'
                       }}
                     >
-                      youth4elders@gmail.com
-                    </a>
+                      <span>{serviceOptions.find((o) => o.value === formData.service)?.label ?? 'Select...'}</span>
+                      <svg
+                        className={`w-4 h-4 flex-shrink-0 absolute right-0 top-1/2 -translate-y-1/2 transition-transform ${serviceDropdownOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        style={{ color: 'var(--color-brown-dark)' }}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {serviceDropdownOpen && (
+                      <div
+                        className="absolute top-full left-0 right-0 mt-2 rounded-2xl overflow-hidden z-[100] py-2"
+                        style={{
+                          background: '#FBF7E8',
+                          border: '1px solid var(--color-brown-dark)',
+                          boxShadow: '0 8px 24px rgba(73, 47, 30, 0.2)'
+                        }}
+                      >
+                        {serviceOptions.map((opt) => (
+                          <button
+                            key={opt.value || 'empty'}
+                            type="button"
+                            className="block w-full text-left px-4 py-3 text-sm transition-colors border-0"
+                            style={{
+                              fontFamily: 'var(--font-kollektif)',
+                              color: 'var(--color-brown-dark)',
+                              background: 'transparent'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = 'rgba(73, 47, 30, 0.1)'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'transparent'
+                            }}
+                            onClick={() => {
+                              setFormData((prev) => ({ ...prev, service: opt.value }))
+                              setServiceDropdownOpen(false)
+                            }}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Right Column - Image */}
-            <div className="relative h-[400px] md:h-[500px] rounded-lg overflow-hidden">
-              <div 
-                className="w-full h-full bg-cover bg-center"
-                style={{
-                  backgroundImage: 'url(/assets/header.jpg)',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Next Steps */}
-      <section className="py-16 md:py-20" style={{ background: 'var(--color-cream)' }}>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-          <h2 
-            className="text-3xl md:text-4xl font-bold mb-12 text-center"
-            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-          >
-            Next Steps
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <div 
-              className="p-6 md:p-8 rounded-xl"
-              style={{ background: 'var(--color-olive)', color: 'var(--color-cream)' }}
-            >
-              <p className="text-sm font-semibold uppercase tracking-wider mb-3 opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>One</p>
-              <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
-                Fill out the form below with your name, email, and message. Click &quot;Send Message&quot; to submit.
-              </p>
-            </div>
-            <div 
-              className="p-6 md:p-8 rounded-xl"
-              style={{ background: 'var(--color-olive)', color: 'var(--color-cream)' }}
-            >
-              <p className="text-sm font-semibold uppercase tracking-wider mb-3 opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>Two</p>
-              <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
-                We&apos;ll get back to you within 24–48 hours to answer your questions or discuss how you can get involved.
-              </p>
-            </div>
-            <div 
-              className="p-6 md:p-8 rounded-xl"
-              style={{ background: 'var(--color-brown-dark)', color: 'var(--color-cream)' }}
-            >
-              <p className="text-sm font-semibold uppercase tracking-wider mb-3 opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>Three</p>
-              <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
-                Join our community—attend events, volunteer, or partner with us to connect generations.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Send Us a Message Section */}
-      <section id="contact-form" className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Left Column - Contact Form (Dark Green Background) */}
-            <div 
-              className="p-8 md:p-10 rounded-lg"
-              style={{ 
-                background: 'var(--color-brown-medium)',
-                boxShadow: '0 8px 24px rgba(175, 121, 120, 0.2)'
-              }}
-            >
-              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
+                  <label
+                    htmlFor="contact-email"
+                    className="block text-sm font-medium mb-1"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                  >
+                    Email (required)
+                  </label>
                   <input
-                    type="text"
-                    name="name"
-                    placeholder="Your Name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-0 py-4 bg-transparent border-b-2 focus:outline-none transition-all"
-                    style={{
-                      borderColor: 'rgba(234, 225, 203, 0.3)',
-                      fontFamily: 'var(--font-kollektif)',
-                      color: 'var(--color-cream)',
-                      fontSize: '15px'
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--color-cream)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(234, 225, 203, 0.3)'
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <input
+                    id="contact-email"
                     type="email"
                     name="email"
-                    placeholder="Your Email"
+                    placeholder="Your email"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-0 py-4 bg-transparent border-b-2 focus:outline-none transition-all"
+                    className="w-full py-2 bg-transparent border-0 border-b-2 focus:outline-none focus:ring-0 transition-colors"
                     style={{
-                      borderColor: 'rgba(234, 225, 203, 0.3)',
+                      borderColor: 'rgba(0,0,0,0.2)',
                       fontFamily: 'var(--font-kollektif)',
-                      color: 'var(--color-cream)',
+                      color: 'var(--color-brown-dark)',
                       fontSize: '15px'
                     }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--color-cream)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(234, 225, 203, 0.3)'
-                    }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-brown-dark)' }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)' }}
                   />
                 </div>
-
                 <div>
+                  <label
+                    htmlFor="contact-phone"
+                    className="block text-sm font-medium mb-1"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                  >
+                    Phone number
+                  </label>
                   <input
+                    id="contact-phone"
                     type="tel"
                     name="phone"
-                    placeholder="Your Phone"
+                    placeholder="Your phone number"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-0 py-4 bg-transparent border-b-2 focus:outline-none transition-all"
+                    className="w-full py-2 bg-transparent border-0 border-b-2 focus:outline-none focus:ring-0 transition-colors"
                     style={{
-                      borderColor: 'rgba(234, 225, 203, 0.3)',
+                      borderColor: 'rgba(0,0,0,0.2)',
                       fontFamily: 'var(--font-kollektif)',
-                      color: 'var(--color-cream)',
+                      color: 'var(--color-brown-dark)',
                       fontSize: '15px'
                     }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--color-cream)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(234, 225, 203, 0.3)'
-                    }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-brown-dark)' }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)' }}
                   />
                 </div>
-
                 <div>
+                  <label
+                    htmlFor="contact-project"
+                    className="block text-sm font-medium mb-1"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                  >
+                    Project description
+                  </label>
                   <textarea
-                    name="message"
-                    placeholder="Your Message"
-                    value={formData.message}
+                    id="contact-project"
+                    name="projectDescription"
+                    placeholder="Tell us about your project or message"
+                    value={formData.projectDescription}
                     onChange={handleInputChange}
-                    required
-                    rows={6}
-                    className="w-full px-0 py-4 bg-transparent border-b-2 focus:outline-none transition-all resize-none"
+                    rows={4}
+                    className="w-full py-2 bg-transparent border-0 border-b-2 focus:outline-none focus:ring-0 transition-colors resize-none"
                     style={{
-                      borderColor: 'rgba(234, 225, 203, 0.3)',
+                      borderColor: 'rgba(0,0,0,0.2)',
                       fontFamily: 'var(--font-kollektif)',
-                      color: 'var(--color-cream)',
+                      color: 'var(--color-brown-dark)',
                       fontSize: '15px'
                     }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--color-cream)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(234, 225, 203, 0.3)'
-                    }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--color-brown-dark)' }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)' }}
                   />
                 </div>
-
                 {submitSuccess && (
-                  <div className="p-4 rounded-lg" style={{ background: 'rgba(76, 175, 80, 0.2)', border: '1px solid rgba(76, 175, 80, 0.4)' }}>
-                    <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: '#4CAF50' }}>
+                  <div className="p-4 rounded-xl" style={{ background: 'rgba(76, 175, 80, 0.15)', border: '1px solid rgba(76, 175, 80, 0.4)' }}>
+                    <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-kollektif)', color: '#2e7d32' }}>
                       ✓ Message sent successfully! We&apos;ll get back to you soon.
                     </p>
                   </div>
                 )}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full px-8 py-4 rounded-lg font-semibold text-base transition-all duration-300 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{
-                    background: 'var(--color-cream)',
-                    color: 'var(--color-brown-medium)',
-                    fontFamily: 'var(--font-kollektif)',
-                    border: '2px solid var(--color-cream)'
-                  }}
-                >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
-                </button>
-              </form>
-            </div>
-
-            {/* Right Column - Message Details */}
-            <div>
-              <div className="mb-3">
-                <span 
-                  className="text-xs font-semibold tracking-wider uppercase"
-                  style={{
-                    fontFamily: 'var(--font-kollektif)',
-                    color: 'var(--color-brown-medium)',
-                    letterSpacing: '0.15em'
-                  }}
-                >
-                  CONTACT
-                </span>
-              </div>
-              <h2 
-                className="text-4xl md:text-5xl font-bold mb-6"
-                style={{ 
-                  fontFamily: 'var(--font-vintage-stylist)', 
-                  color: 'var(--color-brown-dark)'
-                }}
-              >
-                Send Us a Message
-              </h2>
-              <p 
-                className="text-base md:text-lg mb-8 leading-relaxed"
-                style={{ 
-                  fontFamily: 'var(--font-kollektif)', 
-                  color: 'var(--color-brown-medium)',
-                  lineHeight: '1.7'
-                }}
-              >
-                Have questions or want to get involved? Fill out the form and we&apos;ll get back to you as soon as possible. We typically respond within 24-48 hours.
-              </p>
-
-              <div>
-                <h3 
-                  className="text-xl font-bold mb-4"
-                  style={{ 
-                    fontFamily: 'var(--font-vintage-stylist)', 
-                    color: 'var(--color-brown-dark)'
-                  }}
-                >
-                  Follow Us
-                </h3>
-                <div className="flex gap-3">
-                  <a
-                    href="https://www.instagram.com/youth4elders/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                    style={{ 
-                      background: 'var(--color-brown-medium)',
-                      color: 'var(--color-cream)'
+                <div className="flex justify-center pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-10 py-3 rounded-lg font-semibold text-base transition-all duration-300 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      background: 'var(--color-brown-dark)',
+                      color: 'var(--color-cream)',
+                      fontFamily: 'var(--font-kollektif)'
                     }}
-                    aria-label="Instagram"
                   >
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/company/youth4elders"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                    style={{ 
-                      background: 'var(--color-brown-medium)',
-                      color: 'var(--color-cream)'
-                    }}
-                    aria-label="LinkedIn"
-                  >
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                    </svg>
-                  </a>
+                    {isSubmitting ? 'Sending...' : 'Submit'}
+                  </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section - fade-up + bubble wobble on scroll */}
+      {/* FAQ Section - green (olive), socials underneath inside green */}
       <section
         id="faq"
         ref={faqSectionRef}
@@ -605,6 +536,67 @@ export default function Contact() {
                 </div>
               )
             })}
+          </div>
+
+          {/* Socials - underneath FAQ, inside green section */}
+          <div className="mt-16 md:mt-20 pt-12 md:pt-16 flex flex-col items-center gap-8 text-center" style={{ borderTop: '1px solid rgba(251, 247, 232, 0.3)' }}>
+            <h2
+              className="text-4xl md:text-5xl lg:text-6xl font-bold italic"
+              style={{
+                fontFamily: 'var(--font-leiko)',
+                color: 'var(--color-pink-medium)'
+              }}
+            >
+              Find us in the wild — we don&apos;t bite!
+            </h2>
+            <div className="flex gap-5 flex-shrink-0 justify-center flex-wrap">
+              <a
+                href="https://www.instagram.com/youth4elders/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
+                style={{
+                  background: 'var(--color-pink-medium)',
+                  color: 'var(--color-brown-dark)',
+                  borderColor: 'var(--color-pink-medium)'
+                }}
+                aria-label="Instagram"
+              >
+                <svg className="w-7 h-7 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+              <a
+                href="https://www.linkedin.com/company/youth4elders"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
+                style={{
+                  background: 'var(--color-pink-medium)',
+                  color: 'var(--color-brown-dark)',
+                  borderColor: 'var(--color-pink-medium)'
+                }}
+                aria-label="LinkedIn"
+              >
+                <svg className="w-7 h-7 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+              <a
+                href="mailto:youth4elders@gmail.com"
+                className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
+                style={{
+                  background: 'var(--color-pink-medium)',
+                  color: 'var(--color-brown-dark)',
+                  borderColor: 'var(--color-pink-medium)'
+                }}
+                aria-label="Email"
+              >
+                <svg className="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </section>

@@ -419,7 +419,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                     {/* Divider Line */}
                     <div 
                       className="w-20 h-0.5 mb-5"
-                      style={{ background: 'var(--color-pink-medium)' }}
+                      style={{ background: 'var(--color-olive-light)' }}
                     />
                     
                     {/* Body Paragraph */}
@@ -439,21 +439,21 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                       rel="noopener noreferrer"
                       className="inline-block px-6 py-3 rounded-full transition-all duration-300 hover:scale-105"
                       style={{ 
-                        background: 'var(--color-pink-medium)',
-                        border: '2px solid var(--color-pink-medium)',
+                        background: 'var(--color-olive-light)',
+                        border: '2px solid var(--color-olive-light)',
                         color: 'var(--color-cream)',
                         fontFamily: 'var(--font-kollektif)',
                         fontWeight: '600'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.color = 'var(--color-cream)'
-                        e.currentTarget.style.background = 'var(--color-pink-dark)'
-                        e.currentTarget.style.borderColor = 'var(--color-pink-dark)'
+                        e.currentTarget.style.color = 'var(--color-olive-light)'
+                        e.currentTarget.style.background = 'var(--color-cream)'
+                        e.currentTarget.style.borderColor = 'var(--color-olive-light)'
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.color = 'var(--color-cream)'
-                        e.currentTarget.style.background = 'var(--color-pink-medium)'
-                        e.currentTarget.style.borderColor = 'var(--color-pink-medium)'
+                        e.currentTarget.style.background = 'var(--color-olive-light)'
+                        e.currentTarget.style.borderColor = 'var(--color-olive-light)'
                       }}
                     >
                       Visit The Glebe Centre →
