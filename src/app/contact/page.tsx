@@ -63,7 +63,7 @@ export default function Contact() {
   useEffect(() => {
     const t1 = setTimeout(() => setContactTitleVisible(true), 100)
     const t2 = setTimeout(() => setContactCaptionVisible(true), 2500)
-    const t3 = setTimeout(() => setContactFormVisible(true), 3500)
+    const t3 = setTimeout(() => setContactFormVisible(true), 2700)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
@@ -514,14 +514,14 @@ export default function Contact() {
                 </div>
                 {/* Row 3: Service */}
                 <div
-                  className={contactFormVisible ? 'contact-form-row-slide-up' : 'opacity-0'}
+                  className={`${contactFormVisible ? 'contact-form-row-slide-up' : 'opacity-0'} ${serviceDropdownOpen ? 'relative z-[200]' : ''}`}
                   style={{ animationDelay: contactFormVisible ? '0.34s' : undefined, animationFillMode: 'both' }}
                 >
                 <div>
                   <label htmlFor="contact-service-trigger" className="block text-base font-medium mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                     Service
                   </label>
-                  <div className="relative w-full" ref={serviceDropdownRef}>
+                  <div className={`relative w-full ${serviceDropdownOpen ? 'z-[100]' : ''}`} ref={serviceDropdownRef}>
                     <button
                       type="button"
                       id="contact-service-trigger"
@@ -547,7 +547,7 @@ export default function Contact() {
                   </button>
                   {serviceDropdownOpen && (
                     <div
-                      className="absolute top-full left-0 right-0 mt-2 rounded-2xl overflow-y-auto overflow-x-hidden z-[100] py-2 max-h-48"
+                      className="absolute top-full left-0 right-0 mt-2 rounded-2xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-48"
                       style={{
                         background: 'var(--color-cream)',
                         border: '1px solid var(--color-brown-dark)',
