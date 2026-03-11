@@ -40,8 +40,8 @@
   --color-cream: #FBF7E8;
   
   /* PINK SHADES - Accent Colors (Pink Panther) */
-  --color-pink-light: #F5D0C6;
-  --color-pink-medium: #F5D0C6;
+  --color-pink-light: #F8DAD4;   /* slightly lighter pink when input is filled */
+  --color-pink-medium: #F5D0C6;  /* default (non-filled) input background */
   --color-pink-dark: #b8867a; /* darker pink for readability on light backgrounds */
 
   /* Green accents */
@@ -255,6 +255,22 @@ body::-webkit-scrollbar {
   will-change: transform, opacity;
 }
 
+/* ========== Contact form: autofill/filled state ========== */
+.contact-form-field:-webkit-autofill,
+.contact-form-field:-webkit-autofill:hover,
+.contact-form-field:-webkit-autofill:focus,
+.contact-form-field:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-pink-medium) inset !important;
+  box-shadow: 0 0 0 1000px var(--color-pink-medium) inset !important;
+  -webkit-text-fill-color: var(--color-brown-dark) !important;
+  caret-color: var(--color-brown-dark);
+}
+
+/* Lighter pink when user has filled in the field */
+.contact-form-field:not(:placeholder-shown) {
+  background: var(--color-pink-light) !important;
+}
+
 /* ========== 5. SHARED: Intersection Observer (animate-on-scroll) ========== */
 .animate-on-scroll {
   opacity: 0;
@@ -270,7 +286,7 @@ body::-webkit-scrollbar {
 }
 
 .animate-on-scroll.slide-left.visible {
-  transform: translateX(0);
+    transform: translateX(0);
 }
 
 .animate-on-scroll.slide-right {
@@ -278,7 +294,7 @@ body::-webkit-scrollbar {
 }
 
 .animate-on-scroll.slide-right.visible {
-  transform: translateX(0);
+    transform: translateX(0);
 }
 
 .animate-on-scroll.slide-up {
@@ -290,29 +306,29 @@ body::-webkit-scrollbar {
 }
 
 .animate-on-scroll.scale {
-  transform: scale(0.9);
-}
+    transform: scale(0.9);
+  }
 
 .animate-on-scroll.scale.visible {
-  transform: scale(1);
+    transform: scale(1);
 }
 
 .animate-on-scroll.fade {
-  opacity: 0;
+    opacity: 0;
 }
 
 .animate-on-scroll.fade.visible {
-  opacity: 1;
+    opacity: 1;
 }
 
 .animate-on-scroll.fade-up {
-  opacity: 0;
+    opacity: 0;
   transform: translateY(30px);
 }
 
 .animate-on-scroll.fade-up.visible {
-  opacity: 1;
-  transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* ========== 6. SHARED: Loading & word-fade ========== */
@@ -614,6 +630,80 @@ body::-webkit-scrollbar {
   transform-origin: center center;
 }
 
+/* Contact form: smooth appear for success/failure result box */
+.contact-result-box-in {
+  animation: ideaSuccessBoxIn 0.45s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+  transform-origin: center center;
+}
+
+/* Contact form: each row slides up with stagger */
+@keyframes contactFormRowSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-form-row-slide-up {
+  animation: contactFormRowSlideUp 0.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+/* Contact caption: hidden until animation runs, then fades up (no flash) */
+@keyframes contactCaptionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+}
+
+.contact-caption-reveal {
+  opacity: 0;
+  animation: contactCaptionReveal 0.6s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+/* Socials: title fades up, then logos pop in after */
+@keyframes socialsLogoPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.socials-logos-pop {
+  animation: socialsLogoPop 0.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+/* Contact form: smooth enter when form comes back after success/failure */
+.contact-form-enter {
+  animation: contactFormEnter 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+@keyframes contactFormEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Progress bar */
 @keyframes progressFadeIn {
   from { opacity: 0; transform: translateY(-10px); }
@@ -627,7 +717,7 @@ body::-webkit-scrollbar {
 /* ========== 10. PAGE: Club info (/club-info) ========== */
 @keyframes collageScrollReveal {
   from {
-    opacity: 0;
+  opacity: 0;
     transform: translate3d(0, 8px, 0);
   }
   to {

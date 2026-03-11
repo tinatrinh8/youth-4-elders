@@ -601,7 +601,7 @@ export default function ClubInfo() {
                     </div>
                     <h3
                       className="mt-4 text-4xl md:text-5xl font-semibold"
-                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
+                      style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
                     >
                       {item.name}
                     </h3>
