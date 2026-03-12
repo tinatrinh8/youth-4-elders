@@ -48,6 +48,9 @@
   --color-olive: #6f6509;
   --color-olive-light: #C9DAA8;
   --color-olive-dark: #6f6509;
+
+  /* Error - validation and submit failure messages */
+  --color-error: #a1224c;
   
   /* Dynamic page background - updated by components for smooth transitions */
   --page-background: var(--color-cream);
@@ -269,6 +272,17 @@ body::-webkit-scrollbar {
 /* Lighter pink when user has filled in the field */
 .contact-form-field:not(:placeholder-shown) {
   background: var(--color-pink-light) !important;
+}
+
+/* ========== Club info "Share your idea" form: keep background same on autofill (no blue) ========== */
+.idea-form-field:-webkit-autofill,
+.idea-form-field:-webkit-autofill:hover,
+.idea-form-field:-webkit-autofill:focus,
+.idea-form-field:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-cream) inset !important;
+  box-shadow: 0 0 0 1000px var(--color-cream) inset !important;
+  -webkit-text-fill-color: var(--color-olive) !important;
+  caret-color: var(--color-olive);
 }
 
 /* ========== 5. SHARED: Intersection Observer (animate-on-scroll) ========== */

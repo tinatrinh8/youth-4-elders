@@ -16,8 +16,6 @@ export default function ClubInfo() {
   const [ideaSubmitSuccess, setIdeaSubmitSuccess] = useState(false)
   const [ideaSubmitError, setIdeaSubmitError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
-  const [isClosingError, setIsClosingError] = useState(false)
-  const [isClosingFieldErrors, setIsClosingFieldErrors] = useState(false)
   const [founderStoryOpen, setFounderStoryOpen] = useState<'julia' | 'peter' | null>(null)
   const [isClosingFounderStory, setIsClosingFounderStory] = useState(false)
   const aboutUsTitleRef = useRef<HTMLDivElement>(null)
@@ -203,22 +201,6 @@ export default function ClubInfo() {
         return newErrors
       })
     }
-  }
-
-  const handleCloseError = () => {
-    setIsClosingError(true)
-    setTimeout(() => {
-      setIdeaSubmitError('')
-      setIsClosingError(false)
-    }, 280)
-  }
-
-  const handleCloseFieldErrors = () => {
-    setIsClosingFieldErrors(true)
-    setTimeout(() => {
-      setFieldErrors({})
-      setIsClosingFieldErrors(false)
-    }, 280)
   }
 
   const handleIdeaSubmit = async (e: React.FormEvent) => {
@@ -1054,63 +1036,6 @@ export default function ClubInfo() {
                 </div>
               )}
 
-              {(ideaSubmitError || isClosingError) && !ideaSubmitSuccess && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={handleCloseError}
-                  onKeyDown={(e) => e.key === 'Enter' && handleCloseError()}
-                  className={`absolute inset-0 flex items-center justify-center z-50 rounded-2xl backdrop-blur-[6px] cursor-pointer ${isClosingError ? 'modal-overlay-fade-out' : 'modal-overlay-fade'}`}
-                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
-                  aria-label="Close"
-                >
-                  <div
-                    role="dialog"
-                    aria-modal="true"
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    className={`p-4 rounded-xl mx-4 max-w-md border-2 shadow-xl cursor-default ${isClosingError ? 'modal-card-pop-out' : 'modal-card-pop'}`}
-                    style={{ background: 'var(--color-olive)', borderColor: 'var(--color-olive)', color: 'var(--color-cream)' }}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>{ideaSubmitError}</p>
-                      <button onClick={handleCloseError} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {((fieldErrors.name || fieldErrors.email || fieldErrors.message) || isClosingFieldErrors) && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={handleCloseFieldErrors}
-                  onKeyDown={(e) => e.key === 'Enter' && handleCloseFieldErrors()}
-                  className={`absolute inset-0 flex items-center justify-center z-50 rounded-2xl backdrop-blur-[6px] cursor-pointer ${isClosingFieldErrors ? 'modal-overlay-fade-out' : 'modal-overlay-fade'}`}
-                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)' }}
-                  aria-label="Close"
-                >
-                  <div
-                    role="dialog"
-                    aria-modal="true"
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    className={`p-4 rounded-xl mx-4 max-w-sm border-2 shadow-xl cursor-default ${isClosingFieldErrors ? 'modal-card-pop-out' : 'modal-card-pop'}`}
-                    style={{ background: 'var(--color-olive)', borderColor: 'var(--color-olive)', color: 'var(--color-cream)' }}
-                  >
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>Please fill in all fields.</p>
-                      <button type="button" onClick={handleCloseFieldErrors} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
-                    </div>
-                    <ul className="space-y-0.5 text-xs" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.95 }}>
-                      {fieldErrors.name && <li>• {fieldErrors.name}</li>}
-                      {fieldErrors.email && <li>• {fieldErrors.email}</li>}
-                      {fieldErrors.message && <li>• {fieldErrors.message}</li>}
-                    </ul>
-                  </div>
-                </div>
-              )}
-
               {!ideaSubmitSuccess && (
                 <form onSubmit={handleIdeaSubmit} className="relative" noValidate>
                   <div className="space-y-4">
@@ -1125,9 +1050,12 @@ export default function ClubInfo() {
                         value={ideaFormData.name}
                         onChange={handleIdeaInputChange}
                         placeholder="e.g. Jane Smith"
-                        className="w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
-                        style={{ background: 'var(--color-cream)', borderColor: 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
+                        className="idea-form-field w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
+                        style={{ background: 'var(--color-cream)', borderColor: fieldErrors.name ? 'var(--color-error)' : 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
                       />
+                      {fieldErrors.name && (
+                        <p className="text-sm mt-1.5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-error)' }}>{fieldErrors.name}</p>
+                      )}
                     </div>
                     <div>
                       <label htmlFor="idea-email" className="block text-sm font-semibold mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
@@ -1140,9 +1068,12 @@ export default function ClubInfo() {
                         value={ideaFormData.email}
                         onChange={handleIdeaInputChange}
                         placeholder="e.g. jane@example.com"
-                        className="w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
-                        style={{ background: 'var(--color-cream)', borderColor: 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
+                        className="idea-form-field w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
+                        style={{ background: 'var(--color-cream)', borderColor: fieldErrors.email ? 'var(--color-error)' : 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
                       />
+                      {fieldErrors.email && (
+                        <p className="text-sm mt-1.5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-error)' }}>{fieldErrors.email}</p>
+                      )}
                     </div>
                     <div>
                       <label htmlFor="idea-message" className="block text-sm font-semibold mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
@@ -1155,11 +1086,20 @@ export default function ClubInfo() {
                         onChange={handleIdeaInputChange}
                         placeholder="Tell us about your program or event idea..."
                         rows={5}
-                        className="w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors resize-none"
-                        style={{ background: 'var(--color-cream)', borderColor: 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
+                        className="idea-form-field w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors resize-none"
+                        style={{ background: 'var(--color-cream)', borderColor: fieldErrors.message ? 'var(--color-error)' : 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
                       />
+                      {fieldErrors.message && (
+                        <p className="text-sm mt-1.5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-error)' }}>{fieldErrors.message}</p>
+                      )}
                     </div>
                   </div>
+                  {ideaSubmitError && (
+                    <div className="mt-4 p-4 rounded-xl border-2 flex items-start justify-between gap-3" style={{ background: 'var(--color-error)', borderColor: 'var(--color-error)', color: 'var(--color-cream)' }}>
+                      <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>{ideaSubmitError}</p>
+                      <button type="button" onClick={() => setIdeaSubmitError('')} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
+                    </div>
+                  )}
                   <button
                     type="submit"
                     disabled={isSubmittingIdea}

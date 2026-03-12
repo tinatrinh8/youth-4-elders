@@ -23,19 +23,19 @@ export default function NavigationBar() {
   // Determine navbar color scheme based on page
   const getNavbarColors = () => {
     if (isJoinUsPage) {
-      // Join-us (Get Involved) page: Merlot to match palette
+      // Join-us (Get Involved) page: Pink
       return {
-        background: 'var(--color-brown-dark)',
-        text: 'var(--color-cream)',
+        background: 'var(--color-pink-medium)',
+        text: 'var(--color-brown-dark)',
         border: 'none',
-        hover: 'rgba(234, 212, 196, 0.65)',
-        shadow: 'rgba(73, 47, 30, 0.15)',
-        mobileBackground: 'var(--color-brown-dark)',
+        hover: 'rgba(98, 32, 47, 0.85)',
+        shadow: 'rgba(98, 32, 47, 0.2)',
+        mobileBackground: 'var(--color-pink-medium)',
         mobileBorder: 'none',
         dropdownBackground: 'var(--color-cream)',
         dropdownBorder: 'var(--color-brown-dark)',
         dropdownText: 'var(--color-brown-dark)',
-        dropdownHover: 'rgba(73, 47, 30, 0.1)',
+        dropdownHover: 'rgba(98, 32, 47, 0.08)',
         dropdownHoverText: 'var(--color-brown-dark)'
       }
     } else if (isContactPage) {
@@ -186,7 +186,7 @@ export default function NavigationBar() {
       style={{
         background: navColors.background,
         borderRadius: '9999px',
-        border: '2px solid transparent', // Always have border to maintain size
+        border: '2px solid transparent',
         borderColor: navColors.border !== 'none' ? navColors.border : 'transparent',
         marginLeft: '96px',
         marginRight: '96px',

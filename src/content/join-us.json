@@ -20,11 +20,18 @@
     "cta": "Get started"
   },
   "form": {
-    "title": "Application form",
+    "title": "Y4E General Member Application Form",
     "cancel": "Cancel",
     "submit": "Submit",
     "submitting": "Submitting...",
     "errorMessage": "Something went wrong. Please try again.",
+    "experienceChoiceLabel": "Share your experience (choose one)",
+    "optionOutline": "Outline relevant experience",
+    "optionResume": "Upload resume",
+    "resumeFileNote": "We only accept PDF and DOC/DOCX files.",
+    "experiencePlaceholder": "e.g., volunteering, care work, teaching, events...",
+    "linkedinLabel": "LinkedIn profile (optional)",
+    "linkedinPlaceholder": "https://linkedin.com/in/yourprofile",
     "questions": [
       {
         "id": "name",
@@ -89,17 +96,10 @@
       },
       {
         "id": "experience",
-        "label": "Outline previous or relevant experience (optional)",
+        "label": "Share your experience (optional)",
         "type": "textarea",
         "required": false,
         "placeholder": "e.g., volunteering, care work, teaching, events..."
-      },
-      {
-        "id": "resumeFileName",
-        "label": "Upload resume (optional)",
-        "type": "file",
-        "required": false,
-        "accept": ".pdf,.doc,.docx"
       }
     ]
   },

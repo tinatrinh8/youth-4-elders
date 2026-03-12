@@ -24,8 +24,8 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState(false)
+  const [submitErrorMessage, setSubmitErrorMessage] = useState('')
   const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; message?: string }>({})
-  const [isClosingFieldErrors, setIsClosingFieldErrors] = useState(false)
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false)
   const serviceDropdownRef = useRef<HTMLDivElement>(null)
   const contactFormSectionRef = useRef<HTMLElement>(null)
@@ -258,14 +258,6 @@ export default function Contact() {
     }
   }
 
-  const handleCloseFieldErrors = () => {
-    setIsClosingFieldErrors(true)
-    setTimeout(() => {
-      setFieldErrors({})
-      setIsClosingFieldErrors(false)
-    }, 280)
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const errors: { name?: string; email?: string; message?: string } = {}
@@ -287,11 +279,13 @@ export default function Contact() {
     setIsSubmitting(true)
     setFieldErrors({})
     setSubmitError(false)
+    setSubmitErrorMessage('')
     // Simulate form submission (sometimes fails so you can test try-again)
     setTimeout(() => {
       setIsSubmitting(false)
       const simulatedFailure = Math.random() < 0.3
       if (simulatedFailure) {
+        setSubmitErrorMessage('Something went wrong — submission didn\'t work or something is down.')
         setSubmitError(true)
       } else {
       setSubmitSuccess(true)
@@ -366,57 +360,8 @@ export default function Contact() {
                 </div>
               )}
 
-              {submitError && (
-                <div className="w-full rounded-2xl p-8 md:p-10 shadow-lg flex flex-col gap-4 contact-result-box-in" style={{ background: 'var(--color-pink-light)', border: '2px solid var(--color-brown-dark)' }}>
-                  <p className="text-lg font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                    Something went wrong — submission didn&apos;t work or something is down.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setSubmitError(false)}
-                    className="self-start px-6 py-3 rounded-2xl font-semibold text-base transition-all duration-300 hover:opacity-90"
-                    style={{
-                      background: 'var(--color-brown-dark)',
-                      color: 'var(--color-cream)',
-                      fontFamily: 'var(--font-kollektif)'
-                    }}
-                  >
-                    Try again
-                  </button>
-                </div>
-              )}
-
-              {!submitSuccess && !submitError && (
+              {!submitSuccess && (
                 <div className="contact-form-enter w-full">
-              {((fieldErrors.name || fieldErrors.email || fieldErrors.message) || isClosingFieldErrors) && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={handleCloseFieldErrors}
-                  onKeyDown={(e) => e.key === 'Enter' && handleCloseFieldErrors()}
-                  className={`absolute inset-0 flex items-center justify-center z-50 rounded-2xl cursor-pointer ${isClosingFieldErrors ? 'modal-overlay-fade-out' : 'modal-overlay-fade'}`}
-                  aria-label="Close"
-                >
-                  <div
-                    role="dialog"
-                    aria-modal="true"
-                    onClick={(e) => e.stopPropagation()}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    className={`p-6 rounded-xl mx-4 max-w-md border-2 shadow-xl cursor-default ${isClosingFieldErrors ? 'modal-card-pop-out' : 'modal-card-pop'}`}
-                    style={{ background: 'var(--color-olive)', borderColor: 'var(--color-olive)', color: 'var(--color-cream)' }}
-                  >
-                    <div className="flex items-start justify-between gap-4 mb-3">
-                      <p className="text-base font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>Please fill in all fields.</p>
-                      <button type="button" onClick={handleCloseFieldErrors} className="flex-shrink-0 text-xl opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
-                    </div>
-                    <ul className="space-y-1 text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.95 }}>
-                      {fieldErrors.name && <li>• {fieldErrors.name}</li>}
-                      {fieldErrors.email && <li>• {fieldErrors.email}</li>}
-                      {fieldErrors.message && <li>• {fieldErrors.message}</li>}
-                    </ul>
-                  </div>
-                </div>
-              )}
               <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                 {/* Row 1: Name (required) - First Name | Last Name */}
                 <div
@@ -436,12 +381,13 @@ export default function Contact() {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
-                      className="contact-form-field w-full px-5 py-4 rounded-2xl border-0 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
+                      className="contact-form-field w-full px-5 py-4 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
                       style={{ 
                         background: formData.firstName.trim() ? 'var(--color-pink-light)' : 'var(--color-pink-medium)',
                         fontFamily: 'var(--font-kollektif)', 
                         color: 'var(--color-brown-dark)',
-                        fontSize: '17px'
+                        fontSize: '17px',
+                        borderColor: fieldErrors.name ? 'var(--color-error)' : 'transparent'
                       }}
                     />
                   <input
@@ -452,15 +398,19 @@ export default function Contact() {
                       value={formData.lastName}
                     onChange={handleInputChange}
                     required
-                      className="contact-form-field w-full px-5 py-4 rounded-2xl border-0 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
+                      className="contact-form-field w-full px-5 py-4 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
                     style={{
                         background: formData.lastName.trim() ? 'var(--color-pink-light)' : 'var(--color-pink-medium)',
                       fontFamily: 'var(--font-kollektif)',
                         color: 'var(--color-brown-dark)',
-                        fontSize: '17px'
+                        fontSize: '17px',
+                        borderColor: fieldErrors.name ? 'var(--color-error)' : 'transparent'
                       }}
                     />
                   </div>
+                  {fieldErrors.name && (
+                    <p className="text-sm mt-1.5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-error)' }}>{fieldErrors.name}</p>
+                  )}
                 </div>
                 </div>
                 {/* Row 2: Email | Phone */}
@@ -474,21 +424,25 @@ export default function Contact() {
                       Email (required <span style={{ color: 'red' }}>*</span>)
                     </label>
                   <input
-                      id="contact-email"
+id="contact-email"
                     type="email"
                     name="email"
                       placeholder="Your email"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                      className="contact-form-field w-full px-5 py-4 rounded-2xl border-0 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
+                    className="contact-form-field w-full px-5 py-4 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
                     style={{
-                        background: formData.email.trim() ? 'var(--color-pink-light)' : 'var(--color-pink-medium)',
+                      background: formData.email.trim() ? 'var(--color-pink-light)' : 'var(--color-pink-medium)',
                       fontFamily: 'var(--font-kollektif)',
-                        color: 'var(--color-brown-dark)',
-                        fontSize: '17px'
+                      color: 'var(--color-brown-dark)',
+                      fontSize: '17px',
+                      borderColor: fieldErrors.email ? 'var(--color-error)' : 'transparent'
                     }}
                   />
+                  {fieldErrors.email && (
+                    <p className="text-sm mt-1.5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-error)' }}>{fieldErrors.email}</p>
+                  )}
                 </div>
                 <div>
                     <label htmlFor="contact-phone" className="block text-base font-medium mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
@@ -595,14 +549,18 @@ export default function Contact() {
                     value={formData.projectDescription}
                     onChange={handleInputChange}
                     rows={5}
-                    className="contact-form-field w-full px-5 py-4 rounded-2xl border-0 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors resize-none placeholder-[rgba(98,32,47,0.55)]"
+                    className="contact-form-field w-full px-5 py-4 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors resize-none placeholder-[rgba(98,32,47,0.55)]"
                     style={{
                       background: formData.projectDescription.trim() ? 'var(--color-pink-light)' : 'var(--color-pink-medium)',
                       fontFamily: 'var(--font-kollektif)',
                       color: 'var(--color-brown-dark)',
-                      fontSize: '17px'
+                      fontSize: '17px',
+                      borderColor: fieldErrors.message ? 'var(--color-error)' : 'transparent'
                     }}
                   />
+                  {fieldErrors.message && (
+                    <p className="text-sm mt-1.5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-error)' }}>{fieldErrors.message}</p>
+                  )}
                 </div>
                   </div>
                 {/* Submit: left-aligned, larger */}
@@ -610,6 +568,12 @@ export default function Contact() {
                   className={contactFormVisible ? 'contact-form-row-slide-up' : 'opacity-0'}
                   style={{ animationDelay: contactFormVisible ? '0.58s' : undefined, animationFillMode: 'both' }}
                 >
+                {submitError && submitErrorMessage && (
+                  <div className="mb-4 p-4 rounded-xl border-2 flex items-start justify-between gap-3" style={{ background: 'var(--color-error)', borderColor: 'var(--color-error)', color: 'var(--color-cream)' }}>
+                    <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>{submitErrorMessage}</p>
+                    <button type="button" onClick={() => { setSubmitError(false); setSubmitErrorMessage('') }} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
+                  </div>
+                )}
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   type="submit"

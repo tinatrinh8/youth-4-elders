@@ -126,6 +126,9 @@ interface FormData {
   howHeard: string
   experience: string
   resumeFileName: string
+  experienceOutline: boolean
+  experienceResume: boolean
+  linkedinUrl: string
 }
 
 interface Question {
@@ -151,6 +154,13 @@ const content = joinUsContent as {
     submit: string
     submitting: string
     errorMessage: string
+    experienceChoiceLabel: string
+    optionOutline: string
+optionResume: string
+  resumeFileNote: string
+  experiencePlaceholder: string
+    linkedinLabel: string
+    linkedinPlaceholder: string
     questions: Array<{
       id: string
       label: string
@@ -184,7 +194,10 @@ export default function JoinUs() {
     whyJoin: '',
     howHeard: '',
     experience: '',
-    resumeFileName: ''
+    resumeFileName: '',
+    experienceOutline: false,
+    experienceResume: false,
+    linkedinUrl: ''
   })
   const resumeFileRef = useRef<File | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -193,6 +206,20 @@ export default function JoinUs() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [showConfetti, setShowConfetti] = useState(false)
   const [isInitialViewVisible, setIsInitialViewVisible] = useState(false)
+  const [openSelectId, setOpenSelectId] = useState<keyof FormData | null>(null)
+  const selectDropdownRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (openSelectId && selectDropdownRefs.current[openSelectId] && !selectDropdownRefs.current[openSelectId]!.contains(e.target as Node)) {
+        setOpenSelectId(null)
+      }
+    }
+    if (openSelectId) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [openSelectId])
 
   // Design: dark text on light backgrounds for readability
 
@@ -225,7 +252,7 @@ export default function JoinUs() {
     return ''
   }
 
-  const inputBorder = 'var(--color-pink-medium)'
+  const inputBorder = 'var(--color-brown-dark)'
 
   const handleFieldChange = (id: keyof FormData, value: string) => {
     setFormData({ ...formData, [id]: value })
@@ -234,7 +261,8 @@ export default function JoinUs() {
 
   const handleFieldBlur = (id: keyof FormData) => {
     const value = formData[id]
-    const error = validateField(id, value)
+    const str = typeof value === 'string' ? value : ''
+    const error = validateField(id, str)
     if (error) setFieldErrors({ ...fieldErrors, [id]: error })
     else {
       const next = { ...fieldErrors }; delete next[id]; setFieldErrors(next)
@@ -245,9 +273,27 @@ export default function JoinUs() {
     let valid = true
     const next: Record<string, string> = {}
     questions.forEach((q) => {
-      const err = validateField(q.id, formData[q.id])
+      const val = formData[q.id]
+      const err = validateField(q.id, typeof val === 'string' ? val : '')
       if (err && q.required) { valid = false; next[q.id] = err }
     })
+    // Require either resume upload or experience outline (choose one)
+    const noChoice = !formData.experienceOutline && !formData.experienceResume
+    const choseOutlineButEmpty = formData.experienceOutline && !formData.experience.trim()
+    const choseResumeButNoFile = formData.experienceResume && !formData.resumeFileName
+    if (noChoice) {
+      valid = false
+      next.experienceOrResume = 'Please choose to upload a resume or outline your relevant experience'
+    } else {
+      if (choseOutlineButEmpty) {
+        valid = false
+        next.experience = 'Please outline your relevant experience'
+      }
+      if (choseResumeButNoFile) {
+        valid = false
+        next.resumeFileName = 'Please upload a resume'
+      }
+    }
     setFieldErrors((prev) => ({ ...prev, ...next }))
     return valid
   }
@@ -296,7 +342,10 @@ export default function JoinUs() {
           whyJoin: '',
           howHeard: '',
           experience: '',
-          resumeFileName: ''
+          resumeFileName: '',
+          experienceOutline: false,
+          experienceResume: false,
+          linkedinUrl: ''
         })
         resumeFileRef.current = null
         setHasStarted(false)
@@ -325,9 +374,8 @@ export default function JoinUs() {
       
       // Then set background - the transition will handle the animation
       requestAnimationFrame(() => {
-        // Plain beige/cream background
-        document.body.style.background = 'var(--color-cream)'
-        document.documentElement.style.background = 'var(--color-cream)'
+        document.body.style.background = 'var(--color-brown-dark)'
+        document.documentElement.style.background = 'var(--color-brown-dark)'
       })
     })
     
@@ -350,10 +398,10 @@ export default function JoinUs() {
 
   if (isSubmitting && submitStatus === 'idle') {
     return (
-      <main className="min-h-screen pt-[120px] pb-[120px] flex items-center justify-center" style={{ background: 'var(--color-cream)' }}>
+      <main className="min-h-screen pt-[120px] pb-[120px] flex items-center justify-center" style={{ background: 'transparent' }}>
         <div className="text-center">
-          <div className="mb-6 inline-block h-12 w-12 rounded-full border-4 border-[var(--color-pink-light)] border-t-[var(--color-brown-dark)] animate-spin" />
-          <p className="text-xl font-medium text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-leiko)' }}>
+          <div className="mb-6 inline-block h-12 w-12 rounded-full border-4 border-[var(--color-cream)]/30 border-t-[var(--color-cream)] animate-spin" />
+          <p className="text-xl font-medium text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
             {content.loading.message}
           </p>
         </div>
@@ -363,7 +411,7 @@ export default function JoinUs() {
 
   if (submitStatus === 'success') {
     return (
-      <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden" style={{ background: 'var(--color-cream)' }}>
+      <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden" style={{ background: 'transparent' }}>
         {showConfetti && <ConfettiComponent boxRef={successBoxRef as React.RefObject<HTMLDivElement>} />}
         <div className="max-w-lg mx-auto px-6 py-12 text-center">
           <div ref={successBoxRef} className="rounded-2xl bg-[var(--color-olive-light)] p-10 shadow-lg border border-[var(--color-olive)] animate-success-fade-in">
@@ -393,67 +441,59 @@ export default function JoinUs() {
     )
   }
 
-  return (
-      <main className="min-h-screen pb-20" style={{ background: 'var(--color-cream)' }}>
+    return (
+      <main className="min-h-screen pb-20" style={{ background: 'transparent' }}>
         {showConfetti && <ConfettiComponent />}
         {/* Headline + tagline */}
         <div className="w-full pt-[72px] sm:pt-[80px] px-4 sm:px-8 pb-4 md:pb-6 max-w-7xl mx-auto">
           <div className={`text-center transition-all duration-500 ${isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
               {content.page.headline}
             </h1>
-            <p className="text-base md:text-lg text-[var(--color-brown-dark)] mt-2 opacity-90" style={{ fontFamily: 'var(--font-leiko)', fontStyle: 'italic' }}>
+            <p className="text-base md:text-lg text-[var(--color-cream)] mt-2 opacity-90" style={{ fontFamily: 'var(--font-leiko)', fontStyle: 'italic' }}>
               {content.page.tagline}
             </p>
           </div>
-        </div>
-
-        {/* General member + Exec member — info only */}
-        <div className={`max-w-7xl mx-auto px-4 sm:px-8 pb-6 transition-all duration-500 ${isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <div className="rounded-2xl bg-[var(--color-olive)] p-5 md:p-6 border border-[var(--color-olive-dark)] min-h-[140px] flex flex-col">
-              <h3 className="text-lg md:text-xl font-bold text-[var(--color-cream)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
-                {content.cards.generalMember.title}
-              </h3>
-              <p className="text-sm md:text-base text-[var(--color-cream)] leading-relaxed opacity-95 flex-1" style={{ fontFamily: 'var(--font-kollektif)' }}>
-                {content.cards.generalMember.description}
-              </p>
-            </div>
-            <div className="rounded-2xl bg-[var(--color-olive)] p-5 md:p-6 border border-[var(--color-olive-dark)] min-h-[140px] flex flex-col">
-              <h3 className="text-lg md:text-xl font-bold text-[var(--color-cream)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
-                {content.cards.execMember.title}
-              </h3>
-              <p className="text-sm md:text-base text-[var(--color-cream)] leading-relaxed opacity-95 flex-1" style={{ fontFamily: 'var(--font-kollektif)' }}>
-                {content.cards.execMember.descriptionBeforeLink}
-                <a href="https://www.instagram.com/youth4elders/" target="_blank" rel="noopener noreferrer" className="font-semibold underline hover:no-underline text-[var(--color-olive-light)]">
-                  {content.cards.execMember.instagramLabel}
-                </a>
-                {content.cards.execMember.descriptionAfterLink}
-              </p>
-            </div>
           </div>
-        </div>
-
-        {/* I'm interested — own box; extends down with form */}
+          
+        {/* One box: General member + Exec member + Ready to join CTA; extends down with form */}
         <div className={`max-w-7xl mx-auto px-4 sm:px-8 mt-8 md:mt-10 transition-all duration-500 ${isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <div className="rounded-2xl border-2 border-[var(--color-brown-dark)] overflow-hidden bg-[var(--color-cream)] shadow-sm max-w-5xl mx-auto w-full">
+          <div className="rounded-2xl border-2 border-[var(--color-brown-dark)]/20 overflow-hidden bg-[var(--color-cream)] shadow-lg max-w-5xl mx-auto w-full">
+            <div className="p-6 md:p-8 space-y-6 md:space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4">
+                  <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.cards.generalMember.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
+                    {content.cards.generalMember.description}
+            </p>
+          </div>
+                <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4">
+                  <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.cards.execMember.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
+                    {content.cards.execMember.descriptionBeforeLink}
+<a href="https://www.instagram.com/youth4elders/" target="_blank" rel="noopener noreferrer" className="font-semibold underline hover:no-underline text-[var(--color-brown-dark)]">
+                      {content.cards.execMember.instagramLabel}
+                  </a>
+                    {content.cards.execMember.descriptionAfterLink}
+                  </p>
+                </div>
+              </div>
             <button
-              type="button"
-              onClick={() => setHasStarted(true)}
-              className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 hover:bg-[var(--color-pink-light)]/40 transition-colors"
-            >
-              <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-leiko)' }}>
-                {content.applyBox.title}
-              </h3>
-              {!hasStarted && (
-                <span className="text-[var(--color-brown-dark)]/80 text-sm font-semibold inline-flex items-center gap-1" style={{ fontFamily: 'var(--font-leiko)' }}>
-                  {content.applyBox.cta}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                </span>
-              )}
+                type="button"
+                onClick={() => setHasStarted(true)}
+                className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
+              >
+                <h3 className="text-lg md:text-xl font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
+                  {content.applyBox.title}
+                </h3>
             </button>
+            </div>
             <div className={`overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'max-h-[3600px] opacity-100' : 'max-h-0 opacity-0'}`}>
-              <div className="bg-[var(--color-pink-light)] border-t-2 border-[var(--color-pink-dark)] p-8 md:p-10">
+              <div className="bg-[var(--color-cream)] border-t-2 border-[var(--color-brown-dark)]/20 p-8 md:p-10">
         <div className="max-w-5xl w-full">
           <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-leiko)' }}>
             {content.form.title}
@@ -462,31 +502,173 @@ export default function JoinUs() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {questions.map((q) => (
               <div key={q.id} className={q.type === 'textarea' || q.type === 'file' ? 'md:col-span-2' : ''}>
+                {q.id === 'experience' ? (
+                  <>
+                    <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                      {content.form.experienceChoiceLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                    </label>
+                    {fieldErrors.experienceOrResume && (
+                      <p className="text-base text-[var(--color-error)] mb-2" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.experienceOrResume}</p>
+                    )}
+                    <div className="flex flex-wrap gap-3 mb-4">
+            <button
+                        type="button"
+              onClick={() => {
+                          resumeFileRef.current = null
+                          setFormData((prev) => ({ ...prev, experienceOutline: true, experienceResume: false, resumeFileName: '' }))
+                          setFieldErrors((prev) => { const next = { ...prev }; delete next.experienceOrResume; return next })
+                        }}
+                        className="px-5 py-4 rounded-xl border-2 text-base font-medium transition-colors"
+              style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          borderColor: formData.experienceOutline ? 'var(--color-brown-dark)' : inputBorder,
+                          background: formData.experienceOutline ? 'rgba(98, 32, 47, 0.08)' : 'var(--color-pink-light)',
+                          color: 'var(--color-brown-dark)'
+                        }}
+                      >
+                        {content.form.optionOutline}
+            </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          resumeFileRef.current = null
+                          setFormData((prev) => ({ ...prev, experienceResume: true, experienceOutline: false, experience: '' }))
+                          setFieldErrors((prev) => { const next = { ...prev }; delete next.experienceOrResume; return next })
+                        }}
+                        className="px-5 py-4 rounded-xl border-2 text-base font-medium transition-colors"
+              style={{ 
+                          fontFamily: 'var(--font-kollektif)',
+                          borderColor: formData.experienceResume ? 'var(--color-brown-dark)' : inputBorder,
+                          background: formData.experienceResume ? 'rgba(98, 32, 47, 0.08)' : 'var(--color-pink-light)',
+                          color: 'var(--color-brown-dark)'
+                        }}
+                      >
+                        {content.form.optionResume}
+                      </button>
+                    </div>
+                    {(formData.experienceOutline || formData.experienceResume) && (
+                      <div className="space-y-6 mb-6">
+                        {formData.experienceOutline && (
+                          <div>
+                            <textarea
+                              value={formData.experience}
+                              onChange={(e) => handleFieldChange('experience', e.target.value)}
+                              onBlur={() => handleFieldBlur('experience')}
+                              placeholder={content.form.experiencePlaceholder}
+                              rows={4}
+                              className="w-full px-5 py-4 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20 transition-all resize-none text-[var(--color-brown-dark)] text-base md:text-lg"
+                              style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors.experience ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
+                            />
+                            {fieldErrors.experience && (
+                              <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.experience}</p>
+                            )}
+                </div>
+                        )}
+                        {formData.experienceResume && (
+                          <div className="space-y-2">
+                            <p className="text-sm text-[var(--color-brown-dark)] opacity-80" style={{ fontFamily: 'var(--font-kollektif)' }}>{content.form.resumeFileNote}</p>
+                            <input
+                              type="file"
+                              accept=".pdf,.doc,.docx"
+                              onChange={handleFileChange}
+                              className="w-full text-base md:text-lg text-[var(--color-brown-dark)] file:mr-4 file:py-3 file:px-5 file:rounded-lg file:border-0 file:font-semibold file:bg-[var(--color-brown-dark)] file:text-[var(--color-cream)] file:text-base"
+                              style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors.resumeFileName ? 'var(--color-error)' : 'transparent' }}
+                            />
+                            {fieldErrors.resumeFileName && (
+                              <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.resumeFileName}</p>
+                            )}
+                            {formData.resumeFileName && !fieldErrors.resumeFileName && (
+                              <p className="text-base text-[var(--color-brown-dark)] opacity-80" style={{ fontFamily: 'var(--font-kollektif)' }}>Selected: {formData.resumeFileName}</p>
+                            )}
+          </div>
+                        )}
+        </div>
+                    )}
+                    <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2 mt-4" style={{ fontFamily: 'var(--font-leiko)' }}>
+                      {content.form.linkedinLabel}
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.linkedinUrl}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, linkedinUrl: e.target.value }))}
+                      placeholder={content.form.linkedinPlaceholder}
+                      className="w-full px-5 py-4 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20 transition-all text-[var(--color-brown-dark)] text-base md:text-lg"
+                      style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors.linkedinUrl ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
+                    />
+                  </>
+                ) : (
+                <>
                 <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
-                  {q.label}{q.required && <span className="text-red-500 ml-0.5">*</span>}
+                  {q.label}{q.required && <span className="text-[var(--color-error)] ml-0.5">*</span>}
                 </label>
                 {q.type === 'textarea' ? (
-                  <textarea
-                    value={formData[q.id]}
+              <textarea
+                    value={(typeof formData[q.id] === 'string' ? formData[q.id] : '') as string}
                     onChange={(e) => handleFieldChange(q.id, e.target.value)}
                     onBlur={() => handleFieldBlur(q.id)}
                     placeholder={q.placeholder}
                     rows={5}
                     className="w-full px-5 py-4 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20 transition-all resize-none text-[var(--color-brown-dark)] text-base md:text-lg"
-                    style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors[q.id] ? '#dc2626' : inputBorder, background: 'var(--color-pink-medium)' }}
+                    style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors[q.id] ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
                   />
                 ) : q.type === 'select' ? (
-                  <select
-                    value={formData[q.id]}
-                    onChange={(e) => handleFieldChange(q.id, e.target.value)}
-                    onBlur={() => handleFieldBlur(q.id)}
-                    className="w-full px-5 py-4 rounded-xl border-2 text-[var(--color-brown-dark)] bg-[var(--color-pink-medium)] text-base md:text-lg"
-                    style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors[q.id] ? '#dc2626' : inputBorder }}
-                  >
-                    {q.options?.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
+                  <div className={`relative w-full ${openSelectId === q.id ? 'z-[100]' : ''}`} ref={(el) => { selectDropdownRefs.current[q.id] = el }}>
+                <button
+                  type="button"
+                      onClick={() => setOpenSelectId((prev) => (prev === q.id ? null : q.id))}
+                      onBlur={() => handleFieldBlur(q.id)}
+                      className="w-full flex items-center justify-between pl-5 pr-12 py-4 rounded-xl border-2 text-left transition-colors cursor-pointer"
+                style={{ 
+                  fontFamily: 'var(--font-kollektif)',
+                        borderColor: fieldErrors[q.id] ? 'var(--color-error)' : inputBorder,
+                        background: 'var(--color-pink-light)',
+                        color: formData[q.id] ? 'var(--color-brown-dark)' : 'rgba(98, 32, 47, 0.6)',
+                        fontSize: '1rem'
+                      }}
+                    >
+                      <span className="text-base md:text-lg">{q.options?.find((o) => o.value === formData[q.id])?.label ?? 'Select...'}</span>
+                      <svg
+                        className={`w-5 h-5 flex-shrink-0 absolute right-5 top-1/2 -translate-y-1/2 transition-transform ${openSelectId === q.id ? 'rotate-180' : ''}`}
+                        style={{ color: 'var(--color-brown-dark)' }}
+                    fill="none"
+                      stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                    {openSelectId === q.id && q.options && (
+                  <div
+                        className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-48 border-2"
+                    style={{
+                          background: 'var(--color-cream)',
+                          borderColor: 'var(--color-brown-dark)',
+                          boxShadow: '0 8px 24px rgba(98, 32, 47, 0.2)'
+                        }}
+                      >
+                        {q.options.map((opt) => (
+                      <button
+                            key={opt.value || 'empty'}
+                        type="button"
+                            className="block w-full text-left px-5 py-3.5 text-base md:text-lg transition-colors border-0"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                              color: 'var(--color-brown-dark)',
+                              background: 'transparent'
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(98, 32, 47, 0.08)' }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                            onClick={() => {
+                              handleFieldChange(q.id, opt.value)
+                              setOpenSelectId(null)
+                            }}
+                          >
+                            {opt.label}
+                      </button>
+                ))}
+                  </div>
+                    )}
+                  </div>
                 ) : q.type === 'file' ? (
                   <div className="space-y-2">
                     <input
@@ -498,31 +680,41 @@ export default function JoinUs() {
                     />
                     {formData.resumeFileName && (
                       <p className="text-base text-[var(--color-brown-dark)] opacity-80" style={{ fontFamily: 'var(--font-kollektif)' }}>Selected: {formData.resumeFileName}</p>
-                    )}
-                  </div>
-                ) : (
-                  <input
+                )}
+              </div>
+            ) : (
+              <input
                     type={q.type}
-                    value={formData[q.id]}
+                    value={(typeof formData[q.id] === 'string' ? formData[q.id] : '') as string}
                     onChange={(e) => handleFieldChange(q.id, e.target.value)}
                     onBlur={() => handleFieldBlur(q.id)}
                     placeholder={q.placeholder}
                     className="w-full px-5 py-4 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20 transition-all text-[var(--color-brown-dark)] text-base md:text-lg"
-                    style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors[q.id] ? '#dc2626' : inputBorder, background: 'var(--color-pink-medium)' }}
+                    style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors[q.id] ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
                   />
                 )}
                 {fieldErrors[q.id] && (
-                  <p className="text-base text-red-600 mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors[q.id]}</p>
+                  <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors[q.id]}</p>
                 )}
-              </div>
-            ))}
+                </>
+                )}
           </div>
+            ))}
+            </div>
 
+          {submitStatus === 'error' && (
+            <div className="w-full mt-4 mb-4 p-4 rounded-xl border-2 flex items-start justify-between gap-3" style={{ background: 'var(--color-error)', borderColor: 'var(--color-error)', color: 'var(--color-cream)' }}>
+              <p className="text-sm flex-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
+                {content.form.errorMessage}
+              </p>
+              <button type="button" onClick={() => setSubmitStatus('idle')} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
+            </div>
+          )}
           <div className="flex justify-between items-center gap-4 flex-wrap mt-10">
               <button
                 type="button"
                 onClick={() => {
-                  setFormData({ name: '', email: '', program: '', year: '', whyJoin: '', howHeard: '', experience: '', resumeFileName: '' }); resumeFileRef.current = null; setHasStarted(false)
+                  setFormData({ name: '', email: '', program: '', year: '', whyJoin: '', howHeard: '', experience: '', resumeFileName: '', experienceOutline: false, experienceResume: false, linkedinUrl: '' }); resumeFileRef.current = null; setHasStarted(false)
                 }}
                 className="px-6 py-3 rounded-full font-semibold text-base md:text-lg text-[var(--color-brown-dark)] bg-transparent border-2 border-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)] hover:text-[var(--color-cream)] transition-colors"
                 style={{ fontFamily: 'var(--font-leiko)' }}
@@ -539,19 +731,11 @@ export default function JoinUs() {
               {isSubmitting ? content.form.submitting : content.form.submit}
             </button>
           </div>
-
-          {submitStatus === 'error' && (
-            <div className="mt-8 p-5 rounded-xl bg-red-50 border border-red-200">
-              <p className="text-base text-red-700" style={{ fontFamily: 'var(--font-kollektif)' }}>
-                {content.form.errorMessage}
-              </p>
-            </div>
-          )}
         </div>
               </div>
             </div>
-          </div>
         </div>
-      </main>
-    )
+      </div>
+    </main>
+  )
 }
