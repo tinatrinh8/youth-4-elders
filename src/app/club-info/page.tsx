@@ -1174,7 +1174,7 @@ export default function ClubInfo() {
                 </p>
                 <div className="mt-6">
                   <Link
-                    href="/events"
+                    href="/events/upcoming"
                     className="group inline-flex items-center gap-2 font-semibold text-base md:text-lg transition-all duration-300 relative"
                     style={{
                       color: 'var(--color-cream)',

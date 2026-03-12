@@ -225,7 +225,7 @@ export default function Contact() {
           {withBold(before)}
           <Link href="/club-info" className={linkClass} style={linkStyle}>Club Info</Link>
           {withBold(mid)}
-          <Link href="/events#past" className={linkClass} style={linkStyle}>Past Events</Link>
+          <Link href="/events/past" className={linkClass} style={linkStyle}>Past Events</Link>
           {withBold(after)}
         </>
       )
@@ -235,7 +235,7 @@ export default function Contact() {
       return (
         <>
           {withBold(parts[0])}
-          <Link href="/events" className={linkClass} style={linkStyle}>{EVENTS_LINK_TEXT}</Link>
+          <Link href="/events/upcoming" className={linkClass} style={linkStyle}>{EVENTS_LINK_TEXT}</Link>
           {parts[1] ? withBold(parts[1]) : null}
         </>
       )

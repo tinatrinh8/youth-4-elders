@@ -791,25 +791,16 @@ export default function Home() {
       <section className="relative z-10 py-32 md:py-48 lg:py-64 overflow-hidden" style={{ background: 'var(--color-pink-medium)' }}>
         {/* Large Background Text - Scrolling */}
         <div className="absolute inset-0 flex items-start pointer-events-none overflow-hidden" style={{ top: '10%' }}>
-          {/* Scrolling Text Container - Left to Right */}
           <div className="flex whitespace-nowrap animate-scroll-text" style={{ width: '200%' }}>
             <h2 
               className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
-              style={{ 
-                fontFamily: 'var(--font-vintage-stylist)', 
-                color: 'var(--color-brown-dark)',
-                display: 'inline-block'
-              }}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', display: 'inline-block' }}
             >
               Our Events
             </h2>
             <h2 
               className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
-              style={{ 
-                fontFamily: 'var(--font-vintage-stylist)', 
-                color: 'var(--color-brown-dark)',
-                display: 'inline-block'
-              }}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', display: 'inline-block' }}
             >
               Our Events
             </h2>
@@ -817,25 +808,18 @@ export default function Home() {
         </div>
 
         <div className="max-w-7xl mx-auto px-8 relative z-10 -mt-2 md:mt-2 lg:mt-4">
-          {/* Event Cards Grid */}
           <div className="flex flex-col md:flex-row gap-2 md:gap-3 mb-16 md:mb-20" style={{ minHeight: '500px', overflowX: 'hidden' }}>
-            {/* Event Card 1 - Left Card */}
+            {/* Event Card 1 */}
             <div 
               className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-left ${visibleElements.has('event-card-1') ? 'visible' : ''}`}
               data-animate-id="event-card-1"
-              style={{ 
-                background: 'var(--color-cream)',
-                minHeight: '500px',
-                width: '100%',
-                flexBasis: '33.333%'
-              }}
+              style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
               onMouseEnter={(e) => {
                 const container = e.currentTarget.parentElement
                 if (container) {
                   e.currentTarget.style.flexBasis = '50%'
                   e.currentTarget.style.zIndex = '20'
                   e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  // Make other two cards smaller and equal size
                   const siblings = Array.from(container.children) as HTMLElement[]
                   siblings.forEach((sibling) => {
                     if (sibling !== e.currentTarget) {
@@ -843,7 +827,6 @@ export default function Home() {
                       sibling.style.transition = 'flex-basis 500ms ease-out'
                     }
                   })
-                  // Show date and description
                   const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '120px'
@@ -857,14 +840,10 @@ export default function Home() {
                   e.currentTarget.style.flexBasis = '33.333%'
                   e.currentTarget.style.zIndex = '1'
                   e.currentTarget.style.boxShadow = 'none'
-                  // Reset other cards to equal size
                   const siblings = Array.from(container.children) as HTMLElement[]
                   siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '33.333%'
-                    }
+                    if (sibling !== e.currentTarget) sibling.style.flexBasis = '33.333%'
                   })
-                  // Hide date and description
                   const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '0'
@@ -874,45 +853,30 @@ export default function Home() {
               }}
             >
               <div className="relative h-full w-full min-h-[500px] overflow-hidden">
-                <Image
-                  src="/assets/workshop series.jpg"
-                  alt="Workshop Series"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                <Image src="/assets/abbott.JPG" alt="Workshop Series" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
                   {content.events.cards[0].title}
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    {content.events.cards[0].date}
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    {content.events.cards[0].description}
-                  </p>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>{content.events.cards[0].date}</p>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>{content.events.cards[0].description}</p>
                 </div>
               </div>
             </div>
 
-            {/* Event Card 2 - Middle Card */}
+            {/* Event Card 2 */}
             <div 
               className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-up ${visibleElements.has('event-card-2') ? 'visible' : ''}`}
               data-animate-id="event-card-2"
-              style={{ 
-                background: 'var(--color-cream)',
-                minHeight: '500px',
-                width: '100%',
-                flexBasis: '33.333%'
-              }}
+              style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
               onMouseEnter={(e) => {
                 const container = e.currentTarget.parentElement
                 if (container) {
                   e.currentTarget.style.flexBasis = '50%'
                   e.currentTarget.style.zIndex = '20'
                   e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  // Make left and right cards smaller and equal size
                   const siblings = Array.from(container.children) as HTMLElement[]
                   siblings.forEach((sibling) => {
                     if (sibling !== e.currentTarget) {
@@ -920,7 +884,6 @@ export default function Home() {
                       sibling.style.transition = 'flex-basis 500ms ease-out'
                     }
                   })
-                  // Show date and description
                   const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '120px'
@@ -934,14 +897,10 @@ export default function Home() {
                   e.currentTarget.style.flexBasis = '33.333%'
                   e.currentTarget.style.zIndex = '1'
                   e.currentTarget.style.boxShadow = 'none'
-                  // Reset other cards to equal size
                   const siblings = Array.from(container.children) as HTMLElement[]
                   siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '33.333%'
-                    }
+                    if (sibling !== e.currentTarget) sibling.style.flexBasis = '33.333%'
                   })
-                  // Hide date and description
                   const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '0'
@@ -951,45 +910,30 @@ export default function Home() {
               }}
             >
               <div className="relative h-full w-full min-h-[500px] overflow-hidden">
-                <Image
-                  src="/assets/club fair.jpg"
-                  alt="Club Fair at uOttawa UCU"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                <Image src="/assets/kreme.JPG" alt="Krispy Kreme Fundraiser" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
                   {content.events.cards[1].title}
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    {content.events.cards[1].date}
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    {content.events.cards[1].description}
-                  </p>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>{content.events.cards[1].date}</p>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>{content.events.cards[1].description}</p>
                 </div>
               </div>
             </div>
 
-            {/* Event Card 3 - Right Card */}
+            {/* Event Card 3 */}
             <div 
               className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-right ${visibleElements.has('event-card-3') ? 'visible' : ''}`}
               data-animate-id="event-card-3"
-              style={{ 
-                background: 'var(--color-cream)',
-                minHeight: '500px',
-                width: '100%',
-                flexBasis: '33.333%'
-              }}
+              style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
               onMouseEnter={(e) => {
                 const container = e.currentTarget.parentElement
                 if (container) {
                   e.currentTarget.style.flexBasis = '50%'
                   e.currentTarget.style.zIndex = '20'
                   e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  // Make other two cards smaller and equal size
                   const siblings = Array.from(container.children) as HTMLElement[]
                   siblings.forEach((sibling) => {
                     if (sibling !== e.currentTarget) {
@@ -997,7 +941,6 @@ export default function Home() {
                       sibling.style.transition = 'flex-basis 500ms ease-out'
                     }
                   })
-                  // Show date and description
                   const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '120px'
@@ -1011,14 +954,10 @@ export default function Home() {
                   e.currentTarget.style.flexBasis = '33.333%'
                   e.currentTarget.style.zIndex = '1'
                   e.currentTarget.style.boxShadow = 'none'
-                  // Reset other cards to equal size
                   const siblings = Array.from(container.children) as HTMLElement[]
                   siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '33.333%'
-                    }
+                    if (sibling !== e.currentTarget) sibling.style.flexBasis = '33.333%'
                   })
-                  // Hide date and description
                   const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
                   if (textContainer) {
                     textContainer.style.maxHeight = '0'
@@ -1028,75 +967,40 @@ export default function Home() {
               }}
             >
               <div className="relative h-full w-full min-h-[500px] overflow-hidden">
-                <Image
-                  src="/assets/sip.jpg"
-                  alt="Sips, Samples, Social"
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                <Image src="/assets/banner.JPG" alt="Build a Bouquet" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
                   {content.events.cards[2].title}
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
-                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    {content.events.cards[2].date}
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    {content.events.cards[2].description}
-                  </p>
+                  <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>{content.events.cards[2].date}</p>
+                  <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>{content.events.cards[2].description}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Section - Categories and View More */}
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
-            <div 
-              className={`animate-on-scroll slide-left ${visibleElements.has('event-types') ? 'visible' : ''}`}
-              data-animate-id="event-types"
-            >
-              <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                {content.events.eventTypesLabel}
-              </p>
-              <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                {content.events.eventTypesText}
-              </p>
+            <div className={`animate-on-scroll slide-left ${visibleElements.has('event-types') ? 'visible' : ''}`} data-animate-id="event-types">
+              <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>{content.events.eventTypesLabel}</p>
+              <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>{content.events.eventTypesText}</p>
             </div>
             <a
-              href="/events"
+              href="/events/upcoming"
               className={`group font-semibold text-lg transition-all duration-300 flex items-center gap-2 relative animate-on-scroll slide-right ${visibleElements.has('event-view-more') ? 'visible' : ''}`}
               data-animate-id="event-view-more"
-              style={{
-                color: 'var(--color-brown-dark)',
-                fontFamily: 'var(--font-kollektif)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = 'var(--color-brown-dark)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = 'var(--color-brown-dark)'
-              }}
+              style={{ color: 'var(--color-brown-dark)', fontFamily: 'var(--font-kollektif)' }}
             >
               <span>{content.events.viewMore}</span>
-              <svg 
-                className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-              {/* Animated underline on hover */}
-              <span 
-                className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full"
-                style={{ background: 'var(--color-brown-dark)' }}
-              />
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full" style={{ background: 'var(--color-brown-dark)' }} />
             </a>
           </div>
-          </div>
-        </section>
+        </div>
+      </section>
 
       {/* How to Get Involved Section */}
       <section ref={parallaxSectionRef} className="relative z-10 pt-20 md:pt-28 pb-14 md:pb-20 overflow-hidden" style={{ background: 'var(--color-cream)' }}>

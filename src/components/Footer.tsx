@@ -113,7 +113,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/events"
+                    href="/events/upcoming"
                     className="text-sm md:text-base italic transition-all duration-300"
                     style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor, opacity: 0.9 }}
                     onMouseEnter={(e) => {

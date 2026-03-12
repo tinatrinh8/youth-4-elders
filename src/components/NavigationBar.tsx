@@ -176,8 +176,8 @@ export default function NavigationBar() {
     { href: '/team', label: 'Meet the Team' },
   ]
   const eventsSubmenu = [
-    { href: '/events#upcoming', label: 'Upcoming Events' },
-    { href: '/events#past', label: 'Past Events' }
+    { href: '/events/upcoming', label: 'Upcoming Events' },
+    { href: '/events/past', label: 'Past Events' }
   ]
   
   return (
@@ -475,7 +475,7 @@ export default function NavigationBar() {
               >
                 <div className="py-2">
                   <Link
-                    href="/events#upcoming"
+                    href="/events/upcoming"
                     className="block px-4 py-3 text-sm"
                     style={{ 
                       color: navColors.dropdownText || 'var(--color-brown-dark)',
@@ -495,7 +495,7 @@ export default function NavigationBar() {
                     Upcoming Events
                   </Link>
                   <Link
-                    href="/events#past"
+                    href="/events/past"
                     className="block px-4 py-3 text-sm"
                     style={{ 
                       color: navColors.dropdownText || 'var(--color-brown-dark)',
