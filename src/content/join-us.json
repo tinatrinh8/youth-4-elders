@@ -107,8 +107,8 @@
     "title": "Thank you",
     "messageBeforeLink": "You're in! We'll be in touch. Follow our ",
     "instagramLabel": "Instagram",
-    "messageAfterLink": " for updates.",
-    "submitAnother": "Submit another"
+    "messageAfterLink": " for more updates.",
+    "submitAnother": "Submit Another"
   },
   "loading": {
     "message": "Submitting..."

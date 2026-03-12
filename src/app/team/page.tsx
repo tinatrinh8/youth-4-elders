@@ -236,8 +236,20 @@ export default function Team() {
     return () => observer.disconnect()
   }, [])
 
+  // Whole-page background: set html/body to pink so the full viewport (including above nav) is pink
+  useEffect(() => {
+    document.body.style.transition = 'background 0.8s ease-in-out'
+    document.documentElement.style.transition = 'background 0.8s ease-in-out'
+    document.body.style.background = 'var(--color-pink-light)'
+    document.documentElement.style.background = 'var(--color-pink-light)'
+    return () => {
+      document.body.style.background = ''
+      document.documentElement.style.background = ''
+    }
+  }, [])
+
   return (
-    <main className="min-h-screen pt-[120px] pb-24 md:pb-32" style={{ background: 'var(--color-cream)' }}>
+    <main className="min-h-screen pt-[120px] pb-24 md:pb-32" style={{ background: 'transparent' }}>
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
         <header className="text-left pt-0 pb-14 md:pb-20">
           <h1
@@ -283,7 +295,7 @@ export default function Team() {
             className={`text-lg md:text-xl max-w-5xl mt-8 md:mt-10 leading-snug font-normal ${descVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
             style={{
               fontFamily: 'var(--font-leiko)',
-              color: 'var(--color-pink-dark)',
+              color: 'var(--color-olive-dark)',
               animationDelay: descVisible ? '0.15s' : '0s'
             }}
           >
@@ -341,7 +353,7 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
             className="w-full h-full flex items-center justify-center"
             style={{ background: 'var(--color-pink-light)' }}
           >
-            <span className="text-5xl opacity-40" style={{ color: 'var(--color-brown-medium)' }}>👤</span>
+            <span className="text-5xl opacity-40" style={{ color: 'var(--color-brown-dark)' }}>👤</span>
           </div>
         )}
       </div>
@@ -353,13 +365,13 @@ function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamM
       </p>
       <p
         className="text-base md:text-lg leading-snug mt-1 font-normal"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-dark)' }}
+        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-dark)' }}
       >
         {member.role}
       </p>
       <p
         className="text-sm md:text-base leading-snug mt-1 font-normal italic"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-medium)' }}
+        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
       >
         Year {member.yearOfStudy} • {member.program}
       </p>

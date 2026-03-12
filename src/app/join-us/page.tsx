@@ -20,92 +20,24 @@ const ConfettiComponent = ({ boxRef }: { boxRef?: React.RefObject<HTMLDivElement
 
     const confettiColors = ['#676930', '#EAD4C4', '#D3A5A5', '#AF7978'] // Green, cream, pink light, pink medium
 
-    // Get box position for shooting from sides
-    let boxLeft = window.innerWidth * 0.5 - 400 // Approximate center minus half width
-    let boxRight = window.innerWidth * 0.5 + 400
-    let boxTop = window.innerHeight * 0.4 // Approximate vertical center
-    let boxHeight = 400
+    // Wait one frame so the success box ref is attached and laid out
+    const rafId = requestAnimationFrame(() => {
+      let boxLeft = window.innerWidth * 0.5 - 400
+      let boxRight = window.innerWidth * 0.5 + 400
+      let boxTop = window.innerHeight * 0.4
+      let boxHeight = 400
 
-    if (boxRef?.current) {
-      const rect = boxRef.current.getBoundingClientRect()
-      boxLeft = rect.left
-      boxRight = rect.right
-      boxTop = rect.top + rect.height / 2
-      boxHeight = rect.height
-    }
-
-    const confetti: Array<{
-      x: number
-      y: number
-      vx: number
-      vy: number
-      color: string
-      size: number
-      rotation: number
-      rotationSpeed: number
-      side: 'left' | 'right'
-    }> = []
-
-    // Create confetti pieces shooting from left and right
-    for (let i = 0; i < 100; i++) {
-      const side = i % 2 === 0 ? 'left' : 'right'
-      const startX = side === 'left' ? boxLeft : boxRight
-      const startY = boxTop + (Math.random() - 0.5) * boxHeight
-      
-      // Velocity: shoot outward from the box
-      const angle = side === 'left' 
-        ? Math.random() * Math.PI / 3 - Math.PI / 6 // -30 to 0 degrees
-        : Math.random() * Math.PI / 3 + (2 * Math.PI / 3) // 120 to 150 degrees
-      
-      const speed = Math.random() * 8 + 4
-      
-      confetti.push({
-        x: startX,
-        y: startY,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 2, // Slight upward initial velocity
-        color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
-        size: Math.random() * 8 + 4,
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 15,
-        side
-      })
-    }
-
-    const startTime = Date.now()
-    const duration = 2000 // 2 seconds
-
-    let animationId: number
-    const animate = () => {
-      const elapsed = Date.now() - startTime
-      if (elapsed > duration) {
-        return // Stop animation after 2 seconds
+      if (boxRef?.current) {
+        const rect = boxRef.current.getBoundingClientRect()
+        boxLeft = rect.left
+        boxRight = rect.right
+        boxTop = rect.top + rect.height / 2
+        boxHeight = rect.height
       }
+      runConfetti(ctx, canvas, confettiColors, boxLeft, boxRight, boxTop, boxHeight)
+    })
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      confetti.forEach((piece) => {
-        piece.x += piece.vx
-        piece.y += piece.vy
-        piece.rotation += piece.rotationSpeed
-        piece.vy += 0.15 // gravity
-
-        ctx.save()
-        ctx.translate(piece.x, piece.y)
-        ctx.rotate((piece.rotation * Math.PI) / 180)
-        ctx.fillStyle = piece.color
-        ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size)
-        ctx.restore()
-      })
-
-      animationId = requestAnimationFrame(animate)
-    }
-
-    animate()
-
-    return () => {
-      cancelAnimationFrame(animationId)
-    }
+    return () => cancelAnimationFrame(rafId)
   }, [boxRef])
 
   return (
@@ -115,6 +47,79 @@ const ConfettiComponent = ({ boxRef }: { boxRef?: React.RefObject<HTMLDivElement
       style={{ position: 'fixed' }}
     />
   )
+}
+
+function runConfetti(
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  confettiColors: string[],
+  boxLeft: number,
+  boxRight: number,
+  boxTop: number,
+  boxHeight: number
+) {
+
+    const confetti: Array<{
+    x: number
+    y: number
+    vx: number
+    vy: number
+    color: string
+    size: number
+    rotation: number
+    rotationSpeed: number
+    side: 'left' | 'right'
+  }> = []
+
+  for (let i = 0; i < 100; i++) {
+    const side = i % 2 === 0 ? 'left' : 'right'
+    const startX = side === 'left' ? boxLeft : boxRight
+    const startY = boxTop + (Math.random() - 0.5) * boxHeight
+
+    const angle = side === 'left'
+      ? Math.random() * Math.PI / 3 - Math.PI / 6
+      : Math.random() * Math.PI / 3 + (2 * Math.PI / 3)
+    const speed = Math.random() * 8 + 4
+
+    confetti.push({
+      x: startX,
+      y: startY,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2,
+      color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+      size: Math.random() * 8 + 4,
+      rotation: Math.random() * 360,
+      rotationSpeed: (Math.random() - 0.5) * 15,
+      side
+    })
+  }
+
+  const startTime = Date.now()
+  const duration = 2000
+  let animationId: number
+
+  const animate = () => {
+    const elapsed = Date.now() - startTime
+    if (elapsed > duration) return
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    confetti.forEach((piece) => {
+      piece.x += piece.vx
+      piece.y += piece.vy
+      piece.rotation += piece.rotationSpeed
+      piece.vy += 0.15
+      ctx.save()
+      ctx.translate(piece.x, piece.y)
+      ctx.rotate((piece.rotation * Math.PI) / 180)
+      ctx.fillStyle = piece.color
+      ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size)
+      ctx.restore()
+    })
+    animationId = requestAnimationFrame(animate)
+  }
+  animationId = requestAnimationFrame(animate)
+
+  const cleanup = () => cancelAnimationFrame(animationId)
+  setTimeout(cleanup, duration + 100)
 }
 
 interface FormData {
@@ -205,7 +210,7 @@ export default function JoinUs() {
   const [hasStarted, setHasStarted] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [showConfetti, setShowConfetti] = useState(false)
-  const [isInitialViewVisible, setIsInitialViewVisible] = useState(false)
+  const [, setIsInitialViewVisible] = useState(false)
   const [openSelectId, setOpenSelectId] = useState<keyof FormData | null>(null)
   const selectDropdownRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
@@ -386,15 +391,38 @@ export default function JoinUs() {
     }
   }, [])
 
-  // Page load animation
+  // Page load animation: headline (word-fade blur) → caption slide up → content pulls up
+  const [headlineVisible, setHeadlineVisible] = useState(false)
+  const [captionVisible, setCaptionVisible] = useState(false)
+  const [contentVisible, setContentVisible] = useState(false)
   useEffect(() => {
-    setTimeout(() => {
-      setIsInitialViewVisible(true)
-    }, 100)
+    const t1 = setTimeout(() => setHeadlineVisible(true), 100)
+    const t2 = setTimeout(() => setCaptionVisible(true), 1800)   // after title appears
+    const t3 = setTimeout(() => setContentVisible(true), 2500)  // after caption animation finishes (caption is 0.6s)
+    const t4 = setTimeout(() => setIsInitialViewVisible(true), 2800)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [])
 
 
   const successBoxRef = useRef<HTMLDivElement>(null)
+
+  // Scroll success box into view (centered) when showing success
+  useEffect(() => {
+    if (submitStatus === 'success') {
+      const id = requestAnimationFrame(() => {
+        successBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      })
+      return () => cancelAnimationFrame(id)
+    }
+  }, [submitStatus])
+
+  // Unmount confetti after animation so it doesn't stay stuck on screen
+  useEffect(() => {
+    if (submitStatus === 'success' && showConfetti) {
+      const t = setTimeout(() => setShowConfetti(false), 2100)
+      return () => clearTimeout(t)
+    }
+  }, [submitStatus, showConfetti])
 
   if (isSubmitting && submitStatus === 'idle') {
     return (
@@ -413,10 +441,13 @@ export default function JoinUs() {
     return (
       <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden" style={{ background: 'transparent' }}>
         {showConfetti && <ConfettiComponent boxRef={successBoxRef as React.RefObject<HTMLDivElement>} />}
-        <div className="max-w-lg mx-auto px-6 py-12 text-center">
-          <div ref={successBoxRef} className="rounded-2xl bg-[var(--color-olive-light)] p-10 shadow-lg border border-[var(--color-olive)] animate-success-fade-in">
-            <div className="mb-6 flex justify-center">
-              <Image src="/assets/join us/sign up confirmed.png" alt="Sign up confirmed" width={160} height={160} className="object-contain" />
+        <div className="mx-auto px-6 py-12 flex justify-center">
+          <div
+            ref={successBoxRef}
+            className="w-[min(32rem,92vw)] h-[min(32rem,92vw)] rounded-2xl bg-[var(--color-cream)] p-8 md:p-10 shadow-lg border-2 border-[var(--color-brown-dark)] animate-success-fade-in flex flex-col items-center justify-center text-center"
+          >
+            <div className="mb-5 flex justify-center">
+              <Image src="/assets/join us/sign up confirmed.png" alt="Sign up confirmed" width={180} height={180} className="object-contain" />
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
               {content.success.title}
@@ -430,7 +461,7 @@ export default function JoinUs() {
             </p>
             <button
               onClick={() => { setSubmitStatus('idle'); setHasStarted(false) }}
-              className="px-6 py-3 rounded-full font-semibold text-[var(--color-cream)] bg-[var(--color-brown-dark)] hover:opacity-90 transition-opacity"
+              className="px-6 py-3 rounded-full font-semibold text-base md:text-lg text-[var(--color-cream)] bg-[var(--color-brown-dark)] hover:opacity-90 transition-opacity"
               style={{ fontFamily: 'var(--font-leiko)' }}
             >
               {content.success.submitAnother}
@@ -446,18 +477,37 @@ export default function JoinUs() {
         {showConfetti && <ConfettiComponent />}
         {/* Headline + tagline */}
         <div className="w-full pt-[72px] sm:pt-[80px] px-4 sm:px-8 pb-4 md:pb-6 max-w-7xl mx-auto">
-          <div className={`text-center transition-all duration-500 ${isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <div className="text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
-              {content.page.headline}
+              {(content.page.headline as string).split(/\s+/).map((word, i) => (
+                <span key={i}>
+                  <span
+                    className={headlineVisible ? 'word-fade-in-up-blur-slow' : ''}
+                    style={{
+                      display: 'inline-block',
+                      animationDelay: headlineVisible ? `${i * 0.2}s` : undefined,
+                      opacity: headlineVisible ? undefined : 0
+                    }}
+                  >
+                    {word.replace(/[.,]/g, '')}
+                  </span>
+                  {word.endsWith('.') ? '.' : ''}{i < (content.page.headline as string).split(/\s+/).length - 1 ? '\u00A0' : ''}
+                </span>
+              ))}
             </h1>
-            <p className="text-base md:text-lg text-[var(--color-cream)] mt-2 opacity-90" style={{ fontFamily: 'var(--font-leiko)', fontStyle: 'italic' }}>
+            <p
+              className={`text-base md:text-lg text-[var(--color-cream)] mt-2 ${captionVisible ? 'join-us-caption-reveal' : 'opacity-0'}`}
+              style={{ fontFamily: 'var(--font-leiko)', fontStyle: 'italic' }}
+            >
               {content.page.tagline}
             </p>
           </div>
           </div>
           
         {/* One box: General member + Exec member + Ready to join CTA; extends down with form */}
-        <div className={`max-w-7xl mx-auto px-4 sm:px-8 mt-8 md:mt-10 transition-all duration-500 ${isInitialViewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className={`max-w-7xl mx-auto px-4 sm:px-8 mt-8 md:mt-10 ${contentVisible ? 'join-us-content-pull-up' : ''}`}
+          style={contentVisible ? { animationDelay: '0s' } : { opacity: 0 }}
+        >
           <div className="rounded-2xl border-2 border-[var(--color-brown-dark)]/20 overflow-hidden bg-[var(--color-cream)] shadow-lg max-w-5xl mx-auto w-full">
             <div className="p-6 md:p-8 space-y-6 md:space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -493,7 +543,7 @@ export default function JoinUs() {
             </button>
             </div>
             <div className={`overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'max-h-[3600px] opacity-100' : 'max-h-0 opacity-0'}`}>
-              <div className="bg-[var(--color-cream)] border-t-2 border-[var(--color-brown-dark)]/20 p-8 md:p-10">
+              <div className={`bg-[var(--color-cream)] border-t-2 border-[var(--color-brown-dark)]/20 p-8 md:p-10 ${hasStarted ? 'join-us-form-roll-down' : ''}`}>
         <div className="max-w-5xl w-full">
           <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-leiko)' }}>
             {content.form.title}
