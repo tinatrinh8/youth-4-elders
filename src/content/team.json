@@ -1,0 +1,46 @@
+{
+  "page": {
+    "title": "Our Team",
+    "description": "Meet the people behind Youth 4 Elders."
+  },
+  "categories": {
+    "Presidents": "Presidents",
+    "Internal": "Internal",
+    "External": "External",
+    "Finance": "Finance",
+    "Marketing": "Marketing",
+    "Events": "Events"
+  },
+  "members": [
+    {
+      "name": "Julia Diem Hum",
+      "role": "Co-Founder & Co-President",
+      "category": "Presidents",
+      "yearOfStudy": 3,
+      "program": "Translational Molecular Medicine - TMM",
+      "funFact": "Has met a mermaid",
+      "focus": {
+        "title": "Julia's Focus",
+        "points": [
+          { "heading": "Creative connection.", "description": "Designing activities that feel welcoming, calm, and easy to join." },
+          { "heading": "Volunteer experience.", "description": "Making sure students feel prepared, supported, and confident with seniors." },
+          { "heading": "Community storytelling.", "description": "Sharing impact stories that highlight the relationships we build." }
+        ]
+      }
+    },
+    {
+      "name": "Peter Han",
+      "role": "Co-Founder & Co-President",
+      "category": "Presidents",
+      "yearOfStudy": 3,
+      "program": "Translational Molecular Medicine - TMM",
+      "funFact": "Loves Nigerian Jollof",
+      "focus": {
+        "title": "Peter's Focus",
+        "points": [
+          { "heading": "Edit in team.json", "description": "Edit in team.json" }
+        ]
+      }
+    }
+  ]
+}

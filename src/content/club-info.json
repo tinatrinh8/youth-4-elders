@@ -1,0 +1,39 @@
+{
+  "page": {
+    "title": "Club Info",
+    "description": "Learn about Youth 4 Elders — our mission, impact, and team."
+  },
+  "sections": {
+    "aboutUs": {
+      "title": "About Us",
+      "intro": "Edit this in club-info.json"
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "Edit this in club-info.json"
+    },
+    "impact": {
+      "title": "Our Impact",
+      "statPrimaryLabel": "Edit in JSON",
+      "statCommunityLabel": "Edit in JSON",
+      "statStudentLabel": "Edit in JSON"
+    },
+    "ideas": {
+      "title": "Share Your Ideas",
+      "description": "Edit this in club-info.json",
+      "formLabels": {},
+      "submitLabel": "Submit",
+      "successMessage": "Thanks for your idea!",
+      "errorMessage": "Something went wrong."
+    },
+    "testimonies": {
+      "title": "Testimonies",
+      "description": "Edit this in club-info.json"
+    }
+  },
+  "founders": {
+    "title": "Our Founders",
+    "julia": { "name": "Julia", "bio": "Edit in club-info.json" },
+    "peter": { "name": "Peter", "bio": "Edit in club-info.json" }
+  }
+}

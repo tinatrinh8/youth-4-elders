@@ -1,0 +1,109 @@
+{
+  "page": {
+    "title": "Contact",
+    "caption": "Get in touch with Youth 4 Elders."
+  },
+  "links": {
+    "eventsLinkText": "View the events and programs we offer here",
+    "clubInfoLinkLabel": "Club Info",
+    "pastEventsLinkLabel": "Past Events"
+  },
+  "form": {
+    "serviceOptions": [
+      { "value": "", "label": "Select..." },
+      { "value": "volunteer", "label": "Volunteering" },
+      { "value": "partnership", "label": "Partnership" },
+      { "value": "events", "label": "Events & programs" },
+      { "value": "membership", "label": "Membership" },
+      { "value": "donations", "label": "Donations & support" },
+      { "value": "media", "label": "Media & press" },
+      { "value": "collaboration", "label": "Collaboration & projects" },
+      { "value": "general", "label": "General inquiry" },
+      { "value": "other", "label": "Other" }
+    ],
+    "labels": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "service": "I'm reaching out about",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "projectDescription": "Tell us more"
+    },
+    "placeholders": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "you@email.com",
+      "phone": "Phone number",
+      "projectDescription": "Describe your inquiry, project idea, or how you'd like to get involved..."
+    },
+    "submitLabel": "Send message",
+    "submittingLabel": "Sending...",
+    "errors": {
+      "fillAllFields": "Please fill in all fields.",
+      "nameRequired": "Please enter your name",
+      "emailRequired": "Please enter your email",
+      "emailInvalid": "Please enter a valid email address",
+      "messageRequired": "Please enter a message"
+    },
+    "successMessage": "Thanks for reaching out! We'll get back to you soon.",
+    "errorMessage": "Something went wrong. Please try again."
+  },
+  "faq": {
+    "sections": [
+      {
+        "title": "For Interested Members",
+        "faqs": [
+          {
+            "question": "What time commitment is expected from members?",
+            "answer": "Youth4Elders is designed to be **flexible**. Most members commit minimally to a **1 hour monthly meeting** to stay engaged with club events and planning! Depending on their availability, general members are free to volunteer their time in one-time events, or be involved in one-time events, short-term initiatives, or ongoing placements."
+          },
+          {
+            "question": "How are volunteering schedules determined?",
+            "answer": "Scheduling is managed on a **signup basis**. Members indicate their preferred shifts or events, and placements are assigned accordingly. We prioritize **academic balance, flexibility, and consistency** to ensure a positive experience for both volunteers and community partners."
+          },
+          {
+            "question": "Are there opportunities to join the executive team?",
+            "answer": "**Yes.** Youth4Elders actively recruits motivated members into leadership and executive roles throughout the year. Positions are filled through an **application and interview process**, with opportunities to contribute to program development, partnerships, and organizational strategy."
+          },
+          {
+            "question": "Do I need specific vaccines or immunizations?",
+            "answer": "**Some community partner sites may require** standard immunizations depending on their internal policies. Youth4Elders will **communicate any health or immunization requirements in advance** of placements, and alternatives will be offered when possible."
+          },
+          {
+            "question": "Is a Vulnerable Sector Check (VSC) required?",
+            "answer": "A Vulnerable Sector Check (VSC) is **generally not required** for members of Youth4Elders. However, **some community partners require it** for volunteer placements. Members who wish to volunteer with these partners will need to obtain a VSC, and **Youth4Elders will provide the necessary documentation** to support the process."
+          },
+          {
+            "question": "Do I need certifications or prior training to volunteer?",
+            "answer": "**No prior certifications are required.** All volunteers receive **orientation and role-specific training** provided by Youth4Elders. For specialized programs, additional training may be offered in collaboration with partner organizations. For our knowledge, please indicate in your application if you do have standard first aid or any relevant first responder certifications."
+          },
+          {
+            "question": "Will I have the opportunity to create and lead my own initiative or event?",
+            "answer": "**Absolutely.** Youth4Elders strongly encourages member-led innovation. Volunteers are welcome to **design, propose, and lead their own programs**, workshops, or events, with mentorship and organizational support from the executive team."
+          }
+        ]
+      },
+      {
+        "title": "For Interested Community Partners",
+        "faqs": [
+          {
+            "question": "What does Youth4Elders offer as an organization?",
+            "answer": "Youth4Elders provides **trained, reliable student volunteers** who support older adults through volunteerism. Our model emphasizes **intergenerational connection, respect, and meaningful impact**. View the events and programs we offer on our Club Info and Events pages."
+          },
+          {
+            "question": "Is there any cost associated with partnering with Youth4Elders?",
+            "answer": "**No.** Youth4Elders operates as a **non-profit, volunteer-based** organization. **We do not expect payment** for our services, as our mission is rooted in community service and accessibility."
+          },
+          {
+            "question": "How flexible is Youth4Elders' scheduling and availability?",
+            "answer": "We offer **highly flexible** scheduling. Programming can be delivered during **weekdays, evenings, or weekends**, depending on mutual availability. Schedules are coordinated to align with both partner needs and volunteer capacity."
+          },
+          {
+            "question": "Can organizations request specific events or customized programs?",
+            "answer": "**Yes.** Youth4Elders welcomes **formal program or event requests**. We work collaboratively with partners to design **tailored initiatives** that align with organizational goals, resident interests, and logistical requirements."
+          }
+        ]
+      }
+    ]
+  }
+}

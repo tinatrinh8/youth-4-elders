@@ -320,7 +320,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
               className="text-xs md:text-sm uppercase tracking-widest mb-4 transition-all duration-1000 ease-out"
               style={{ 
                 fontFamily: 'var(--font-kollektif)', 
-                color: 'var(--color-pink-dark)',
+                color: 'var(--color-brown-dark)',
                 letterSpacing: '0.2em',
                 opacity: heroVisible ? 1 : 0,
                 transform: heroVisible ? 'translateY(0)' : 'translateY(-10px)',
@@ -346,7 +346,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
             className="text-sm md:text-base lg:text-lg max-w-2xl mx-auto leading-relaxed text-center transition-all duration-1000 ease-out" 
             style={{ 
               fontFamily: 'var(--font-leiko)', 
-              color: 'var(--color-pink-dark)',
+              color: 'var(--color-brown-dark)',
               opacity: heroVisible ? 1 : 0,
               transform: heroVisible ? 'translateY(0)' : 'translateY(20px)',
               transitionDelay: '600ms'
@@ -600,8 +600,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
         {/* Decorative Top Border - Green */}
         <div 
           className="absolute top-0 left-0 right-0 h-1"
-          style={{ 
-            background: 'var(--color-olive)'
+          style={{
+            background: 'var(--color-brown-dark)'
           }}
         />
 
@@ -648,8 +648,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                     key={sponsor.sys.id}
                     className="flex items-center justify-center h-40 md:h-48 lg:h-56 p-6 md:p-8 rounded-2xl transition-all duration-500 ease-out hover:scale-105"
                     style={{
-                      background: 'var(--color-olive)',
-                      border: '2px solid var(--color-brown-dark)',
+                      background: 'var(--color-brown-dark)',
+                      border: '2px solid var(--color-cream)',
                       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                       opacity: sponsorsVisible ? 1 : 0,
                       transform: sponsorsVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)',
@@ -704,8 +704,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                   key={index}
                   className="flex items-center justify-center h-40 md:h-48 lg:h-56 p-6 md:p-8 rounded-2xl transition-all duration-500 ease-out hover:scale-105"
                   style={{
-                    background: 'var(--color-olive)',
-                    border: '2px solid var(--color-brown-dark)',
+                    background: 'var(--color-brown-dark)',
+                    border: '2px solid var(--color-cream)',
                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                     opacity: sponsorsVisible ? 1 : 0,
                     transform: sponsorsVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)',
@@ -746,7 +746,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
           )}
 
           {/* Become a Partner - Compact Note Style */}
-          <div className="mt-16 md:mt-20 pt-8 md:pt-10 border-t" style={{ borderColor: 'var(--color-olive)' }}>
+          <div className="mt-16 md:mt-20 pt-8 md:pt-10 border-t" style={{ borderColor: 'var(--color-brown-dark)' }}>
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 px-4">
               <div className="flex-1 text-center md:text-left">
                 <p 
@@ -764,9 +764,9 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                 href="/contact"
                 className="flex-shrink-0 px-6 py-3 rounded-full transition-all duration-300 hover:scale-105"
                 style={{ 
-                  background: 'var(--color-olive)',
-                  border: '2px solid var(--color-olive)',
-                  color: 'var(--color-cream)',
+                  background: 'var(--color-cream)',
+                  border: '2px solid var(--color-brown-dark)',
+                  color: 'var(--color-brown-dark)',
                   fontFamily: 'var(--font-kollektif)',
                   fontWeight: '600',
                   fontSize: '0.875rem',
@@ -774,13 +774,13 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = 'var(--color-cream)'
-                  e.currentTarget.style.background = 'var(--color-olive-dark)'
-                  e.currentTarget.style.borderColor = 'var(--color-olive-dark)'
+                  e.currentTarget.style.background = 'var(--color-brown-dark)'
+                  e.currentTarget.style.borderColor = 'var(--color-brown-dark)'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = 'var(--color-cream)'
-                  e.currentTarget.style.background = 'var(--color-olive)'
-                  e.currentTarget.style.borderColor = 'var(--color-olive)'
+                  e.currentTarget.style.color = 'var(--color-brown-dark)'
+                  e.currentTarget.style.background = 'var(--color-cream)'
+                  e.currentTarget.style.borderColor = 'var(--color-brown-dark)'
                 }}
               >
                 Get in Touch →
@@ -790,8 +790,8 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
         </div>
       </section>
 
-      {/* Green line before footer - same thickness as top border */}
-      <div className="w-full h-1" style={{ background: 'var(--color-olive)' }} aria-hidden />
+      {/* Merlot line before footer - same thickness as top border */}
+      <div className="w-full h-1" style={{ background: 'var(--color-brown-dark)' }} aria-hidden />
     </main>
   )
 }

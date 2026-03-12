@@ -1,0 +1,16 @@
+{
+  "page": {
+    "title": "Partners & Sponsors",
+    "description": "Organizations and sponsors that support Youth 4 Elders."
+  },
+  "sections": {
+    "partners": {
+      "title": "Our Partners",
+      "emptyMessage": "Partner information is loaded from Contentful."
+    },
+    "sponsors": {
+      "title": "Sponsors",
+      "emptyMessage": "Sponsor information is loaded from Contentful."
+    }
+  }
+}

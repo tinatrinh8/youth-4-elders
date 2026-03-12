@@ -1,0 +1,25 @@
+{
+  "page": {
+    "title": "Events",
+    "description": "Upcoming and past events from Youth 4 Elders."
+  },
+  "search": {
+    "placeholder": "Search events..."
+  },
+  "filters": {
+    "all": "All",
+    "holiday": "Holiday",
+    "school": "School",
+    "club": "Club"
+  },
+  "empty": {
+    "noEvents": "No events found for this period.",
+    "tryDifferent": "Try a different date range or search."
+  },
+  "modal": {
+    "closeLabel": "Close",
+    "dateLabel": "Date",
+    "locationLabel": "Location",
+    "timeLabel": "Time"
+  }
+}

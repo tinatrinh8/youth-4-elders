@@ -10,10 +10,12 @@ const SCROLL_RANGE_PX = 420
 export default function Footer() {
   const pathname = usePathname()
   const isHome = pathname === '/'
-  const footerBackground = isHome ? 'var(--color-brown-dark)' : 'var(--color-brown-dark)'
-  const footerTextColor = isHome ? 'var(--color-cream)' : 'var(--color-cream)'
-  const footerHoverColor = isHome ? 'var(--color-olive)' : 'var(--color-olive)'
-  const footerBorderColor = isHome ? 'rgba(247, 240, 227, 0.2)' : 'rgba(247, 240, 227, 0.2)'
+  const isClubInfo = pathname === '/club-info'
+  const isPartner = pathname === '/partner'
+  const footerBackground = isPartner ? 'var(--color-olive)' : (isClubInfo ? 'var(--color-pink-medium)' : (isHome ? 'var(--color-brown-dark)' : 'var(--color-brown-dark)'))
+  const footerTextColor = isPartner ? 'var(--color-olive-light)' : (isClubInfo ? 'var(--color-brown-dark)' : 'var(--color-cream)')
+  const footerHoverColor = isPartner ? 'var(--color-cream)' : (isClubInfo ? '#351219' : 'var(--color-olive)')
+  const footerBorderColor = isPartner ? 'rgba(251, 247, 232, 0.25)' : (isClubInfo ? 'rgba(98, 32, 47, 0.2)' : (isHome ? 'rgba(247, 240, 227, 0.2)' : 'rgba(247, 240, 227, 0.2)'))
 
   const footerRef = useRef<HTMLElement>(null)
   const [scrollProgress, setScrollProgress] = useState(1)

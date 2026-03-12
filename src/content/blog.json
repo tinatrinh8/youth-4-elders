@@ -1,0 +1,25 @@
+{
+  "page": {
+    "title": "Our Stories",
+    "description": "Discover the heartwarming stories, community reflections, and behind-the-scenes moments from our Youth 4 Elders journey."
+  },
+  "cards": {
+    "comingSoon": "Coming Soon",
+    "workshopStories": {
+      "title": "Workshop Stories",
+      "description": "Heartwarming stories from our intergenerational workshops and the connections we've built."
+    },
+    "communityStories": {
+      "title": "Community Stories",
+      "description": "Edit in blog.json"
+    },
+    "volunteerStories": {
+      "title": "Volunteer Stories",
+      "description": "Edit in blog.json"
+    }
+  },
+  "empty": {
+    "noPosts": "No blog posts found in this environment.",
+    "loadError": "Could not load blog posts. Check terminal logs for Contentful IDs."
+  }
+}

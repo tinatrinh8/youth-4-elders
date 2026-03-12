@@ -1,0 +1,116 @@
+{
+  "page": {
+    "headline": "Be part of something meaningful.",
+    "tagline": "Become a general member in a few steps."
+  },
+  "cards": {
+    "generalMember": {
+      "title": "General member",
+      "description": "Join our community and take part in events, workshops, and activities whenever you like. No commitment required—just show up when you can."
+    },
+    "execMember": {
+      "title": "Exec member?",
+      "descriptionBeforeLink": "Keep an eye on our ",
+      "instagramLabel": "Instagram",
+      "descriptionAfterLink": " for when exec applications open."
+    }
+  },
+  "applyBox": {
+    "title": "Ready to join? Start here",
+    "cta": "Get started"
+  },
+  "form": {
+    "title": "Application form",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "errorMessage": "Something went wrong. Please try again.",
+    "questions": [
+      {
+        "id": "name",
+        "label": "What's your full name?",
+        "type": "text",
+        "required": true,
+        "placeholder": "Enter your full name"
+      },
+      {
+        "id": "email",
+        "label": "What's your email address?",
+        "type": "email",
+        "required": true,
+        "placeholder": "Enter your email"
+      },
+      {
+        "id": "program",
+        "label": "What's your program or field of study?",
+        "type": "text",
+        "required": false,
+        "placeholder": "e.g., Computer Science, Nursing"
+      },
+      {
+        "id": "year",
+        "label": "What year are you in?",
+        "type": "select",
+        "required": false,
+        "options": [
+          { "value": "", "label": "Select year" },
+          { "value": "1st Year", "label": "1st Year" },
+          { "value": "2nd Year", "label": "2nd Year" },
+          { "value": "3rd Year", "label": "3rd Year" },
+          { "value": "4th Year", "label": "4th Year" },
+          { "value": "5th Year", "label": "5th Year" },
+          { "value": "Graduate", "label": "Graduate" },
+          { "value": "Alumni", "label": "Alumni" },
+          { "value": "Community Member", "label": "Community Member" }
+        ]
+      },
+      {
+        "id": "howHeard",
+        "label": "How did you hear about us?",
+        "type": "select",
+        "required": false,
+        "options": [
+          { "value": "", "label": "Select an option" },
+          { "value": "Club Fair", "label": "Club Fair" },
+          { "value": "Social Media", "label": "Social Media" },
+          { "value": "Friend/Classmate", "label": "Friend/Classmate" },
+          { "value": "Website", "label": "Website" },
+          { "value": "Poster/Flyer", "label": "Poster/Flyer" },
+          { "value": "Event", "label": "Event" },
+          { "value": "Other", "label": "Other" }
+        ]
+      },
+      {
+        "id": "whyJoin",
+        "label": "Why do you want to join Youth 4 Elders?",
+        "type": "textarea",
+        "required": true,
+        "placeholder": "Tell us what interests you about our mission..."
+      },
+      {
+        "id": "experience",
+        "label": "Outline previous or relevant experience (optional)",
+        "type": "textarea",
+        "required": false,
+        "placeholder": "e.g., volunteering, care work, teaching, events..."
+      },
+      {
+        "id": "resumeFileName",
+        "label": "Upload resume (optional)",
+        "type": "file",
+        "required": false,
+        "accept": ".pdf,.doc,.docx"
+      }
+    ]
+  },
+  "success": {
+    "title": "Thank you",
+    "messageBeforeLink": "You're in! We'll be in touch. Follow our ",
+    "instagramLabel": "Instagram",
+    "messageAfterLink": " for updates.",
+    "submitAnother": "Submit another"
+  },
+  "loading": {
+    "message": "Submitting..."
+  }
+}

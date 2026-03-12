@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import homeContent from '@/content/home.json'
 // Types for future Contentful integration
 // import type { Entry } from 'contentful'
 // import type { ClubUpdateSkeleton } from '@/types/clubUpdates'
@@ -41,32 +42,16 @@ export default function Home() {
   //   type: entry.fields.type || 'standard'
   // })) || []
   
-  const clubUpdates: ClubUpdate[] = [
-    {
-      id: '1',
-      title: 'Website Now Live!',
-      description: 'Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.',
-      icon: '✨',
-      type: 'highlight',
-      hasCountdown: false
-    },
-    {
-      id: '2',
-      title: 'Upcoming Event: Spikeball Event',
-      description: 'Join us for our upcoming Spikeball event on January 15, 2026! Check the countdown to see how many days are left.',
-      icon: '🎾',
-      type: 'highlight',
-      hasCountdown: true // This one has the countdown, so it should be pink
-    },
-    {
-      id: '3',
-      title: 'Tech Literacy at Glebe',
-      description: 'Our tech literacy workshop series has started again at The Glebe Centre as of January 16.',
-      icon: '💻',
-      type: 'standard',
-      hasCountdown: false
-    }
-  ]
+  const content = homeContent as {
+    modal: { headline: string; body: string; emailPlaceholder: string; noThanks: string; successTitle: string; successMessage: string }
+    mission: { description: string }
+    quote: { text: string }
+    events: { cards: Array<{ title: string; date: string; description: string }>; eventTypesLabel: string; eventTypesText: string; viewMore: string }
+    getInvolved: { description: string; buttonLabel: string }
+    clubUpdates: { updates: ClubUpdate[] }
+    countdown: { daysLeftLabel: string; eventName: string; todayLabel: string; todayIsThe: string; todayEventName: string }
+  }
+  const clubUpdates: ClubUpdate[] = content.clubUpdates.updates
 
   useEffect(() => {
     // Show modal after 6 seconds on page load
@@ -251,12 +236,12 @@ export default function Home() {
           >
             {/* Headline */}
             <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-              Help Us Grow Our Club
+              {content.modal.headline}
             </h2>
 
             {/* Body Text */}
             <p className="text-base md:text-lg mb-6 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-              We would like to see who is interested to join the Youth 4 Elders community! Add your email if you&apos;re interested in helping grow our club and connecting generations.
+              {content.modal.body}
             </p>
 
             {/* Email Form */}
@@ -265,7 +250,7 @@ export default function Home() {
                 <input
                   type="email"
                   name="email"
-                  placeholder="you@email.com"
+                  placeholder={content.modal.emailPlaceholder}
                   required
                   className="flex-1 px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200"
                   style={{ 
@@ -325,7 +310,7 @@ export default function Home() {
                 e.currentTarget.style.color = 'var(--color-brown-dark)'
               }}
             >
-              Maybe Another Time :)
+              {content.modal.noThanks}
             </button>
           </div>
         </div>
@@ -360,11 +345,11 @@ export default function Home() {
 
             {/* Success Message */}
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-              Thanks for Signing Up!
-        </h2>
+              {content.modal.successTitle}
+            </h2>
 
             <p className="text-base md:text-lg mb-6 leading-relaxed text-center" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
-              We hope to see you soon! We&apos;ll be in touch with updates about Youth 4 Elders and upcoming events.
+              {content.modal.successMessage}
             </p>
           </div>
         </div>
@@ -511,7 +496,7 @@ export default function Home() {
             style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)' }}
             data-animate-id="mission-description"
           >
-            A student-led club dedicated to bridging the gap between elders and youth in a fast-moving society. Created by passionate uOttawa students and community members, Youth 4 Elders connects generations through volunteering, workshops, and meaningful relationships.
+            {content.mission.description}
           </p>
         </div>
       </section>
@@ -690,7 +675,7 @@ export default function Home() {
                           letterSpacing: '0.1em'
                         }}
                       >
-                        DAYS LEFT UNTIL
+                        {content.countdown.daysLeftLabel}
                       </p>
                       <p 
                         className="text-xl md:text-2xl lg:text-3xl font-bold"
@@ -699,7 +684,7 @@ export default function Home() {
                           color: 'var(--color-brown-dark)'
                         }}
                       >
-                        SPIKEBALL EVENT
+                        {content.countdown.eventName}
                       </p>
                     </div>
                   </>
@@ -723,7 +708,7 @@ export default function Home() {
                             color: 'var(--color-cream)'
                           }}
                         >
-                          TODAY
+                          {content.countdown.todayLabel}
                         </div>
                       </div>
                     </div>
@@ -737,7 +722,7 @@ export default function Home() {
                           color: 'var(--color-brown-dark)'
                         }}
                       >
-                        Today is the
+                        {content.countdown.todayIsThe}
                       </p>
                       <p 
                         className="text-2xl md:text-3xl lg:text-4xl font-bold"
@@ -746,7 +731,7 @@ export default function Home() {
                           color: 'var(--color-brown-dark)'
                         }}
                       >
-                        Spikeball Event
+                        {content.countdown.todayEventName}
                       </p>
                     </div>
                   </>
@@ -796,7 +781,7 @@ export default function Home() {
                 fontStyle: 'italic'
               }}
             >
-              Bridging generations, one connection at a time.
+              {content.quote.text}
             </p>
           </div>
         </div>
@@ -898,14 +883,14 @@ export default function Home() {
               </div>
               <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                  Workshop Series
+                  {content.events.cards[0].title}
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
                   <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    Started again Jan 16
+                    {content.events.cards[0].date}
                   </p>
                   <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    A 6-week weekly workshop series teaching and helping with technology. Now running at The Glebe Centre.
+                    {content.events.cards[0].description}
                   </p>
                 </div>
               </div>
@@ -975,14 +960,14 @@ export default function Home() {
               </div>
               <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                  School Club Fair
+                  {content.events.cards[1].title}
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
                   <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    Sept 3rd, 2025
+                    {content.events.cards[1].date}
                   </p>
                   <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    At the beginning of the school year, we joined the club fair to connect with students and share our mission.
+                    {content.events.cards[1].description}
                   </p>
                 </div>
               </div>
@@ -1052,14 +1037,14 @@ export default function Home() {
               </div>
               <div className="absolute bottom-0 left-0 right-0 group-hover:pb-8 transition-all duration-500" style={{ background: 'var(--color-brown-dark)', padding: '1.5rem' }}>
                 <h3 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                  Sips, Samples, Social
+                  {content.events.cards[2].title}
                 </h3>
                 <div className="event-details overflow-hidden transition-all duration-500 ease-out" style={{ maxHeight: '0', opacity: '0' }}>
                   <p className="text-sm mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    Nov 10th, 2025
+                    {content.events.cards[2].date}
                   </p>
                   <p className="text-xs leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}>
-                    Sample delicious goodies from our favourite local vendors at Abbotsford Seniors Centre.
+                    {content.events.cards[2].description}
                   </p>
                 </div>
               </div>
@@ -1073,10 +1058,10 @@ export default function Home() {
               data-animate-id="event-types"
             >
               <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                Event Types
+                {content.events.eventTypesLabel}
               </p>
               <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>
-                Workshops / Community / Volunteering / Social
+                {content.events.eventTypesText}
               </p>
             </div>
             <a
@@ -1094,7 +1079,7 @@ export default function Home() {
                 e.currentTarget.style.color = 'var(--color-brown-dark)'
               }}
             >
-              <span>VIEW MORE</span>
+              <span>{content.events.viewMore}</span>
               <svg 
                 className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" 
                 fill="none" 
@@ -1243,7 +1228,7 @@ export default function Home() {
             style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.92 }}
             data-animate-id="get-involved-description"
           >
-            Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.
+            {content.getInvolved.description}
           </p>
           <div className="max-w-3xl text-right order-1 lg:order-2 lg:ml-auto">
             <h2
@@ -1302,7 +1287,7 @@ export default function Home() {
                   e.currentTarget.style.color = 'var(--color-olive-light)'
                 }}
               >
-                Learn more
+                {content.getInvolved.buttonLabel}
               </a>
             </div>
           </div>

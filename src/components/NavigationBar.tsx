@@ -23,23 +23,7 @@ export default function NavigationBar() {
   // Determine navbar color scheme based on page
   const getNavbarColors = () => {
     if (isJoinUsPage) {
-      // Join-us page: Pink background with pink accents
-      return {
-        background: 'var(--color-pink-medium)',
-        text: 'var(--color-cream)',
-        border: 'var(--color-pink-dark)',
-        hover: 'var(--color-pink-dark)',
-        shadow: 'rgba(175, 121, 120, 0.2)',
-        mobileBackground: 'var(--color-pink-medium)',
-        mobileBorder: 'var(--color-pink-dark)',
-        dropdownBackground: 'var(--color-cream)',
-        dropdownBorder: 'var(--color-pink-dark)',
-        dropdownText: 'var(--color-pink-dark)',
-        dropdownHover: 'rgba(175, 121, 120, 0.1)',
-        dropdownHoverText: 'var(--color-pink-medium)'
-      }
-    } else if (isContactPage) {
-      // Contact page: Merlot (brown-dark) to match page
+      // Join-us (Get Involved) page: Merlot to match palette
       return {
         background: 'var(--color-brown-dark)',
         text: 'var(--color-cream)',
@@ -52,6 +36,22 @@ export default function NavigationBar() {
         dropdownBorder: 'var(--color-brown-dark)',
         dropdownText: 'var(--color-brown-dark)',
         dropdownHover: 'rgba(73, 47, 30, 0.1)',
+        dropdownHoverText: 'var(--color-brown-dark)'
+      }
+    } else if (isContactPage) {
+      // Contact page: Pink option
+      return {
+        background: 'var(--color-pink-medium)',
+        text: 'var(--color-brown-dark)',
+        border: 'none',
+        hover: 'rgba(98, 32, 47, 0.85)',
+        shadow: 'rgba(98, 32, 47, 0.2)',
+        mobileBackground: 'var(--color-pink-medium)',
+        mobileBorder: 'none',
+        dropdownBackground: 'var(--color-cream)',
+        dropdownBorder: 'var(--color-brown-dark)',
+        dropdownText: 'var(--color-brown-dark)',
+        dropdownHover: 'rgba(98, 32, 47, 0.08)',
         dropdownHoverText: 'var(--color-brown-dark)'
       }
     } else if (isClubInfoPage) {

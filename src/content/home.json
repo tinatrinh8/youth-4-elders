@@ -1,0 +1,87 @@
+{
+  "modal": {
+    "headline": "Help Us Grow Our Club",
+    "body": "We would like to see who is interested to join the Youth 4 Elders community! Add your email if you're interested in helping grow our club and connecting generations.",
+    "emailPlaceholder": "you@email.com",
+    "noThanks": "Maybe Another Time :)",
+    "successTitle": "Thanks for Signing Up!",
+    "successMessage": "We hope to see you soon! We'll be in touch with updates about Youth 4 Elders and upcoming events."
+  },
+  "hero": {
+    "tagline": "... is now live !",
+    "titleWords": ["Youth", "4", "Elders"]
+  },
+  "mission": {
+    "headlineWords": ["Nothing", "great", "is", "built", "alone."],
+    "description": "A student-led club dedicated to bridging the gap between elders and youth in a fast-moving society. Created by passionate uOttawa students and community members, Youth 4 Elders connects generations through volunteering, workshops, and meaningful relationships."
+  },
+  "clubUpdates": {
+    "headingWords": ["Current", "Club"],
+    "headingItalic": "Updates",
+    "updates": [
+      {
+        "id": "1",
+        "title": "Website Now Live!",
+        "description": "Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.",
+        "icon": "✨",
+        "type": "highlight",
+        "hasCountdown": false
+      },
+      {
+        "id": "2",
+        "title": "Upcoming Event: Spikeball Event",
+        "description": "Join us for our upcoming Spikeball event on January 15, 2026! Check the countdown to see how many days are left.",
+        "icon": "🎾",
+        "type": "highlight",
+        "hasCountdown": true
+      },
+      {
+        "id": "3",
+        "title": "Tech Literacy at Glebe",
+        "description": "Our tech literacy workshop series has started again at The Glebe Centre as of January 16.",
+        "icon": "💻",
+        "type": "standard",
+        "hasCountdown": false
+      }
+    ]
+  },
+  "countdown": {
+    "daysLeftLabel": "DAYS LEFT UNTIL",
+    "eventName": "SPIKEBALL EVENT",
+    "todayLabel": "TODAY",
+    "todayIsThe": "Today is the",
+    "todayEventName": "Spikeball Event"
+  },
+  "quote": {
+    "text": "Bridging generations, one connection at a time."
+  },
+  "events": {
+    "sectionTitle": "Our Events",
+    "cards": [
+      {
+        "title": "Workshop Series",
+        "date": "Started again Jan 16",
+        "description": "A 6-week weekly workshop series teaching and helping with technology. Now running at The Glebe Centre."
+      },
+      {
+        "title": "School Club Fair",
+        "date": "Sept 3rd, 2025",
+        "description": "At the beginning of the school year, we joined the club fair to connect with students and share our mission."
+      },
+      {
+        "title": "Sips, Samples, Social",
+        "date": "Nov 10th, 2025",
+        "description": "Sample delicious goodies from our favourite local vendors at Abbotsford Seniors Centre."
+      }
+    ],
+    "eventTypesLabel": "Event Types",
+    "eventTypesText": "Workshops / Community / Volunteering / Social",
+    "viewMore": "VIEW MORE"
+  },
+  "getInvolved": {
+    "description": "Want to become a member? Connect with passionate students and caring elders as we build meaningful relationships that bring generations together.",
+    "headingLine1": ["Want", "to", "Get"],
+    "headingLine2": "Involved?",
+    "buttonLabel": "Learn more"
+  }
+}
