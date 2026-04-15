@@ -29,9 +29,9 @@
       },
       {
         "id": "2",
-        "title": "Upcoming Event: Spikeball Event",
-        "description": "Join us for our upcoming Spikeball event on January 15, 2026! Check the countdown to see how many days are left.",
-        "icon": "🎾",
+        "title": "Upcoming Event: Bingo Night",
+        "description": "Join us April 7, 2026 in the RGN Student Lounge—trivia, three rounds of bingo, and $30 FNS gift cards for round winners. Free spots are limited; check the countdown and register via the link in our bio.",
+        "icon": "🎱",
         "type": "highlight",
         "hasCountdown": true
       },
@@ -47,10 +47,10 @@
   },
   "countdown": {
     "daysLeftLabel": "DAYS LEFT UNTIL",
-    "eventName": "SPIKEBALL EVENT",
+    "eventName": "BINGO NIGHT",
     "todayLabel": "TODAY",
     "todayIsThe": "Today is the",
-    "todayEventName": "Spikeball Event"
+    "todayEventName": "Bingo Night"
   },
   "quote": {
     "text": "Bridging generations, one connection at a time."

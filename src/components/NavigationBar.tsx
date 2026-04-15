@@ -19,6 +19,7 @@ export default function NavigationBar() {
   const isContactPage = pathname === '/contact'
   const isClubInfoPage = pathname === '/club-info'
   const isPartnerPage = pathname === '/partner'
+  const isUpcomingEventsPage = pathname === '/events/upcoming'
 
   // Determine navbar color scheme based on page
   const getNavbarColors = () => {
@@ -71,7 +72,7 @@ export default function NavigationBar() {
         dropdownHoverText: 'var(--color-brown-dark)'
       }
     } else if (isPartnerPage) {
-      // Partner page: Chartreuse + seafoam + cream
+      // Partner page: Chartreuse + olive tones + cream
       return {
         background: 'var(--color-olive)',
         text: 'var(--color-cream)',
@@ -100,6 +101,22 @@ export default function NavigationBar() {
         dropdownBorder: 'var(--color-brown-dark)',
         dropdownText: 'var(--color-brown-dark)',
         dropdownHover: 'rgba(73, 47, 30, 0.1)',
+        dropdownHoverText: 'var(--color-brown-dark)'
+      }
+    } else if (isUpcomingEventsPage) {
+      // Upcoming events: cream bar + burgundy text (page uses olive background)
+      return {
+        background: 'var(--color-cream)',
+        text: 'var(--color-brown-dark)',
+        border: 'var(--color-brown-dark)',
+        hover: 'rgba(98, 32, 47, 0.85)',
+        shadow: 'rgba(98, 32, 47, 0.18)',
+        mobileBackground: 'var(--color-cream)',
+        mobileBorder: 'var(--color-brown-dark)',
+        dropdownBackground: 'var(--color-cream)',
+        dropdownBorder: 'var(--color-brown-dark)',
+        dropdownText: 'var(--color-brown-dark)',
+        dropdownHover: 'rgba(98, 32, 47, 0.08)',
         dropdownHoverText: 'var(--color-brown-dark)'
       }
     } else {
@@ -149,19 +166,16 @@ export default function NavigationBar() {
     // Translation implementation will be added later
   }
   
-  // Set page background behind nav - no animation when leaving join-us page
+  // Set page background behind nav
   useEffect(() => {
-    if (!isJoinUsPage) {
-      // When leaving join-us page or on other pages
-      // Set background immediately without transition
-      document.body.style.background = 'var(--color-cream)'
-      document.documentElement.style.background = 'var(--color-cream)'
-      // Remove transition for instant change
-      document.body.style.transition = 'none'
-      document.documentElement.style.transition = 'none'
-    }
-    // Note: join-us page manages its own background with animation
-  }, [isJoinUsPage])
+    // join-us and upcoming pages manage their own background animation internally
+    if (isJoinUsPage || isUpcomingEventsPage) return
+
+    document.body.style.background = 'var(--color-cream)'
+    document.documentElement.style.background = 'var(--color-cream)'
+    document.body.style.transition = 'none'
+    document.documentElement.style.transition = 'none'
+  }, [isJoinUsPage, isUpcomingEventsPage])
 
   useEffect(() => {
     if (!mobileMenuOpen) {

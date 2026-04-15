@@ -13,10 +13,41 @@ export default function Footer() {
   const isClubInfo = pathname === '/club-info'
   const isPartner = pathname === '/partner'
   const isJoinUs = pathname === '/join-us'
-  const footerBackground = isPartner ? 'var(--color-olive)' : (isJoinUs ? 'var(--color-pink-medium)' : (isClubInfo ? 'var(--color-pink-medium)' : (isHome ? 'var(--color-brown-dark)' : 'var(--color-brown-dark)')))
-  const footerTextColor = isPartner ? 'var(--color-olive-light)' : (isJoinUs || isClubInfo ? 'var(--color-brown-dark)' : 'var(--color-cream)')
-  const footerHoverColor = isPartner ? 'var(--color-cream)' : (isJoinUs || isClubInfo ? '#351219' : 'var(--color-olive)')
-  const footerBorderColor = isPartner ? 'rgba(251, 247, 232, 0.25)' : (isJoinUs || isClubInfo ? 'rgba(98, 32, 47, 0.2)' : (isHome ? 'rgba(247, 240, 227, 0.2)' : 'rgba(247, 240, 227, 0.2)'))
+  const isUpcomingEvents = pathname === '/events/upcoming'
+  const footerBackground = isUpcomingEvents
+    ? 'var(--color-olive-light)'
+    : isPartner
+      ? 'var(--color-olive)'
+      : isJoinUs
+        ? 'var(--color-pink-medium)'
+        : isClubInfo
+          ? 'var(--color-pink-medium)'
+          : isHome
+            ? 'var(--color-brown-dark)'
+            : 'var(--color-brown-dark)'
+  const footerTextColor = isUpcomingEvents
+    ? 'var(--color-cream)'
+    : isPartner
+      ? 'var(--color-olive-light)'
+      : isJoinUs || isClubInfo
+        ? 'var(--color-brown-dark)'
+        : 'var(--color-cream)'
+  const footerHoverColor = isUpcomingEvents
+    ? '#351219'
+    : isPartner
+      ? 'var(--color-cream)'
+      : isJoinUs || isClubInfo
+        ? '#351219'
+        : 'var(--color-olive)'
+  const footerBorderColor = isUpcomingEvents
+    ? 'rgba(251, 247, 232, 0.35)'
+    : isPartner
+      ? 'rgba(251, 247, 232, 0.25)'
+      : isJoinUs || isClubInfo
+        ? 'rgba(98, 32, 47, 0.2)'
+        : isHome
+          ? 'rgba(247, 240, 227, 0.2)'
+          : 'rgba(247, 240, 227, 0.2)'
 
   const footerRef = useRef<HTMLElement>(null)
   const [scrollProgress, setScrollProgress] = useState(1)

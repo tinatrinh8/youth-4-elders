@@ -46,8 +46,10 @@
 
   /* Green accents */
   --color-olive: #6f6509;
-  --color-olive-light: #C9DAA8;
+  --color-olive-light: #bbb47b;
   --color-olive-dark: #6f6509;
+  /* Darker olive for nav / small type on cream (same hue, lower luminance) */
+  --color-olive-deep: #3d390a;
 
   /* Error - validation and submit failure messages */
   --color-error: #a1224c;

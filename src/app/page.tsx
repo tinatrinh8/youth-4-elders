@@ -122,8 +122,8 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // Set target date to January 15, 2026 for Spikeball Event
-    const targetDate = new Date(2026, 0, 15, 0, 0, 0) // January 15, 2026 at midnight
+    // Bingo Night — April 7, 2026 (matches events.ts and home.json countdown)
+    const targetDate = new Date(2026, 3, 7, 0, 0, 0) // April 7, 2026 at midnight
     
     const calculateTimeLeft = () => {
       const now = new Date().getTime()

@@ -65,6 +65,15 @@ export const events: CalendarEvent[] = [
     type: 'club',
     description: 'Join us for our fun Spikeball tournament!'
   },
+  // Bingo Night (homepage countdown)
+  {
+    id: 'bingo-night-2026',
+    title: 'Bingo Night',
+    date: new Date(2026, 3, 7), // April 7, 2026
+    type: 'club',
+    description:
+      'Join us for a fun night with good food, games, and prizes. Bring your friends or come meet new people! We will kick things off with trivia, then get into 3 rounds of bingo. Each round winner gets a $30 FNS gift card. Time: 7:00 PM – 10:00 PM. Meet us in the RGN Student Lounge. Free spots are limited—link in bio to register!'
+  },
   // School events
   {
     id: 'fall-term-starts',

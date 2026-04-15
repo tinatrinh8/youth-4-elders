@@ -456,7 +456,7 @@ export default function ClubInfo() {
                   style={{
                     width: '420px',
                     height: '420px',
-                    background: '#C9DAA8', // Seafoam light
+                    background: '#C9DAA8', // Light green (olive-light)
                     borderRadius: '45% 55% 60% 40% / 55% 45% 55% 45%',
                     zIndex: 0,
                     top: '-10%',
@@ -469,7 +469,7 @@ export default function ClubInfo() {
                   style={{
                     width: '300px',
                     height: '300px',
-                    background: '#A9C98A', // Seafoam deep
+                    background: '#A9C98A', // Deeper light green
                     borderRadius: '55% 45% 50% 50% / 45% 55% 45% 55%',
                     zIndex: 0,
                     bottom: '2%',
