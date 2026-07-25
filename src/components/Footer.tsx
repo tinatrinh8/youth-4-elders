@@ -14,42 +14,47 @@ export default function Footer() {
   const isPartner = pathname === '/partner'
   const isJoinUs = pathname === '/join-us'
   const isUpcomingEvents = pathname === '/events/upcoming'
+  const isPastEvents = pathname === '/events/past'
   const isTeam = pathname === '/team'
   const isContact = pathname === '/contact'
-  const footerBackground = isUpcomingEvents
-    ? 'var(--color-olive-light)'
-    : isPartner
-      ? 'var(--color-olive)'
-      : isJoinUs
-        ? 'var(--color-pink-medium)'
-        : isClubInfo
+  const footerBackground = isPastEvents
+    ? 'var(--color-olive)'
+    : isUpcomingEvents
+      ? 'var(--color-olive-light)'
+      : isPartner
+        ? 'var(--color-olive)'
+        : isJoinUs
           ? 'var(--color-pink-medium)'
-          : isHome
-            ? 'var(--color-brown-dark)'
-            : 'var(--color-brown-dark)'
-  const footerTextColor = isUpcomingEvents
+          : isClubInfo
+            ? 'var(--color-pink-medium)'
+            : isHome
+              ? 'var(--color-brown-dark)'
+              : 'var(--color-brown-dark)'
+  const footerTextColor = isPastEvents || isUpcomingEvents
     ? 'var(--color-cream)'
     : isPartner
       ? 'var(--color-olive-light)'
       : isJoinUs || isClubInfo
         ? 'var(--color-brown-dark)'
         : 'var(--color-cream)'
-  const footerHoverColor = isUpcomingEvents
+  const footerHoverColor = isPastEvents || isUpcomingEvents
     ? '#351219'
     : isPartner
       ? 'var(--color-cream)'
       : isJoinUs || isClubInfo
         ? '#351219'
         : 'var(--color-olive)'
-  const footerBorderColor = isUpcomingEvents
-    ? 'rgba(251, 247, 232, 0.35)'
-    : isPartner
-      ? 'rgba(251, 247, 232, 0.25)'
-      : isJoinUs || isClubInfo
-        ? 'rgba(98, 32, 47, 0.2)'
-        : isHome
-          ? 'rgba(247, 240, 227, 0.2)'
-          : 'rgba(247, 240, 227, 0.2)'
+  const footerBorderColor = isPastEvents
+    ? 'rgba(251, 247, 232, 0.25)'
+    : isUpcomingEvents
+      ? 'rgba(251, 247, 232, 0.35)'
+      : isPartner
+        ? 'rgba(251, 247, 232, 0.25)'
+        : isJoinUs || isClubInfo
+          ? 'rgba(98, 32, 47, 0.2)'
+          : isHome
+            ? 'rgba(247, 240, 227, 0.2)'
+            : 'rgba(247, 240, 227, 0.2)'
 
   const footerRef = useRef<HTMLElement>(null)
   const [scrollProgress, setScrollProgress] = useState(1)
@@ -292,7 +297,7 @@ export default function Footer() {
                 src={
                   isPartner
                     ? '/images/Y4E_LOGO_TEXT_OLIVE_LIGHT.png'
-                    : isHome || isTeam || isUpcomingEvents || isContact
+                    : isHome || isTeam || isUpcomingEvents || isPastEvents || isContact
                       ? '/images/Y4E_LOGO_TEXT_CREAM.png'
                       : '/images/Y4E_LOGO_TEXT.png'
                 }
@@ -309,11 +314,17 @@ export default function Footer() {
       {/* Scroll to Top Button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-8 right-8 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg z-50"
+        className={`fixed z-50 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg ${
+          isUpcomingEvents
+            ? 'hidden md:flex bottom-8 right-8 h-12 w-12'
+            : isPastEvents
+              ? 'bottom-8 right-4 h-9 w-9 md:bottom-8 md:right-8 md:h-12 md:w-12'
+              : 'bottom-8 right-8 h-12 w-12'
+        }`}
         style={{
           background: 'var(--color-brown-dark)',
           border: '2px solid var(--color-cream)',
-          color: 'var(--color-cream)'
+          color: 'var(--color-cream)',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.background = 'var(--color-olive)'
@@ -325,7 +336,16 @@ export default function Footer() {
         }}
         aria-label="Scroll to top"
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className={
+            isUpcomingEvents || isPastEvents
+              ? 'h-4 w-4 md:h-6 md:w-6'
+              : 'h-6 w-6'
+          }
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>
       </button>

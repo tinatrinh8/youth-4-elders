@@ -40,6 +40,18 @@ export default function PastEventsPage() {
     return () => { document.body.style.overflow = 'unset' }
   }, [selectedEvent])
 
+  useEffect(() => {
+    const rafId = requestAnimationFrame(() => {
+      document.body.style.transition = 'background 0.8s ease-in-out'
+      document.documentElement.style.transition = 'background 0.8s ease-in-out'
+      requestAnimationFrame(() => {
+        document.body.style.background = 'var(--color-olive-light)'
+        document.documentElement.style.background = 'var(--color-olive-light)'
+      })
+    })
+    return () => cancelAnimationFrame(rafId)
+  }, [])
+
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
   const monthLabel = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`
 
@@ -115,13 +127,12 @@ export default function PastEventsPage() {
 
   const pastEventDays = useMemo(() => {
     const days = new Set<number>()
-    for (const e of monthEvents) {
-      if (normalizeDay(e.endDate ?? e.date) < today) {
-        days.add(e.date.getDate())
-      }
+    for (const e of past) {
+      days.add(e.date.getDate())
+      if (e.endDate) days.add(e.endDate.getDate())
     }
     return days
-  }, [monthEvents, today])
+  }, [past])
 
   const renderCard = (event: DisplayEvent) => {
     const time = getTimeFromDescription(event.description)
@@ -183,7 +194,7 @@ export default function PastEventsPage() {
   }
 
   return (
-    <main className="min-h-screen pt-[60px] pb-20" style={{ background: 'var(--color-pink-light)' }}>
+    <main className="min-h-screen pt-[60px] pb-20" style={{ background: 'transparent' }}>
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
         {/* Scrapbook memory calendar */}
         <section className="mb-12 md:mb-14">

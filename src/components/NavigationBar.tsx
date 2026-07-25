@@ -20,6 +20,7 @@ export default function NavigationBar() {
   const isClubInfoPage = pathname === '/club-info'
   const isPartnerPage = pathname === '/partner'
   const isUpcomingEventsPage = pathname === '/events/upcoming'
+  const isPastEventsPage = pathname === '/events/past'
   const isTeamPage = pathname === '/team'
 
   // Determine navbar color scheme based on page
@@ -104,8 +105,8 @@ export default function NavigationBar() {
         dropdownHover: 'rgba(73, 47, 30, 0.1)',
         dropdownHoverText: 'var(--color-brown-dark)'
       }
-    } else if (isUpcomingEventsPage) {
-      // Upcoming events: cream bar + burgundy text (page uses olive background)
+    } else if (isUpcomingEventsPage || isPastEventsPage) {
+      // Events pages: cream bar + merlot text (upcoming = olive, past = olive-light)
       return {
         background: 'var(--color-cream)',
         text: 'var(--color-brown-dark)',
@@ -169,14 +170,14 @@ export default function NavigationBar() {
   
   // Set page background behind nav
   useEffect(() => {
-    // join-us and upcoming pages manage their own background animation internally
-    if (isJoinUsPage || isUpcomingEventsPage) return
+    // join-us, upcoming, and past pages manage their own background
+    if (isJoinUsPage || isUpcomingEventsPage || isPastEventsPage) return
 
     document.body.style.background = 'var(--color-cream)'
     document.documentElement.style.background = 'var(--color-cream)'
     document.body.style.transition = 'none'
     document.documentElement.style.transition = 'none'
-  }, [isJoinUsPage, isUpcomingEventsPage])
+  }, [isJoinUsPage, isUpcomingEventsPage, isPastEventsPage])
 
   useEffect(() => {
     if (!mobileMenuOpen) {
@@ -217,22 +218,18 @@ export default function NavigationBar() {
         <div className="flex items-center flex-shrink-0">
           <Link href="/" className="flex items-center">
             <span
-              className="mr-2 flex items-center justify-center flex-shrink-0"
+              className="mr-2 flex items-center justify-center flex-shrink-0 w-10 h-10"
               style={
                 isHomePage || isPartnerPage || isTeamPage
                   ? {
                       background: 'var(--color-cream)',
                       borderRadius: '9999px',
-                      width: 40,
-                      height: 40,
                       padding: 4,
                     }
-                  : isClubInfoPage || isJoinUsPage || isUpcomingEventsPage || isContactPage
+                  : isClubInfoPage || isJoinUsPage || isUpcomingEventsPage || isPastEventsPage || isContactPage
                     ? {
                         background: 'var(--color-brown-dark)',
                         borderRadius: '9999px',
-                        width: 40,
-                        height: 40,
                         padding: 4,
                       }
                     : undefined
@@ -244,7 +241,7 @@ export default function NavigationBar() {
                     ? '/images/Y4E_LOGO_TEXT_PINK.png'
                     : isPartnerPage
                       ? '/images/Y4E_LOGO_TEXT_OLIVE.png'
-                      : isUpcomingEventsPage
+                      : isUpcomingEventsPage || isPastEventsPage
                         ? '/images/Y4E_LOGO_TEXT_CREAM.png'
                         : '/images/Y4E_LOGO_TEXT.png'
                 }
@@ -745,22 +742,18 @@ export default function NavigationBar() {
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center">
                 <span
-                  className="mr-2 flex items-center justify-center flex-shrink-0"
+                  className="mr-2 flex items-center justify-center flex-shrink-0 w-8 h-8"
                   style={
                     isHomePage || isPartnerPage || isTeamPage
                       ? {
                           background: 'var(--color-cream)',
                           borderRadius: '9999px',
-                          width: 32,
-                          height: 32,
                           padding: 3,
                         }
-                      : isClubInfoPage || isJoinUsPage || isUpcomingEventsPage || isContactPage
+                      : isClubInfoPage || isJoinUsPage || isUpcomingEventsPage || isPastEventsPage || isContactPage
                         ? {
                             background: 'var(--color-brown-dark)',
                             borderRadius: '9999px',
-                            width: 32,
-                            height: 32,
                             padding: 3,
                           }
                         : undefined
@@ -772,7 +765,7 @@ export default function NavigationBar() {
                         ? '/images/Y4E_LOGO_TEXT_PINK.png'
                         : isPartnerPage
                           ? '/images/Y4E_LOGO_TEXT_OLIVE.png'
-                          : isUpcomingEventsPage
+                          : isUpcomingEventsPage || isPastEventsPage
                             ? '/images/Y4E_LOGO_TEXT_CREAM.png'
                             : '/images/Y4E_LOGO_TEXT.png'
                     }
