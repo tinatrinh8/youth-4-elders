@@ -102,6 +102,27 @@ export default function PastEventsPage() {
       .map(([k, v]) => ({ startKey: k, date: new Date(k), events: v }))
   }, [past])
 
+  const pastMonthGrid = useMemo(() => {
+    const year = currentDate.getFullYear()
+    const month = currentDate.getMonth()
+    const startPad = new Date(year, month, 1).getDay()
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+    const cells: (number | null)[] = Array.from({ length: startPad }, () => null)
+    for (let d = 1; d <= daysInMonth; d++) cells.push(d)
+    while (cells.length % 7 !== 0) cells.push(null)
+    return cells
+  }, [currentDate])
+
+  const pastEventDays = useMemo(() => {
+    const days = new Set<number>()
+    for (const e of monthEvents) {
+      if (normalizeDay(e.endDate ?? e.date) < today) {
+        days.add(e.date.getDate())
+      }
+    }
+    return days
+  }, [monthEvents, today])
+
   const renderCard = (event: DisplayEvent) => {
     const time = getTimeFromDescription(event.description)
     const location = getLocationFromDescription(event.description)
@@ -164,29 +185,143 @@ export default function PastEventsPage() {
   return (
     <main className="min-h-screen pt-[60px] pb-20" style={{ background: 'var(--color-pink-light)' }}>
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-12">
-        <div className="mb-12">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-3" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', lineHeight: '1.1' }}>
-                Past Events
-              </h1>
-              <p className="text-base md:text-lg" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-dark)', lineHeight: '1.7' }}>
-                {monthLabel} — look back at what we did. Search and filter below.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <button type="button" onClick={() => navigateMonth('prev')} disabled={!canGoPrevMonth()} className="h-11 px-4 rounded-lg font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed" style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-brown-dark)', color: 'var(--color-cream)' }}>
-                Prev
-              </button>
-              <button type="button" onClick={goToToday} className="h-11 px-4 rounded-lg font-semibold transition-all" style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-cream)', color: 'var(--color-brown-dark)', border: '2px solid var(--color-brown-dark)' }}>
-                Today
-              </button>
-              <button type="button" onClick={() => navigateMonth('next')} className="h-11 px-4 rounded-lg font-semibold transition-all" style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-brown-dark)', color: 'var(--color-cream)' }}>
-                Next
-              </button>
+        {/* Scrapbook memory calendar */}
+        <section className="mb-12 md:mb-14">
+          <div
+            className="relative scrapbook-paper rounded-[1.5rem] md:rounded-[1.75rem] border-2 overflow-visible"
+            style={{
+              background: 'var(--color-cream)',
+              borderColor: 'var(--color-brown-dark)',
+              boxShadow: '0 16px 40px rgba(98, 32, 47, 0.12)',
+            }}
+          >
+            <div className="washi-tape washi-tape-pink -top-3 left-10 -rotate-6" aria-hidden />
+            <div className="washi-tape washi-tape-olive -top-2 right-20 rotate-6" aria-hidden />
+            <div className="scrapbook-corner" aria-hidden />
+
+            <div className="overflow-hidden rounded-[1.4rem] md:rounded-[1.65rem]">
+              <div
+                className="px-4 md:px-8 py-4 flex items-center justify-between gap-3"
+                style={{ background: 'var(--color-pink-medium)' }}
+              >
+                <button
+                  type="button"
+                  onClick={() => navigateMonth('prev')}
+                  disabled={!canGoPrevMonth()}
+                  className="h-10 px-3 rounded-lg font-semibold text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-brown-dark)', color: 'var(--color-cream)' }}
+                >
+                  ← Prev
+                </button>
+                <div className="text-center min-w-0">
+                  <p
+                    className="text-[10px] md:text-xs font-bold uppercase tracking-[0.24em] mb-1"
+                    style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}
+                  >
+                    Memory scrapbook
+                  </p>
+                  <p
+                    className="text-sm md:text-base font-bold uppercase tracking-[0.16em] truncate"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                  >
+                    {monthLabel}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={goToToday}
+                    className="h-10 px-3 rounded-lg font-semibold text-sm"
+                    style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-cream)', color: 'var(--color-brown-dark)', border: '2px solid var(--color-brown-dark)' }}
+                  >
+                    Today
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigateMonth('next')}
+                    className="h-10 px-3 rounded-lg font-semibold text-sm"
+                    style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-brown-dark)', color: 'var(--color-cream)' }}
+                  >
+                    Next →
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 scrapbook-lines">
+                <div className="flex flex-col justify-center px-6 md:px-10 py-10 md:py-12 border-b-2 lg:border-b-0 lg:border-r-2" style={{ borderColor: 'rgba(196, 114, 124, 0.35)' }}>
+                  <span className="scrapbook-stamp w-fit mb-4" style={{ fontFamily: 'var(--font-kollektif)' }}>
+                    Look back
+                  </span>
+                  <h1
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3"
+                    style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', lineHeight: '1.05' }}
+                  >
+                    Past Events
+                  </h1>
+                  <p
+                    className="text-base md:text-lg max-w-md"
+                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: '1.7' }}
+                  >
+                    Flip through {monthLabel} like a scrapbook — stamped days are ones we celebrated together.
+                  </p>
+                </div>
+
+                <div className="px-5 md:px-8 py-8 md:py-10 flex flex-col justify-center">
+                  <div className="grid grid-cols-7 gap-1.5 md:gap-2 mb-2">
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((label, i) => (
+                      <div
+                        key={`${label}-${i}`}
+                        className="text-center text-[10px] md:text-xs font-bold uppercase tracking-wider py-1"
+                        style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}
+                      >
+                        {label}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-7 gap-1.5 md:gap-2">
+                    {pastMonthGrid.map((day, i) => {
+                      const hasEvent = day != null && pastEventDays.has(day)
+                      return (
+                        <div
+                          key={i}
+                          className="relative aspect-square rounded-lg flex items-center justify-center text-sm md:text-base font-bold tabular-nums"
+                          style={{
+                            fontFamily: 'var(--font-kollektif)',
+                            background: day == null
+                              ? 'transparent'
+                              : hasEvent
+                                ? 'var(--color-pink-medium)'
+                                : 'rgba(251, 247, 232, 0.7)',
+                            color: day == null
+                              ? 'transparent'
+                              : hasEvent
+                                ? 'var(--color-brown-dark)'
+                                : 'rgba(98, 32, 47, 0.28)',
+                            boxShadow: hasEvent ? 'inset 0 0 0 2px rgba(111, 101, 9, 0.35)' : undefined,
+                          }}
+                        >
+                          {day ?? ''}
+                          {hasEvent && (
+                            <span
+                              className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                              style={{ transform: 'rotate(-12deg)' }}
+                              aria-hidden
+                            >
+                              <span
+                                className="w-7 h-7 md:w-8 md:h-8 rounded-full border-2 opacity-50"
+                                style={{ borderColor: 'var(--color-olive)' }}
+                              />
+                            </span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
           <div className="lg:col-span-7">

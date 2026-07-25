@@ -189,22 +189,58 @@ const teamMembers: TeamMember[] = [
   },
 ]
 
-// Display order (hierarchy): Founders → Presidents → VPs → Junior VPs → Directors → Others (A–Z within each tier)
-const sortedTeamMembers = [...teamMembers].sort((a, b) => {
-  const rank = (role: string) => {
-    const r = role.toLowerCase()
-    if (r.includes('founder')) return 0
-    if (r.includes('president')) return 1 // includes co-president
-    if (r.includes('vp') && !r.includes('junior')) return 2
-    if (r.includes('junior') && r.includes('vp')) return 3
-    if (r.includes('director')) return 4
-    return 5
-  }
+type TeamCategory = TeamMember['category']
 
-  const rankDiff = rank(a.role) - rank(b.role)
-  if (rankDiff !== 0) return rankDiff
-  return a.name.localeCompare(b.name)
-})
+const CATEGORY_ORDER: TeamCategory[] = [
+  'Presidents',
+  'Internal',
+  'External',
+  'Events',
+  'Finance',
+  'Marketing',
+]
+
+const CATEGORY_META: Record<TeamCategory, { title: string; blurb: string }> = {
+  Presidents: { title: 'Presidents', blurb: 'Founders steering the vision.' },
+  Internal: { title: 'Internal', blurb: 'Culture, equity, and team operations.' },
+  External: { title: 'External', blurb: 'Partnerships, outreach, and community ties.' },
+  Events: { title: 'Events', blurb: 'Workshops and experiences that bring people together.' },
+  Finance: { title: 'Finance', blurb: 'Budgeting and sustainable growth.' },
+  Marketing: { title: 'Marketing', blurb: 'Storytelling and brand presence.' },
+}
+
+function roleRank(role: string) {
+  const r = role.toLowerCase()
+  if (r.includes('founder')) return 0
+  if (r.includes('president')) return 1
+  if (r.includes('vp') && !r.includes('junior')) return 2
+  if (r.includes('junior') && r.includes('vp')) return 3
+  if (r.includes('director')) return 4
+  return 5
+}
+
+const teamSections = CATEGORY_ORDER
+  .map(category => ({
+    key: category,
+    ...CATEGORY_META[category],
+    members: teamMembers
+      .filter(m => m.category === category)
+      .sort((a, b) => {
+        const rankDiff = roleRank(a.role) - roleRank(b.role)
+        if (rankDiff !== 0) return rankDiff
+        return a.name.localeCompare(b.name)
+      }),
+  }))
+  .filter(section => section.members.length > 0)
+
+function getInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0]?.toUpperCase() ?? '')
+    .join('')
+}
 
 export default function Team() {
   const [titleVisible, setTitleVisible] = useState(false)
@@ -225,18 +261,17 @@ export default function Team() {
     const el = sectionRef.current
     if (!el) return
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
+      entries => {
+        entries.forEach(e => {
           if (e.isIntersecting) setCardsVisible(true)
         })
       },
-      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.06, rootMargin: '0px 0px -40px 0px' }
     )
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
-  // Whole-page background: set html/body to pink so the full viewport (including above nav) is pink
   useEffect(() => {
     document.body.style.transition = 'background 0.8s ease-in-out'
     document.documentElement.style.transition = 'background 0.8s ease-in-out'
@@ -251,130 +286,186 @@ export default function Team() {
   return (
     <main className="min-h-screen pt-[120px] pb-24 md:pb-32" style={{ background: 'transparent' }}>
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
-        <header className="text-left pt-0 pb-14 md:pb-20">
-          <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-none"
-            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-          >
-            <span className="block">
-              {['OUR', 'TEAM'].map((word, i) => (
-                <span key={i}>
-                  <span
-                    className={titleVisible ? 'word-fade-in-up-blur-slow' : ''}
-                    style={{
-                      display: 'inline-block',
-                      animationDelay: titleVisible ? `${i * 0.5}s` : undefined,
-                      opacity: titleVisible ? undefined : 0
-                    }}
-                  >
-                    {word}
+        <header className="pt-2 pb-14 md:pb-20">
+          <div className="max-w-3xl">
+            <h1
+              className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[0.95]"
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+            >
+              <span className="block">
+                {['OUR', 'TEAM'].map((word, i) => (
+                  <span key={i}>
+                    <span
+                      className={titleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                      style={{
+                        display: 'inline-block',
+                        animationDelay: titleVisible ? `${i * 0.4}s` : undefined,
+                        opacity: titleVisible ? undefined : 0
+                      }}
+                    >
+                      {word}
+                    </span>
+                    {i < 1 ? '\u00A0' : ''}
                   </span>
-                  {i < 1 ? '\u00A0' : ''}
-                </span>
-              ))}
-            </span>
-            <span className="block">
-              {['BEHIND', 'THE', 'VISION'].map((word, i) => (
-                <span key={i}>
-                  <span
-                    className={titleVisible ? 'word-fade-in-up-blur-slow' : ''}
-                    style={{
-                      display: 'inline-block',
-                      animationDelay: titleVisible ? `${2 * 0.5 + i * 0.5}s` : undefined,
-                      opacity: titleVisible ? undefined : 0
-                    }}
-                  >
-                    {word}
+                ))}
+              </span>
+              <span className="block mt-1">
+                {['BEHIND', 'THE', 'VISION'].map((word, i) => (
+                  <span key={i}>
+                    <span
+                      className={titleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                      style={{
+                        display: 'inline-block',
+                        animationDelay: titleVisible ? `${0.8 + i * 0.4}s` : undefined,
+                        opacity: titleVisible ? undefined : 0
+                      }}
+                    >
+                      {word}
+                    </span>
+                    {i < 2 ? '\u00A0' : ''}
                   </span>
-                  {i < 2 ? '\u00A0' : ''}
-                </span>
-              ))}
-            </span>
-          </h1>
+                ))}
+              </span>
+            </h1>
+
+            <div
+              className={`mt-6 md:mt-8 h-1 w-14 rounded-full ${descVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+              style={{ background: 'var(--color-olive)', animationDelay: descVisible ? '0s' : '0s' }}
+              aria-hidden
+            />
+          </div>
+
           <p
-            className={`text-lg md:text-xl max-w-5xl mt-8 md:mt-10 leading-snug font-normal ${descVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+            className={`text-lg md:text-xl mt-6 md:mt-8 leading-relaxed font-normal max-w-none ${descVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
             style={{
               fontFamily: 'var(--font-leiko)',
               color: 'var(--color-olive-dark)',
-              animationDelay: descVisible ? '0.15s' : '0s'
+              animationDelay: descVisible ? '0.12s' : '0s'
             }}
           >
-            Get to know the passionate students who make Youth 4 Elders possible! From organizing workshops to building connections, our team brings creativity and dedication to everything we&nbsp;do.
+            Get to know the passionate students who make Youth 4 Elders possible. From organizing workshops to building connections, our team brings creativity and dedication to everything we&nbsp;do.
           </p>
         </header>
 
-        <section ref={sectionRef} className="pt-4" aria-label="Team members">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14 md:gap-x-10 md:gap-y-20 lg:[&>*:nth-child(3n+1)]:justify-self-start lg:[&>*:nth-child(3n+2)]:justify-self-center lg:[&>*:nth-child(3n)]:justify-self-end">
-            {sortedTeamMembers.map((member, index) => {
-              const cols = 3
-              const row = Math.floor(index / cols)
-              const col = index % cols
-              const cardDelay = row * 1.6 + col * 0.1
-              return (
-                <TeamMemberCard
-                  key={member.name}
-                  member={member}
-                  index={index}
-                  isVisible={cardsVisible}
-                  cardDelay={cardDelay}
+        <section ref={sectionRef} className="space-y-16 md:space-y-20" aria-label="Team members">
+          {teamSections.map((section, sectionIndex) => (
+            <div key={section.key}>
+              <div className="mb-8 md:mb-10 flex items-stretch gap-4 md:gap-5">
+                <div
+                  className="w-1 shrink-0 rounded-full self-stretch min-h-[3rem]"
+                  style={{ background: 'var(--color-olive)' }}
+                  aria-hidden
                 />
-              )
-            })}
-          </div>
+                <div>
+                  <h2
+                    className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-none"
+                    style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-brown-dark)' }}
+                  >
+                    {section.title}
+                  </h2>
+                  <p
+                    className="mt-2 md:mt-3 text-lg md:text-xl lg:text-2xl font-normal leading-snug"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-dark)' }}
+                  >
+                    {section.blurb}
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className={`grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 md:gap-x-8 md:gap-y-12 ${
+                  section.key === 'Presidents' || section.members.length <= 2
+                    ? 'lg:grid-cols-2 lg:max-w-3xl'
+                    : 'lg:grid-cols-3'
+                }`}
+              >
+                {section.members.map((member, memberIndex) => {
+                  const globalIndex = sectionIndex * 8 + memberIndex
+                  return (
+                    <TeamMemberCard
+                      key={member.name}
+                      member={member}
+                      isVisible={cardsVisible}
+                      cardDelay={0.08 + globalIndex * 0.05}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </section>
       </div>
     </main>
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- index used by parent for cardDelay
-function TeamMemberCard({ member, index, isVisible, cardDelay }: { member: TeamMember; index: number; isVisible: boolean; cardDelay: number }) {
+function TeamMemberCard({
+  member,
+  isVisible,
+  cardDelay,
+}: {
+  member: TeamMember
+  isVisible: boolean
+  cardDelay: number
+}) {
+  const initials = getInitials(member.name)
+
   return (
-    <div
-      className={`w-full max-w-[340px] ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+    <article
+      className={`w-full ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
       style={{
         animationDelay: isVisible ? `${cardDelay}s` : '0s',
-        willChange: isVisible ? 'auto' : 'opacity, transform'
       }}
     >
       <div
-        className="relative w-full aspect-[3/4] overflow-hidden rounded-2xl mb-3"
-        style={{ background: 'var(--color-pink-light)' }}
+        className="relative w-full max-w-[280px] md:max-w-[300px] aspect-[4/5] overflow-hidden rounded-xl mb-4"
+        style={{
+          background: 'var(--color-cream)',
+          boxShadow: '0 1px 0 rgba(98, 32, 47, 0.06)',
+        }}
       >
         {member.imageUrl ? (
           <Image
             src={member.imageUrl}
             alt={member.name}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover object-top"
           />
         ) : (
           <div
             className="w-full h-full flex items-center justify-center"
-            style={{ background: 'var(--color-pink-light)' }}
+            style={{ background: 'var(--color-cream)' }}
           >
-            <span className="text-5xl opacity-40" style={{ color: 'var(--color-brown-dark)' }}>👤</span>
+            <span
+              className="text-3xl md:text-4xl font-bold tracking-wide"
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
+              aria-hidden
+            >
+              {initials}
+            </span>
           </div>
         )}
       </div>
-      <p
-        className="font-bold text-xl md:text-2xl leading-tight mt-3"
-        style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
+
+      <h3
+        className="text-lg md:text-xl font-bold leading-snug tracking-tight"
+        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
       >
         {member.name}
-      </p>
+      </h3>
       <p
-        className="text-base md:text-lg leading-snug mt-1 font-normal"
+        className="text-sm md:text-[0.95rem] leading-snug mt-1 font-semibold"
         style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-dark)' }}
       >
         {member.role}
       </p>
       <p
-        className="text-sm md:text-base leading-snug mt-1 font-normal italic"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+        className="text-xs md:text-sm leading-snug mt-1.5 font-normal"
+        style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(98, 32, 47, 0.7)' }}
       >
-        Year {member.yearOfStudy} • {member.program}
+        Year {member.yearOfStudy} · {member.program}
       </p>
-    </div>
+    </article>
   )
 }

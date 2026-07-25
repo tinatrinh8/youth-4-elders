@@ -20,6 +20,7 @@ export default function NavigationBar() {
   const isClubInfoPage = pathname === '/club-info'
   const isPartnerPage = pathname === '/partner'
   const isUpcomingEventsPage = pathname === '/events/upcoming'
+  const isTeamPage = pathname === '/team'
 
   // Determine navbar color scheme based on page
   const getNavbarColors = () => {
@@ -215,13 +216,44 @@ export default function NavigationBar() {
         {/* Logo on the left */}
         <div className="flex items-center flex-shrink-0">
           <Link href="/" className="flex items-center">
-            <Image
-              src="/images/Y4E_CLEAR.PNG"
-              alt="Youth 4 Elders Logo"
-              width={40}
-              height={40}
-              className="object-contain mr-2"
-            />
+            <span
+              className="mr-2 flex items-center justify-center flex-shrink-0"
+              style={
+                isHomePage || isPartnerPage || isTeamPage
+                  ? {
+                      background: 'var(--color-cream)',
+                      borderRadius: '9999px',
+                      width: 40,
+                      height: 40,
+                      padding: 4,
+                    }
+                  : isClubInfoPage || isJoinUsPage || isUpcomingEventsPage || isContactPage
+                    ? {
+                        background: 'var(--color-brown-dark)',
+                        borderRadius: '9999px',
+                        width: 40,
+                        height: 40,
+                        padding: 4,
+                      }
+                    : undefined
+              }
+            >
+              <Image
+                src={
+                  isClubInfoPage || isJoinUsPage || isContactPage
+                    ? '/images/Y4E_LOGO_TEXT_PINK.png'
+                    : isPartnerPage
+                      ? '/images/Y4E_LOGO_TEXT_OLIVE.png'
+                      : isUpcomingEventsPage
+                        ? '/images/Y4E_LOGO_TEXT_CREAM.png'
+                        : '/images/Y4E_LOGO_TEXT.png'
+                }
+                alt="Youth 4 Elders Logo"
+                width={40}
+                height={40}
+                className="object-contain w-full h-full"
+              />
+            </span>
             <span 
               className="text-xl md:text-2xl font-bold italic"
               style={{ 
@@ -712,13 +744,44 @@ export default function NavigationBar() {
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center">
-                <Image
-                  src="/images/Y4E_CLEAR.PNG"
-                  alt="Youth 4 Elders Logo"
-                  width={32}
-                  height={32}
-                  className="object-contain mr-2"
-                />
+                <span
+                  className="mr-2 flex items-center justify-center flex-shrink-0"
+                  style={
+                    isHomePage || isPartnerPage || isTeamPage
+                      ? {
+                          background: 'var(--color-cream)',
+                          borderRadius: '9999px',
+                          width: 32,
+                          height: 32,
+                          padding: 3,
+                        }
+                      : isClubInfoPage || isJoinUsPage || isUpcomingEventsPage || isContactPage
+                        ? {
+                            background: 'var(--color-brown-dark)',
+                            borderRadius: '9999px',
+                            width: 32,
+                            height: 32,
+                            padding: 3,
+                          }
+                        : undefined
+                  }
+                >
+                  <Image
+                    src={
+                      isClubInfoPage || isJoinUsPage || isContactPage
+                        ? '/images/Y4E_LOGO_TEXT_PINK.png'
+                        : isPartnerPage
+                          ? '/images/Y4E_LOGO_TEXT_OLIVE.png'
+                          : isUpcomingEventsPage
+                            ? '/images/Y4E_LOGO_TEXT_CREAM.png'
+                            : '/images/Y4E_LOGO_TEXT.png'
+                    }
+                    alt="Youth 4 Elders Logo"
+                    width={32}
+                    height={32}
+                    className="object-contain w-full h-full"
+                  />
+                </span>
                 <span 
                   className="text-lg font-bold italic"
                   style={{ 

@@ -14,6 +14,8 @@ export default function Footer() {
   const isPartner = pathname === '/partner'
   const isJoinUs = pathname === '/join-us'
   const isUpcomingEvents = pathname === '/events/upcoming'
+  const isTeam = pathname === '/team'
+  const isContact = pathname === '/contact'
   const footerBackground = isUpcomingEvents
     ? 'var(--color-olive-light)'
     : isPartner
@@ -287,11 +289,17 @@ export default function Footer() {
             {/* Logo */}
             <div className="flex-shrink-0">
               <Image
-                src="/images/Y4E_OFFICIAL.PNG"
+                src={
+                  isPartner
+                    ? '/images/Y4E_LOGO_TEXT_OLIVE_LIGHT.png'
+                    : isHome || isTeam || isUpcomingEvents || isContact
+                      ? '/images/Y4E_LOGO_TEXT_CREAM.png'
+                      : '/images/Y4E_LOGO_TEXT.png'
+                }
                 alt="Youth 4 Elders Logo"
-                width={80}
-                height={80}
-                className="object-contain opacity-80 hover:opacity-100 transition-opacity duration-300 w-14 h-14 md:w-20 md:h-20"
+                width={60}
+                height={60}
+                className="object-contain w-14 h-14 md:w-20 md:h-20"
               />
             </div>
           </div>
