@@ -14,10 +14,13 @@ export default function Footer() {
   const isPartner = pathname === '/partner'
   const isJoinUs = pathname === '/join-us'
   const isUpcomingEvents = pathname === '/events/upcoming'
-  const isPastEvents = pathname === '/events/past'
+  const isPastEvents = pathname === '/events/past' || pathname.startsWith('/events/past/')
+  const isPastGallery = pathname.startsWith('/events/past/') && pathname !== '/events/past'
   const isTeam = pathname === '/team'
   const isContact = pathname === '/contact'
-  const footerBackground = isPastEvents
+  const footerBackground = isPastGallery
+    ? 'var(--color-brown-dark)'
+    : isPastEvents
     ? 'var(--color-olive)'
     : isUpcomingEvents
       ? 'var(--color-olive-light)'
@@ -44,7 +47,9 @@ export default function Footer() {
       : isJoinUs || isClubInfo
         ? '#351219'
         : 'var(--color-olive)'
-  const footerBorderColor = isPastEvents
+  const footerBorderColor = isPastGallery
+    ? 'rgba(251, 247, 232, 0.2)'
+    : isPastEvents
     ? 'rgba(251, 247, 232, 0.25)'
     : isUpcomingEvents
       ? 'rgba(251, 247, 232, 0.35)'
@@ -60,6 +65,7 @@ export default function Footer() {
   const [scrollProgress, setScrollProgress] = useState(1)
 
   useEffect(() => {
+    if (isPastGallery) return
     const footer = footerRef.current
     if (!footer) return
 
@@ -77,7 +83,9 @@ export default function Footer() {
       window.removeEventListener('scroll', update)
       window.removeEventListener('resize', update)
     }
-  }, [])
+  }, [isPastGallery])
+
+  if (isPastGallery) return null
 
   const scale = 1 + 1.4 * (1 - scrollProgress)
   const transition = 'transform 0.28s ease-out'

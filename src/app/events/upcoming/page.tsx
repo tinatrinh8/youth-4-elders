@@ -13,6 +13,12 @@ import {
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
+const EVENT_TYPE_STICKERS = {
+  club: '/assets/events/club.png',
+  school: '/assets/events/school.png',
+  holiday: '/assets/events/holiday.png',
+} as const
+
 function MobileMonthCarousel({
   events: monthEvents,
   renderCard,
@@ -381,32 +387,6 @@ export default function UpcomingEventsPage() {
           ? { bg: 'var(--color-olive-light)', text: 'var(--color-olive-deep)', label: 'School' }
           : { bg: 'rgba(98, 32, 47, 0.12)', text: 'var(--color-brown-dark)', label: 'Holiday' }
 
-    const typeIcon =
-      event.type === 'school' ? (
-        // Graduation cap
-        <svg className="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 14l9-5-9-5-9 5 9 5z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5a12.083 12.083 0 01-6.16-10.922L12 14z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 14v7.5" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M19 11.5v4.5" />
-        </svg>
-      ) : event.type === 'holiday' ? (
-        // Sparkle / celebration star
-        <svg className="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M5 15l.55 1.55L7.1 17.1 5.55 17.65 5 19.2l-.55-1.55L2.9 17.1l1.55-.55L5 15z" />
-        </svg>
-      ) : (
-        // Club / community people
-        <svg className="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2" />
-          <circle cx="10" cy="7" r="3.5" strokeWidth={1.6} />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M21 20v-2a3.5 3.5 0 00-2.5-3.35" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M16 3.65a3.5 3.5 0 010 6.7" />
-        </svg>
-      )
-
     return (
       <article
         className="relative scrapbook-paper w-full overflow-visible rounded-[1.1rem] md:rounded-[1.5rem] border-2 transition-transform duration-300 md:hover:-translate-y-0.5"
@@ -424,17 +404,18 @@ export default function UpcomingEventsPage() {
         />
 
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 p-4 sm:p-5 md:p-7">
-          {/* Stamp-like icon */}
+          {/* Type sticker */}
           <div
-            className="scrapbook-stamp shrink-0 self-start flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full border-2"
-            style={{
-              borderColor: 'var(--color-brown-dark)',
-              background: typeAccent.bg,
-              color: typeAccent.text,
-            }}
+            className="scrapbook-stamp shrink-0 self-start relative w-[4.25rem] h-[4.25rem] md:w-[5.25rem] md:h-[5.25rem] -rotate-6"
             aria-hidden
           >
-            {typeIcon}
+            <Image
+              src={EVENT_TYPE_STICKERS[event.type]}
+              alt=""
+              width={96}
+              height={96}
+              className="object-contain w-full h-full drop-shadow-[0_4px_10px_rgba(61,57,10,0.22)]"
+            />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -528,11 +509,23 @@ export default function UpcomingEventsPage() {
           boxShadow: '0 6px 16px rgba(98, 32, 47, 0.08)',
         }}
       >
-        <div className="h-1.5 w-full" style={{ background: typeAccent.bg }} aria-hidden />
-        <div className="p-3.5">
-          <div className="mb-2 flex items-start justify-between gap-2">
+        <div className="h-1.5 w-full rounded-t-[0.65rem]" style={{ background: typeAccent.bg }} aria-hidden />
+        <div
+          className="pointer-events-none absolute top-3 right-2.5 z-10 w-[3.35rem] h-[3.35rem] rotate-[8deg]"
+          aria-hidden
+        >
+          <Image
+            src={EVENT_TYPE_STICKERS[event.type]}
+            alt=""
+            width={56}
+            height={56}
+            className="object-contain w-full h-full drop-shadow-[0_3px_8px_rgba(61,57,10,0.28)]"
+          />
+        </div>
+        <div className="p-3.5 pr-[4.25rem]">
+          <div className="mb-2">
             <span
-              className="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em]"
+              className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em]"
               style={{
                 fontFamily: 'var(--font-kollektif)',
                 background: typeAccent.bg,
@@ -541,20 +534,20 @@ export default function UpcomingEventsPage() {
             >
               {typeAccent.label}
             </span>
-            <span
-              className="shrink-0 text-[11px] font-bold tabular-nums leading-none"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
-            >
-              {shortDate}
-              {endShort ? ` – ${endShort}` : ''}
-            </span>
           </div>
           <h3
-            className="mb-2 text-lg font-bold leading-snug"
+            className="mb-1.5 text-lg font-bold leading-snug"
             style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
           >
             {event.title}
           </h3>
+          <p
+            className="mb-2.5 text-[11px] font-bold tabular-nums leading-none"
+            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
+          >
+            {shortDate}
+            {endShort ? ` – ${endShort}` : ''}
+          </p>
           {event.description && (
             <p
               className="text-sm leading-relaxed"
@@ -762,15 +755,8 @@ export default function UpcomingEventsPage() {
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-14 w-full max-w-[100vw] md:max-w-7xl overflow-x-hidden md:overflow-x-visible box-border">
         <div className="mb-10 md:mb-28 lg:mb-32">
-          <div className="flex flex-col items-stretch lg:items-end gap-2 md:gap-3 mb-20 md:mb-40 lg:mb-48">
-            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center lg:justify-end">
-              {(['all', 'club', 'school', 'holiday'] as const).map(t => (
-                <button key={t} type="button" onClick={() => setFilterType(t)} className="h-8 md:h-10 px-2.5 md:px-4 rounded-lg font-semibold text-xs md:text-sm transition-all" style={{ fontFamily: 'var(--font-kollektif)', background: filterType === t ? 'var(--color-brown-dark)' : 'var(--color-cream)', color: filterType === t ? 'var(--color-cream)' : 'var(--color-brown-dark)', border: `2px solid ${filterType === t ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)'}` }}>
-                  {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
-                </button>
-              ))}
-            </div>
-            <div className="relative w-full max-w-full lg:w-[min(100%,28rem)] lg:max-w-none">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-3 mb-20 md:mb-40 lg:mb-48">
+            <div className="relative w-full sm:flex-1 sm:max-w-xl md:max-w-2xl lg:max-w-3xl">
               <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search upcoming events..." className="w-full h-10 md:h-12 pl-9 md:pl-11 pr-9 md:pr-11 rounded-lg md:rounded-xl border-2 focus:outline-none text-sm md:text-base" style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-cream)', borderColor: searchQuery ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)', color: 'var(--color-brown-dark)' }} />
               <svg className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5" style={{ color: 'var(--color-olive)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -782,6 +768,13 @@ export default function UpcomingEventsPage() {
                   </svg>
                 </button>
               )}
+            </div>
+            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center sm:justify-end shrink-0">
+              {(['all', 'club', 'school', 'holiday'] as const).map(t => (
+                <button key={t} type="button" onClick={() => setFilterType(t)} className="h-8 md:h-10 px-2.5 md:px-4 rounded-lg font-semibold text-xs md:text-sm transition-all" style={{ fontFamily: 'var(--font-kollektif)', background: filterType === t ? 'var(--color-brown-dark)' : 'var(--color-cream)', color: filterType === t ? 'var(--color-cream)' : 'var(--color-brown-dark)', border: `2px solid ${filterType === t ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)'}` }}>
+                  {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -1211,6 +1204,31 @@ export default function UpcomingEventsPage() {
                     </div>
                   )
                 })}
+              </div>
+
+              <div className="mt-10 md:mt-24 flex flex-col items-center text-center gap-1.5 md:gap-3 px-3">
+                <p
+                  className="text-xs md:text-lg leading-snug md:leading-normal max-w-[18rem] md:max-w-none md:whitespace-nowrap"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)' }}
+                >
+                  Want to look back? Flip through what we&apos;ve already done.
+                </p>
+                <Link
+                  href="/events/past"
+                  className="past-events-link group inline-flex items-center gap-1 md:gap-1.5 text-[11px] md:text-base font-semibold"
+                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}
+                >
+                  <span className="past-events-link-text">Check Past Events</span>
+                  <svg
+                    className="past-events-link-arrow w-3 h-3 md:w-4 md:h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.25} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
               </div>
             </>
           ) : (

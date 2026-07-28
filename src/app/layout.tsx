@@ -85,9 +85,9 @@ export const metadata: Metadata = {
   title: 'Youth 4 Elders | UOttawa',
   description: 'Student-led club dedicated to bridging the gap between youth and elders.',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: [{ url: '/images/Y4E_LOGO.png', type: 'image/png' }],
+    shortcut: '/images/Y4E_LOGO.png',
+    apple: '/images/Y4E_LOGO.png',
   },
 }
 

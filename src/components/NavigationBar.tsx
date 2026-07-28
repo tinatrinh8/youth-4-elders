@@ -20,6 +20,7 @@ export default function NavigationBar() {
   const isClubInfoPage = pathname === '/club-info'
   const isPartnerPage = pathname === '/partner'
   const isUpcomingEventsPage = pathname === '/events/upcoming'
+  const isPastGalleryPage = pathname.startsWith('/events/past/') && pathname !== '/events/past'
   const isPastEventsPage = pathname === '/events/past'
   const isTeamPage = pathname === '/team'
 
@@ -170,14 +171,14 @@ export default function NavigationBar() {
   
   // Set page background behind nav
   useEffect(() => {
-    // join-us, upcoming, and past pages manage their own background
-    if (isJoinUsPage || isUpcomingEventsPage || isPastEventsPage) return
+    // join-us, upcoming, past, and club gallery pages manage their own background
+    if (isJoinUsPage || isUpcomingEventsPage || isPastEventsPage || isPastGalleryPage) return
 
     document.body.style.background = 'var(--color-cream)'
     document.documentElement.style.background = 'var(--color-cream)'
     document.body.style.transition = 'none'
     document.documentElement.style.transition = 'none'
-  }, [isJoinUsPage, isUpcomingEventsPage, isPastEventsPage])
+  }, [isJoinUsPage, isUpcomingEventsPage, isPastEventsPage, isPastGalleryPage])
 
   useEffect(() => {
     if (!mobileMenuOpen) {
@@ -195,7 +196,9 @@ export default function NavigationBar() {
     { href: '/events/upcoming', label: 'Upcoming Events' },
     { href: '/events/past', label: 'Past Events' }
   ]
-  
+
+  if (isPastGalleryPage) return null
+
   return (
     <nav 
       className="relative z-[100] py-2 md:py-3 nav-mobile-margins"
