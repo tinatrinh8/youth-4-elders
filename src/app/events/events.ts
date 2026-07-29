@@ -22,22 +22,29 @@ const generateWorkshopDates = (startDate: Date): Date[] => {
   return dates
 }
 
-// Session 1: fall 2025 · Session 2: restarted Jan 16, 2026 (ends Feb 20, 2026)
+// Session 1 (fall 2025): tech literacy · Session 2: Jan 16 – Feb 20, 2026
 const workshopDates = [
   ...generateWorkshopDates(new Date(2025, 8, 16)), // Sep 19 – Oct 24, 2025
   ...generateWorkshopDates(new Date(2026, 0, 16)), // Jan 16 – Feb 20, 2026
 ]
 
+const SESSION_1_WEEKS = 6
+
 // All events data
 export const events: CalendarEvent[] = [
   // Technology Workshop Series — two 6-week Friday sessions
-  ...workshopDates.map((date, index) => ({
-    id: `workshop-${index + 1}`,
-    title: 'Technology Workshop',
-    date: date,
-    type: 'club' as const,
-    description: 'A 6-week weekly workshop series teaching and helping with technology. Help elders with technology basics. Located at Glebe Centre Abbotsford.'
-  })),
+  ...workshopDates.map((date, index) => {
+    const isSession1 = index < SESSION_1_WEEKS
+    return {
+      id: `workshop-${index + 1}`,
+      title: isSession1 ? 'Technology Literacy Workshop' : 'Technology Workshop',
+      date,
+      type: 'club' as const,
+      description: isSession1
+        ? 'Our fall Technology Literacy Workshop at Glebe Centre Abbotsford—Friday sessions helping elders build confidence with phones, apps, and everyday tech. We bring lots of examples of lessons, activities, and real-life scenarios so everyone can learn at their own pace.'
+        : 'A 6-week weekly workshop series teaching and helping with technology. Help elders with technology basics. Located at Glebe Centre Abbotsford.',
+    }
+  }),
   // School Club Fair — recap only (no gallery page)
   {
     id: 'club-fair',

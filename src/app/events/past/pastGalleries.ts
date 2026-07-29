@@ -34,6 +34,7 @@ function withFill(lead: string[], count = 12): string[] {
 }
 
 export const TECHNOLOGY_WORKSHOP_GALLERY = withFill([
+  `${GALLERY}/technology-workshop/cover-session-1.jpg`,
   `${GALLERY}/technology-workshop/workshop-series.jpg`,
   `${GALLERY}/technology-workshop/abbott.JPG`,
   `${GALLERY}/technology-workshop/carousel2.JPG`,
@@ -76,6 +77,9 @@ export const CLUB_EVENT_GALLERIES: Record<string, string[]> = {
     `${GALLERY}/bingo-night-2026/carousel2.JPG`,
     `${GALLERY}/bingo-night-2026/kreme.JPG`,
   ]),
+  'technology-workshop-session-1': Array.from({ length: 26 }, (_, i) =>
+    `${GALLERY}/technology-workshop/session-1/photo-${String(i + 2).padStart(2, '0')}.jpg`
+  ),
 }
 
 /** Club items that only get a list recap — no photo gallery page. */
@@ -90,6 +94,7 @@ const CLUB_CARD_COVERS: Record<string, string> = {
   spikeball: '/assets/events/past/spikeball.jpg',
   'bingo-night-2026': '/assets/events/past/bingo-night-2026.jpg',
   'sips-samples': '/assets/events/past/sips-samples.jpg',
+  'technology-workshop-session-1': '/assets/events/past/technology-workshop-session-1.jpg',
 }
 
 export function isClubRecapOnly(eventId: string): boolean {
@@ -107,6 +112,9 @@ const CLUB_GALLERY_CLIPS: Record<string, string[]> = {
     n => `${GALLERY}/build-a-bouquet-2026/video-${String(n).padStart(2, '0')}.mp4`
   ),
   spikeball: [`${GALLERY}/spikeball/video-01.mp4`],
+  'technology-workshop-session-1': [1, 2, 3, 4, 5].map(
+    n => `${GALLERY}/technology-workshop/session-1/video-${String(n).padStart(2, '0')}.mp4`
+  ),
 }
 
 export type ClubGalleryItem = { kind: 'image' | 'video'; src: string }
@@ -123,9 +131,11 @@ export function getClubGalleryVideo(eventId: string): string | undefined {
 export function getClubGallery(eventId: string): string[] {
   if (isClubRecapOnly(eventId)) return []
 
-  const raw = isWorkshopEventId(eventId)
-    ? TECHNOLOGY_WORKSHOP_GALLERY
-    : (CLUB_EVENT_GALLERIES[eventId] ?? withFill(CLUB_INFO.slice(0, 4)))
+  const raw =
+    CLUB_EVENT_GALLERIES[eventId] ??
+    (isWorkshopEventId(eventId)
+      ? TECHNOLOGY_WORKSHOP_GALLERY
+      : withFill(CLUB_INFO.slice(0, 4)))
 
   return raw.map(src => encodeURI(src))
 }
@@ -173,10 +183,11 @@ const CLUB_MEMORY_BLURBS: Record<string, string> = {
   spikeball: 'Our first Spikeball Social tournament — packed house, winners crowned, Domino’s Pizza on the table.',
   'build-a-bouquet-2026': 'Our Valentine’s Day Build-a-Bouquet — flowers made together for Abbotsford.',
   'bingo-night-2026': 'Trivia, three bingo rounds, and $30 FNS gift cards at the RGN Student Lounge.',
+  'technology-workshop-session-1':
+    'Fall tech literacy Fridays at Abbotsford — phones, apps, and lots of hands-on examples.',
 }
 
 export function getClubMemoryBlurb(eventId: string): string | undefined {
-  if (isWorkshopEventId(eventId)) return undefined
   return CLUB_MEMORY_BLURBS[eventId]
 }
 
@@ -190,11 +201,68 @@ const CLUB_GALLERY_BLURBS: Record<string, string> = {
     'A miscellaneous Y4E gathering, Sips, Samples, Social brought a small group together at Abbotsford Seniors Centre on November 10 from 5–6 PM to sample delicious goodies from our favourite local vendors. For $10 a participant (max 15), it was an intimate afternoon of tasting, chatting, and connecting across generations—sweet bites, warm company, and a cosy hour well spent.',
   'build-a-bouquet-2026':
     'This Valentine’s Day, Build-a-Bouquet brought everyone together for an afternoon of making little bouquets—with friends, partners, or just for someone special. For a $5 entry, you could choose from premium flowers and greenery—roses, lilies, tulips, carnations, baby’s breath, and more—and build your bouquet however you wanted: keep it, gift it, wrap it up, or send a little love out into the world.\n\nWhat an incredible turnout—thank you to everyone who came out and made it such a huge success. Dozens of our bouquets headed to Abbotsford to brighten someone’s day. The flowers were beautiful, but the smiles we received back meant even more—a small bunch of blooms, a few warm conversations, and a whole lot of love. Sometimes the simplest gestures are the sweetest.',
+  'technology-workshop-session-1':
+    'Our first fall series was a Technology Literacy Workshop at Glebe Centre Abbotsford—Friday mornings (and afternoons of patience) helping elders feel more at home with phones, apps, and everyday tech. We come prepared with lots of examples of lessons, activities, and real-life scenarios, so everyone can learn at their own pace and leave with something useful.',
 }
 
 export function getClubGalleryBlurb(eventId: string): string | undefined {
-  if (isWorkshopEventId(eventId)) return undefined
+  if (isWorkshopEventId(eventId)) {
+    return CLUB_GALLERY_BLURBS[eventId]
+  }
   return CLUB_GALLERY_BLURBS[eventId] ?? CLUB_MEMORY_BLURBS[eventId]
+}
+
+/** Example Friday PowerPoints / discussion topics for workshop gallery pages. */
+export type WorkshopFridayExample = {
+  week: string
+  slideTitle: string
+  summary: string
+  discuss: string[]
+}
+
+const WORKSHOP_FRIDAY_EXAMPLES: Record<string, WorkshopFridayExample[]> = {
+  'technology-workshop-session-1': [
+    {
+      week: 'Week 1',
+      slideTitle: 'Getting Comfortable with Your Phone',
+      summary: 'A gentle intro to the home screen, icons, volume, brightness, and locking/unlocking with confidence.',
+      discuss: ['What feels confusing on your phone?', 'Practice opening and closing apps', 'Saving a contact for later'],
+    },
+    {
+      week: 'Week 2',
+      slideTitle: 'Photos & Memories',
+      summary: 'Taking photos, finding the camera roll, zooming in, and sharing a favourite picture with family.',
+      discuss: ['How to take a clear photo', 'Finding old pictures', 'Sending a photo to a loved one'],
+    },
+    {
+      week: 'Week 3',
+      slideTitle: 'Staying Connected',
+      summary: 'Calls, texts, and video chat—simple steps to reach friends and family without the overwhelm.',
+      discuss: ['Making a call from contacts', 'Sending a short text', 'Trying a video call together'],
+    },
+    {
+      week: 'Week 4',
+      slideTitle: 'Email Basics',
+      summary: 'Opening inbox, reading a message, and writing a short reply with subject lines that make sense.',
+      discuss: ['Spotting important emails', 'Replying vs. forwarding', 'Avoiding spam clicks'],
+    },
+    {
+      week: 'Week 5',
+      slideTitle: 'Online Safety & Scams',
+      summary: 'Real examples of phishing texts and fake calls—and how to pause, check, and stay safe.',
+      discuss: ['What a scam often looks like', 'Who to trust', 'When to ask for help'],
+    },
+    {
+      week: 'Week 6',
+      slideTitle: 'Everyday Tech Wins',
+      summary: 'Putting it all together: settings favourites, helpful apps, and celebrating what everyone learned.',
+      discuss: ['Favourite tip from the series', 'One skill to keep practicing', 'Questions for next time'],
+    },
+  ],
+}
+
+export function getWorkshopFridayExamples(eventId: string): WorkshopFridayExample[] {
+  return WORKSHOP_FRIDAY_EXAMPLES[eventId] ?? []
 }
 
 type WorkshopLike = {
@@ -244,14 +312,19 @@ export function collapseWorkshopSeries<T extends WorkshopLike>(list: T[]): T[] {
     const lastEnd = last.endDate ?? last.date
     const sessionNumber = index + 1
     const weekCount = session.length
+    const isLiteracy = sessionNumber === 1
 
     return {
       ...first,
       id: workshopSessionId(sessionNumber),
-      title: `Technology Workshop · Session ${sessionNumber}`,
+      title: isLiteracy
+        ? `Technology Literacy Workshop · Session ${sessionNumber}`
+        : `Technology Workshop · Session ${sessionNumber}`,
       date: first.date,
       endDate: lastEnd.getTime() > first.date.getTime() ? lastEnd : first.endDate,
-      description: `A ${weekCount}-week stretch of Friday tech help at Glebe Centre Abbotsford.`,
+      description: isLiteracy
+        ? `Our fall Technology Literacy Workshop at Glebe Centre Abbotsford—a ${weekCount}-week stretch of Fridays helping elders build confidence with phones, apps, and everyday tech. We bring lots of examples of lessons, activities, and real-life scenarios so everyone can learn at their own pace.`
+        : `A ${weekCount}-week stretch of Friday tech help at Glebe Centre Abbotsford.`,
     } as T
   })
 

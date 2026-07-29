@@ -12,7 +12,7 @@ import {
   mergeConsecutiveEvents,
   normalizeDay,
 } from '../../../shared'
-import { getClubGalleryBlurb, getClubGalleryItems, getClubGalleryVideos, collapseWorkshopSeries, isWorkshopEventId, resolveWorkshopPageId, isClubRecapOnly } from '../../pastGalleries'
+import { getClubGalleryBlurb, getClubGalleryItems, getClubGalleryVideos, getWorkshopFridayExamples, collapseWorkshopSeries, isWorkshopEventId, resolveWorkshopPageId, isClubRecapOnly } from '../../pastGalleries'
 import { galleryHref, getGalleryParent, setGalleryParent } from '../../galleryNav'
 
 function cleanLocation(description?: string): string | null {
@@ -312,6 +312,7 @@ export default function PastEventGalleryPage() {
 
   const media = useMemo(() => (event ? getClubGalleryItems(event.id) : []), [event])
   const videos = useMemo(() => (event ? getClubGalleryVideos(event.id) : []), [event])
+  const fridayExamples = useMemo(() => (event ? getWorkshopFridayExamples(event.id) : []), [event])
   const photoCount = useMemo(() => media.filter(m => m.kind === 'image').length, [media])
   const clipCount = useMemo(() => media.filter(m => m.kind === 'video').length, [media])
 
@@ -527,6 +528,96 @@ export default function PastEventGalleryPage() {
             >
               Flowers, friends, and a little Valentine magic
             </p>
+          </div>
+        </section>
+      )}
+
+      {/* Friday PowerPoint & discussion examples (tech literacy session) — above gallery */}
+      {fridayExamples.length > 0 && (
+        <section
+          className={`mx-auto w-full max-w-5xl px-5 sm:px-10 md:px-14 lg:px-16 pb-12 md:pb-16 transition-all duration-700 ease-out ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+          style={{ transitionDelay: entered ? '380ms' : '0ms' }}
+        >
+          <div className="flex w-full items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <span className="h-px flex-1" style={{ background: 'var(--color-olive-light)', opacity: 0.45 }} aria-hidden />
+            <p
+              className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.22em] sm:tracking-[0.28em] italic shrink-0"
+              style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive-light)' }}
+            >
+              Friday examples
+            </p>
+            <span className="h-px flex-1" style={{ background: 'var(--color-olive-light)', opacity: 0.45 }} aria-hidden />
+          </div>
+          <p
+            className="mx-auto mb-6 sm:mb-8 max-w-2xl text-center text-sm sm:text-base leading-relaxed"
+            style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-medium)', lineHeight: 1.65, opacity: 0.9 }}
+          >
+            Sample PowerPoints we bring on Fridays—and the kinds of things we talk through together.
+          </p>
+
+          <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {fridayExamples.map(example => (
+              <article
+                key={`${example.week}-${example.slideTitle}`}
+                className="relative overflow-hidden rounded-xl sm:rounded-2xl border"
+                style={{
+                  background: 'rgba(251, 247, 232, 0.1)',
+                  borderColor: 'rgba(251, 247, 232, 0.18)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.16)',
+                }}
+              >
+                {/* Slide-deck header bar */}
+                <div
+                  className="flex items-center gap-1.5 px-3 py-2 sm:px-3.5"
+                  style={{ background: 'rgba(53, 18, 25, 0.55)', borderBottom: '1px solid rgba(251, 247, 232, 0.12)' }}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--color-pink-medium)', opacity: 0.7 }} aria-hidden />
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--color-olive-light)', opacity: 0.55 }} aria-hidden />
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: 'var(--color-cream)', opacity: 0.35 }} aria-hidden />
+                  <span
+                    className="ml-2 text-[9px] font-bold uppercase tracking-[0.16em]"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.55 }}
+                  >
+                    {example.week} · slides
+                  </span>
+                </div>
+
+                <div className="p-4 sm:p-5">
+                  <h3
+                    className="mb-2 text-base sm:text-lg font-bold leading-snug"
+                    style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}
+                  >
+                    {example.slideTitle}
+                  </h3>
+                  <p
+                    className="mb-3.5 text-xs sm:text-sm leading-relaxed"
+                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.8, lineHeight: 1.6 }}
+                  >
+                    {example.summary}
+                  </p>
+                  <p
+                    className="mb-2 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.18em]"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)', opacity: 0.85 }}
+                  >
+                    We discuss
+                  </p>
+                  <ul className="space-y-1.5">
+                    {example.discuss.map(item => (
+                      <li
+                        key={item}
+                        className="flex gap-2 text-xs sm:text-sm leading-snug"
+                        style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.78 }}
+                      >
+                        <span style={{ color: 'var(--color-olive-light)', opacity: 0.8 }} aria-hidden>
+                          ·
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
       )}
