@@ -242,34 +242,40 @@ function getInitials(name: string) {
     .join('')
 }
 
+function useScrollReveal<T extends HTMLElement>(rootMargin = '0px 0px -10% 0px') {
+  const ref = useRef<T>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        setVisible(true)
+        observer.unobserve(el)
+      },
+      { threshold: 0.12, rootMargin }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [rootMargin])
+
+  return { ref, visible }
+}
+
 export default function Team() {
   const [titleVisible, setTitleVisible] = useState(false)
   const [descVisible, setDescVisible] = useState(false)
-  const [cardsVisible, setCardsVisible] = useState(false)
-  const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const t1 = setTimeout(() => setTitleVisible(true), 100)
-    const t2 = setTimeout(() => setDescVisible(true), 450)
+    // Wait for title word animation (~0.4s delay + ~0.8–1s anim) before desc
+    const t2 = setTimeout(() => setDescVisible(true), 1100)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
     }
-  }, [])
-
-  useEffect(() => {
-    const el = sectionRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting) setCardsVisible(true)
-        })
-      },
-      { threshold: 0.06, rootMargin: '0px 0px -40px 0px' }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
@@ -287,9 +293,9 @@ export default function Team() {
     <main className="min-h-screen pt-[120px] pb-24 md:pb-32" style={{ background: 'transparent' }}>
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
         <header className="pt-2 pb-14 md:pb-20">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[0.95]"
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95]"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
             >
               <span className="block">
@@ -309,89 +315,34 @@ export default function Team() {
                   </span>
                 ))}
               </span>
-              <span className="block mt-1">
-                {['BEHIND', 'THE', 'VISION'].map((word, i) => (
-                  <span key={i}>
-                    <span
-                      className={titleVisible ? 'word-fade-in-up-blur-slow' : ''}
-                      style={{
-                        display: 'inline-block',
-                        animationDelay: titleVisible ? `${0.8 + i * 0.4}s` : undefined,
-                        opacity: titleVisible ? undefined : 0
-                      }}
-                    >
-                      {word}
-                    </span>
-                    {i < 2 ? '\u00A0' : ''}
-                  </span>
-                ))}
-              </span>
             </h1>
 
             <div
-              className={`mt-6 md:mt-8 h-1 w-14 rounded-full ${descVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
-              style={{ background: 'var(--color-olive)', animationDelay: descVisible ? '0s' : '0s' }}
+              className={`mt-6 md:mt-8 h-1 w-14 rounded-full transition-all duration-700 ease-out ${descVisible ? 'opacity-100 translate-y-0 scale-x-100' : 'opacity-0 translate-y-3 scale-x-50'}`}
+              style={{
+                background: 'var(--color-olive)',
+                transformOrigin: 'left center',
+                transitionDelay: descVisible ? '0ms' : '0ms',
+              }}
               aria-hidden
             />
           </div>
 
           <p
-            className={`text-lg md:text-xl mt-6 md:mt-8 leading-relaxed font-normal max-w-none ${descVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
+            className={`text-lg md:text-xl mt-6 md:mt-8 leading-relaxed font-normal max-w-5xl transition-all duration-700 ease-out ${descVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
             style={{
               fontFamily: 'var(--font-leiko)',
               color: 'var(--color-olive-dark)',
-              animationDelay: descVisible ? '0.12s' : '0s'
+              transitionDelay: descVisible ? '120ms' : '0ms',
             }}
           >
             Get to know the passionate students who make Youth 4 Elders possible. From organizing workshops to building connections, our team brings creativity and dedication to everything we&nbsp;do.
           </p>
         </header>
 
-        <section ref={sectionRef} className="space-y-16 md:space-y-20" aria-label="Team members">
-          {teamSections.map((section, sectionIndex) => (
-            <div key={section.key}>
-              <div className="mb-8 md:mb-10 flex items-stretch gap-4 md:gap-5">
-                <div
-                  className="w-1 shrink-0 rounded-full self-stretch min-h-[3rem]"
-                  style={{ background: 'var(--color-olive)' }}
-                  aria-hidden
-                />
-                <div>
-                  <h2
-                    className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-none"
-                    style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-brown-dark)' }}
-                  >
-                    {section.title}
-                  </h2>
-                  <p
-                    className="mt-2 md:mt-3 text-lg md:text-xl lg:text-2xl font-normal leading-snug"
-                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-dark)' }}
-                  >
-                    {section.blurb}
-                  </p>
-                </div>
-              </div>
-
-              <div
-                className={`grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 md:gap-x-8 md:gap-y-12 ${
-                  section.key === 'Presidents' || section.members.length <= 2
-                    ? 'lg:grid-cols-2 lg:max-w-3xl'
-                    : 'lg:grid-cols-3'
-                }`}
-              >
-                {section.members.map((member, memberIndex) => {
-                  const globalIndex = sectionIndex * 8 + memberIndex
-                  return (
-                    <TeamMemberCard
-                      key={member.name}
-                      member={member}
-                      isVisible={cardsVisible}
-                      cardDelay={0.08 + globalIndex * 0.05}
-                    />
-                  )
-                })}
-              </div>
-            </div>
+        <section className="space-y-16 md:space-y-20" aria-label="Team members">
+          {teamSections.map(section => (
+            <TeamSectionBlock key={section.key} section={section} />
           ))}
         </section>
       </div>
@@ -399,29 +350,84 @@ export default function Team() {
   )
 }
 
+function TeamSectionBlock({
+  section,
+}: {
+  section: (typeof teamSections)[number]
+}) {
+  const { ref, visible } = useScrollReveal<HTMLDivElement>()
+
+  return (
+    <div ref={ref}>
+      <div
+        className={`mb-8 md:mb-10 flex items-stretch gap-4 md:gap-5 transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+      >
+        <div
+          className={`w-1 shrink-0 rounded-full self-stretch min-h-[3rem] transition-all duration-700 ease-out ${visible ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-50'}`}
+          style={{ background: 'var(--color-olive)', transformOrigin: 'top center', transitionDelay: visible ? '80ms' : '0ms' }}
+          aria-hidden
+        />
+        <div>
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-none"
+            style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-brown-dark)' }}
+          >
+            {section.title}
+          </h2>
+          <p
+            className={`mt-2 md:mt-3 text-lg md:text-xl lg:text-2xl font-normal leading-snug transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            style={{
+              fontFamily: 'var(--font-kollektif)',
+              color: 'var(--color-olive-dark)',
+              transitionDelay: visible ? '140ms' : '0ms',
+            }}
+          >
+            {section.blurb}
+          </p>
+        </div>
+      </div>
+
+      <div
+        className={`grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 md:gap-x-8 md:gap-y-12 ${
+          section.key === 'Presidents' || section.members.length <= 2
+            ? 'lg:grid-cols-2 lg:max-w-3xl'
+            : 'lg:grid-cols-3'
+        }`}
+      >
+        {section.members.map((member, memberIndex) => (
+          <TeamMemberCard
+            key={member.name}
+            member={member}
+            staggerDelay={0.1 + memberIndex * 0.08}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function TeamMemberCard({
   member,
-  isVisible,
-  cardDelay,
+  staggerDelay,
 }: {
   member: TeamMember
-  isVisible: boolean
-  cardDelay: number
+  staggerDelay: number
 }) {
+  const { ref, visible } = useScrollReveal<HTMLElement>()
   const initials = getInitials(member.name)
 
   return (
     <article
-      className={`w-full ${isVisible ? 'animate-fadeInUp' : 'opacity-0'}`}
-      style={{
-        animationDelay: isVisible ? `${cardDelay}s` : '0s',
-      }}
+      ref={ref}
+      className={`w-full transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+      style={{ transitionDelay: visible ? `${staggerDelay}s` : '0s' }}
     >
       <div
-        className="relative w-full max-w-[280px] md:max-w-[300px] aspect-[4/5] overflow-hidden rounded-xl mb-4"
+        className={`relative w-full max-w-[280px] md:max-w-[300px] aspect-[4/5] overflow-hidden rounded-xl mb-4 transition-all duration-700 ease-out ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.96]'}`}
         style={{
           background: 'var(--color-cream)',
           boxShadow: '0 1px 0 rgba(98, 32, 47, 0.06)',
+          transitionDelay: visible ? `${staggerDelay + 0.05}s` : '0s',
         }}
       >
         {member.imageUrl ? (
@@ -449,20 +455,32 @@ function TeamMemberCard({
       </div>
 
       <h3
-        className="text-lg md:text-xl font-bold leading-snug tracking-tight"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+        className={`text-lg md:text-xl font-bold leading-snug tracking-tight transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+        style={{
+          fontFamily: 'var(--font-kollektif)',
+          color: 'var(--color-brown-dark)',
+          transitionDelay: visible ? `${staggerDelay + 0.12}s` : '0s',
+        }}
       >
         {member.name}
       </h3>
       <p
-        className="text-sm md:text-[0.95rem] leading-snug mt-1 font-semibold"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-dark)' }}
+        className={`text-sm md:text-[0.95rem] leading-snug mt-1 font-semibold transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+        style={{
+          fontFamily: 'var(--font-kollektif)',
+          color: 'var(--color-olive-dark)',
+          transitionDelay: visible ? `${staggerDelay + 0.18}s` : '0s',
+        }}
       >
         {member.role}
       </p>
       <p
-        className="text-xs md:text-sm leading-snug mt-1.5 font-normal"
-        style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(98, 32, 47, 0.7)' }}
+        className={`text-xs md:text-sm leading-snug mt-1.5 font-normal transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+        style={{
+          fontFamily: 'var(--font-kollektif)',
+          color: 'rgba(98, 32, 47, 0.7)',
+          transitionDelay: visible ? `${staggerDelay + 0.24}s` : '0s',
+        }}
       >
         Year {member.yearOfStudy} · {member.program}
       </p>

@@ -6,34 +6,31 @@ export interface CalendarEvent {
   description?: string
 }
 
-// Generate recurring Technology Workshop events (every Friday for 6 weeks)
-// Starts on September 16, 2025, occurs every Friday
-const generateWorkshopDates = (): Date[] => {
-  // Start from September 16, 2025 and find the first Friday on or after that date
-  const startDate = new Date(2025, 8, 16) // September 16, 2025
+// Generate recurring Technology Workshop Fridays for a 6-week session
+const generateWorkshopDates = (startDate: Date): Date[] => {
   const dates: Date[] = []
-  
-  // Find the first Friday on or after September 16, 2025
   const currentDate = new Date(startDate)
-  while (currentDate.getDay() !== 5) { // 5 = Friday
+  while (currentDate.getDay() !== 5) {
+    // 5 = Friday
     currentDate.setDate(currentDate.getDate() + 1)
   }
-  
-  // Generate 6 Fridays
   for (let i = 0; i < 6; i++) {
     const friday = new Date(currentDate)
-    friday.setDate(currentDate.getDate() + (i * 7))
+    friday.setDate(currentDate.getDate() + i * 7)
     dates.push(friday)
   }
-  
   return dates
 }
 
-const workshopDates = generateWorkshopDates()
+// Session 1: fall 2025 · Session 2: restarted Jan 16, 2026 (ends Feb 20, 2026)
+const workshopDates = [
+  ...generateWorkshopDates(new Date(2025, 8, 16)), // Sep 19 – Oct 24, 2025
+  ...generateWorkshopDates(new Date(2026, 0, 16)), // Jan 16 – Feb 20, 2026
+]
 
 // All events data
 export const events: CalendarEvent[] = [
-  // Technology Workshop Series - recurring every Friday for 6 weeks
+  // Technology Workshop Series — two 6-week Friday sessions
   ...workshopDates.map((date, index) => ({
     id: `workshop-${index + 1}`,
     title: 'Technology Workshop',
@@ -41,13 +38,32 @@ export const events: CalendarEvent[] = [
     type: 'club' as const,
     description: 'A 6-week weekly workshop series teaching and helping with technology. Help elders with technology basics. Located at Glebe Centre Abbotsford.'
   })),
-  // School Club Fair
+  // School Club Fair — recap only (no gallery page)
   {
     id: 'club-fair',
     title: 'Club Fair',
     date: new Date(2025, 8, 3), // September 3, 2025
     type: 'club',
-    description: 'Come find us at the Club Fair! This Wednesday, September 3rd, from 2:00-4:00 PM, swing by Table 16 in UCU (85 University Private). Come chat with our execs and find out why Y4E could be perfect for you!'
+    description:
+      'From morning into the afternoon at UCU (University Centre) at uOttawa, we tabled alongside other clubs to introduce Youth 4 Elders, share what we do, and welcome students who wanted to join.'
+  },
+  // Krispy Kreme Fundraiser — recap only (no gallery page)
+  {
+    id: 'krispy-kreme-2026',
+    title: 'Krispy Kreme Fundraiser',
+    date: new Date(2026, 1, 11), // February 11, 2026
+    type: 'club',
+    description:
+      'We partnered with Discover Innovate Youth Network for a Krispy Kreme fundraiser at the UCU basement and the RGN Student Lounge at uOttawa—students bought boxes of donuts, and every sale helped raise funds to support seniors through Y4E.'
+  },
+  // SPCO contract / grant signing
+  {
+    id: 'spco-grant-signing-2025',
+    title: 'SPCO Grant Signing',
+    date: new Date(2025, 11, 4), // December 4, 2025
+    type: 'club',
+    description:
+      'We signed our contract with the Social Planning Council of Ottawa and received a $5,000 grant to support Youth 4 Elders and our work with seniors in the community. SPCO is helping us invest in growing our club—programs, outreach, and the connections we build across generations—and we are deeply grateful for their partnership and belief in our mission.'
   },
   // Sips, Samples, Social
   {
@@ -55,24 +71,35 @@ export const events: CalendarEvent[] = [
     title: 'Sips, Samples, Social',
     date: new Date(2025, 10, 10), // November 10, 2025
     type: 'club',
-    description: 'Sample delicious goodies from our favourite local vendors at Abbotsford Seniors Centre.'
+    description:
+      'A miscellaneous Y4E gathering, Sips, Samples, Social brought a small group together at Abbotsford Seniors Centre on November 10 from 5–6 PM to sample delicious goodies from our favourite local vendors. For $10 a participant (max 15), it was an intimate afternoon of tasting, chatting, and connecting across generations—sweet bites, warm company, and a cosy hour well spent.',
   },
-  // Spikeball Event (from countdown)
+  // Spikeball Social — tournament night
   {
     id: 'spikeball',
-    title: 'Spikeball Event',
+    title: 'Spikeball Social',
     date: new Date(2026, 0, 15), // January 15, 2026
     type: 'club',
-    description: 'Join us for our fun Spikeball tournament!'
+    description:
+      'Y4E hosted our very first Spikeball Social—a tournament night for anyone who wanted to jump in and play—and it did not disappoint. With an amazing turnout, great energy, and even better people, the night was a massive hit. Shoutout to our winners, and a huge thank you to Domino’s Pizza for sponsoring the event. Thanks to everyone who came out and made it such a great night—stay tuned for more Y4E events coming soon.',
   },
-  // Bingo Night (homepage countdown)
+  // Build a Bouquet — Valentine's Day fundraiser
+  {
+    id: 'build-a-bouquet-2026',
+    title: 'Build-a-Bouquet',
+    date: new Date(2026, 1, 13), // February 13, 2026
+    type: 'club',
+    description:
+      'This Valentine’s Day, Build-a-Bouquet brought everyone together for an afternoon of making little bouquets at CRX—with friends, partners, or just for someone special. What an incredible turnout—thank you to everyone who came out and made it such a huge success.\n\nDozens of our bouquets headed to Abbotsford to brighten someone’s day. The flowers were beautiful, but the smiles we received back meant even more—a small bunch of blooms, a few warm conversations, and a whole lot of love. Sometimes the simplest gestures are the sweetest.'
+  },
+  // Bingo Night — recap only (no gallery photos yet)
   {
     id: 'bingo-night-2026',
     title: 'Bingo Night',
     date: new Date(2026, 3, 7), // April 7, 2026
     type: 'club',
     description:
-      'Join us for a fun night with good food, games, and prizes. Bring your friends or come meet new people! We will kick things off with trivia, then get into 3 rounds of bingo. Each round winner gets a $30 FNS gift card. Time: 7:00 PM – 10:00 PM. Meet us in the RGN Student Lounge. Free spots are limited—link in bio to register!'
+      'Y4E Bingo Night filled the RGN Student Lounge on April 7 from 7–10 PM—a cozy evening for about 40 people with pizza, drinks, games, and prizes. We kicked things off with pizza, drinks, and trivia, then moved into three rounds of bingo (5-in-a-row, inner frame, and X), with a $30 FNS gift card for each round’s first-place winner. After the games, we lingered for photos and chill time—good food, good company, and a night well spent.',
   },
   // School events
   {

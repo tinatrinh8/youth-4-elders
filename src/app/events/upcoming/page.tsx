@@ -19,6 +19,130 @@ const EVENT_TYPE_STICKERS = {
   holiday: '/assets/events/holiday.png',
 } as const
 
+function useScrollReveal<T extends HTMLElement>(rootMargin = '0px 0px -8% 0px', threshold = 0.1) {
+  const ref = useRef<T>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        setVisible(true)
+        observer.unobserve(el)
+      },
+      { threshold, rootMargin }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [rootMargin, threshold])
+
+  return { ref, visible }
+}
+
+function UpcomingToolsAndTitle({
+  searchQuery,
+  setSearchQuery,
+  filterType,
+  setFilterType,
+}: {
+  searchQuery: string
+  setSearchQuery: (v: string) => void
+  filterType: 'all' | 'holiday' | 'school' | 'club'
+  setFilterType: (v: 'all' | 'holiday' | 'school' | 'club') => void
+}) {
+  const { ref, visible } = useScrollReveal<HTMLDivElement>('0px 0px -10% 0px', 0.12)
+  const [stage, setStage] = useState(0)
+  // 0 = hidden, 1 = search/filters, 2 = title, 3 = logo
+
+  useEffect(() => {
+    if (!visible) {
+      setStage(0)
+      return
+    }
+    setStage(1)
+    const titleTimer = window.setTimeout(() => setStage(2), 520)
+    const logoTimer = window.setTimeout(() => setStage(3), 520 + 780)
+    return () => {
+      window.clearTimeout(titleTimer)
+      window.clearTimeout(logoTimer)
+    }
+  }, [visible])
+
+  const searchReady = stage >= 1
+  const titleReady = stage >= 2
+  const logoReady = stage >= 3
+
+  return (
+    <div ref={ref} className="mb-10 md:mb-28 lg:mb-32">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-3 mb-20 md:mb-40 lg:mb-48">
+        <div
+          className={`relative w-full sm:flex-1 sm:max-w-xl md:max-w-2xl lg:max-w-3xl transition-all duration-700 ease-out ${searchReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-5'}`}
+        >
+          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search upcoming events..." className="w-full h-10 md:h-12 pl-9 md:pl-11 pr-9 md:pr-11 rounded-lg md:rounded-xl border-2 focus:outline-none text-sm md:text-base" style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-cream)', borderColor: searchQuery ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)', color: 'var(--color-brown-dark)' }} />
+          <svg className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5" style={{ color: 'var(--color-olive)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          {searchQuery && (
+            <button type="button" onClick={() => setSearchQuery('')} className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 w-7 h-7 md:w-9 md:h-9 rounded-lg transition-all" style={{ background: 'rgba(98, 32, 47, 0.1)', color: 'var(--color-brown-dark)' }} aria-label="Clear search">
+              <svg className="w-4 h-4 md:w-5 md:h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+        <div
+          className={`flex flex-wrap gap-1.5 md:gap-2 justify-center sm:justify-end shrink-0 transition-all duration-700 ease-out ${searchReady ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-5'}`}
+          style={{ transitionDelay: searchReady ? '100ms' : '0ms' }}
+        >
+          {(['all', 'club', 'school', 'holiday'] as const).map(t => (
+            <button key={t} type="button" onClick={() => setFilterType(t)} className="h-8 md:h-10 px-2.5 md:px-4 rounded-lg font-semibold text-xs md:text-sm transition-all" style={{ fontFamily: 'var(--font-kollektif)', background: filterType === t ? 'var(--color-brown-dark)' : 'var(--color-cream)', color: filterType === t ? 'var(--color-cream)' : 'var(--color-brown-dark)', border: `2px solid ${filterType === t ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)'}` }}>
+              {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center gap-3 md:gap-5 px-1">
+        <h2
+          className="text-[2.35rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-tight text-center leading-[1.05]"
+          style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}
+        >
+          {['Upcoming', 'events'].map((word, i) => (
+            <span key={word}>
+              <span
+                className={`inline-block transition-all duration-700 ease-out ${titleReady ? 'opacity-100 translate-y-0 blur-0' : 'opacity-0 translate-y-6 blur-sm'}`}
+                style={{ transitionDelay: titleReady ? `${i * 160}ms` : '0ms' }}
+              >
+                {word}
+              </span>
+              {i === 0 ? '\u00A0' : ''}
+            </span>
+          ))}
+        </h2>
+        <span
+          className={`relative flex items-center justify-center flex-shrink-0 w-20 h-20 md:w-28 md:h-28 transition-all duration-700 ease-out ${logoReady ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-6'}`}
+          style={{
+            background: 'var(--color-pink-medium)',
+            borderRadius: '9999px',
+          }}
+        >
+          <Image
+            src="/images/Y4E_LOGO_TEXT.png"
+            alt="Youth 4 Elders Logo"
+            width={96}
+            height={96}
+            priority
+            className="object-contain"
+            style={{ width: '68%', height: '68%' }}
+          />
+        </span>
+      </div>
+    </div>
+  )
+}
+
 function MobileMonthCarousel({
   events: monthEvents,
   renderCard,
@@ -382,28 +506,28 @@ export default function UpcomingEventsPage() {
 
     const typeAccent =
       event.type === 'club'
-        ? { bg: 'var(--color-pink-medium)', text: 'var(--color-brown-dark)', label: 'Club' }
+        ? { bg: 'var(--color-pink-dark)', text: 'var(--color-cream)', label: 'Club', cardBg: 'var(--color-pink-medium)' }
         : event.type === 'school'
-          ? { bg: 'var(--color-olive-light)', text: 'var(--color-olive-deep)', label: 'School' }
-          : { bg: 'rgba(98, 32, 47, 0.12)', text: 'var(--color-brown-dark)', label: 'Holiday' }
+          ? { bg: 'var(--color-olive-light)', text: 'var(--color-olive-deep)', label: 'School', cardBg: 'var(--color-cream)' }
+          : { bg: 'rgba(98, 32, 47, 0.12)', text: 'var(--color-brown-dark)', label: 'Holiday', cardBg: 'var(--color-cream)' }
 
     return (
       <article
-        className="relative scrapbook-paper w-full overflow-visible rounded-[1.1rem] md:rounded-[1.5rem] border-2 transition-transform duration-300 md:hover:-translate-y-0.5"
+        className="relative scrapbook-paper w-full overflow-hidden rounded-[1.1rem] md:rounded-[1.5rem] border-2 transition-transform duration-300 md:hover:-translate-y-0.5"
         style={{
-          background: 'var(--color-cream)',
+          background: typeAccent.cardBg,
           borderColor: 'var(--color-brown-dark)',
           boxShadow: '0 10px 28px rgba(98, 32, 47, 0.1), 0 1px 0 rgba(251, 247, 232, 0.85) inset',
         }}
       >
-        {/* Soft top accent strip */}
+        {/* Soft top accent strip — absolute so it hugs the card edges */}
         <div
-          className="h-1.5 md:h-2 w-full rounded-t-[1rem] md:rounded-t-[1.35rem]"
+          className="absolute inset-x-0 top-0 z-[1] h-1.5 md:h-2"
           style={{ background: typeAccent.bg }}
           aria-hidden
         />
 
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 p-4 sm:p-5 md:p-7">
+        <div className="relative flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 p-4 pt-5 sm:p-5 sm:pt-6 md:p-7 md:pt-8">
           {/* Type sticker */}
           <div
             className="scrapbook-stamp shrink-0 self-start relative w-[4.25rem] h-[4.25rem] md:w-[5.25rem] md:h-[5.25rem] -rotate-6"
@@ -424,8 +548,8 @@ export default function UpcomingEventsPage() {
                 className="inline-flex items-center px-2.5 py-1 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.14em]"
                 style={{
                   fontFamily: 'var(--font-kollektif)',
-                  background: typeAccent.bg,
-                  color: typeAccent.text,
+                  background: event.type === 'club' ? 'var(--color-cream)' : typeAccent.bg,
+                  color: event.type === 'club' ? 'var(--color-brown-dark)' : typeAccent.text,
                   borderRadius: '9999px',
                 }}
               >
@@ -495,21 +619,21 @@ export default function UpcomingEventsPage() {
       : null
     const typeAccent =
       event.type === 'club'
-        ? { bg: 'var(--color-pink-medium)', text: 'var(--color-brown-dark)', label: 'Club' }
+        ? { bg: 'var(--color-pink-dark)', text: 'var(--color-cream)', label: 'Club', cardBg: 'var(--color-pink-medium)' }
         : event.type === 'school'
-          ? { bg: 'var(--color-olive-light)', text: 'var(--color-olive-deep)', label: 'School' }
-          : { bg: 'rgba(98, 32, 47, 0.12)', text: 'var(--color-brown-dark)', label: 'Holiday' }
+          ? { bg: 'var(--color-olive-light)', text: 'var(--color-olive-deep)', label: 'School', cardBg: 'var(--color-cream)' }
+          : { bg: 'rgba(98, 32, 47, 0.12)', text: 'var(--color-brown-dark)', label: 'Holiday', cardBg: 'var(--color-cream)' }
 
     return (
       <article
         className="relative w-full overflow-hidden rounded-xl border-2"
         style={{
-          background: 'var(--color-cream)',
+          background: typeAccent.cardBg,
           borderColor: 'var(--color-brown-dark)',
           boxShadow: '0 6px 16px rgba(98, 32, 47, 0.08)',
         }}
       >
-        <div className="h-1.5 w-full rounded-t-[0.65rem]" style={{ background: typeAccent.bg }} aria-hidden />
+        <div className="absolute inset-x-0 top-0 z-[1] h-1.5" style={{ background: typeAccent.bg }} aria-hidden />
         <div
           className="pointer-events-none absolute top-3 right-2.5 z-10 w-[3.35rem] h-[3.35rem] rotate-[8deg]"
           aria-hidden
@@ -522,14 +646,14 @@ export default function UpcomingEventsPage() {
             className="object-contain w-full h-full drop-shadow-[0_3px_8px_rgba(61,57,10,0.28)]"
           />
         </div>
-        <div className="p-3.5 pr-[4.25rem]">
+        <div className="relative p-3.5 pt-5 pr-[4.25rem]">
           <div className="mb-2">
             <span
               className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em]"
               style={{
                 fontFamily: 'var(--font-kollektif)',
-                background: typeAccent.bg,
-                color: typeAccent.text,
+                background: event.type === 'club' ? 'var(--color-cream)' : typeAccent.bg,
+                color: event.type === 'club' ? 'var(--color-brown-dark)' : typeAccent.text,
               }}
             >
               {typeAccent.label}
@@ -752,58 +876,64 @@ export default function UpcomingEventsPage() {
         </div>
       </section>
 
-
-      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-14 w-full max-w-[100vw] md:max-w-7xl overflow-x-hidden md:overflow-x-visible box-border">
-        <div className="mb-10 md:mb-28 lg:mb-32">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-3 mb-20 md:mb-40 lg:mb-48">
-            <div className="relative w-full sm:flex-1 sm:max-w-xl md:max-w-2xl lg:max-w-3xl">
-              <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search upcoming events..." className="w-full h-10 md:h-12 pl-9 md:pl-11 pr-9 md:pr-11 rounded-lg md:rounded-xl border-2 focus:outline-none text-sm md:text-base" style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-cream)', borderColor: searchQuery ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)', color: 'var(--color-brown-dark)' }} />
-              <svg className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5" style={{ color: 'var(--color-olive)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              {searchQuery && (
-                <button type="button" onClick={() => setSearchQuery('')} className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 w-7 h-7 md:w-9 md:h-9 rounded-lg transition-all" style={{ background: 'rgba(98, 32, 47, 0.1)', color: 'var(--color-brown-dark)' }} aria-label="Clear search">
-                  <svg className="w-4 h-4 md:w-5 md:h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
+      {/* Short programs teaser — full detail lives on Club Info */}
+      <section className="mx-3 sm:mx-4 md:mx-24 mb-10 md:mb-16">
+        <div
+          className="relative overflow-hidden rounded-[1.25rem] md:rounded-[1.75rem] border-2 px-5 py-6 sm:px-7 sm:py-7 md:px-9 md:py-8"
+          style={{
+            background: 'var(--color-brown-dark)',
+            borderColor: 'var(--color-brown-dark)',
+            boxShadow: '0 12px 32px rgba(98, 32, 47, 0.28)',
+          }}
+        >
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-10">
+            <div className="min-w-0 max-w-2xl">
+              <p
+                className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] md:text-xs"
+                style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive-light)' }}
+              >
+                Sessions & programs
+              </p>
+              <h2
+                className="mb-2.5 text-2xl font-bold leading-tight sm:text-3xl md:text-4xl"
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
+              >
+                What Y4E Offers
+              </h2>
+              <p
+                className="text-sm leading-relaxed md:text-base"
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)', lineHeight: 1.65, opacity: 0.9 }}
+              >
+                Tech help, companionship, educational and wellness workshops, community events, fundraisers, and youth-led active living—adapted for each partner.
+              </p>
             </div>
-            <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center sm:justify-end shrink-0">
-              {(['all', 'club', 'school', 'holiday'] as const).map(t => (
-                <button key={t} type="button" onClick={() => setFilterType(t)} className="h-8 md:h-10 px-2.5 md:px-4 rounded-lg font-semibold text-xs md:text-sm transition-all" style={{ fontFamily: 'var(--font-kollektif)', background: filterType === t ? 'var(--color-brown-dark)' : 'var(--color-cream)', color: filterType === t ? 'var(--color-cream)' : 'var(--color-brown-dark)', border: `2px solid ${filterType === t ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)'}` }}>
-                  {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
 
-          <div className="flex flex-col items-center gap-3 md:gap-5 px-1">
-            <h2
-              className="text-[2.35rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-tight text-center leading-[1.05]"
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}
-            >
-              Upcoming events
-            </h2>
-            <span
-              className="relative flex items-center justify-center flex-shrink-0 w-20 h-20 md:w-28 md:h-28"
+            <Link
+              href="/club-info#programs"
+              className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border-2 px-4 py-2 text-xs font-bold uppercase tracking-[0.1em] transition-transform duration-300 hover:-translate-y-0.5 md:text-sm"
               style={{
-                background: 'var(--color-pink-medium)',
-                borderRadius: '9999px',
+                fontFamily: 'var(--font-kollektif)',
+                background: 'var(--color-olive-light)',
+                borderColor: 'var(--color-olive-light)',
+                color: 'var(--color-brown-dark)',
               }}
             >
-              <Image
-                src="/images/Y4E_LOGO_TEXT.png"
-                alt="Youth 4 Elders Logo"
-                width={96}
-                height={96}
-                priority
-                className="object-contain"
-                style={{ width: '68%', height: '68%' }}
-              />
-            </span>
+              Club Info
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
         </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-14 w-full max-w-[100vw] md:max-w-7xl overflow-x-hidden md:overflow-x-visible box-border">
+        <UpcomingToolsAndTitle
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          filterType={filterType}
+          setFilterType={setFilterType}
+        />
 
         <section id="events-grid" className="scroll-mt-28 md:pr-0">
           {groupedByMonth.length > 0 ? (
@@ -1104,17 +1234,17 @@ export default function UpcomingEventsPage() {
                     <div key={year} className={yearIndex > 0 ? 'pt-4 md:pt-12' : ''}>
                       {/* Year divider */}
                       <div
-                        className="flex items-end gap-3 md:gap-6 mb-7 md:mb-14"
+                        className="flex items-baseline gap-3 md:gap-6 mb-7 md:mb-14"
                         style={{ borderBottom: '2px solid rgba(234, 225, 203, 0.4)' }}
                       >
                         <h2
                           className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-none pb-2 md:pb-4"
-                          style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}
+                          style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
                         >
                           {year}
                         </h2>
                         <span
-                          className="text-xs sm:text-sm md:text-base font-semibold tabular-nums pb-3 md:pb-5"
+                          className="text-xs sm:text-sm md:text-base font-semibold tabular-nums pb-2 md:pb-4"
                           style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)' }}
                         >
                           {yearEventCount} event{yearEventCount === 1 ? '' : 's'}
@@ -1135,7 +1265,7 @@ export default function UpcomingEventsPage() {
                               <div className="flex items-end justify-between gap-3 md:gap-4 mb-5 md:mb-10">
                                 <h3
                                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase tracking-tight leading-[1.05]"
-                                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}
+                                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
                                 >
                                   {monthName}
                                 </h3>
@@ -1154,7 +1284,7 @@ export default function UpcomingEventsPage() {
                                 showTopBadge={isFirstMonthOverall}
                               />
 
-                              {/* Desktop: date-grouped list (unchanged) */}
+                              {/* Desktop: date-grouped list */}
                               <div className="hidden md:block space-y-14 lg:space-y-16">
                                 {month.dateGroups.map((group, groupIndex) => (
                                   <div key={group.startKey} className="grid grid-cols-12 gap-6 lg:gap-8">

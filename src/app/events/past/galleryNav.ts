@@ -33,5 +33,6 @@ export function clearGalleryParents() {
 }
 
 export function galleryHref(eventId: string, fromId?: string | null) {
-  return fromId ? `/events/past/${eventId}?from=${encodeURIComponent(fromId)}` : `/events/past/${eventId}`
+  const base = `/events/past/gallery/${eventId}`
+  return fromId ? `${base}?from=${encodeURIComponent(fromId)}` : base
 }

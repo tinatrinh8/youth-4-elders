@@ -10,8 +10,8 @@ import {
   getLocationFromDescription,
   mergeConsecutiveEvents
 } from '../shared'
-import { getClubGallery, collapseWorkshopSeries } from '../pastGalleries'
-import { clearGalleryParents } from './galleryNav'
+import { getClubMemoryBlurb, getClubCardCover, collapseWorkshopSeries, isClubRecapOnly } from './pastGalleries'
+import { clearGalleryParents, galleryHref } from './galleryNav'
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -230,7 +230,7 @@ export default function PastEventsPage() {
         return title.includes(q) || desc.includes(q) || (loc && loc.includes(q))
       })
     }
-    // Chronological within months; grouping reverses year/month order below
+    // Ascending for grouping; months + days are reversed for look-back below
     return [...list].sort((a, b) => a.date.getTime() - b.date.getTime())
   }, [filterType, pastBase, searchQuery])
 
@@ -245,7 +245,7 @@ export default function PastEventsPage() {
       dateGroups.set(key, arr)
     }
 
-    // Chronological days within each month
+    // Chronological days within each month (reversed after month order flip)
     const sortedDates = [...dateGroups.entries()]
       .sort((a, b) => a[0] - b[0])
       .map(([k, v]) => ({ startKey: k, date: new Date(k), events: v }))
@@ -267,8 +267,11 @@ export default function PastEventsPage() {
       }
     }
 
-    // Newest months / years at top for look-back
-    return months.reverse()
+    // Newest months/years at top; within each month, newest days first (e.g. 30 → 12 → 4)
+    return months.reverse().map(month => ({
+      ...month,
+      dateGroups: [...month.dateGroups].reverse(),
+    }))
   }, [displayEvents])
 
   const tocByYear = useMemo(() => {
@@ -351,16 +354,24 @@ export default function PastEventsPage() {
   const activeTocYear = tocByYear.find(y => y.year === tocYear) ?? tocByYear[0]
 
   const pastClubEvents = useMemo(
-    () => pastBase.filter(e => e.type === 'club').sort((a, b) => b.date.getTime() - a.date.getTime()),
+    () =>
+      pastBase
+        .filter(e => e.type === 'club' && !isClubRecapOnly(e.id))
+        .sort((a, b) => b.date.getTime() - a.date.getTime()),
     [pastBase]
   )
 
   const highlight = useMemo(() => {
+    const bouquet = pastClubEvents.find(e => e.id === 'build-a-bouquet-2026')
+    if (bouquet) {
+      return { event: bouquet, label: 'Voted favourite this year' as const }
+    }
+
     const thisMonthClub = pastClubEvents.find(
       e => e.date.getFullYear() === today.getFullYear() && e.date.getMonth() === today.getMonth()
     )
     if (thisMonthClub) {
-      return { event: thisMonthClub, label: "This month's highlight" as const }
+      return { event: thisMonthClub, label: "This month's memory" as const }
     }
 
     const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
@@ -368,11 +379,11 @@ export default function PastEventsPage() {
       e => e.date.getFullYear() === prevMonth.getFullYear() && e.date.getMonth() === prevMonth.getMonth()
     )
     if (lastMonthClub) {
-      return { event: lastMonthClub, label: "Last month's highlight" as const }
+      return { event: lastMonthClub, label: "Last month's memory" as const }
     }
 
     if (pastClubEvents[0]) {
-      return { event: pastClubEvents[0], label: 'A recent highlight' as const }
+      return { event: pastClubEvents[0], label: 'A recent memory' as const }
     }
 
     return null
@@ -413,120 +424,131 @@ export default function PastEventsPage() {
   }, [pastBase, today])
 
   const renderClubDesktopCard = (event: DisplayEvent) => {
-    const photos = getClubGallery(event.id).slice(0, 3)
+    const isRecap = isClubRecapOnly(event.id)
+    const cover = getClubCardCover(event.id)
+    const blurb = isRecap
+      ? event.description
+      : (getClubMemoryBlurb(event.id) ?? event.description)
     const shortDate = event.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     const endShort = event.endDate
       ? event.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       : null
 
-    return (
-      <Link
-        href={`/events/past/${event.id}`}
-        onClick={() => clearGalleryParents()}
-        className="group relative scrapbook-paper w-full overflow-visible rounded-[1.1rem] md:rounded-[1.5rem] border-2 text-left transition-transform duration-300 md:hover:-translate-y-0.5 block"
-        style={{
-          background: 'var(--color-cream)',
-          borderColor: 'var(--color-pink-dark)',
-          boxShadow: '0 10px 28px rgba(196, 114, 124, 0.16), 0 1px 0 rgba(251, 247, 232, 0.85) inset',
-        }}
-      >
-        <div
-          className="h-1.5 md:h-2 w-full rounded-t-[1rem] md:rounded-t-[1.35rem]"
-          style={{ background: 'var(--color-pink-medium)' }}
-          aria-hidden
-        />
-
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 p-4 sm:p-5 md:p-7">
-          <div className="scrapbook-stamp shrink-0 self-start relative w-[4.25rem] h-[4.25rem] md:w-[5.25rem] md:h-[5.25rem] -rotate-6" aria-hidden>
+    const body = (
+      <div className="relative flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 p-5 pt-7 sm:p-6 sm:pt-8 md:p-7 md:pt-9 pb-6 md:pb-8">
+        {cover && (
+          <div
+            className="relative shrink-0 self-start w-[5.5rem] h-[5.5rem] md:w-[7rem] md:h-[7rem] overflow-hidden rounded-xl border-2"
+            style={{ borderColor: 'var(--color-brown-dark)', background: 'rgba(98, 32, 47, 0.08)' }}
+          >
             <Image
-              src={EVENT_TYPE_STICKERS.club}
+              src={cover}
               alt=""
-              width={96}
-              height={96}
-              className="object-contain w-full h-full drop-shadow-[0_4px_10px_rgba(61,57,10,0.22)]"
+              fill
+              className="object-cover"
+              sizes="112px"
             />
           </div>
+        )}
 
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-2.5 md:mb-3">
+        <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex flex-wrap items-center gap-2 mb-2.5 md:mb-3">
+            <span
+              className="inline-flex items-center px-2.5 py-1 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.14em]"
+              style={{
+                fontFamily: 'var(--font-kollektif)',
+                background: 'var(--color-cream)',
+                color: 'var(--color-brown-dark)',
+                borderRadius: '9999px',
+              }}
+            >
+              Club memory
+            </span>
+            {event.endDate && (
               <span
-                className="inline-flex items-center px-2.5 py-1 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.14em]"
+                className="inline-flex items-center px-2.5 py-1 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.12em]"
                 style={{
                   fontFamily: 'var(--font-kollektif)',
-                  background: 'var(--color-pink-medium)',
                   color: 'var(--color-brown-dark)',
+                  border: '1.5px solid rgba(98, 32, 47, 0.25)',
                   borderRadius: '9999px',
                 }}
               >
-                Club
+                Multi-day
               </span>
-              {event.endDate && (
-                <span
-                  className="inline-flex items-center px-2.5 py-1 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.12em]"
-                  style={{
-                    fontFamily: 'var(--font-kollektif)',
-                    color: 'var(--color-brown-dark)',
-                    border: '1.5px solid rgba(98, 32, 47, 0.25)',
-                    borderRadius: '9999px',
-                  }}
-                >
-                  Multi-day
-                </span>
-              )}
-            </div>
+            )}
+          </div>
 
-            <h3
-              className="text-xl sm:text-2xl md:text-3xl lg:text-[2.1rem] font-bold leading-tight mb-2"
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
-            >
-              {event.title}
-            </h3>
+          <h3
+            className="text-xl sm:text-2xl md:text-3xl lg:text-[2.05rem] font-bold leading-tight mb-2"
+            style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+          >
+            {event.title}
+          </h3>
 
+          <p
+            className="text-sm md:text-base font-semibold tabular-nums mb-2.5"
+            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
+          >
+            {shortDate}
+            {endShort ? ` – ${endShort}` : ''}
+          </p>
+
+          {blurb && (
             <p
-              className="text-sm md:text-base font-semibold tabular-nums mb-3"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
+              className={`text-sm md:text-base leading-relaxed ${isRecap ? '' : 'mb-4 line-clamp-2'}`}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)', lineHeight: 1.65 }}
             >
-              {shortDate}
-              {endShort ? ` – ${endShort}` : ''}
+              {blurb}
             </p>
+          )}
 
-            {photos.length > 0 && (
-              <div className="mb-4 flex gap-2">
-                {photos.map((src, i) => (
-                  <div
-                    key={`${event.id}-thumb-${i}`}
-                    className="relative h-16 w-16 md:h-20 md:w-20 overflow-hidden rounded-lg border-2"
-                    style={{
-                      borderColor: 'var(--color-pink-dark)',
-                      transform: i === 1 ? 'rotate(2deg)' : i === 2 ? 'rotate(-2deg)' : 'rotate(-1deg)',
-                    }}
-                  >
-                    <Image src={src} alt="" fill className="object-cover" sizes="80px" />
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {event.description && (
-              <p
-                className="text-[0.95rem] sm:text-base md:text-lg leading-relaxed mb-3 line-clamp-2"
-                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)', lineHeight: 1.75 }}
-              >
-                {event.description}
-              </p>
-            )}
-
+          {!isRecap && (
             <span
-              className="inline-flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-[0.1em]"
-              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-dark)' }}
+              className="open-memory-btn mt-auto inline-flex w-fit items-center gap-2 rounded-full border-2 px-4 py-2 text-xs md:text-sm font-bold uppercase tracking-[0.1em]"
+              style={{
+                fontFamily: 'var(--font-kollektif)',
+                background: 'var(--color-brown-dark)',
+                borderColor: 'var(--color-brown-dark)',
+                color: 'var(--color-cream)',
+              }}
             >
-              Look back
-              <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              Open memory
+              <svg className="open-memory-btn-arrow w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </span>
-          </div>
+          )}
         </div>
+      </div>
+    )
+
+    const cardStyle = {
+      background: 'var(--color-pink-medium)',
+      borderColor: 'var(--color-brown-dark)',
+      boxShadow:
+        'inset 0 6px 0 0 var(--color-brown-dark), 0 10px 28px rgba(196, 114, 124, 0.16), 0 1px 0 rgba(251, 247, 232, 0.85) inset',
+    } as const
+
+    if (isRecap) {
+      return (
+        <article
+          className="relative scrapbook-paper w-full overflow-hidden rounded-[1.1rem] md:rounded-[1.5rem] border-2 text-left"
+          style={cardStyle}
+        >
+          {body}
+        </article>
+      )
+    }
+
+    return (
+      <Link
+        href={galleryHref(event.id)}
+        onClick={() => clearGalleryParents()}
+        className="relative scrapbook-paper w-full overflow-hidden rounded-[1.1rem] md:rounded-[1.5rem] border-2 text-left block"
+        style={cardStyle}
+      >
+        {body}
       </Link>
     )
   }
@@ -544,7 +566,7 @@ export default function PastEventsPage() {
 
     return (
       <article
-        className="relative scrapbook-paper w-full overflow-visible rounded-[1.1rem] md:rounded-[1.5rem] border-2 transition-transform duration-300 md:hover:-translate-y-0.5"
+        className="relative scrapbook-paper w-full overflow-hidden rounded-[1.1rem] md:rounded-[1.5rem] border-2 transition-transform duration-300 md:hover:-translate-y-0.5"
         style={{
           background: 'var(--color-cream)',
           borderColor: 'var(--color-brown-dark)',
@@ -552,12 +574,12 @@ export default function PastEventsPage() {
         }}
       >
         <div
-          className="h-1.5 md:h-2 w-full rounded-t-[1rem] md:rounded-t-[1.35rem]"
+          className="absolute inset-x-0 top-0 z-[1] h-1.5 md:h-2"
           style={{ background: typeAccent.bg }}
           aria-hidden
         />
 
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 p-4 sm:p-5 md:p-7">
+        <div className="relative flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 p-4 pt-5 sm:p-5 sm:pt-6 md:p-7 md:pt-8">
           <div
             className="scrapbook-stamp shrink-0 self-start relative w-[4.25rem] h-[4.25rem] md:w-[5.25rem] md:h-[5.25rem] -rotate-6"
             aria-hidden
@@ -632,62 +654,45 @@ export default function PastEventsPage() {
     event.type === 'club' ? renderClubDesktopCard(event) : renderPaperCard(event)
 
   const renderMobileClubCard = (event: DisplayEvent) => {
-    const photos = getClubGallery(event.id).slice(0, 3)
+    const isRecap = isClubRecapOnly(event.id)
+    const cover = getClubCardCover(event.id)
+    const blurb = isRecap
+      ? event.description
+      : (getClubMemoryBlurb(event.id) ?? event.description)
     const shortDate = event.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     const endShort = event.endDate
       ? event.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       : null
 
-    return (
-      <Link
-        href={`/events/past/${event.id}`}
-        onClick={() => clearGalleryParents()}
-        className="relative w-full overflow-hidden rounded-xl border-2 text-left block"
-        style={{
-          background: 'var(--color-cream)',
-          borderColor: 'var(--color-pink-dark)',
-          boxShadow: '0 6px 16px rgba(196, 114, 124, 0.14)',
-        }}
-      >
-        <div className="h-1.5 w-full rounded-t-[0.65rem]" style={{ background: 'var(--color-pink-medium)' }} aria-hidden />
-        <div
-          className="pointer-events-none absolute top-3 right-2.5 z-10 w-[3.35rem] h-[3.35rem] rotate-[8deg]"
-          aria-hidden
-        >
-          <Image
-            src={EVENT_TYPE_STICKERS.club}
-            alt=""
-            width={56}
-            height={56}
-            className="object-contain w-full h-full drop-shadow-[0_3px_8px_rgba(61,57,10,0.28)]"
-          />
-        </div>
-        <div className="p-3.5 pr-[4.25rem]">
-          <div className="mb-2">
+    const body = (
+      <div className="relative flex gap-3 p-3.5 pt-5 pb-4">
+        {cover && (
+          <div
+            className="relative shrink-0 w-[4.25rem] h-[4.25rem] overflow-hidden rounded-lg border-2"
+            style={{ borderColor: 'var(--color-brown-dark)', background: 'rgba(98, 32, 47, 0.08)' }}
+          >
+            <Image
+              src={cover}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="68px"
+            />
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex flex-wrap items-center gap-1.5">
             <span
               className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em]"
               style={{
                 fontFamily: 'var(--font-kollektif)',
-                background: 'var(--color-pink-medium)',
+                background: 'var(--color-cream)',
                 color: 'var(--color-brown-dark)',
               }}
             >
-              Club
+              Club memory
             </span>
           </div>
-          {photos.length > 0 && (
-            <div className="mb-2.5 flex gap-1.5">
-              {photos.map((src, i) => (
-                <div
-                  key={`${event.id}-m-thumb-${i}`}
-                  className="relative h-12 w-12 overflow-hidden rounded-md border"
-                  style={{ borderColor: 'var(--color-pink-dark)' }}
-                >
-                  <Image src={src} alt="" fill className="object-cover" sizes="48px" />
-                </div>
-              ))}
-            </div>
-          )}
           <h3
             className="mb-1.5 text-lg font-bold leading-snug"
             style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
@@ -701,13 +706,57 @@ export default function PastEventsPage() {
             {shortDate}
             {endShort ? ` – ${endShort}` : ''}
           </p>
-          <span
-            className="text-[10px] font-bold uppercase tracking-[0.12em]"
-            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-dark)' }}
-          >
-            Open gallery →
-          </span>
+          {blurb && (
+            <p
+              className={`text-[11px] leading-relaxed ${isRecap ? '' : 'mb-3 line-clamp-2'}`}
+              style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)', lineHeight: 1.55 }}
+            >
+              {blurb}
+            </p>
+          )}
+          {!isRecap && (
+            <span
+              className="open-memory-btn inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em]"
+              style={{
+                fontFamily: 'var(--font-kollektif)',
+                background: 'var(--color-brown-dark)',
+                border: '2px solid var(--color-brown-dark)',
+                color: 'var(--color-cream)',
+              }}
+            >
+              Open memory
+              <svg className="open-memory-btn-arrow h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+              </svg>
+            </span>
+          )}
         </div>
+      </div>
+    )
+
+    const cardStyle = {
+      background: 'var(--color-pink-medium)',
+      borderColor: 'var(--color-brown-dark)',
+      boxShadow:
+        'inset 0 5px 0 0 var(--color-brown-dark), 0 6px 16px rgba(196, 114, 124, 0.14)',
+    } as const
+
+    if (isRecap) {
+      return (
+        <article className="relative w-full overflow-hidden rounded-xl border-2 text-left" style={cardStyle}>
+          {body}
+        </article>
+      )
+    }
+
+    return (
+      <Link
+        href={galleryHref(event.id)}
+        onClick={() => clearGalleryParents()}
+        className="relative w-full overflow-hidden rounded-xl border-2 text-left block"
+        style={cardStyle}
+      >
+        {body}
       </Link>
     )
   }
@@ -731,7 +780,7 @@ export default function PastEventsPage() {
           boxShadow: '0 6px 16px rgba(98, 32, 47, 0.08)',
         }}
       >
-        <div className="h-1.5 w-full rounded-t-[0.65rem]" style={{ background: typeAccent.bg }} aria-hidden />
+        <div className="absolute inset-x-0 top-0 z-[1] h-1.5" style={{ background: typeAccent.bg }} aria-hidden />
         <div
           className="pointer-events-none absolute top-3 right-2.5 z-10 w-[3.35rem] h-[3.35rem] rotate-[8deg]"
           aria-hidden
@@ -744,7 +793,7 @@ export default function PastEventsPage() {
             className="object-contain w-full h-full drop-shadow-[0_3px_8px_rgba(61,57,10,0.28)]"
           />
         </div>
-        <div className="p-3.5 pr-[4.25rem]">
+        <div className="relative p-3.5 pt-5 pr-[4.25rem]">
           <div className="mb-2">
             <span
               className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em]"
@@ -786,11 +835,12 @@ export default function PastEventsPage() {
   const renderMobileCard = (event: DisplayEvent) =>
     event.type === 'club' ? renderMobileClubCard(event) : renderMobilePaperCard(event)
 
-  const highlightPhotos = highlight ? getClubGallery(highlight.event.id) : []
-  const highlightCover = highlightPhotos[0]
   const highlightShortDate = highlight
     ? highlight.event.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     : ''
+  const highlightBlurb = highlight
+    ? (getClubMemoryBlurb(highlight.event.id) ?? highlight.event.description)
+    : undefined
 
   return (
     <main
@@ -954,70 +1004,98 @@ export default function PastEventsPage() {
         </div>
       </section>
 
-      {/* Highlight band — after scrapbook, before search/title */}
-      {highlight && highlightCover && (
-        <section className="mx-3 sm:mx-4 md:mx-24 mb-10 md:mb-16">
-          <Link
-            href={`/events/past/${highlight.event.id}`}
-            onClick={() => clearGalleryParents()}
-            className="group relative scrapbook-paper w-full overflow-hidden rounded-[1.25rem] md:rounded-[1.75rem] border-2 text-left transition-transform duration-300 hover:-translate-y-0.5 block"
+      {/* Featured memory — award banner (not a CTA) */}
+      {highlight && (
+        <section className="mx-3 sm:mx-4 md:mx-24 mb-10 md:mb-16" aria-label="Featured club memory">
+          <div
+            className="relative overflow-hidden rounded-[1.25rem] md:rounded-[1.75rem] border-2 px-5 py-7 sm:px-8 sm:py-8 md:px-10 md:py-9"
             style={{
-              background: 'var(--color-cream)',
-              borderColor: 'var(--color-brown-dark)',
-              boxShadow: '0 16px 40px rgba(98, 32, 47, 0.12)',
+              background: 'var(--color-pink-medium)',
+              borderColor: 'var(--color-olive)',
+              boxShadow: '0 12px 32px rgba(196, 114, 124, 0.16)',
             }}
           >
-            <div className="washi-tape washi-tape-pink -top-2.5 left-8 -rotate-6" aria-hidden />
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-              <div className="relative md:col-span-5 aspect-[4/3] md:aspect-auto md:min-h-[16rem] lg:min-h-[18rem]">
-                <Image
-                  src={highlightCover}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 40vw"
-                  priority
-                />
-              </div>
-              <div className="md:col-span-7 flex flex-col justify-center px-5 sm:px-7 md:px-10 py-6 md:py-8">
-                <p
-                  className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] mb-2"
-                  style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-pink-dark)' }}
-                >
-                  {highlight.label}
-                </p>
+            {/* Soft award wash */}
+            <div
+              className="pointer-events-none absolute inset-0 opacity-40"
+              style={{
+                background:
+                  'radial-gradient(ellipse 55% 80% at 88% 50%, rgba(251, 247, 232, 0.55), transparent 70%)',
+              }}
+              aria-hidden
+            />
+
+            <div className="relative z-[2] flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8 md:gap-12">
+              <div className="min-w-0 max-w-xl md:max-w-2xl">
+                <div className="mb-2.5 flex items-center gap-2.5">
+                  <p
+                    className="text-[10px] font-bold uppercase tracking-[0.22em] md:text-xs italic"
+                    style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}
+                  >
+                    {highlight.label}
+                  </p>
+                  <span
+                    className="hidden h-px w-8 sm:block md:w-12"
+                    style={{ background: 'var(--color-olive)', opacity: 0.35 }}
+                    aria-hidden
+                  />
+                </div>
                 <h2
-                  className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-2"
-                  style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
+                  className="mb-2.5 text-2xl font-bold leading-tight sm:text-3xl md:text-4xl"
+                  style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}
                 >
                   {highlight.event.title}
                 </h2>
                 <p
-                  className="text-sm md:text-base font-semibold tabular-nums mb-3"
-                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
+                  className="text-sm leading-relaxed md:text-base"
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: 1.65, opacity: 0.9 }}
                 >
                   {highlightShortDate}
+                  {highlightBlurb ? ` · ${highlightBlurb}` : ''}
                 </p>
-                {highlight.event.description && (
-                  <p
-                    className="text-sm md:text-base leading-relaxed line-clamp-2 mb-4"
-                    style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)', lineHeight: 1.7 }}
+              </div>
+
+              {/* Award stamp */}
+              <div
+                className="pointer-events-none relative mx-auto flex h-[6.25rem] w-[6.25rem] shrink-0 rotate-[-12deg] items-center justify-center rounded-full sm:mx-0 md:h-[7.25rem] md:w-[7.25rem] md:rotate-[-14deg]"
+                aria-hidden
+                style={{
+                  border: '2.5px dashed rgba(111, 101, 9, 0.55)',
+                  boxShadow: 'inset 0 0 0 6px rgba(251, 247, 232, 0.4), 0 6px 18px rgba(111, 101, 9, 0.08)',
+                  background: 'rgba(251, 247, 232, 0.35)',
+                }}
+              >
+                <div
+                  className="absolute inset-[8px] rounded-full"
+                  style={{ border: '1.5px solid rgba(111, 101, 9, 0.32)' }}
+                />
+                <div className="relative flex flex-col items-center gap-0.5 px-2 text-center">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="mb-0.5"
+                    style={{ color: 'var(--color-olive)', opacity: 0.9 }}
                   >
-                    {highlight.event.description}
-                  </p>
-                )}
-                <span
-                  className="inline-flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-[0.1em]"
-                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-dark)' }}
-                >
-                  Open gallery
-                  <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    <path d="M12 2.5l2.6 5.9 6.4.6-4.9 4.2 1.5 6.2L12 16.2l-5.6 3.2 1.5-6.2-4.9-4.2 6.4-.6L12 2.5z" />
                   </svg>
-                </span>
+                  <span
+                    className="text-[8px] md:text-[9px] font-bold uppercase leading-tight tracking-[0.16em]"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
+                  >
+                    Standout
+                  </span>
+                  <span
+                    className="text-[7px] md:text-[8px] font-bold uppercase leading-tight tracking-[0.14em]"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.72 }}
+                  >
+                    of ’26
+                  </span>
+                </div>
               </div>
             </div>
-          </Link>
+          </div>
         </section>
       )}
 
@@ -1077,19 +1155,19 @@ export default function PastEventsPage() {
           <div className="flex flex-col items-center gap-3 md:gap-5 px-1">
             <h2
               className="text-[2.35rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-tight text-center leading-[1.05]"
-              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
             >
               Past events
             </h2>
             <span
               className="relative flex items-center justify-center flex-shrink-0 w-20 h-20 md:w-28 md:h-28"
               style={{
-                background: 'var(--color-pink-medium)',
+                background: 'var(--color-brown-dark)',
                 borderRadius: '9999px',
               }}
             >
               <Image
-                src="/images/Y4E_LOGO_TEXT.png"
+                src="/images/Y4E_LOGO_TEXT_PINK.png"
                 alt="Youth 4 Elders Logo"
                 width={96}
                 height={96}
@@ -1396,7 +1474,7 @@ export default function PastEventsPage() {
                   return (
                     <div key={year} className={yearIndex > 0 ? 'pt-4 md:pt-12' : ''}>
                       <div
-                        className="flex items-end gap-3 md:gap-6 mb-7 md:mb-14"
+                        className="flex items-baseline gap-3 md:gap-6 mb-7 md:mb-14"
                         style={{ borderBottom: '2px solid rgba(98, 32, 47, 0.18)' }}
                       >
                         <h2
@@ -1406,7 +1484,7 @@ export default function PastEventsPage() {
                           {year}
                         </h2>
                         <span
-                          className="text-xs sm:text-sm md:text-base font-semibold tabular-nums pb-3 md:pb-5"
+                          className="text-xs sm:text-sm md:text-base font-semibold tabular-nums pb-2 md:pb-4"
                           style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
                         >
                           {yearEventCount} event{yearEventCount === 1 ? '' : 's'}
@@ -1453,15 +1531,15 @@ export default function PastEventsPage() {
                                         <div
                                           className="w-full rounded-xl border-2 px-5 py-2.5"
                                           style={{
-                                            background: 'var(--color-cream)',
+                                            background: 'var(--color-olive)',
                                             borderColor: 'var(--color-brown-dark)',
                                             boxShadow: '0 4px 14px rgba(73, 47, 30, 0.1)',
                                           }}
                                         >
-                                          <div className="text-sm font-semibold leading-none mb-1 tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                                          <div className="text-sm font-semibold leading-none mb-1 tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                                             {group.date.toLocaleDateString('en-US', { weekday: 'short' })}
                                           </div>
-                                          <div className="text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-none" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                                          <div className="text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-none" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}>
                                             {group.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                           </div>
                                         </div>

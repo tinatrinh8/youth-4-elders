@@ -20,7 +20,7 @@ export default function NavigationBar() {
   const isClubInfoPage = pathname === '/club-info'
   const isPartnerPage = pathname === '/partner'
   const isUpcomingEventsPage = pathname === '/events/upcoming'
-  const isPastGalleryPage = pathname.startsWith('/events/past/') && pathname !== '/events/past'
+  const isPastGalleryPage = pathname.startsWith('/events/past/gallery/')
   const isPastEventsPage = pathname === '/events/past'
   const isTeamPage = pathname === '/team'
 

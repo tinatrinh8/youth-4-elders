@@ -15,7 +15,7 @@ export default function Footer() {
   const isJoinUs = pathname === '/join-us'
   const isUpcomingEvents = pathname === '/events/upcoming'
   const isPastEvents = pathname === '/events/past' || pathname.startsWith('/events/past/')
-  const isPastGallery = pathname.startsWith('/events/past/') && pathname !== '/events/past'
+  const isPastGallery = pathname.startsWith('/events/past/gallery/')
   const isTeam = pathname === '/team'
   const isContact = pathname === '/contact'
   const footerBackground = isPastGallery
@@ -335,8 +335,8 @@ export default function Footer() {
           color: 'var(--color-cream)',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = 'var(--color-olive)'
-          e.currentTarget.style.borderColor = 'var(--color-olive)'
+          e.currentTarget.style.background = 'var(--color-olive-light)'
+          e.currentTarget.style.borderColor = 'var(--color-olive-light)'
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = 'var(--color-brown-dark)'
