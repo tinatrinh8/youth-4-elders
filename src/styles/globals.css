@@ -1177,3 +1177,149 @@ body::-webkit-scrollbar {
   }
 }
 
+/* ========== Gallery: Friday lessons scroll reveal ========== */
+.friday-lessons-section {
+  position: relative;
+  overflow-x: clip;
+}
+
+.friday-lessons-progress {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  height: 3px;
+  margin: 0 0 1.25rem;
+  border-radius: 999px;
+  background: rgba(251, 247, 232, 0.18);
+  overflow: hidden;
+  transform-origin: left center;
+}
+
+.friday-lessons-progress-bar {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(var(--friday-progress, 0));
+  background: linear-gradient(90deg, var(--color-olive-light), var(--color-cream));
+  transition: transform 80ms linear;
+}
+
+.friday-lessons-header {
+  opacity: 0;
+  transform: translate3d(0, 36px, 0);
+  filter: blur(8px);
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 0.85s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+
+.friday-lessons-header.is-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+}
+
+.friday-title-rule {
+  display: block;
+  width: min(12rem, 40%);
+  height: 2px;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-olive-light), transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) 0.28s;
+}
+
+.friday-lessons-header.is-in .friday-title-rule {
+  transform: scaleX(1);
+}
+
+.friday-lesson-card {
+  will-change: opacity, transform;
+}
+
+.friday-lesson-card-scroll {
+  transition: box-shadow 0.5s ease;
+  backface-visibility: hidden;
+}
+
+.friday-lesson-copy {
+  opacity: 0;
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) 0.12s,
+    transform 0.65s cubic-bezier(0.22, 0.61, 0.36, 1) 0.12s;
+}
+
+.friday-lesson-card.slides-from-left .friday-lesson-copy {
+  transform: translate3d(22px, 0, 0);
+}
+
+.friday-lesson-card.slides-from-right .friday-lesson-copy {
+  transform: translate3d(-22px, 0, 0);
+}
+
+.friday-lesson-card.is-in .friday-lesson-copy {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.friday-carousel-slide {
+  opacity: 0;
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.friday-carousel-slide.from-left {
+  transform: translate3d(-108%, 0, 0);
+}
+
+.friday-carousel-slide.from-right {
+  transform: translate3d(108%, 0, 0);
+}
+
+.friday-carousel-slide.is-active {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.friday-board-item {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.friday-lesson-card.is-in .friday-board-item {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.friday-lesson-card.is-in .friday-board-item:nth-child(1) { transition-delay: 0.28s; }
+.friday-lesson-card.is-in .friday-board-item:nth-child(2) { transition-delay: 0.36s; }
+.friday-lesson-card.is-in .friday-board-item:nth-child(3) { transition-delay: 0.44s; }
+.friday-lesson-card.is-in .friday-board-item:nth-child(4) { transition-delay: 0.52s; }
+.friday-lesson-card.is-in .friday-board-item:nth-child(5) { transition-delay: 0.6s; }
+.friday-lesson-card.is-in .friday-board-item:nth-child(6) { transition-delay: 0.68s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .friday-lessons-header,
+  .friday-title-rule,
+  .friday-lesson-card,
+  .friday-lesson-copy,
+  .friday-lesson-slides,
+  .friday-board-item,
+  .friday-lessons-progress-bar,
+  .friday-carousel-slide {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+

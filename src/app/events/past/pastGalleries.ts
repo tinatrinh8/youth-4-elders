@@ -80,6 +80,8 @@ export const CLUB_EVENT_GALLERIES: Record<string, string[]> = {
   'technology-workshop-session-1': Array.from({ length: 26 }, (_, i) =>
     `${GALLERY}/technology-workshop/session-1/photo-${String(i + 2).padStart(2, '0')}.jpg`
   ),
+  /** Session 2 photos coming later — keep empty so we don't show filler. */
+  'technology-workshop-session-2': [],
 }
 
 /** Club items that only get a list recap — no photo gallery page. */
@@ -131,13 +133,22 @@ export function getClubGalleryVideo(eventId: string): string | undefined {
 export function getClubGallery(eventId: string): string[] {
   if (isClubRecapOnly(eventId)) return []
 
-  const raw =
-    CLUB_EVENT_GALLERIES[eventId] ??
-    (isWorkshopEventId(eventId)
-      ? TECHNOLOGY_WORKSHOP_GALLERY
-      : withFill(CLUB_INFO.slice(0, 4)))
+  // Dedicated entry (including empty arrays) wins — no silent filler for unfinished sessions
+  if (Object.prototype.hasOwnProperty.call(CLUB_EVENT_GALLERIES, eventId)) {
+    return CLUB_EVENT_GALLERIES[eventId].map(src => encodeURI(src))
+  }
+
+  const raw = isWorkshopEventId(eventId)
+    ? TECHNOLOGY_WORKSHOP_GALLERY
+    : withFill(CLUB_INFO.slice(0, 4))
 
   return raw.map(src => encodeURI(src))
+}
+
+/** True when this memory page has no photos/clips yet. */
+export function isGalleryComingSoon(eventId: string): boolean {
+  if (isClubRecapOnly(eventId)) return false
+  return getClubGalleryItems(eventId).length === 0
 }
 
 /** Photos + short clips for the masonry gallery. */
@@ -185,6 +196,8 @@ const CLUB_MEMORY_BLURBS: Record<string, string> = {
   'bingo-night-2026': 'Trivia, three bingo rounds, and $30 FNS gift cards at the RGN Student Lounge.',
   'technology-workshop-session-1':
     'Fall tech literacy Fridays at Abbotsford — phones, apps, and lots of hands-on examples.',
+  'technology-workshop-session-2':
+    'Our next tech literacy stretch — photos and Friday notes are still on the way. Check back soon.',
 }
 
 export function getClubMemoryBlurb(eventId: string): string | undefined {
@@ -218,45 +231,62 @@ export type WorkshopFridayExample = {
   slideTitle: string
   summary: string
   discuss: string[]
+  /** Optional slide images shown in an auto-playing carousel */
+  slides?: string[]
 }
 
 const WORKSHOP_FRIDAY_EXAMPLES: Record<string, WorkshopFridayExample[]> = {
   'technology-workshop-session-1': [
     {
-      week: 'Week 1',
-      slideTitle: 'Getting Comfortable with Your Phone',
-      summary: 'A gentle intro to the home screen, icons, volume, brightness, and locking/unlocking with confidence.',
-      discuss: ['What feels confusing on your phone?', 'Practice opening and closing apps', 'Saving a contact for later'],
+      week: 'Week 1 · Sept 19',
+      slideTitle: 'Tech 101',
+      summary:
+        'Building blocks first—internet, Wi‑Fi, Bluetooth, and the cloud—then iPhone vs Android, phone basics, downloading apps, and spotting scams.',
+      discuss: [
+        'Internet, Wi‑Fi, Bluetooth & the cloud',
+        'iPhone / iOS vs Android',
+        'Phone basics (power, unlock, apps)',
+        'Downloading apps',
+        'Scam red flags',
+      ],
+      slides: [1, 2, 3, 4, 5].map(
+        n =>
+          `${GALLERY}/technology-workshop/session-1/slides/tech-101/slide-${String(n).padStart(2, '0')}.jpg`
+      ),
     },
     {
-      week: 'Week 2',
-      slideTitle: 'Photos & Memories',
-      summary: 'Taking photos, finding the camera roll, zooming in, and sharing a favourite picture with family.',
-      discuss: ['How to take a clear photo', 'Finding old pictures', 'Sending a photo to a loved one'],
+      week: 'Oct 4',
+      slideTitle: 'Staying Safe from Scams',
+      summary:
+        'A focused Friday on real scam patterns—phone, text, email, marketplace, and fake tech support—plus simple habits to pause, verify, and ask for help.',
+      discuss: [
+        'Phone scam red flags',
+        'Text message scams',
+        'Email & marketplace scams',
+        'Tech support scams',
+        'General safety tips',
+      ],
+      slides: [1, 2, 3, 4, 5].map(
+        n =>
+          `${GALLERY}/technology-workshop/session-1/slides/staying-safe-scams/slide-${String(n).padStart(2, '0')}.jpg`
+      ),
     },
     {
-      week: 'Week 3',
-      slideTitle: 'Staying Connected',
-      summary: 'Calls, texts, and video chat—simple steps to reach friends and family without the overwhelm.',
-      discuss: ['Making a call from contacts', 'Sending a short text', 'Trying a video call together'],
-    },
-    {
-      week: 'Week 4',
-      slideTitle: 'Email Basics',
-      summary: 'Opening inbox, reading a message, and writing a short reply with subject lines that make sense.',
-      discuss: ['Spotting important emails', 'Replying vs. forwarding', 'Avoiding spam clicks'],
-    },
-    {
-      week: 'Week 5',
-      slideTitle: 'Online Safety & Scams',
-      summary: 'Real examples of phishing texts and fake calls—and how to pause, check, and stay safe.',
-      discuss: ['What a scam often looks like', 'Who to trust', 'When to ask for help'],
-    },
-    {
-      week: 'Week 6',
-      slideTitle: 'Everyday Tech Wins',
-      summary: 'Putting it all together: settings favourites, helpful apps, and celebrating what everyone learned.',
-      discuss: ['Favourite tip from the series', 'One skill to keep practicing', 'Questions for next time'],
+      week: 'Oct 24',
+      slideTitle: 'Rideshare',
+      summary:
+        'How Uber works end to end—download the app, request a ride, check driver details, and use safety settings with confidence.',
+      discuss: [
+        'What rideshare is',
+        'Download the Uber app',
+        'Order a ride',
+        'Driver info & tracking',
+        'Settings & safety features',
+      ],
+      slides: [1, 2, 3, 4, 5].map(
+        n =>
+          `${GALLERY}/technology-workshop/session-1/slides/rideshare/slide-${String(n).padStart(2, '0')}.jpg`
+      ),
     },
   ],
 }
