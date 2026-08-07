@@ -6,13 +6,14 @@
   "cards": {
     "generalMember": {
       "title": "General member",
-      "description": "Join our community and take part in events, workshops, and activities whenever you like. No commitment required—just show up when you can."
+      "description": "Open to everyone. Join our community and take part in events, workshops, and activities whenever you like. No commitment required—just show up when you can."
     },
     "execMember": {
       "title": "Exec member?",
       "descriptionBeforeLink": "Keep an eye on our ",
       "instagramLabel": "Instagram",
-      "descriptionAfterLink": " for when exec applications open."
+      "descriptionAfterLink": " for when exec applications open. ",
+      "teamRolesNote": " are currently only open to University of Ottawa students."
     }
   },
   "applyBox": {
@@ -25,6 +26,20 @@
     "submit": "Submit",
     "submitting": "Submitting...",
     "errorMessage": "Something went wrong. Please try again.",
+    "schoolStatusLabel": "Are you currently in school?",
+    "schoolStatusInSchool": "Yes, I'm in school",
+    "schoolStatusNotInSchool": "No, I'm not currently in school",
+    "schoolSituationLabel": "What best describes you?",
+    "schoolSituationOtherLabel": "Tell us a bit more",
+    "schoolSituationOtherPlaceholder": "e.g., just finished high school, taking a gap year...",
+    "schoolSituationOptions": [
+      { "value": "", "label": "Select an option" },
+      { "value": "Just finished high school", "label": "Just finished high school" },
+      { "value": "Just finished university / college", "label": "Just finished university / college" },
+      { "value": "Taking time off / gap year", "label": "Taking time off / gap year" },
+      { "value": "Looking to join as a community member", "label": "Looking to join as a community member" },
+      { "value": "Other", "label": "Other" }
+    ],
     "experienceChoiceLabel": "Share your experience (choose one)",
     "optionOutline": "Outline relevant experience",
     "optionResume": "Upload resume",
@@ -48,6 +63,13 @@
         "placeholder": "Enter your email"
       },
       {
+        "id": "schoolName",
+        "label": "What university or college are you attending?",
+        "type": "text",
+        "required": true,
+        "placeholder": "e.g., University of Ottawa, Carleton University"
+      },
+      {
         "id": "program",
         "label": "What's your program or field of study?",
         "type": "text",
@@ -66,9 +88,7 @@
           { "value": "3rd Year", "label": "3rd Year" },
           { "value": "4th Year", "label": "4th Year" },
           { "value": "5th Year", "label": "5th Year" },
-          { "value": "Graduate", "label": "Graduate" },
-          { "value": "Alumni", "label": "Alumni" },
-          { "value": "Community Member", "label": "Community Member" }
+          { "value": "Graduate", "label": "Graduate" }
         ]
       },
       {
@@ -104,7 +124,7 @@
     ]
   },
   "success": {
-    "title": "Thank you",
+    "title": "Thank You!",
     "messageBeforeLink": "You're in! We'll be in touch. Follow our ",
     "instagramLabel": "Instagram",
     "messageAfterLink": " for more updates.",
