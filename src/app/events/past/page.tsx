@@ -531,7 +531,7 @@ export default function PastEventsPage() {
     } as const
 
     if (isRecap) {
-      return (
+    return (
         <article
           className="relative scrapbook-paper w-full overflow-hidden rounded-[1.1rem] md:rounded-[1.5rem] border-2 text-left"
           style={cardStyle}
@@ -645,7 +645,7 @@ export default function PastEventsPage() {
               </p>
             )}
           </div>
-        </div>
+            </div>
       </article>
     )
   }
@@ -730,8 +730,8 @@ export default function PastEventsPage() {
               </svg>
             </span>
           )}
+          </div>
         </div>
-      </div>
     )
 
     const cardStyle = {
@@ -746,10 +746,10 @@ export default function PastEventsPage() {
         <article className="relative w-full overflow-hidden rounded-xl border-2 text-left" style={cardStyle}>
           {body}
         </article>
-      )
-    }
+    )
+  }
 
-    return (
+  return (
       <Link
         href={galleryHref(event.id)}
         onClick={() => clearGalleryParents()}
@@ -978,7 +978,7 @@ export default function PastEventsPage() {
                   style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', transitionDelay: heroTextVisible ? '120ms' : '0ms' }}
                 >
                   Past events
-                </h1>
+              </h1>
                 <p
                   className={`text-[0.95rem] sm:text-base md:text-lg max-w-md mb-6 md:mb-8 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: '1.6', transitionDelay: heroTextVisible ? '220ms' : '0ms' }}
@@ -997,8 +997,8 @@ export default function PastEventsPage() {
                   }}
                 >
                   Scroll down to look back
-                </p>
-              </div>
+              </p>
+            </div>
             </div>
           </div>
         </div>
@@ -1133,7 +1133,7 @@ export default function PastEventsPage() {
               )}
             </div>
             <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center sm:justify-end shrink-0">
-              {(['all', 'club', 'school', 'holiday'] as const).map(t => (
+            {(['all', 'club', 'school', 'holiday'] as const).map(t => (
                 <button
                   key={t}
                   type="button"
@@ -1147,10 +1147,10 @@ export default function PastEventsPage() {
                   }}
                 >
                   {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
-                </button>
-              ))}
-            </div>
+              </button>
+            ))}
           </div>
+        </div>
 
           <div className="flex flex-col items-center gap-3 md:gap-5 px-1">
             <h2
@@ -1177,7 +1177,7 @@ export default function PastEventsPage() {
               />
             </span>
           </div>
-        </div>
+          </div>
 
         <section id="events-grid" className="scroll-mt-28 md:pr-0">
           {groupedByMonth.length > 0 ? (
@@ -1240,8 +1240,8 @@ export default function PastEventsPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                       </svg>
                     </button>
-                  </div>
-                </div>
+                    </div>
+                    </div>
 
                 <div
                   id="month-toc-panel-mobile"
@@ -1282,7 +1282,7 @@ export default function PastEventsPage() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       </button>
-                    </div>
+                  </div>
 
                     <div
                       className="mb-3 grid w-full gap-2"
@@ -1567,10 +1567,10 @@ export default function PastEventsPage() {
                                           </div>
                                         ))}
                                       </div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
+                  </div>
+                </div>
+              ))}
+            </div>
                             </section>
                           )
                         })}
@@ -1615,8 +1615,8 @@ export default function PastEventsPage() {
                 viewBox="0 0 24 24"
                 aria-hidden
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               <h3
                 className="text-2xl md:text-3xl font-normal mb-3"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}

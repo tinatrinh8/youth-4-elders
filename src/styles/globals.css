@@ -800,6 +800,69 @@ body::-webkit-scrollbar {
   backface-visibility: hidden;
 }
 
+.idea-submit-btn {
+  box-shadow: 4px 4px 0 var(--color-olive-deep);
+  transition:
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    color 0.22s ease;
+}
+
+.idea-submit-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  background: var(--color-cream) !important;
+  color: var(--color-olive) !important;
+  box-shadow: 4px 7px 0 var(--color-olive-deep);
+}
+
+.idea-submit-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 2px 2px 0 var(--color-olive-deep);
+}
+
+.contact-submit-btn {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 var(--color-brown-dark);
+  transition:
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    color 0.22s ease;
+}
+
+.contact-submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(251, 247, 232, 0.45) 50%,
+    transparent 80%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.55s ease;
+  pointer-events: none;
+}
+
+.contact-submit-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  background: var(--color-pink-light) !important;
+  color: var(--color-brown-dark) !important;
+  box-shadow: 4px 7px 0 var(--color-brown-dark);
+}
+
+.contact-submit-btn:hover:not(:disabled)::after {
+  transform: translateX(130%);
+}
+
+.contact-submit-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 2px 2px 0 var(--color-brown-dark);
+}
+
 /* ========== 11. PAGE: Partner (/partner) ========== */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }

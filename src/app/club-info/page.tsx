@@ -438,11 +438,11 @@ export default function ClubInfo() {
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.92, fontStyle: 'italic', borderLeft: '3px solid var(--color-cream)', paddingLeft: '20px' }}
                   >
                   <p className="mb-4">
-                    Youth 4 Elders was founded through a shared passion for intergenerational connection and community care.
+                    We started Youth 4 Elders because we care deeply about bringing generations together.
                   </p>
 
                   <p>
-                    Julia’s connection to senior care began at an early age, through time spent in long-term care homes visiting family and forming relationships with residents through music, games, and conversation. While volunteering in community centres during the COVID-19 pandemic, as social isolation deepened for many older adults, it became increasingly clear to Julia that many seniors were left without consistent support. This experience revealed a meaningful gap and a powerful opportunity for youth to engage, contribute, and help build more equitable and accessible care for older adults.
+                    For us, senior care has always felt personal—growing up visiting family in long-term care, playing games and making music with residents, or sitting with our grandparents while they struggled with a phone or tablet. During the COVID-19 pandemic, we felt how lonely so many older adults had become, and it hurt us to see them left without consistent support. We knew then that we wanted to do something about it—to create a space where youth like us could show up, connect, and help older adults feel less alone.
                   </p>
                 </blockquote>
 
@@ -1103,7 +1103,7 @@ export default function ClubInfo() {
                   <button
                     type="submit"
                     disabled={isSubmittingIdea}
-                    className="mt-6 w-full py-3.5 rounded-xl font-semibold text-base uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed border-2 transition-colors hover:opacity-90"
+                    className="idea-submit-btn mt-6 w-full py-3.5 rounded-xl font-semibold text-base uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed border-2"
                     style={{ background: 'var(--color-olive)', color: 'var(--color-cream)', fontFamily: 'var(--font-kollektif)', borderColor: 'var(--color-olive)' }}
                   >
                     {isSubmittingIdea ? 'Sending...' : 'Send your idea'}
@@ -1170,18 +1170,18 @@ export default function ClubInfo() {
                   className="text-base md:text-lg leading-relaxed mt-4 mb-6"
                   style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
                 >
-                  We run new workshops, sessions, and community events throughout the year—see what&apos;s coming up on our events page.
+                  We run workshops, sessions, and community events throughout the year—see past events for examples of what we do.
                 </p>
                 <div className="mt-6">
                   <Link
-                    href="/events/upcoming"
+                    href="/events/past"
                     className="group inline-flex items-center gap-2 font-semibold text-base md:text-lg transition-all duration-300 relative"
                     style={{
                       color: 'var(--color-cream)',
                       fontFamily: 'var(--font-kollektif)',
                     }}
                   >
-                    <span>See new events</span>
+                    <span>See Past Events</span>
                     <svg
                       className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2"
                       fill="none"

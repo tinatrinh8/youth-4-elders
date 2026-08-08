@@ -169,7 +169,7 @@ const content = joinUsContent as {
     execMember: {
       title: string
       description: string
-    }
+  }
   }
   applyBox: { generalTitle: string; teamTitle: string; cta: string }
   form: {
@@ -187,9 +187,9 @@ const content = joinUsContent as {
     schoolSituationOptions: { value: string; label: string }[]
     experienceChoiceLabel: string
     optionOutline: string
-    optionResume: string
-    resumeFileNote: string
-    experiencePlaceholder: string
+optionResume: string
+  resumeFileNote: string
+  experiencePlaceholder: string
     linkedinLabel: string
     linkedinPlaceholder: string
     questions: Array<{
@@ -421,12 +421,12 @@ export default function JoinUs() {
         next.teamRoleSecond = 'Please choose a different fallback role'
       }
     } else {
-      questions.forEach((q) => {
+    questions.forEach((q) => {
         if (q.id === 'schoolName' || q.id === 'program' || q.id === 'year' || q.id === 'name' || q.id === 'email' || q.id === 'whyJoin') return
-        const val = formData[q.id]
-        const err = validateField(q.id, typeof val === 'string' ? val : '')
-        if (err && q.required) { valid = false; next[q.id] = err }
-      })
+      const val = formData[q.id]
+      const err = validateField(q.id, typeof val === 'string' ? val : '')
+      if (err && q.required) { valid = false; next[q.id] = err }
+    })
       if (!formData.schoolStatus) {
         valid = false
         next.schoolStatus = 'Please tell us if you are currently in school'
@@ -448,22 +448,22 @@ export default function JoinUs() {
 
     // Experience / resume is only required for team applications
     if (isTeamApp) {
-      const noChoice = !formData.experienceOutline && !formData.experienceResume
-      const choseOutlineButEmpty = formData.experienceOutline && !formData.experience.trim()
-      const choseResumeButNoFile = formData.experienceResume && !formData.resumeFileName
-      if (noChoice) {
+    const noChoice = !formData.experienceOutline && !formData.experienceResume
+    const choseOutlineButEmpty = formData.experienceOutline && !formData.experience.trim()
+    const choseResumeButNoFile = formData.experienceResume && !formData.resumeFileName
+    if (noChoice) {
+      valid = false
+      next.experienceOrResume = 'Please choose to upload a resume or outline your relevant experience'
+    } else {
+      if (choseOutlineButEmpty) {
         valid = false
-        next.experienceOrResume = 'Please choose to upload a resume or outline your relevant experience'
-      } else {
-        if (choseOutlineButEmpty) {
-          valid = false
-          next.experience = 'Please outline your relevant experience'
-        }
-        if (choseResumeButNoFile) {
-          valid = false
-          next.resumeFileName = 'Please upload a resume'
-        }
+        next.experience = 'Please outline your relevant experience'
       }
+      if (choseResumeButNoFile) {
+        valid = false
+        next.resumeFileName = 'Please upload a resume'
+      }
+    }
     }
     setFieldErrors(next)
     return valid
@@ -656,7 +656,7 @@ export default function JoinUs() {
             ) : (
               <p className="text-base md:text-lg text-[var(--color-brown-dark)] mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
                 {content.success.general.messageBeforeLink}
-                <a href="https://www.instagram.com/youth4elders/" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-brown-dark)] underline hover:no-underline">
+              <a href="https://www.instagram.com/youth4elders/" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-brown-dark)] underline hover:no-underline">
                   {content.success.general.instagramLabel}
                 </a>
                 {content.success.general.messageAfterLink}
@@ -738,11 +738,11 @@ export default function JoinUs() {
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                <button
-                  type="button"
+            <button
+                type="button"
                   onClick={() => startApplication('general')}
-                  className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
-                >
+                className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
+              >
                   <h3 className="text-base md:text-lg font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
                     {content.applyBox.generalTitle}
                   </h3>
@@ -754,9 +754,9 @@ export default function JoinUs() {
                 >
                   <h3 className="text-base md:text-lg font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
                     {content.applyBox.teamTitle}
-                  </h3>
-                </button>
-              </div>
+                </h3>
+            </button>
+            </div>
             </div>
             <div className={`overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'max-h-[4200px] opacity-100' : 'max-h-0 opacity-0'}`}>
               <div className={`bg-[var(--color-cream)] border-t-2 border-[var(--color-brown-dark)]/20 p-8 md:p-10 ${hasStarted ? 'join-us-form-roll-down' : ''}`}>

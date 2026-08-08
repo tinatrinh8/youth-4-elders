@@ -1,11 +1,12 @@
 {
   "modal": {
     "headline": "Help Us Grow Our Club",
-    "body": "We would like to see who is interested to join the Youth 4 Elders community! Add your email if you're interested in helping grow our club and connecting generations.",
-    "emailPlaceholder": "you@email.com",
-    "noThanks": "Maybe Another Time :)",
-    "successTitle": "Thanks for Signing Up!",
-    "successMessage": "We hope to see you soon! We'll be in touch with updates about Youth 4 Elders and upcoming events."
+    "body": "Come hang with us ♡ Follow along for events, updates, and ways to get involved.",
+    "instagramLabel": "Instagram",
+    "linkedinLabel": "LinkedIn",
+    "instagramUrl": "https://www.instagram.com/youth4elders/",
+    "linkedinUrl": "https://www.linkedin.com/company/youth4elders/",
+    "noThanks": "Maybe Another Time :)"
   },
   "hero": {
     "tagline": "... is now live !",
@@ -30,7 +31,7 @@
       {
         "id": "2",
         "title": "Upcoming Event: Bingo Night",
-        "description": "Join us April 7, 2026 in the RGN Student Lounge—trivia, three rounds of bingo, and $30 FNS gift cards for round winners. Free spots are limited; check the countdown and register via the link in our bio.",
+        "description": "April 7 at the RGN Student Lounge: trivia, three bingo rounds, and $30 FNS gift cards for round winners. Spots are limited!",
         "icon": "🎱",
         "type": "highlight",
         "hasCountdown": true

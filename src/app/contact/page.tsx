@@ -7,6 +7,21 @@ const EVENTS_LINK_TEXT = 'View the events and programs we offer here'
 const CLUB_INFO_LINK_PLACEHOLDER = '__CLUB_INFO_LINK__'
 const EVENTS_LINK_PLACEHOLDER = '__EVENTS_LINK__'
 
+function isValidEmail(value: string) {
+  const email = value.trim()
+  if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) return false
+  if (email.includes('..')) return false
+  const [local, domain] = email.split('@')
+  if (!local || !domain) return false
+  if (local.startsWith('.') || local.endsWith('.')) return false
+  if (domain.startsWith('-') || domain.endsWith('-') || domain.startsWith('.') || domain.endsWith('.')) return false
+  return true
+}
+
+function isValidPhone(value: string) {
+  return /^\d+$/.test(value.trim())
+}
+
 export default function Contact() {
   const [openFAQs, setOpenFAQs] = useState<number[]>([])
   const [faqInView, setFaqInView] = useState(false)
@@ -16,6 +31,7 @@ export default function Contact() {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    company: '',
     service: '',
     email: '',
     phone: '',
@@ -25,7 +41,7 @@ export default function Contact() {
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [submitErrorMessage, setSubmitErrorMessage] = useState('')
-  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; message?: string }>({})
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; phone?: string; message?: string }>({})
   const [serviceDropdownOpen, setServiceDropdownOpen] = useState(false)
   const serviceDropdownRef = useRef<HTMLDivElement>(null)
   const contactFormSectionRef = useRef<HTMLElement>(null)
@@ -253,6 +269,8 @@ export default function Contact() {
       if (fieldErrors.name) setFieldErrors(prev => { const next = { ...prev }; delete next.name; return next })
     } else if (name === 'email') {
       if (fieldErrors.email) setFieldErrors(prev => { const next = { ...prev }; delete next.email; return next })
+    } else if (name === 'phone') {
+      if (fieldErrors.phone) setFieldErrors(prev => { const next = { ...prev }; delete next.phone; return next })
     } else if (name === 'projectDescription') {
       if (fieldErrors.message) setFieldErrors(prev => { const next = { ...prev }; delete next.message; return next })
     }
@@ -260,14 +278,17 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const errors: { name?: string; email?: string; message?: string } = {}
+    const errors: { name?: string; email?: string; phone?: string; message?: string } = {}
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
       errors.name = 'Please enter your name'
     }
     if (!formData.email.trim()) {
       errors.email = 'Please enter your email'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!isValidEmail(formData.email)) {
       errors.email = 'Please enter a valid email address'
+    }
+    if (formData.phone.trim() && !isValidPhone(formData.phone)) {
+      errors.phone = 'Please enter a valid phone number'
     }
     if (!formData.projectDescription.trim()) {
       errors.message = 'Please share your message'
@@ -280,19 +301,30 @@ export default function Contact() {
     setFieldErrors({})
     setSubmitError(false)
     setSubmitErrorMessage('')
-    // Simulate form submission (sometimes fails so you can test try-again)
-    setTimeout(() => {
-      setIsSubmitting(false)
-      const simulatedFailure = Math.random() < 0.3
-      if (simulatedFailure) {
-        setSubmitErrorMessage('Something went wrong — submission didn\'t work or something is down.')
-        setSubmitError(true)
+
+    try {
+      const response = await fetch('/api/send-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      const data = await response.json()
+
+      if (response.ok) {
+        setSubmitSuccess(true)
+        setFormData({ firstName: '', lastName: '', company: '', service: '', email: '', phone: '', projectDescription: '' })
+        setTimeout(() => setSubmitSuccess(false), 5000)
       } else {
-      setSubmitSuccess(true)
-        setFormData({ firstName: '', lastName: '', service: '', email: '', phone: '', projectDescription: '' })
-      setTimeout(() => setSubmitSuccess(false), 5000)
+        setSubmitErrorMessage(data.error || 'Something went wrong — please try again.')
+        setSubmitError(true)
       }
-    }, 1000)
+    } catch (error) {
+      console.error('Error submitting contact form:', error)
+      setSubmitErrorMessage('Something went wrong — please try again.')
+      setSubmitError(true)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -348,14 +380,14 @@ export default function Contact() {
                   <button
                     type="button"
                     onClick={() => setSubmitSuccess(false)}
-                    className="px-6 py-3 rounded-2xl font-semibold text-base transition-all duration-300 hover:opacity-90"
+                    className="contact-submit-btn px-10 py-4 rounded-2xl font-semibold text-lg"
                       style={{ 
                       background: 'var(--color-brown-dark)',
                       color: 'var(--color-cream)',
                       fontFamily: 'var(--font-kollektif)'
                     }}
                   >
-                    Submit another
+                    <span className="relative z-10">Submit another</span>
                   </button>
                 </div>
               )}
@@ -413,6 +445,33 @@ export default function Contact() {
                   )}
                 </div>
                 </div>
+                {/* Company / group (optional) */}
+                <div
+                  className={contactFormVisible ? 'contact-form-row-slide-up' : 'opacity-0'}
+                  style={{ animationDelay: contactFormVisible ? '0.16s' : undefined, animationFillMode: 'both' }}
+                >
+                  <div>
+                    <label htmlFor="contact-company" className="block text-base font-medium mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                      Organization
+                    </label>
+                    <input
+                      id="contact-company"
+                      type="text"
+                      name="company"
+                      placeholder="School, company, or group (optional)"
+                      value={formData.company}
+                      onChange={handleInputChange}
+                      className="contact-form-field w-full px-5 py-4 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
+                      style={{
+                        background: formData.company.trim() ? 'var(--color-pink-light)' : 'var(--color-pink-medium)',
+                        fontFamily: 'var(--font-kollektif)',
+                        color: 'var(--color-brown-dark)',
+                        fontSize: '17px',
+                        borderColor: 'transparent'
+                      }}
+                    />
+                  </div>
+                </div>
                 {/* Row 2: Email | Phone */}
                 <div
                   className={contactFormVisible ? 'contact-form-row-slide-up' : 'opacity-0'}
@@ -455,14 +514,18 @@ id="contact-email"
                       placeholder="Your phone number"
                     value={formData.phone}
                     onChange={handleInputChange}
-                      className="contact-form-field w-full px-5 py-4 rounded-2xl border-0 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
+                      className="contact-form-field w-full px-5 py-4 rounded-2xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[var(--color-pink-dark)] transition-colors placeholder-[rgba(98,32,47,0.55)]"
                     style={{
                         background: formData.phone.trim() ? 'var(--color-pink-light)' : 'var(--color-pink-medium)',
                       fontFamily: 'var(--font-kollektif)',
                         color: 'var(--color-brown-dark)',
-                        fontSize: '17px'
+                        fontSize: '17px',
+                        borderColor: fieldErrors.phone ? 'var(--color-error)' : 'transparent'
                       }}
                     />
+                  {fieldErrors.phone && (
+                    <p className="text-sm mt-1.5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-error)' }}>{fieldErrors.phone}</p>
+                  )}
                   </div>
                 </div>
                 </div>
@@ -578,14 +641,14 @@ id="contact-email"
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                    className="px-10 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="contact-submit-btn px-10 py-4 rounded-2xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{
                       background: 'var(--color-brown-dark)',
                       color: 'var(--color-cream)',
                       fontFamily: 'var(--font-kollektif)'
                     }}
                   >
-                    {isSubmitting ? 'Sending...' : 'Submit'}
+                    <span className="relative z-10">{isSubmitting ? 'Sending...' : 'Submit'}</span>
                 </button>
                 </div>
                 </div>
@@ -647,7 +710,8 @@ id="contact-email"
                       const floatY =
                         Math.cos(t * 0.18 + i * 0.9) * 3 +
                         Math.sin(t * 0.1 + i * 1.3) * 1.5
-                      const floatRotate = Math.sin(t * 0.12 + i * 1.2) * 0.2
+                      const baseTilt = [1.15, -0.7, 0.9, -1.3, 0.55, -0.95, 1.35, -0.5, 0.8, -1.1, 1.0][i % 11]
+                      const floatRotate = baseTilt + Math.sin(t * 0.12 + i * 1.2) * 0.25
                       return (
                         <div
                           key={`${section.title}-${faqIdx}`}
