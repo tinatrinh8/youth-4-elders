@@ -132,7 +132,6 @@ const teamMembers: TeamMember[] = [
     yearOfStudy: 3,
     program: 'Biomedical Sciences',
     funFact: 'TBD',
-    imageUrl: '/assets/team/santino.jpg',
   },
   {
     name: 'Leyna Trinh',
@@ -233,6 +232,27 @@ const teamSections = CATEGORY_ORDER
   }))
   .filter(section => section.members.length > 0)
 
+/** Photos that exist in /public/assets/team — skip Image if the file is missing. */
+const EXISTING_TEAM_PHOTOS = new Set([
+  '/assets/team/anwyn.jpg',
+  '/assets/team/bradley.jpg',
+  '/assets/team/cheyenne.jpg',
+  '/assets/team/eamonn.jpg',
+  '/assets/team/jakob.jpg',
+  '/assets/team/jenna.jpg',
+  '/assets/team/julia.jpg',
+  '/assets/team/lana.jpg',
+  '/assets/team/leyna.jpg',
+  '/assets/team/marly.jpg',
+  '/assets/team/monica.jpg',
+  '/assets/team/peter.jpg',
+])
+
+function resolveTeamPhoto(imageUrl?: string) {
+  if (!imageUrl || !EXISTING_TEAM_PHOTOS.has(imageUrl)) return undefined
+  return imageUrl
+}
+
 function getInitials(name: string) {
   return name
     .split(/\s+/)
@@ -279,23 +299,25 @@ export default function Team() {
   }, [])
 
   useEffect(() => {
+    document.body.classList.add('team-page')
     document.body.style.transition = 'background 0.8s ease-in-out'
     document.documentElement.style.transition = 'background 0.8s ease-in-out'
     document.body.style.background = 'var(--color-pink-light)'
     document.documentElement.style.background = 'var(--color-pink-light)'
     return () => {
+      document.body.classList.remove('team-page')
       document.body.style.background = ''
       document.documentElement.style.background = ''
     }
   }, [])
 
   return (
-    <main className="min-h-screen pt-[120px] pb-24 md:pb-32" style={{ background: 'transparent' }}>
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8">
-        <header className="pt-2 pb-14 md:pb-20">
+    <main className="min-h-screen pt-[120px] pb-24 md:pb-32 team-page-tablet-lock" style={{ background: 'transparent' }}>
+      <div className="team-page-inner w-full max-w-7xl mx-auto px-4 md:px-8">
+        <header className="team-page-hero pt-2 pb-[120px] md:pb-20">
           <div className="max-w-4xl">
             <h1
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95]"
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95]"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
             >
               <span className="block">
@@ -318,7 +340,7 @@ export default function Team() {
             </h1>
 
             <div
-              className={`mt-6 md:mt-8 h-1 w-14 rounded-full transition-all duration-700 ease-out ${descVisible ? 'opacity-100 translate-y-0 scale-x-100' : 'opacity-0 translate-y-3 scale-x-50'}`}
+              className={`mt-4 md:mt-8 h-1 w-10 md:w-14 rounded-full transition-all duration-700 ease-out ${descVisible ? 'opacity-100 translate-y-0 scale-x-100' : 'opacity-0 translate-y-3 scale-x-50'}`}
               style={{
                 background: 'var(--color-olive)',
                 transformOrigin: 'left center',
@@ -329,7 +351,7 @@ export default function Team() {
           </div>
 
           <p
-            className={`text-lg md:text-xl mt-6 md:mt-8 leading-relaxed font-normal max-w-5xl transition-all duration-700 ease-out ${descVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+            className={`text-sm md:text-xl mt-4 md:mt-8 leading-relaxed font-normal max-w-5xl transition-all duration-700 ease-out ${descVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
             style={{
               fontFamily: 'var(--font-leiko)',
               color: 'var(--color-olive-dark)',
@@ -340,7 +362,7 @@ export default function Team() {
           </p>
         </header>
 
-        <section className="space-y-16 md:space-y-20" aria-label="Team members">
+        <section className="space-y-24 md:space-y-20" aria-label="Team members">
           {teamSections.map(section => (
             <TeamSectionBlock key={section.key} section={section} />
           ))}
@@ -360,22 +382,22 @@ function TeamSectionBlock({
   return (
     <div ref={ref}>
       <div
-        className={`mb-8 md:mb-10 flex items-stretch gap-4 md:gap-5 transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        className={`mb-5 md:mb-10 flex items-stretch gap-3 md:gap-5 transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
       >
         <div
-          className={`w-1 shrink-0 rounded-full self-stretch min-h-[3rem] transition-all duration-700 ease-out ${visible ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-50'}`}
+          className={`w-1 shrink-0 rounded-full self-stretch min-h-[2rem] md:min-h-[3rem] transition-all duration-700 ease-out ${visible ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-50'}`}
           style={{ background: 'var(--color-olive)', transformOrigin: 'top center', transitionDelay: visible ? '80ms' : '0ms' }}
           aria-hidden
         />
         <div>
           <h2
-            className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-none"
+            className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-none"
             style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-brown-dark)' }}
           >
             {section.title}
           </h2>
           <p
-            className={`mt-2 md:mt-3 text-lg md:text-xl lg:text-2xl font-normal leading-snug transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            className={`mt-1.5 md:mt-3 text-sm md:text-xl lg:text-2xl font-normal leading-snug transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
             style={{
               fontFamily: 'var(--font-kollektif)',
               color: 'var(--color-olive-dark)',
@@ -388,7 +410,7 @@ function TeamSectionBlock({
       </div>
 
       <div
-        className={`grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-10 md:gap-x-8 md:gap-y-12 ${
+        className={`grid grid-cols-2 gap-x-3 gap-y-8 md:gap-x-8 md:gap-y-12 ${
           section.key === 'Presidents' || section.members.length <= 2
             ? 'lg:grid-cols-2 lg:max-w-3xl'
             : 'lg:grid-cols-3'
@@ -414,25 +436,26 @@ function TeamMemberCard({
   staggerDelay: number
 }) {
   const { ref, visible } = useScrollReveal<HTMLElement>()
+  const photoSrc = resolveTeamPhoto(member.imageUrl)
   const initials = getInitials(member.name)
 
   return (
     <article
       ref={ref}
-      className={`w-full transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+      className={`team-member-card w-full transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
       style={{ transitionDelay: visible ? `${staggerDelay}s` : '0s' }}
     >
       <div
-        className={`relative w-full max-w-[280px] md:max-w-[300px] aspect-[4/5] overflow-hidden rounded-xl mb-4 transition-all duration-700 ease-out ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.96]'}`}
+        className={`team-member-photo relative w-full max-w-none md:max-w-[300px] aspect-[4/5] overflow-hidden rounded-xl mb-3 md:mb-4 transition-all duration-700 ease-out ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.96]'}`}
         style={{
           background: 'var(--color-cream)',
           boxShadow: '0 1px 0 rgba(98, 32, 47, 0.06)',
           transitionDelay: visible ? `${staggerDelay + 0.05}s` : '0s',
         }}
       >
-        {member.imageUrl ? (
+        {photoSrc ? (
           <Image
-            src={member.imageUrl}
+            src={photoSrc}
             alt={member.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -455,7 +478,7 @@ function TeamMemberCard({
       </div>
 
       <h3
-        className={`text-lg md:text-xl font-bold leading-snug tracking-tight transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+        className={`text-sm md:text-xl font-bold leading-snug tracking-tight transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
         style={{
           fontFamily: 'var(--font-kollektif)',
           color: 'var(--color-brown-dark)',
@@ -465,7 +488,7 @@ function TeamMemberCard({
         {member.name}
       </h3>
       <p
-        className={`text-sm md:text-[0.95rem] leading-snug mt-1 font-semibold transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
+        className={`text-xs md:text-[0.95rem] leading-snug mt-1 font-semibold transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}
         style={{
           fontFamily: 'var(--font-kollektif)',
           color: 'var(--color-olive-dark)',
