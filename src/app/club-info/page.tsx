@@ -38,6 +38,11 @@ export default function ClubInfo() {
   const [statCommunity, setStatCommunity] = useState(0)
   const [statStudent, setStatStudent] = useState(0)
   const ideasSectionRef = useRef<HTMLElement>(null)
+  const foundersContentRef = useRef<HTMLDivElement>(null)
+  const foundersSectionRef = useRef<HTMLElement>(null)
+  const [viewportH, setViewportH] = useState(0)
+  const [viewportW, setViewportW] = useState(0)
+  const [foundersContentH, setFoundersContentH] = useState(0)
   const [ideasInView, setIdeasInView] = useState(false)
   const testimoniesSectionRef = useRef<HTMLElement>(null)
   const [testimoniesInView, setTestimoniesInView] = useState(false)
@@ -67,8 +72,8 @@ export default function ClubInfo() {
       const elapsed = now - start
       const t = Math.min(elapsed / duration, 1)
       const progress = easeOutCubic(t)
-      setStatPrimary(Math.round(5000 * progress))
-      setStatCommunity(Math.round(3000 * progress))
+      setStatPrimary(Math.round(50 * progress))
+      setStatCommunity(Math.round(100 * progress))
       setStatStudent(Math.round(100 * progress))
       if (t < 1) rafId = requestAnimationFrame(tick)
     }
@@ -175,6 +180,38 @@ export default function ClubInfo() {
   }, [])
 
   useEffect(() => {
+    document.body.classList.add('club-info-page')
+    return () => document.body.classList.remove('club-info-page')
+  }, [])
+
+  useEffect(() => {
+    const sync = () => {
+      setViewportH(window.innerHeight)
+      setViewportW(window.innerWidth)
+    }
+    sync()
+    window.addEventListener('resize', sync)
+    return () => window.removeEventListener('resize', sync)
+  }, [])
+
+  useEffect(() => {
+    const content = foundersContentRef.current
+    if (!content) return
+    const sync = () => {
+      const extraPad = window.innerWidth < 768 ? 88 : window.innerWidth < 1024 ? 96 : 48
+      setFoundersContentH(Math.ceil(content.getBoundingClientRect().height + extraPad))
+    }
+    sync()
+    const ro = new ResizeObserver(sync)
+    ro.observe(content)
+    window.addEventListener('resize', sync)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', sync)
+    }
+  }, [])
+
+  useEffect(() => {
     if (!founderStoryOpen) return
     const originalOverflow = document.body.style.overflow
     const originalHtmlOverflow = document.documentElement.style.overflow
@@ -260,7 +297,20 @@ export default function ClubInfo() {
   const HERO_SCROLL_VH = 100
   const SECOND_SECTION_SCROLL_VH = 310
   const SECOND_SECTION_OFFSET = 60
+  const TABLET_SECOND_SECTION_OFFSET = 6
   const SCROLL_WRAPPER_HEIGHT_VH = HERO_SCROLL_VH + SECOND_SECTION_OFFSET + SECOND_SECTION_SCROLL_VH
+  const isMobileFounders = viewportW > 0 && viewportW < 768
+  const isTabletFounders = viewportW >= 768 && viewportW < 1024
+  const heroPx = viewportH
+  const offsetPx = viewportH
+    ? viewportH * ((isTabletFounders ? TABLET_SECOND_SECTION_OFFSET : SECOND_SECTION_OFFSET) / 100)
+    : 0
+  const secondPx = viewportH
+    ? isMobileFounders || isTabletFounders
+      ? Math.max(foundersContentH, viewportH)
+      : Math.max(viewportH * (SECOND_SECTION_SCROLL_VH / 100), foundersContentH)
+    : 0
+  const wrapperPx = viewportH ? heroPx + offsetPx + secondPx : 0
   const founderStories = [
     {
       key: 'julia' as const,
@@ -277,27 +327,29 @@ export default function ClubInfo() {
   ]
 
   return (
-    <main className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
+    <main className="min-h-screen club-info-page-tablet-lock" style={{ background: 'var(--color-cream)' }}>
       
       <div 
+        className="club-info-roll-wrapper"
         style={{
           position: 'relative',
-          height: `${SCROLL_WRAPPER_HEIGHT_VH}vh`, 
-          zIndex: 2
+          height: wrapperPx ? `${wrapperPx}px` : `${SCROLL_WRAPPER_HEIGHT_VH}vh`,
+          zIndex: 2,
+          overflow: 'visible',
         }}
       >
         <section 
-          className="relative flex flex-col justify-center items-center px-6 md:px-8 py-12 overflow-visible"
+          className="club-info-hero-roll relative flex flex-col justify-center md:justify-start lg:justify-center items-center px-6 md:px-8 py-12 md:pt-44 lg:pt-12 overflow-visible"
           style={{
             position: 'sticky', 
             top: 0,
-            height: `${HERO_SCROLL_VH}vh`,
+            height: heroPx ? `${heroPx}px` : '100dvh',
             zIndex: 2,          
             background: 'var(--color-cream)', 
           }}
         >
             <div className="w-full max-w-3xl text-center">
-            <h2 className="text-7xl md:text-8xl lg:text-9xl font-bold mb-8" style={{ fontFamily: 'var(--font-vintage-ligatures)' }}>
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-bold mb-5 md:mb-8" style={{ fontFamily: 'var(--font-vintage-ligatures)' }}>
               <div
                 ref={aboutUsTitleRef}
                 className="relative inline-block cursor-default select-none"
@@ -378,40 +430,42 @@ export default function ClubInfo() {
               style={{ animationDelay: contentVisible ? '0.15s' : '0s' }}
             >
               <p
-                className="text-xl md:text-2xl leading-relaxed mb-14"
+                className="text-sm md:text-2xl leading-relaxed mb-6 md:mb-14"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.92 }}
               >
                 Youth 4 Elders is a student-led organization from the University of Ottawa, dedicated to supporting the senior community through meaningful volunteerism.
               </p>
               <p
-                className="text-lg italic opacity-90"
+                className="text-xs md:text-lg italic opacity-90"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
               >
                 Scroll to find out more
               </p>
-              <span className="inline-block animate-bounce text-base mt-2 opacity-90" style={{ color: 'var(--color-brown-dark)' }} aria-hidden>↓</span>
+              <span className="inline-block animate-bounce text-sm md:text-base mt-1.5 md:mt-2 opacity-90" style={{ color: 'var(--color-brown-dark)' }} aria-hidden>↓</span>
             </div>
           </div>
         </section>
 
         {/* Second section (redesigned): Founders + Impact (scroll-reveal over hero) */}
         <section 
-          className="relative py-16 md:py-24"
+          ref={foundersSectionRef}
+          className="club-info-founders-roll relative py-12 md:py-14 lg:py-24"
           style={{ 
             position: 'absolute', 
-            top: `${HERO_SCROLL_VH + SECOND_SECTION_OFFSET}vh`,
+            top: wrapperPx ? `${heroPx + offsetPx}px` : `${HERO_SCROLL_VH + SECOND_SECTION_OFFSET}vh`,
             left: 0,
             right: 0,
             width: '100%',
-            height: `${SECOND_SECTION_SCROLL_VH}vh`,
+            height: secondPx ? `${secondPx}px` : `${SECOND_SECTION_SCROLL_VH}vh`,
             background: 'var(--color-olive)',
             zIndex: 3,
             pointerEvents: 'auto',
-            overflow: 'visible',
+            overflow: 'hidden',
+            paddingBottom: isMobileFounders ? '3.5rem' : isTabletFounders ? '5rem' : undefined,
           }}
         >
-          <div className="max-w-6xl mx-auto px-6 md:px-10 lg:px-12 relative pt-[12vh] md:pt-[18vh]" style={{ overflow: 'visible' }}>
-            <div className="mb-8 md:mb-12">
+          <div ref={foundersContentRef} className="max-w-6xl mx-auto px-5 md:px-8 md:pr-14 lg:px-12 lg:pr-12 relative pt-8 md:pt-14 lg:pt-[18vh] pb-10 md:pb-20 lg:pb-0" style={{ overflow: 'visible' }}>
+            <div className="relative z-20 mb-6 md:mb-8 lg:mb-12">
               <p 
                 className="text-sm md:text-base uppercase tracking-widest mb-3"
                 style={{ 
@@ -430,11 +484,11 @@ export default function ClubInfo() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 xl:gap-28 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-8 lg:gap-24 xl:gap-28 items-start">
               {/* Text - narrower column for more space before image */}
-              <div className="pt-2 md:pt-4 order-2 lg:order-1 max-w-xl lg:max-w-none lg:pr-4 xl:pr-8">
+              <div className="pt-2 md:pt-2 lg:pt-4 order-2 md:order-1 max-w-xl md:max-w-none md:pr-2 lg:pr-4 xl:pr-8">
                 <blockquote 
-                  className="text-lg md:text-xl leading-relaxed italic mb-16 md:mb-18 max-w-xl"
+                  className="text-sm md:text-base lg:text-xl leading-relaxed italic mb-8 md:mb-10 lg:mb-18 max-w-xl"
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)', opacity: 0.92, fontStyle: 'italic', borderLeft: '3px solid var(--color-cream)', paddingLeft: '20px' }}
                   >
                   <p className="mb-4">
@@ -449,40 +503,29 @@ export default function ClubInfo() {
               </div>
 
               {/* Photo - Now on the right with decorative blobs */}
-              <div className="w-full max-w-2xl mx-auto lg:mx-0 order-1 lg:order-2 relative" style={{ minHeight: '600px', padding: '40px 20px', overflow: 'visible' }}>
+              <div className="relative mx-auto w-full max-w-[300px] md:max-w-[420px] lg:max-w-2xl md:mx-0 order-1 md:order-2 overflow-visible min-h-0 md:min-h-[400px] lg:min-h-[600px] p-8 md:p-6 md:mt-10 lg:mt-0 lg:p-10">
                 {/* First decorative blob - top right (outside) */}
               <div 
-                  className="absolute"
+                  className="absolute w-40 h-40 md:w-[250px] md:h-[250px] lg:w-[420px] lg:h-[420px] -top-2 -right-3 md:-top-[6%] md:right-0 lg:-top-[10%] lg:-right-[15%]"
                   style={{
-                    width: '420px',
-                    height: '420px',
                     background: '#C9DAA8', // Light green (olive-light)
                     borderRadius: '45% 55% 60% 40% / 55% 45% 55% 45%',
                     zIndex: 0,
-                    top: '-10%',
-                    right: '-15%',
                   }}
                 />
                 {/* Second decorative blob - bottom left (outside) */}
                 <div 
-                  className="absolute"
+                  className="absolute w-28 h-28 md:w-[200px] md:h-[200px] lg:w-[300px] lg:h-[300px] bottom-1 -left-2 md:bottom-[2%] md:-left-[5%]"
                   style={{
-                    width: '300px',
-                    height: '300px',
                     background: '#A9C98A', // Deeper light green
                     borderRadius: '55% 45% 50% 50% / 45% 55% 45% 55%',
                     zIndex: 0,
-                    bottom: '2%',
-                    left: '-5%',
                   }}
                 />
                 {/* Founders image with organic blob shape */}
                 <div 
-                  className="relative z-10 mx-auto"
+                  className="relative z-10 mx-auto w-[230px] aspect-square md:w-[420px] lg:w-[520px] max-w-full"
                 style={{ 
-                    width: '520px',
-                    height: '520px',
-                    maxWidth: '100%',
                     borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%',
                     overflow: 'hidden',
                     boxShadow: '0 12px 34px rgba(73, 47, 30, 0.16)',
@@ -493,8 +536,9 @@ export default function ClubInfo() {
                     src="/assets/club-info/founders.jpg"
                     alt="Youth 4 Elders founders at a club gathering"
                     fill
-                    sizes="(max-width: 1024px) 100vw, 520px"
-                    style={{ objectFit: 'cover', objectPosition: 'center 25%' }}
+                    sizes="(max-width: 767px) 230px, (max-width: 1023px) 360px, 520px"
+                    className="object-cover"
+                    style={{ objectPosition: 'center 25%' }}
                   />
                   <div
                     aria-hidden
@@ -508,10 +552,10 @@ export default function ClubInfo() {
               </div>
             </div>
 
-            <div className="mt-24 md:mt-32 pt-6">
-              <div className="flex flex-col gap-3 mb-12">
+            <div className="mt-12 md:mt-16 lg:mt-32 pt-4 md:pt-4 lg:pt-6">
+              <div className="flex flex-col gap-3 mb-6 md:mb-8 lg:mb-12">
                 <p
-                  className="text-sm md:text-base uppercase tracking-widest mb-2"
+                  className="text-xs md:text-sm lg:text-base uppercase tracking-widest mb-2"
                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)', letterSpacing: '0.2em' }}
                 >
                   Founder goals
@@ -520,7 +564,7 @@ export default function ClubInfo() {
               </div>
 
               <p
-                className="text-lg md:text-xl leading-relaxed w-full pr-0"
+                className="text-xs md:text-base lg:text-xl leading-relaxed w-full pr-0"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)' }}
               >
                 We connect youth and seniors through tech help, education, and one‑on‑one engagement—building confidence on both sides and empowering youth with leadership and community responsibility. Our focus is older adults in senior homes and those facing isolation, through workshops, companionship, and support for care communities.
@@ -528,7 +572,7 @@ export default function ClubInfo() {
 
             </div>
 
-            <div className="mt-44 md:mt-52">
+            <div className="mt-24 md:mt-28 lg:mt-52">
               <div className="flex flex-col gap-3 mb-8 text-center">
                 <p
                   className="text-3xl md:text-4xl lg:text-5xl font-semibold italic"
@@ -537,19 +581,19 @@ export default function ClubInfo() {
                   Founder Perspectives
                 </p>
                 <p
-                  className="text-lg md:text-xl lg:text-2xl"
+                  className="text-sm md:text-lg lg:text-2xl whitespace-nowrap"
                   style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(251, 247, 232, 0.85)' }}
                 >
                   Hear our founders in their own words.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 md:mt-16">
+              <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-8 mt-8 md:mt-10 lg:mt-16">
                 {founderStories.map((item) => (
                   <button
                     key={item.key}
                     type="button"
-                    className="group border p-10 text-center transition-all duration-300 hover:-translate-y-1 w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] mx-auto flex flex-col items-center justify-center relative"
+                    className="group border p-3 md:p-7 lg:p-10 text-center transition-all duration-300 hover:-translate-y-1 w-[9.5rem] h-[9.5rem] md:w-72 md:h-72 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] mx-auto flex flex-col items-center justify-center relative"
                     style={{
                       borderColor: 'rgba(251, 247, 232, 0.45)',
                       background: 'rgba(251, 247, 232, 0.04)',
@@ -567,7 +611,7 @@ export default function ClubInfo() {
                     }}
                   >
                     <div
-                      className="mx-auto relative w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden"
+                      className="mx-auto relative w-14 h-14 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden"
                       style={{ background: 'var(--color-olive-light)' }}
                     >
                       <Image
@@ -582,7 +626,7 @@ export default function ClubInfo() {
                       />
                     </div>
                     <h3
-                      className="mt-4 text-4xl md:text-5xl font-semibold"
+                      className="mt-1.5 md:mt-3 lg:mt-4 text-xl md:text-4xl lg:text-5xl font-semibold"
                       style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
                     >
                       {item.name}
@@ -613,7 +657,7 @@ export default function ClubInfo() {
 
             {founderStoryOpen && typeof document !== 'undefined' && createPortal(
               <div
-                className={`fixed inset-0 z-[9999] flex items-center justify-center px-6 py-10 backdrop-blur-md ${
+                className={`fixed inset-0 z-[9999] flex items-center justify-center px-4 py-6 md:px-8 md:py-8 lg:px-6 lg:py-10 backdrop-blur-md ${
                   isClosingFounderStory ? 'modal-overlay-fade-out' : 'modal-overlay-fade'
                 }`}
                 style={{ background: 'rgba(15, 31, 20, 0.65)' }}
@@ -626,21 +670,19 @@ export default function ClubInfo() {
                 }}
               >
                 <div
-                  className={`relative w-full max-w-4xl rounded-3xl border p-8 md:p-10 ${
+                  className={`relative w-full max-w-lg md:max-w-xl lg:max-w-4xl rounded-2xl md:rounded-2xl lg:rounded-3xl border p-4 md:p-6 lg:p-10 max-h-[72vh] md:max-h-[70vh] lg:max-h-[85vh] overflow-y-auto ${
                     isClosingFounderStory ? 'modal-card-pop-out' : 'modal-card-pop'
                   }`}
                   style={{
                     background: 'var(--color-pink-light)',
                     borderColor: 'rgba(98, 32, 47, 0.35)',
                     boxShadow: '0 24px 60px rgba(15, 31, 20, 0.25)',
-                    maxHeight: '85vh',
-                    overflowY: 'auto'
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
                     type="button"
-                    className="absolute top-5 right-5 w-10 h-10 rounded-full flex items-center justify-center"
+                    className="absolute top-3 right-3 md:top-4 md:right-4 lg:top-5 lg:right-5 w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-sm md:text-sm lg:text-base"
                     style={{
                       background: 'var(--color-brown-dark)',
                       color: 'var(--color-pink-light)',
@@ -663,13 +705,13 @@ export default function ClubInfo() {
                       .map((item) => (
                         <div key={item.key}>
                           <p
-                            className="text-xs md:text-sm uppercase tracking-widest mb-4"
+                            className="text-[10px] md:text-xs lg:text-sm uppercase tracking-widest mb-2 md:mb-3 lg:mb-4 pr-8"
                             style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
                           >
                             {item.name}&rsquo;s story
                           </p>
-                          <div className="mb-6 flex justify-center">
-                            <div className="relative w-44 h-44 md:w-52 md:h-52">
+                          <div className="mb-3 md:mb-4 lg:mb-6 flex justify-center">
+                            <div className="relative w-20 h-20 md:w-28 md:h-28 lg:w-52 lg:h-52">
                               <Image
                                 src={
                                   item.key === 'julia'
@@ -683,13 +725,13 @@ export default function ClubInfo() {
                             </div>
                           </div>
                           <h3
-                            className="text-3xl md:text-4xl font-semibold mb-5"
+                            className="text-xl md:text-2xl lg:text-4xl font-semibold mb-3 md:mb-3 lg:mb-5"
                             style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
                           >
                             {item.key === 'julia' ? 'Music, Care, and Connection' : 'A Call That Sparked a Movement'}
                           </h3>
                           <p
-                            className="text-base md:text-lg leading-relaxed whitespace-pre-line"
+                            className="text-xs md:text-sm lg:text-lg leading-snug md:leading-relaxed whitespace-pre-line"
                             style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
                           >
                             {item.sample}
@@ -742,53 +784,70 @@ export default function ClubInfo() {
       {/* Our Mission — inspo: centered headline + overlapping image & soft pink card per block */}
       <section className="pt-28 pb-20 md:pt-36 md:pb-28" style={{ background: 'var(--color-cream)' }}>
         <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-5">
-          <header className="text-center mb-28 md:mb-40 pt-4 md:pt-6">
+          <header className="text-center mb-16 md:mb-40 pt-4 md:pt-6">
             <h2
               ref={missionHeaderRef}
-              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold max-w-4xl mx-auto leading-tight mb-6 md:mb-8"
+              className="text-[1.85rem] sm:text-4xl md:text-6xl lg:text-6xl xl:text-7xl font-bold max-w-4xl mx-auto leading-snug md:leading-tight mb-6 md:mb-8 px-2"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
             >
-              {['The work we do. The ', 'difference', ' you can make.'].map((part, i) => (
-                <span key={i}>
-                  {part === 'difference' ? (
-                    <span
-                      className={missionTitleVisible ? 'word-fade-in-up-blur-slow' : ''}
-                      style={{
-                        display: 'inline-block',
-                        animationDelay: missionTitleVisible ? `${i * 0.5}s` : undefined,
-                        opacity: missionTitleVisible ? undefined : 0,
-                      }}
-                    >
-                      <span className="px-2 py-0.5 rounded-full" style={{ background: 'var(--color-pink-light)', boxShadow: '0 0 0 2px var(--color-pink-medium)' }}>
-                        difference
-                    </span>
-                    </span>
-                  ) : (
-                    <span
-                      className={missionTitleVisible ? 'word-fade-in-up-blur-slow' : ''}
-                      style={{
-                        display: 'inline-block',
-                        animationDelay: missionTitleVisible ? `${i * 0.5}s` : undefined,
-                        opacity: missionTitleVisible ? undefined : 0,
-                      }}
-                    >
-                      {part}
-                    </span>
-                  )}
-                    </span>
-                  ))}
+              <span
+                className={missionTitleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                style={{
+                  display: 'inline-block',
+                  animationDelay: missionTitleVisible ? '0s' : undefined,
+                  opacity: missionTitleVisible ? undefined : 0,
+                }}
+              >
+                The work we do.
+              </span>
+              <br className="lg:hidden" />
+              <span className="hidden lg:inline">{'\u00A0'}</span>
+              <span className="inline-block md:whitespace-nowrap">
+                <span
+                  className={missionTitleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                  style={{
+                    display: 'inline-block',
+                    animationDelay: missionTitleVisible ? '0.5s' : undefined,
+                    opacity: missionTitleVisible ? undefined : 0,
+                  }}
+                >
+                  The{' '}
+                </span>
+                <span
+                  className={missionTitleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                  style={{
+                    display: 'inline-block',
+                    animationDelay: missionTitleVisible ? '1s' : undefined,
+                    opacity: missionTitleVisible ? undefined : 0,
+                  }}
+                >
+                  <span className="px-2 py-0.5 rounded-full" style={{ background: 'var(--color-pink-light)', boxShadow: '0 0 0 2px var(--color-pink-medium)' }}>
+                    difference
+                  </span>
+                </span>
+                <span
+                  className={missionTitleVisible ? 'word-fade-in-up-blur-slow' : ''}
+                  style={{
+                    display: 'inline-block',
+                    animationDelay: missionTitleVisible ? '1.5s' : undefined,
+                    opacity: missionTitleVisible ? undefined : 0,
+                  }}
+                >
+                  {' '}you can make.
+                </span>
+              </span>
             </h2>
-            <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed mb-12 md:mb-16" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.98 }}>
+            <p className="text-sm md:text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed mb-6 md:mb-16 px-2" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.98 }}>
               To inspire passion among their peers —
               all the while mobilizing youth, raising awareness, and creating meaningful impact.
             </p>
           </header>
 
-          <div className="space-y-28 md:space-y-36 lg:space-y-44">
+          <div className="space-y-10 md:space-y-20 lg:space-y-44">
             {/* Block 1: image on left, wider, shifted right to overlap the box */}
             <div
               ref={missionLeftRef}
-              className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-0"
+              className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0"
               style={{
                 transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
                 opacity: missionLeftInView ? 1 : 0.6,
@@ -796,31 +855,31 @@ export default function ClubInfo() {
               }}
             >
               {/* Image — overlaps the pink box more (larger negative margin) */}
-              <div className="relative w-full lg:w-96 xl:w-[26rem] flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto lg:mx-0 lg:mr-[-7rem] lg:z-10 max-w-lg border-4 border-solid" style={{ borderColor: 'var(--color-olive)' }}>
+              <div className="relative w-[78%] max-w-[240px] md:w-64 lg:w-96 xl:w-[26rem] md:max-w-md flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto md:mx-0 md:mr-[-3.5rem] lg:mr-[-7rem] md:z-10 border-2 md:border-[3px] lg:border-4 border-solid" style={{ borderColor: 'var(--color-olive)' }}>
                 <Image
                   src="/assets/club-info/table.jpg"
                   alt="Support that reaches every generation — collaboration and programs"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 416px"
+                  sizes="(max-width: 1024px) 240px, 416px"
                 />
               </div>
               {/* Box: MERLOT background. Text: label = cream, title + body = pink */}
               <div
-                className="flex-1 min-h-[440px] md:min-h-[520px] lg:min-h-[600px] rounded-2xl md:rounded-3xl py-5 md:py-6 lg:py-8 pl-24 md:pl-32 lg:pl-40 pr-6 md:pr-8 flex flex-col justify-center text-left"
+                className="flex-1 min-h-0 md:min-h-[340px] lg:min-h-[600px] rounded-2xl md:rounded-2xl lg:rounded-3xl py-5 px-5 md:py-5 md:pl-28 md:pr-6 lg:py-8 lg:pl-40 lg:pr-8 flex flex-col justify-center text-left"
                 style={{
                   background: 'var(--color-brown-dark)',
                   boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.12)',
                 }}
               >
-                <div className="max-w-2xl">
-                  <p className="text-base md:text-lg uppercase tracking-[0.2em] mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}>
+                <div className="max-w-2xl md:max-w-none lg:max-w-2xl">
+                  <p className="text-xs md:text-sm lg:text-lg uppercase tracking-[0.16em] md:tracking-[0.18em] lg:tracking-[0.2em] mb-2 md:mb-2.5 lg:mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}>
                     What we do
                   </p>
-                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
+                  <h3 className="text-2xl md:text-3xl lg:text-6xl font-bold mb-3 md:mb-3 lg:mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
                     Support that reaches every generation.
                 </h3>
-                  <p className="text-lg md:text-xl leading-relaxed mb-5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
+                  <p className="text-sm md:text-base lg:text-xl leading-relaxed mb-0 md:mb-2 lg:mb-5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
                     The club delivers <strong>workshops, events, programs, and fundraisers</strong> designed to provide <strong>direct support</strong> to older adults and raise awareness about issues that affect seniors. Our programs and services are built on a commitment to <strong>equity and accessibility</strong>, ensuring that opportunities for connection and support remain <strong>inclusive and responsive</strong> to the diverse needs of older adults.
                 </p>
               </div>
@@ -830,7 +889,7 @@ export default function ClubInfo() {
             {/* Block 2: same as block 1 — merlot box, pink label/title/body, image on right */}
             <div
               ref={missionRightRef}
-              className="flex flex-col lg:flex-row-reverse lg:items-center gap-6 lg:gap-0"
+              className="flex flex-col md:flex-row-reverse md:items-center gap-4 md:gap-0"
             style={{
                 transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
                 opacity: missionRightInView ? 1 : 0.6,
@@ -838,31 +897,31 @@ export default function ClubInfo() {
               }}
             >
               {/* Image — on right, overlaps the box (mirror of block 1) */}
-              <div className="relative w-full lg:w-96 xl:w-[26rem] flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto lg:mx-0 lg:ml-[-7rem] lg:z-10 max-w-lg order-1 lg:order-1 border-4 border-solid" style={{ borderColor: 'var(--color-olive)' }}>
+              <div className="relative w-[78%] max-w-[240px] md:w-64 lg:w-96 xl:w-[26rem] md:max-w-md flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto md:mx-0 md:ml-[-3.5rem] lg:ml-[-7rem] md:z-10 order-1 border-2 md:border-[3px] lg:border-4 border-solid" style={{ borderColor: 'var(--color-olive)' }}>
                 <Image
                   src="/assets/club-info/team.jpg"
                   alt="Grow your skills. Make a real impact — Youth 4 Elders team"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 416px"
+                  sizes="(max-width: 1024px) 240px, 416px"
                 />
               </div>
               {/* Box: same as block 1 — MERLOT, text shifted left (less left padding) */}
               <div
-                className="flex-1 min-h-[440px] md:min-h-[520px] lg:min-h-[600px] rounded-2xl md:rounded-3xl py-5 md:py-6 lg:py-8 pl-12 md:pl-16 lg:pl-20 pr-6 md:pr-8 flex flex-col justify-center text-left order-2 lg:order-2"
+                className="flex-1 min-h-0 md:min-h-[340px] lg:min-h-[600px] rounded-2xl md:rounded-2xl lg:rounded-3xl py-5 px-5 md:py-5 md:pl-6 md:pr-28 lg:py-8 lg:pl-20 lg:pr-8 flex flex-col justify-center text-left order-2"
               style={{ 
                   background: 'var(--color-brown-dark)',
                   boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.12)',
                 }}
               >
-                <div className="max-w-2xl">
-                  <p className="text-base md:text-lg uppercase tracking-[0.2em] mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}>
+                <div className="max-w-2xl md:max-w-none lg:max-w-2xl">
+                  <p className="text-xs md:text-sm lg:text-lg uppercase tracking-[0.16em] md:tracking-[0.18em] lg:tracking-[0.2em] mb-2 md:mb-2.5 lg:mb-4 font-semibold italic" style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}>
                     Why get involved
                   </p>
-                  <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
+                  <h3 className="text-2xl md:text-3xl lg:text-6xl font-bold mb-3 md:mb-3 lg:mb-6 leading-tight" style={{ fontFamily: 'var(--font-vintage-ligatures)', color: 'var(--color-pink-medium)' }}>
                     Grow your skills. Make a real impact.
                   </h3>
-                  <ul className="text-lg md:text-xl leading-relaxed space-y-4 list-disc pl-5 md:pl-6" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
+                  <ul className="text-sm md:text-base lg:text-xl leading-relaxed space-y-2.5 md:space-y-3 lg:space-y-4 list-disc pl-4 md:pl-5 lg:pl-6" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)', opacity: 0.95 }}>
                     <li>Support older adults while building <strong>transferable skills</strong>—communication, leadership, collaboration, empathy, and compassion—and form <strong>meaningful connections</strong> along the way. Skills you can use in school, work, and beyond.</li>
                     <li>Gain <strong>professional experience</strong> that counts: <strong>volunteer hours and reference letters</strong> for school or your career, plus opportunities to build lasting <strong>professional relationships</strong> and expand your network.</li>
                   </ul>
@@ -878,30 +937,30 @@ export default function ClubInfo() {
       {/* Impact stats — full-width strip with count-up */}
       <section
         ref={impactStatsRef}
-        className="py-6 md:py-8 mb-14 md:mb-24 border-y-4 md:border-y-[6px] border-dotted"
+        className="py-6 md:py-5 lg:py-8 mb-14 md:mb-16 lg:mb-24 border-y-4 md:border-y-[4px] lg:border-y-[6px] border-dotted md:max-w-3xl md:mx-auto lg:max-w-none"
         style={{
           background: 'var(--color-pink-light)',
           borderColor: 'var(--color-olive)',
         }}
       >
-        <div className="max-w-6xl mx-auto px-6 md:px-10 grid grid-cols-1 sm:grid-cols-3 gap-10 md:gap-12 text-center">
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
+        <div className="max-w-6xl mx-auto px-3 md:px-5 lg:px-10 grid grid-cols-3 gap-2 md:gap-5 lg:gap-12 text-center">
+          <div className="flex flex-col items-center gap-1 md:gap-1.5 lg:gap-2 min-w-0">
+            <span className="text-2xl md:text-3xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
               {statPrimary.toLocaleString()}+
             </span>
-            <span className="text-sm md:text-base uppercase tracking-widest" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Primary participants</span>
+            <span className="text-[9px] md:text-xs lg:text-base uppercase tracking-[0.08em] md:tracking-[0.12em] lg:tracking-widest leading-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Primary participants</span>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
+          <div className="flex flex-col items-center gap-1 md:gap-1.5 lg:gap-2 min-w-0">
+            <span className="text-2xl md:text-3xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
               {statCommunity.toLocaleString()}+
             </span>
-            <span className="text-sm md:text-base uppercase tracking-widest" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Community &amp; public impact</span>
+            <span className="text-[9px] md:text-xs lg:text-base uppercase tracking-[0.08em] md:tracking-[0.12em] lg:tracking-widest leading-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Community &amp; public impact</span>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-4xl md:text-5xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
+          <div className="flex flex-col items-center gap-1 md:gap-1.5 lg:gap-2 min-w-0">
+            <span className="text-2xl md:text-3xl lg:text-6xl font-bold tabular-nums" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}>
               {statStudent}%
             </span>
-            <span className="text-sm md:text-base uppercase tracking-widest" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Student-led</span>
+            <span className="text-[9px] md:text-xs lg:text-base uppercase tracking-[0.08em] md:tracking-[0.12em] lg:tracking-widest leading-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.95 }}>Student-led</span>
           </div>
         </div>
       </section>
@@ -912,16 +971,16 @@ export default function ClubInfo() {
         className="relative pt-8 pb-0 md:pt-10 md:pb-0 overflow-hidden"
         style={{
           background: 'var(--color-cream)',
-          minHeight: 'clamp(540px, 60vw, 740px)',
+          minHeight: 'clamp(460px, 130vw, 740px)',
           width: '100vw',
           marginLeft: 'calc(-50vw + 50%)',
           marginRight: 'calc(-50vw + 50%)',
         }}
       >
-        <div className="relative w-full max-w-none px-0 origin-center" style={{ minHeight: 'clamp(500px, 56vw, 680px)', transform: 'scale(0.88)', width: '100%' }}>
+        <div className="relative w-full max-w-none px-0 origin-center min-h-[430px] md:min-h-[680px] md:scale-[0.88]" style={{ width: '100%' }}>
           {/* Left panel — vertical */}
           <div
-            className={`absolute left-[-4%] md:left-[-10%] top-0 w-[34%] min-w-[180px] max-w-[340px] aspect-[3/4] rounded-lg overflow-hidden z-10 ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            className={`absolute left-[-18%] md:left-[-10%] top-[-4%] md:top-0 w-[58%] md:w-[34%] max-w-[340px] aspect-[3/4] rounded-lg overflow-hidden z-10 ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
             style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[0]}s` : undefined }}
           >
             <Image
@@ -935,7 +994,7 @@ export default function ClubInfo() {
 
           {/* Center panel — overlaps left, main focal */}
           <div
-            className={`absolute left-[24%] md:left-[78%] top-[5%] w-[50%] min-w-[240px] max-w-[500px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            className={`absolute left-[58%] md:left-[78%] top-[18%] md:top-[5%] w-[56%] md:w-[50%] max-w-[500px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
             style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[1]}s` : undefined }}
           >
             <Image
@@ -947,9 +1006,9 @@ export default function ClubInfo() {
             />
           </div>
 
-          {/* Top-right card — overlaps center */}
+          {/* Top-right card — overlaps center / bottom gifts photo */}
           <div
-            className={`absolute left-[52%] md:left-[60%] top-[62%] w-[20%] min-w-[140px] max-w-[280px] aspect-[4/5] rounded-lg overflow-hidden z-[6] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            className={`absolute left-[62%] md:left-[46%] lg:left-[60%] top-[68%] md:top-[52%] lg:top-[62%] w-[38%] md:w-[42%] lg:w-[20%] max-w-[280px] md:max-w-[460px] lg:max-w-[280px] aspect-[4/5] rounded-lg overflow-hidden z-[6] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
             style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[2]}s` : undefined }}
           >
             <Image
@@ -957,24 +1016,30 @@ export default function ClubInfo() {
               alt=""
               fill
               className="object-cover"
-              sizes="280px"
+              sizes="(max-width: 1023px) 460px, 280px"
             />
           </div>
 
-          {/* Meet the team — on top of images */}
+          {/* Meet the team — desktop left overlay, mobile centered pill */}
           <Link
             href="/team"
-            className={`group absolute left-[16%] top-[22%] z-[20] inline-flex items-center gap-2 font-semibold text-sm md:text-base tracking-widest transition-all duration-300 ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
-            style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', letterSpacing: '0.15em', opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[6]}s` : undefined }}
+            className={`meet-the-team-mobile-pill group absolute z-[30] inline-flex items-center gap-1.5 md:gap-2 font-semibold tracking-widest whitespace-nowrap transition-all duration-300 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full px-5 py-2.5 text-xs shadow-md border-2 md:left-[42%] md:top-[6%] lg:left-[16%] lg:top-[22%] md:translate-x-0 md:translate-y-0 md:rounded-none md:px-0 md:py-0 md:text-base md:shadow-none md:border-0 md:bg-transparent ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            style={{
+              fontFamily: 'var(--font-kollektif)',
+              color: 'var(--color-brown-dark)',
+              letterSpacing: '0.12em',
+              opacity: 0,
+              animationDelay: collageRevealed ? `${COLLAGE_DELAYS[6]}s` : undefined,
+            }}
           >
             <span>MEET THE TEAM</span>
-            <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full" style={{ background: 'var(--color-brown-dark)' }} />
+            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <span className="hidden md:block absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full" style={{ background: 'var(--color-brown-dark)' }} />
           </Link>
 
           {/* Sixth photo — overlaps center/right (gym / community) */}
           <div
-            className={`absolute left-[61%] md:left-[65%] top-[-10%] w-[30%] min-w-[140px] max-w-[300px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            className={`absolute left-[54%] md:left-[65%] top-[-12%] md:top-[-10%] w-[48%] md:w-[30%] max-w-[300px] aspect-[4/5] rounded-lg overflow-hidden z-[8] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
             style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[3]}s` : undefined }}
           >
             <Image
@@ -988,7 +1053,7 @@ export default function ClubInfo() {
 
           {/* Check photo — horizontal frame to match landscape photo (no vertical crop) */}
           <div
-            className={`absolute left-[52%] md:left-[5%] top-[30%] w-[50%] min-w-[320px] max-w-[660px] aspect-[4/3] rounded-lg overflow-hidden z-[6] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            className={`absolute left-[-8%] md:left-[5%] top-[54%] md:top-[30%] w-[78%] md:w-[50%] max-w-[660px] aspect-[4/3] rounded-lg overflow-hidden z-[6] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
             style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[4]}s` : undefined }}
           >
             <Image
@@ -1002,7 +1067,7 @@ export default function ClubInfo() {
 
           {/* Flowers (carousel5) — square container to match square image */}
           <div
-            className={`absolute left-[53%] md:left-[40%] top-[10%] w-[38%] min-w-[200px] max-w-[400px] aspect-square rounded-lg overflow-hidden z-[7] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
+            className={`absolute left-[28%] md:left-[40%] top-[20%] md:top-[10%] w-[50%] md:w-[38%] max-w-[400px] aspect-square rounded-lg overflow-hidden z-[7] ${collageRevealed ? 'collage-scroll-reveal' : ''}`}
             style={{ opacity: 0, animationDelay: collageRevealed ? `${COLLAGE_DELAYS[5]}s` : undefined }}
           >
             <Image
@@ -1015,17 +1080,17 @@ export default function ClubInfo() {
           </div>
         </div>
         <div className="h-8 md:h-10" aria-hidden />
-        <div className="mt-20 md:mt-28 mx-auto max-w-3xl border-t-4 md:border-t-[6px] border-dashed" style={{ borderColor: 'var(--color-brown-dark)' }} aria-hidden />
+        <div className="mt-16 md:mt-28 mx-auto max-w-3xl border-t-4 md:border-t-[6px] border-dashed" style={{ borderColor: 'var(--color-brown-dark)' }} aria-hidden />
       </section>
 
       {/* Ideas Welcome — form left, copy right; green & pink colour scheme */}
       <section ref={ideasSectionRef} id="ideas" className="mt-0 py-16 md:py-20 lg:py-28 scroll-mt-6" style={{ background: 'var(--color-cream)' }}>
-        <div className={`w-full mx-auto px-6 md:px-10 lg:px-12 max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center animate-on-scroll fade-up ${ideasInView ? 'visible' : ''}`} style={{ transitionDuration: '0.6s', transitionDelay: '0.2s' }}>
+        <div className={`w-full mx-auto px-6 md:px-10 lg:px-12 max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center animate-on-scroll fade-up ${ideasInView ? 'visible' : ''}`} style={{ transitionDuration: '0.6s', transitionDelay: '0.2s' }}>
           {/* Form — left */}
-          <div className="relative min-w-0 flex flex-col items-center lg:items-start order-2 lg:order-1">
+          <div className="relative min-w-0 flex flex-col items-center md:items-start order-2 md:order-1">
             <div
               key={ideaSubmitSuccess ? 'success' : 'form'}
-              className={`relative w-full max-w-lg rounded-2xl p-6 md:p-8 lg:p-10 shadow-lg ${ideaSubmitSuccess ? 'idea-success-box-in' : ''}`}
+              className={`relative w-full max-w-[16.75rem] md:max-w-lg rounded-2xl p-3.5 md:p-6 lg:p-10 shadow-lg ${ideaSubmitSuccess ? 'idea-success-box-in' : ''}`}
               style={{ background: 'var(--color-pink-light)', border: '2px solid var(--color-olive)' }}
             >
               {ideaSubmitSuccess && (
@@ -1038,9 +1103,9 @@ export default function ClubInfo() {
 
               {!ideaSubmitSuccess && (
                 <form onSubmit={handleIdeaSubmit} className="relative" noValidate>
-                  <div className="space-y-4">
+                  <div className="space-y-4 md:space-y-3 lg:space-y-4">
                     <div>
-                      <label htmlFor="idea-name" className="block text-sm font-semibold mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+                      <label htmlFor="idea-name" className="block text-sm md:text-xs lg:text-sm font-semibold mb-2 md:mb-1.5 lg:mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
                         Name
                       </label>
                       <input
@@ -1050,7 +1115,7 @@ export default function ClubInfo() {
                         value={ideaFormData.name}
                         onChange={handleIdeaInputChange}
                         placeholder="e.g. Jane Smith"
-                        className="idea-form-field w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
+                        className="idea-form-field w-full px-3.5 py-3 md:px-3.5 md:py-2.5 lg:px-5 lg:py-4 text-sm md:text-base lg:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
                         style={{ background: 'var(--color-cream)', borderColor: fieldErrors.name ? 'var(--color-error)' : 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
                       />
                       {fieldErrors.name && (
@@ -1058,7 +1123,7 @@ export default function ClubInfo() {
                       )}
                     </div>
                     <div>
-                      <label htmlFor="idea-email" className="block text-sm font-semibold mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+                      <label htmlFor="idea-email" className="block text-sm md:text-xs lg:text-sm font-semibold mb-2 md:mb-1.5 lg:mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
                         Email
                       </label>
                       <input
@@ -1068,7 +1133,7 @@ export default function ClubInfo() {
                         value={ideaFormData.email}
                         onChange={handleIdeaInputChange}
                         placeholder="e.g. jane@example.com"
-                        className="idea-form-field w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
+                        className="idea-form-field w-full px-3.5 py-3 md:px-3.5 md:py-2.5 lg:px-5 lg:py-4 text-sm md:text-base lg:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors"
                         style={{ background: 'var(--color-cream)', borderColor: fieldErrors.email ? 'var(--color-error)' : 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
                       />
                       {fieldErrors.email && (
@@ -1076,7 +1141,7 @@ export default function ClubInfo() {
                       )}
                     </div>
                     <div>
-                      <label htmlFor="idea-message" className="block text-sm font-semibold mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
+                      <label htmlFor="idea-message" className="block text-sm md:text-xs lg:text-sm font-semibold mb-2 md:mb-1.5 lg:mb-2 uppercase tracking-wider" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}>
                         Your idea
                       </label>
                       <textarea
@@ -1086,7 +1151,7 @@ export default function ClubInfo() {
                         onChange={handleIdeaInputChange}
                         placeholder="Tell us about your program or event idea..."
                         rows={5}
-                        className="idea-form-field w-full px-5 py-4 text-base md:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors resize-none"
+                        className="idea-form-field w-full px-3.5 py-3 md:px-3.5 md:py-2.5 lg:px-5 lg:py-4 text-sm md:text-base lg:text-lg rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[var(--color-pink-medium)] transition-colors resize-none md:min-h-[6.75rem] md:max-h-[6.75rem] lg:min-h-0 lg:max-h-none"
                         style={{ background: 'var(--color-cream)', borderColor: fieldErrors.message ? 'var(--color-error)' : 'var(--color-olive)', color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
                       />
                       {fieldErrors.message && (
@@ -1103,7 +1168,7 @@ export default function ClubInfo() {
                   <button
                     type="submit"
                     disabled={isSubmittingIdea}
-                    className="idea-submit-btn mt-6 w-full py-3.5 rounded-xl font-semibold text-base uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed border-2"
+                    className="idea-submit-btn mt-5 md:mt-3.5 lg:mt-6 w-full py-3 md:py-2.5 lg:py-3.5 rounded-xl font-semibold text-sm md:text-sm lg:text-base uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed border-2"
                     style={{ background: 'var(--color-olive)', color: 'var(--color-cream)', fontFamily: 'var(--font-kollektif)', borderColor: 'var(--color-olive)' }}
                   >
                     {isSubmittingIdea ? 'Sending...' : 'Send your idea'}
@@ -1114,19 +1179,18 @@ export default function ClubInfo() {
           </div>
 
           {/* Copy — right */}
-          <div className="order-1 lg:order-2 text-right">
-            <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase mb-10 flex flex-wrap items-center justify-end gap-x-3 gap-y-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', letterSpacing: '0.08em' }}>
+          <div className="order-1 md:order-2 text-left md:text-right">
+            <h3 className="text-3xl md:text-5xl lg:text-6xl font-bold uppercase mb-6 md:mb-10 flex flex-wrap items-center justify-start md:justify-end gap-x-3 gap-y-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', letterSpacing: '0.08em' }}>
               Ideas Welcome
             </h3>
-            <p className="text-lg md:text-xl leading-relaxed mb-6" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.9, lineHeight: 1.7 }}>
+            <p className="text-base md:text-lg lg:text-xl leading-relaxed mb-4 md:mb-6" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', opacity: 0.9, lineHeight: 1.7 }}>
               Got a program or event idea? We’d love to hear it. We team up with partners to shape initiatives that fit your goals, your residents’ interests, and what works on the ground.
             </p>
-            <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: 1.7 }}>
+            <p className="text-sm md:text-sm lg:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: 1.7 }}>
               <span
-                className="px-1.5 -mx-1.5 inline whitespace-nowrap"
+                className="ideas-drop-highlight px-1 lg:px-1.5 -mx-1 lg:-mx-1.5 inline whitespace-normal md:whitespace-nowrap text-sm md:text-[0.95rem] lg:text-lg"
                 style={{
                   fontFamily: 'var(--font-kollektif)',
-                  backgroundImage: 'linear-gradient(transparent 25%, var(--color-pink-light) 25%, var(--color-pink-light) 75%, transparent 75%)',
                   boxDecorationBreak: 'clone',
                   WebkitBoxDecorationBreak: 'clone',
                 }}
@@ -1140,9 +1204,8 @@ export default function ClubInfo() {
 
       <section
         id="programs"
-        className="relative py-20 md:py-28 flex flex-col justify-center scroll-mt-6"
+        className="club-info-programs relative py-10 md:py-14 lg:py-28 flex flex-col justify-center scroll-mt-6 min-h-0 md:min-h-0 lg:min-h-[105vh]"
         style={{
-          minHeight: '105vh',
           backgroundImage:
             "linear-gradient(rgba(44, 35, 31, 0.3), rgba(55, 30, 36, 0.8)), url('/assets/club-info/programs%20background.jpg')",
           backgroundSize: 'cover',
@@ -1150,32 +1213,32 @@ export default function ClubInfo() {
           backgroundAttachment: 'fixed'
         }}
       >
-        <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-10 lg:px-12 w-full">
+        <div className="relative z-10 max-w-6xl mx-auto px-5 md:px-8 lg:px-12 w-full">
           <div>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-              <div className="lg:col-span-5">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-6 lg:gap-16 items-center">
+              <div className="md:col-span-5">
                 <h2
-                  className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold italic mb-4 leading-tight"
+                  className="text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold italic mb-3 md:mb-3 lg:mb-4 leading-tight"
                   style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
                 >
                   Programs & Services
                 </h2>
                 <p
-                  className="text-base md:text-lg leading-relaxed"
+                  className="text-sm md:text-base lg:text-lg leading-relaxed"
                   style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
                 >
                   Programs may include the following. All programs are adaptable to meet the specific needs of each partner organization.
                 </p>
                 <p
-                  className="text-base md:text-lg leading-relaxed mt-4 mb-6"
+                  className="text-sm md:text-base lg:text-lg leading-relaxed mt-3 md:mt-3 lg:mt-4 mb-4 md:mb-4 lg:mb-6"
                   style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
                 >
                   We run workshops, sessions, and community events throughout the year—see past events for examples of what we do.
                 </p>
-                <div className="mt-6">
+                <div className="mt-4 md:mt-4 lg:mt-6">
                   <Link
                     href="/events/past"
-                    className="group inline-flex items-center gap-2 font-semibold text-base md:text-lg transition-all duration-300 relative"
+                    className="group inline-flex items-center gap-2 font-semibold text-sm md:text-base lg:text-lg transition-all duration-300 relative"
                     style={{
                       color: 'var(--color-cream)',
                       fontFamily: 'var(--font-kollektif)',
@@ -1183,7 +1246,7 @@ export default function ClubInfo() {
                   >
                     <span>See Past Events</span>
                     <svg
-                      className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2"
+                      className="w-4 h-4 md:w-4 md:h-4 lg:w-5 lg:h-5 transition-transform duration-300 group-hover:translate-x-2"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1199,9 +1262,9 @@ export default function ClubInfo() {
                 </div>
               </div>
 
-              <div className="lg:col-span-7">
+              <div className="md:col-span-7">
                 <p
-                  className="text-xs md:text-sm uppercase tracking-widest mb-6"
+                  className="text-[10px] md:text-xs lg:text-sm uppercase tracking-widest mb-3 md:mb-4 lg:mb-6"
                   style={{ fontFamily: 'var(--font-kollektif)', color: 'rgba(234, 225, 203, 0.85)', letterSpacing: '0.2em' }}
                 >
                   Programs may include:
@@ -1217,17 +1280,17 @@ export default function ClubInfo() {
                   ].map((item, index) => (
                     <div
                       key={item}
-                      className="flex items-start gap-6 py-6"
+                      className="flex items-start gap-3 md:gap-4 lg:gap-6 py-3 md:py-3.5 lg:py-6"
                       style={{ borderBottom: index === 5 ? 'none' : '1px solid rgba(234, 225, 203, 0.35)' }}
                     >
                       <div
-                        className="text-2xl md:text-3xl flex-shrink-0 tabular-nums"
+                        className="text-lg md:text-2xl lg:text-3xl flex-shrink-0 tabular-nums"
                         style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
                       >
                         {`0${index + 1} /`}
                       </div>
                       <p
-                        className="text-base md:text-lg leading-relaxed pt-0.5"
+                        className="text-sm md:text-base lg:text-lg leading-relaxed pt-0.5"
                         style={{ fontFamily: 'var(--font-leiko)', color: 'rgba(234, 225, 203, 0.9)' }}
                       >
                         {item}
@@ -1242,50 +1305,50 @@ export default function ClubInfo() {
       </section>
 
       {/* Testimonies */}
-      <section ref={testimoniesSectionRef} className="pt-16 md:pt-24 pb-16 md:pb-24" style={{ background: 'var(--color-cream)' }}>
+      <section ref={testimoniesSectionRef} className="pt-10 md:pt-24 pb-10 md:pb-24" style={{ background: 'var(--color-cream)' }}>
         <div className="w-full mx-auto px-6 md:px-10 max-w-6xl">
-          <header className={`mb-10 md:mb-12 text-center max-w-2xl mx-auto animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`} style={{ transitionDuration: '0.6s' }}>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold italic tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+          <header className={`mb-6 md:mb-12 text-center max-w-2xl mx-auto animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`} style={{ transitionDuration: '0.6s' }}>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold italic tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
               Testimonies
             </h2>
-            <p className="mt-3 text-base md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.88 }}>
+            <p className="mt-2 md:mt-3 text-sm md:text-lg leading-relaxed" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)', opacity: 0.88 }}>
               Voices from elders, volunteers, and partners—short reflections on the comfort, connection, and impact of our work, in their own words.
             </p>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-5 lg:gap-6 md:items-stretch">
             <div
-              className={`min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
+              className={`min-h-0 md:min-h-0 md:h-full lg:min-h-[240px] flex flex-col justify-center p-4 md:p-5 lg:p-8 text-center rounded-none border-4 md:border-[5px] lg:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
               style={{ background: 'var(--color-olive)', borderColor: 'var(--color-cream)', transitionDuration: '0.6s', transitionDelay: '0.25s' }}
             >
-              <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
+              <blockquote className="text-sm md:text-sm lg:text-lg leading-relaxed mb-2 md:mb-2 lg:mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
                 &ldquo;The tech support sessions have been a lifesaver. The students are so patient and kind, and I finally feel confident using my tablet.&rdquo;
               </blockquote>
-              <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
+              <p className="text-xs md:text-xs lg:text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
                 — Margaret, 72 · Elder
               </p>
             </div>
 
             <div
-              className={`min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
+              className={`min-h-0 md:min-h-0 md:h-full lg:min-h-[240px] flex flex-col justify-center p-4 md:p-5 lg:p-8 text-center rounded-none border-4 md:border-[5px] lg:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
               style={{ background: 'var(--color-brown-dark)', borderColor: 'var(--color-cream)', transitionDuration: '0.6s', transitionDelay: '0.4s' }}
             >
-              <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
+              <blockquote className="text-sm md:text-sm lg:text-lg leading-relaxed mb-2 md:mb-2 lg:mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
                 &ldquo;Volunteering here has been one of the most rewarding experiences of my university years. The connections I&apos;ve made are genuine and meaningful.&rdquo;
               </blockquote>
-              <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
+              <p className="text-xs md:text-xs lg:text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
                 — Sarah · Student Volunteer
               </p>
             </div>
 
             <div
-              className={`min-h-[200px] md:min-h-[240px] flex flex-col justify-center p-6 md:p-8 text-center rounded-none border-4 md:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
+              className={`min-h-0 md:min-h-0 md:h-full lg:min-h-[240px] flex flex-col justify-center p-4 md:p-5 lg:p-8 text-center rounded-none border-4 md:border-[5px] lg:border-[6px] border-dotted animate-on-scroll fade-up ${testimoniesInView ? 'visible' : ''}`}
               style={{ background: 'var(--color-olive)', borderColor: 'var(--color-cream)', transitionDuration: '0.6s', transitionDelay: '0.55s' }}
             >
-              <blockquote className="text-base md:text-lg leading-relaxed mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
+              <blockquote className="text-sm md:text-sm lg:text-lg leading-relaxed mb-2 md:mb-2 lg:mb-3" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}>
                 &ldquo;The workshops and visits have brought so much joy to our residents. Youth 4 Elders has become a highlight of our programming.&rdquo;
               </blockquote>
-              <p className="text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
+              <p className="text-xs md:text-xs lg:text-sm font-medium" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}>
                 — Care home partner
               </p>
             </div>

@@ -865,6 +865,67 @@ body::-webkit-scrollbar {
 }
 
 /* ========== 10. PAGE: Club info (/club-info) ========== */
+.club-info-hero-roll {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+/* Phone: clip page overflow so collage/blobs can't swipe sideways */
+@media (max-width: 767px) {
+  html:has(body.club-info-page),
+  body.club-info-page {
+    overflow-x: clip;
+  }
+
+  body.club-info-page #site-root,
+  body.club-info-page #site-root > main {
+    overflow: visible;
+  }
+}
+
+/* Tablet: lock sideways swipe without breaking sticky roll-up */
+@media (min-width: 768px) and (max-width: 1023px) {
+  html:has(body.club-info-page),
+  body.club-info-page {
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+  }
+
+  body.club-info-page #site-root,
+  body.club-info-page #site-root > main {
+    overflow: visible;
+    max-width: 100vw;
+  }
+
+  .club-info-page-tablet-lock {
+    max-width: 100vw;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+}
+
+/* Ideas Welcome — pink highlight band */
+.ideas-drop-highlight {
+  background-image: linear-gradient(
+    transparent 38%,
+    var(--color-pink-light) 38%,
+    var(--color-pink-light) 72%,
+    transparent 72%
+  );
+}
+
+@media (min-width: 1024px) {
+  .ideas-drop-highlight {
+    background-image: linear-gradient(
+      transparent 25%,
+      var(--color-pink-light) 25%,
+      var(--color-pink-light) 75%,
+      transparent 75%
+    );
+  }
+}
+
 @keyframes collageScrollReveal {
   from {
   opacity: 0;
@@ -879,6 +940,14 @@ body::-webkit-scrollbar {
 .collage-scroll-reveal {
   animation: collageScrollReveal 1.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
   backface-visibility: hidden;
+}
+
+@media (max-width: 767px) {
+  .meet-the-team-mobile-pill {
+    background: var(--color-cream);
+    border-color: var(--color-brown-dark);
+    white-space: nowrap;
+  }
 }
 
 .idea-submit-btn {
