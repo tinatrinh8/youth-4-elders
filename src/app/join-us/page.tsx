@@ -18,7 +18,13 @@ const ConfettiComponent = ({ boxRef }: { boxRef?: React.RefObject<HTMLDivElement
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
-    const confettiColors = ['#676930', '#EAD4C4', '#D3A5A5', '#AF7978'] // Green, cream, pink light, pink medium
+    const confettiColors = [
+      '#62202F', // brown-dark
+      '#FBF7E8', // cream
+      '#F8DAD4', // pink-light
+      '#F5D0C6', // pink-medium
+      '#6f6509', // olive
+    ]
 
     // Wait one frame so the success box ref is attached and laid out
     const rafId = requestAnimationFrame(() => {
@@ -138,7 +144,13 @@ interface FormData {
   experienceOutline: boolean
   experienceResume: boolean
   linkedinUrl: string
+  teamRole: string
+  teamRoleSecond: string
+  referralName: string
+  uOttawaConfirm: boolean
 }
+
+type ApplicationType = 'general' | 'team'
 
 interface Question {
   id: keyof FormData
@@ -156,13 +168,10 @@ const content = joinUsContent as {
     generalMember: { title: string; description: string }
     execMember: {
       title: string
-      descriptionBeforeLink: string
-      instagramLabel: string
-      descriptionAfterLink: string
-      teamRolesNote: string
+      description: string
     }
   }
-  applyBox: { title: string; cta: string }
+  applyBox: { generalTitle: string; teamTitle: string; cta: string }
   form: {
     title: string
     cancel: string
@@ -193,7 +202,41 @@ const content = joinUsContent as {
       accept?: string
     }>
   }
-  success: { title: string; messageBeforeLink: string; instagramLabel: string; messageAfterLink: string; submitAnother: string }
+  teamForm: {
+    title: string
+    uOttawaConfirmEyebrow: string
+    uOttawaConfirmTitle: string
+    uOttawaConfirmBody: string
+    uOttawaConfirmLabel: string
+    uOttawaConfirmError: string
+    programLabel: string
+    programPlaceholder: string
+    yearLabel: string
+    yearRequired: boolean
+    teamRoleFirstLabel: string
+    teamRoleSecondLabel: string
+    referralNameLabel: string
+    referralNamePlaceholder: string
+    whyJoinLabel: string
+    whyJoinPlaceholder: string
+    teamRoleOptions: { value: string; label: string }[]
+    teamRoleSecondOptions: { value: string; label: string }[]
+  }
+  success: {
+    general: {
+      title: string
+      messageBeforeLink: string
+      instagramLabel: string
+      messageAfterLink: string
+      cue: string
+    }
+    team: {
+      title: string
+      message: string
+      cue: string
+    }
+    submitAnother: string
+  }
   loading: { message: string }
 }
 
@@ -223,7 +266,11 @@ export default function JoinUs() {
     resumeFileName: '',
     experienceOutline: false,
     experienceResume: false,
-    linkedinUrl: ''
+    linkedinUrl: '',
+    teamRole: '',
+    teamRoleSecond: '',
+    referralName: '',
+    uOttawaConfirm: false,
   })
 
   const [formData, setFormData] = useState<FormData>(emptyForm)
@@ -231,11 +278,43 @@ export default function JoinUs() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [hasStarted, setHasStarted] = useState(false)
+  const [applicationType, setApplicationType] = useState<ApplicationType | null>(null)
+  const [submittedApplicationType, setSubmittedApplicationType] = useState<ApplicationType | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [showConfetti, setShowConfetti] = useState(false)
   const [, setIsInitialViewVisible] = useState(false)
   const [openSelectId, setOpenSelectId] = useState<keyof FormData | null>(null)
   const selectDropdownRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  const isTeamApp = applicationType === 'team'
+
+  const startApplication = (type: ApplicationType) => {
+    setApplicationType(type)
+    resumeFileRef.current = null
+    setFieldErrors({})
+    setSubmitStatus('idle')
+    setFormData(
+      type === 'team'
+        ? {
+            ...emptyForm(),
+            schoolStatus: 'in-school',
+            schoolName: 'University of Ottawa',
+            uOttawaConfirm: false,
+          }
+        : emptyForm()
+    )
+    setHasStarted(true)
+  }
+
+  const resetApplication = () => {
+    setFormData(emptyForm())
+    resumeFileRef.current = null
+    setHasStarted(false)
+    setApplicationType(null)
+    setSubmittedApplicationType(null)
+    setFieldErrors({})
+    setSubmitStatus('idle')
+  }
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -253,7 +332,11 @@ export default function JoinUs() {
 
   // Validation functions
   const validateField = (id: keyof FormData, value: string): string => {
-    if (!value.trim() && questions.find(q => q.id === id)?.required) {
+    if (id === 'whyJoin' && !value.trim()) return 'This field is required'
+    if (id === 'name' || id === 'email') {
+      if (!value.trim()) return 'This field is required'
+    }
+    if (!isTeamApp && !value.trim() && questions.find(q => q.id === id)?.required) {
       return 'This field is required'
     }
 
@@ -300,47 +383,86 @@ export default function JoinUs() {
   const isFormValid = () => {
     let valid = true
     const next: Record<string, string> = {}
-    questions.forEach((q) => {
-      // School-only fields are validated separately based on schoolStatus
-      if (q.id === 'schoolName' || q.id === 'program' || q.id === 'year') return
-      const val = formData[q.id]
-      const err = validateField(q.id, typeof val === 'string' ? val : '')
-      if (err && q.required) { valid = false; next[q.id] = err }
-    })
-    // School status follow-ups
-    if (!formData.schoolStatus) {
-      valid = false
-      next.schoolStatus = 'Please tell us if you are currently in school'
-    } else if (formData.schoolStatus === 'in-school') {
-      if (!formData.schoolName.trim()) {
+
+    ;(['name', 'email', 'whyJoin'] as const).forEach((id) => {
+      const err = validateField(id, formData[id])
+      if (err) {
         valid = false
-        next.schoolName = 'Please enter your university or college'
+        next[id] = err
       }
-    } else if (formData.schoolStatus === 'not-in-school') {
-      if (!formData.schoolSituation) {
+    })
+
+    if (isTeamApp) {
+      if (!formData.uOttawaConfirm) {
         valid = false
-        next.schoolSituation = 'Please select what best describes you'
-      } else if (formData.schoolSituation === 'Other' && !formData.schoolSituationOther.trim()) {
+        next.uOttawaConfirm = content.teamForm.uOttawaConfirmError
+      }
+      if (!formData.program.trim()) {
         valid = false
-        next.schoolSituationOther = 'Please tell us a bit more'
+        next.program = 'Please enter your program'
+      }
+      if (!formData.year) {
+        valid = false
+        next.year = 'Please select your year'
+      }
+      if (!formData.teamRole) {
+        valid = false
+        next.teamRole = 'Please select your first-choice role'
+      }
+      if (!formData.teamRoleSecond) {
+        valid = false
+        next.teamRoleSecond = 'Please select a second-choice role (or “No second preference”)'
+      } else if (
+        formData.teamRole &&
+        formData.teamRoleSecond !== 'No second preference' &&
+        formData.teamRoleSecond === formData.teamRole
+      ) {
+        valid = false
+        next.teamRoleSecond = 'Please choose a different fallback role'
+      }
+    } else {
+      questions.forEach((q) => {
+        if (q.id === 'schoolName' || q.id === 'program' || q.id === 'year' || q.id === 'name' || q.id === 'email' || q.id === 'whyJoin') return
+        const val = formData[q.id]
+        const err = validateField(q.id, typeof val === 'string' ? val : '')
+        if (err && q.required) { valid = false; next[q.id] = err }
+      })
+      if (!formData.schoolStatus) {
+        valid = false
+        next.schoolStatus = 'Please tell us if you are currently in school'
+      } else if (formData.schoolStatus === 'in-school') {
+        if (!formData.schoolName.trim()) {
+          valid = false
+          next.schoolName = 'Please enter your university or college'
+        }
+      } else if (formData.schoolStatus === 'not-in-school') {
+        if (!formData.schoolSituation) {
+          valid = false
+          next.schoolSituation = 'Please select what best describes you'
+        } else if (formData.schoolSituation === 'Other' && !formData.schoolSituationOther.trim()) {
+          valid = false
+          next.schoolSituationOther = 'Please tell us a bit more'
+        }
       }
     }
 
-    // Require either resume upload or experience outline (choose one)
-    const noChoice = !formData.experienceOutline && !formData.experienceResume
-    const choseOutlineButEmpty = formData.experienceOutline && !formData.experience.trim()
-    const choseResumeButNoFile = formData.experienceResume && !formData.resumeFileName
-    if (noChoice) {
-      valid = false
-      next.experienceOrResume = 'Please choose to upload a resume or outline your relevant experience'
-    } else {
-      if (choseOutlineButEmpty) {
+    // Experience / resume is only required for team applications
+    if (isTeamApp) {
+      const noChoice = !formData.experienceOutline && !formData.experienceResume
+      const choseOutlineButEmpty = formData.experienceOutline && !formData.experience.trim()
+      const choseResumeButNoFile = formData.experienceResume && !formData.resumeFileName
+      if (noChoice) {
         valid = false
-        next.experience = 'Please outline your relevant experience'
-      }
-      if (choseResumeButNoFile) {
-        valid = false
-        next.resumeFileName = 'Please upload a resume'
+        next.experienceOrResume = 'Please choose to upload a resume or outline your relevant experience'
+      } else {
+        if (choseOutlineButEmpty) {
+          valid = false
+          next.experience = 'Please outline your relevant experience'
+        }
+        if (choseResumeButNoFile) {
+          valid = false
+          next.resumeFileName = 'Please upload a resume'
+        }
       }
     }
     setFieldErrors(next)
@@ -388,6 +510,7 @@ export default function JoinUs() {
 
     try {
       const body = new window.FormData()
+      body.append('applicationType', applicationType || 'general')
       body.append('name', formData.name)
       body.append('email', formData.email)
       body.append('schoolStatus', formData.schoolStatus)
@@ -400,6 +523,10 @@ export default function JoinUs() {
       body.append('howHeard', formData.howHeard)
       body.append('experience', formData.experience)
       body.append('linkedinUrl', formData.linkedinUrl)
+      body.append('uOttawaConfirm', String(formData.uOttawaConfirm))
+      body.append('teamRole', formData.teamRole)
+      body.append('teamRoleSecond', formData.teamRoleSecond)
+      body.append('referralName', formData.referralName)
       body.append('experienceOutline', String(formData.experienceOutline))
       body.append('experienceResume', String(formData.experienceResume))
       if (formData.experienceResume && resumeFileRef.current) {
@@ -416,10 +543,12 @@ export default function JoinUs() {
       if (response.ok) {
         await new Promise(resolve => setTimeout(resolve, 800))
         setShowConfetti(true)
+        setSubmittedApplicationType(applicationType || 'general')
         setSubmitStatus('success')
         setFormData(emptyForm())
         resumeFileRef.current = null
         setHasStarted(false)
+        setApplicationType(null)
         setTimeout(() => setShowConfetti(false), 2000)
       } else {
         console.error('Join form error:', result?.error || response.statusText)
@@ -504,29 +633,43 @@ export default function JoinUs() {
   }
 
   if (submitStatus === 'success') {
+    const isTeamSuccess = submittedApplicationType === 'team'
+    const successCopy = isTeamSuccess ? content.success.team : content.success.general
     return (
       <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden" style={{ background: 'transparent' }}>
         {showConfetti && <ConfettiComponent boxRef={successBoxRef as React.RefObject<HTMLDivElement>} />}
         <div className="mx-auto px-6 py-12 flex justify-center">
           <div
             ref={successBoxRef}
-            className="w-[min(32rem,92vw)] h-[min(32rem,92vw)] rounded-2xl bg-[var(--color-cream)] p-8 md:p-10 shadow-lg border-2 border-[var(--color-brown-dark)] animate-success-fade-in flex flex-col items-center justify-center text-center"
+            className="w-[min(32rem,92vw)] min-h-[min(32rem,92vw)] rounded-2xl bg-[var(--color-cream)] p-8 md:p-10 shadow-lg border-2 border-[var(--color-brown-dark)] animate-success-fade-in flex flex-col items-center justify-center text-center"
           >
             <div className="mb-5 flex justify-center">
               <Image src="/assets/join us/sign up confirmed.png" alt="Sign up confirmed" width={180} height={180} className="object-contain" />
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
-              {content.success.title}
+              {successCopy.title}
             </h2>
-            <p className="text-base md:text-lg text-[var(--color-brown-dark)] mb-6 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
-              {content.success.messageBeforeLink}
-              <a href="https://www.instagram.com/youth4elders/" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-brown-dark)] underline hover:no-underline">
-                {content.success.instagramLabel}
-              </a>
-              {content.success.messageAfterLink}
+            {isTeamSuccess ? (
+              <p className="text-base md:text-lg text-[var(--color-brown-dark)] mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
+                {content.success.team.message}
+              </p>
+            ) : (
+              <p className="text-base md:text-lg text-[var(--color-brown-dark)] mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
+                {content.success.general.messageBeforeLink}
+                <a href="https://www.instagram.com/youth4elders/" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-brown-dark)] underline hover:no-underline">
+                  {content.success.general.instagramLabel}
+                </a>
+                {content.success.general.messageAfterLink}
+              </p>
+            )}
+            <p
+              className="text-sm md:text-base text-[var(--color-brown-dark)] mb-6 leading-relaxed italic"
+              style={{ fontFamily: 'var(--font-leiko)', opacity: 0.85 }}
+            >
+              {successCopy.cue}
             </p>
             <button
-              onClick={() => { setSubmitStatus('idle'); setHasStarted(false) }}
+              onClick={() => { setSubmitStatus('idle'); resetApplication() }}
               className="px-6 py-3 rounded-full font-semibold text-base md:text-lg text-[var(--color-cream)] bg-[var(--color-brown-dark)] hover:opacity-90 transition-opacity"
               style={{ fontFamily: 'var(--font-leiko)' }}
             >
@@ -590,31 +733,36 @@ export default function JoinUs() {
                     {content.cards.execMember.title}
                   </h3>
                   <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
-                    {content.cards.execMember.descriptionBeforeLink}
-                    <a href="https://www.instagram.com/youth4elders/" target="_blank" rel="noopener noreferrer" className="font-semibold underline hover:no-underline text-[var(--color-brown-dark)]">
-                      {content.cards.execMember.instagramLabel}
-                    </a>
-                    {content.cards.execMember.descriptionAfterLink}
-                    <strong className="font-bold text-[var(--color-brown-dark)]">Team roles</strong>
-                    {content.cards.execMember.teamRolesNote}
+                    {content.cards.execMember.description}
                   </p>
                 </div>
               </div>
-            <button
-                type="button"
-                onClick={() => setHasStarted(true)}
-                className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
-              >
-                <h3 className="text-lg md:text-xl font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
-                  {content.applyBox.title}
-                </h3>
-            </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <button
+                  type="button"
+                  onClick={() => startApplication('general')}
+                  className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
+                >
+                  <h3 className="text-base md:text-lg font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.applyBox.generalTitle}
+                  </h3>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startApplication('team')}
+                  className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
+                >
+                  <h3 className="text-base md:text-lg font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.applyBox.teamTitle}
+                  </h3>
+                </button>
+              </div>
             </div>
-            <div className={`overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'max-h-[3600px] opacity-100' : 'max-h-0 opacity-0'}`}>
+            <div className={`overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'max-h-[4200px] opacity-100' : 'max-h-0 opacity-0'}`}>
               <div className={`bg-[var(--color-cream)] border-t-2 border-[var(--color-brown-dark)]/20 p-8 md:p-10 ${hasStarted ? 'join-us-form-roll-down' : ''}`}>
         <div className="max-w-5xl w-full">
           <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-leiko)' }}>
-            {content.form.title}
+            {isTeamApp ? content.teamForm.title : content.form.title}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -638,7 +786,268 @@ export default function JoinUs() {
               </div>
             ))}
 
-            {/* School status */}
+            {/* Team: university / program / year / role */}
+            {isTeamApp && (
+              <>
+                <div className="md:col-span-2">
+                  <div
+                    className="overflow-hidden rounded-lg border-2"
+                    style={{
+                      borderColor: fieldErrors.uOttawaConfirm ? 'var(--color-error)' : 'var(--color-brown-dark)',
+                      background: 'var(--color-cream)',
+                    }}
+                  >
+                    <div
+                      className="px-5 py-3 border-b-2"
+                      style={{
+                        borderColor: 'var(--color-brown-dark)',
+                        background: 'var(--color-pink-medium)',
+                      }}
+                    >
+                      <p
+                        className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em]"
+                        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                      >
+                        {content.teamForm.uOttawaConfirmEyebrow}
+                      </p>
+                      <p
+                        className="mt-1 text-base md:text-lg font-bold"
+                        style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}
+                      >
+                        {content.teamForm.uOttawaConfirmTitle}
+                      </p>
+                    </div>
+
+                    <div className="px-5 py-4 space-y-4" style={{ background: 'var(--color-cream)' }}>
+                      <p
+                        className="text-sm md:text-base leading-relaxed"
+                        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                      >
+                        {content.teamForm.uOttawaConfirmBody}
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            uOttawaConfirm: !prev.uOttawaConfirm,
+                            schoolName: 'University of Ottawa',
+                            schoolStatus: 'in-school',
+                          }))
+                          setFieldErrors((prev) => {
+                            const next = { ...prev }
+                            delete next.uOttawaConfirm
+                            return next
+                          })
+                        }}
+                        className="w-full flex items-start gap-3 rounded-md border-2 px-4 py-3.5 text-left transition-colors"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          borderColor: fieldErrors.uOttawaConfirm
+                            ? 'var(--color-error)'
+                            : 'var(--color-brown-dark)',
+                          background: formData.uOttawaConfirm
+                            ? 'var(--color-pink-medium)'
+                            : 'var(--color-pink-light)',
+                          color: 'var(--color-brown-dark)',
+                        }}
+                        aria-pressed={formData.uOttawaConfirm}
+                      >
+                        <span
+                          className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2"
+                          style={{
+                            borderColor: fieldErrors.uOttawaConfirm
+                              ? 'var(--color-error)'
+                              : 'var(--color-brown-dark)',
+                            background: formData.uOttawaConfirm
+                              ? 'var(--color-brown-dark)'
+                              : 'var(--color-cream)',
+                          }}
+                          aria-hidden
+                        >
+                          {formData.uOttawaConfirm && (
+                            <svg className="h-3.5 w-3.5 text-[var(--color-cream)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[10px] font-bold uppercase tracking-[0.16em] mb-1" style={{ color: 'var(--color-brown-dark)' }}>
+                            Applicant acknowledgement
+                          </span>
+                          <span className="block text-sm md:text-base leading-snug font-medium">
+                            {content.teamForm.uOttawaConfirmLabel}
+                            <span className="text-[var(--color-error)] ml-0.5">*</span>
+                          </span>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                  {fieldErrors.uOttawaConfirm && (
+                    <p className="text-base text-[var(--color-error)] mt-2" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.uOttawaConfirm}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.teamForm.programLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.program}
+                    onChange={(e) => handleFieldChange('program', e.target.value)}
+                    placeholder={content.teamForm.programPlaceholder}
+                    className="w-full px-5 py-4 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20 transition-all text-[var(--color-brown-dark)] text-base md:text-lg"
+                    style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors.program ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
+                  />
+                  {fieldErrors.program && (
+                    <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.program}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.teamForm.yearLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                  </label>
+                  <div className={`relative w-full ${openSelectId === 'year' ? 'z-[100]' : ''}`} ref={(el) => { selectDropdownRefs.current.year = el }}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenSelectId((prev) => (prev === 'year' ? null : 'year'))}
+                      className="w-full flex items-center justify-between pl-5 pr-12 py-4 rounded-xl border-2 text-left transition-colors cursor-pointer"
+                      style={{
+                        fontFamily: 'var(--font-kollektif)',
+                        borderColor: fieldErrors.year ? 'var(--color-error)' : inputBorder,
+                        background: 'var(--color-pink-light)',
+                        color: formData.year ? 'var(--color-brown-dark)' : 'var(--color-pink-dark)',
+                        fontSize: '1rem'
+                      }}
+                    >
+                      <span className="text-base md:text-lg">{questions.find(q => q.id === 'year')?.options?.find((o) => o.value === formData.year)?.label ?? 'Select...'}</span>
+                      <svg className={`w-5 h-5 flex-shrink-0 absolute right-5 top-1/2 -translate-y-1/2 transition-transform ${openSelectId === 'year' ? 'rotate-180' : ''}`} style={{ color: 'var(--color-brown-dark)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {openSelectId === 'year' && (
+                      <div className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-48 border-2" style={{ background: 'var(--color-cream)', borderColor: 'var(--color-brown-dark)', boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)' }}>
+                        {(questions.find(q => q.id === 'year')?.options || []).map((opt) => (
+                          <button key={opt.value || 'empty'} type="button" className="block w-full text-left px-5 py-3.5 text-base md:text-lg transition-colors border-0" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'transparent' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }} onClick={() => { handleFieldChange('year', opt.value); setOpenSelectId(null) }}>
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {fieldErrors.year && (
+                    <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.year}</p>
+                  )}
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.teamForm.teamRoleFirstLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                  </label>
+                  <div className={`relative w-full ${openSelectId === 'teamRole' ? 'z-[100]' : ''}`} ref={(el) => { selectDropdownRefs.current.teamRole = el }}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenSelectId((prev) => (prev === 'teamRole' ? null : 'teamRole'))}
+                      className="w-full flex items-center justify-between pl-5 pr-12 py-4 rounded-xl border-2 text-left transition-colors cursor-pointer"
+                      style={{
+                        fontFamily: 'var(--font-kollektif)',
+                        borderColor: fieldErrors.teamRole ? 'var(--color-error)' : inputBorder,
+                        background: 'var(--color-pink-light)',
+                        color: formData.teamRole ? 'var(--color-brown-dark)' : 'var(--color-pink-dark)',
+                        fontSize: '1rem'
+                      }}
+                    >
+                      <span className="text-base md:text-lg">{content.teamForm.teamRoleOptions.find((o) => o.value === formData.teamRole)?.label ?? 'Select...'}</span>
+                      <svg className={`w-5 h-5 flex-shrink-0 absolute right-5 top-1/2 -translate-y-1/2 transition-transform ${openSelectId === 'teamRole' ? 'rotate-180' : ''}`} style={{ color: 'var(--color-brown-dark)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {openSelectId === 'teamRole' && (
+                      <div className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-56 border-2" style={{ background: 'var(--color-cream)', borderColor: 'var(--color-brown-dark)', boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)' }}>
+                        {content.teamForm.teamRoleOptions.map((opt) => (
+                          <button key={opt.value || 'empty'} type="button" className="block w-full text-left px-5 py-3.5 text-base md:text-lg transition-colors border-0" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'transparent' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }} onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              teamRole: opt.value,
+                              teamRoleSecond:
+                                prev.teamRoleSecond === opt.value && opt.value !== 'Open to any team role'
+                                  ? ''
+                                  : prev.teamRoleSecond,
+                            }))
+                            setFieldErrors((prev) => {
+                              const next = { ...prev }
+                              delete next.teamRole
+                              delete next.teamRoleSecond
+                              return next
+                            })
+                            setOpenSelectId(null)
+                          }}>
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {fieldErrors.teamRole && (
+                    <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.teamRole}</p>
+                  )}
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.teamForm.teamRoleSecondLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                  </label>
+                  <div className={`relative w-full ${openSelectId === 'teamRoleSecond' ? 'z-[100]' : ''}`} ref={(el) => { selectDropdownRefs.current.teamRoleSecond = el }}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenSelectId((prev) => (prev === 'teamRoleSecond' ? null : 'teamRoleSecond'))}
+                      className="w-full flex items-center justify-between pl-5 pr-12 py-4 rounded-xl border-2 text-left transition-colors cursor-pointer"
+                      style={{
+                        fontFamily: 'var(--font-kollektif)',
+                        borderColor: fieldErrors.teamRoleSecond ? 'var(--color-error)' : inputBorder,
+                        background: 'var(--color-pink-light)',
+                        color: formData.teamRoleSecond ? 'var(--color-brown-dark)' : 'var(--color-pink-dark)',
+                        fontSize: '1rem'
+                      }}
+                    >
+                      <span className="text-base md:text-lg">{content.teamForm.teamRoleSecondOptions.find((o) => o.value === formData.teamRoleSecond)?.label ?? 'Select...'}</span>
+                      <svg className={`w-5 h-5 flex-shrink-0 absolute right-5 top-1/2 -translate-y-1/2 transition-transform ${openSelectId === 'teamRoleSecond' ? 'rotate-180' : ''}`} style={{ color: 'var(--color-brown-dark)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {openSelectId === 'teamRoleSecond' && (
+                      <div className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-56 border-2" style={{ background: 'var(--color-cream)', borderColor: 'var(--color-brown-dark)', boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)' }}>
+                        {content.teamForm.teamRoleSecondOptions
+                          .filter((opt) => !opt.value || opt.value === 'No second preference' || opt.value !== formData.teamRole)
+                          .map((opt) => (
+                          <button key={opt.value || 'empty-second'} type="button" className="block w-full text-left px-5 py-3.5 text-base md:text-lg transition-colors border-0" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'transparent' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }} onClick={() => { handleFieldChange('teamRoleSecond', opt.value); setOpenSelectId(null) }}>
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {fieldErrors.teamRoleSecond && (
+                    <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.teamRoleSecond}</p>
+                  )}
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.teamForm.referralNameLabel}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.referralName}
+                    onChange={(e) => handleFieldChange('referralName', e.target.value)}
+                    placeholder={content.teamForm.referralNamePlaceholder}
+                    className="w-full px-5 py-4 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20 transition-all text-[var(--color-brown-dark)] text-base md:text-lg"
+                    style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors.referralName ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* General: school status */}
+            {!isTeamApp && (
             <div className="md:col-span-2">
               <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
                 {content.form.schoolStatusLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
@@ -668,7 +1077,7 @@ export default function JoinUs() {
                   style={{
                     fontFamily: 'var(--font-kollektif)',
                     borderColor: formData.schoolStatus === 'in-school' ? 'var(--color-brown-dark)' : inputBorder,
-                    background: formData.schoolStatus === 'in-school' ? 'rgba(98, 32, 47, 0.08)' : 'var(--color-pink-light)',
+                    background: formData.schoolStatus === 'in-school' ? 'var(--color-pink-medium)' : 'var(--color-pink-light)',
                     color: 'var(--color-brown-dark)'
                   }}
                 >
@@ -697,7 +1106,7 @@ export default function JoinUs() {
                   style={{
                     fontFamily: 'var(--font-kollektif)',
                     borderColor: formData.schoolStatus === 'not-in-school' ? 'var(--color-brown-dark)' : inputBorder,
-                    background: formData.schoolStatus === 'not-in-school' ? 'rgba(98, 32, 47, 0.08)' : 'var(--color-pink-light)',
+                    background: formData.schoolStatus === 'not-in-school' ? 'var(--color-pink-medium)' : 'var(--color-pink-light)',
                     color: 'var(--color-brown-dark)'
                   }}
                 >
@@ -723,7 +1132,7 @@ export default function JoinUs() {
                               fontFamily: 'var(--font-kollektif)',
                               borderColor: fieldErrors[q.id] ? 'var(--color-error)' : inputBorder,
                               background: 'var(--color-pink-light)',
-                              color: formData[q.id] ? 'var(--color-brown-dark)' : 'rgba(98, 32, 47, 0.6)',
+                              color: formData[q.id] ? 'var(--color-brown-dark)' : 'var(--color-pink-dark)',
                               fontSize: '1rem'
                             }}
                           >
@@ -744,7 +1153,7 @@ export default function JoinUs() {
                               style={{
                                 background: 'var(--color-cream)',
                                 borderColor: 'var(--color-brown-dark)',
-                                boxShadow: '0 8px 24px rgba(98, 32, 47, 0.2)'
+                                boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)'
                               }}
                             >
                               {q.options.map((opt) => (
@@ -757,7 +1166,7 @@ export default function JoinUs() {
                                     color: 'var(--color-brown-dark)',
                                     background: 'transparent'
                                   }}
-                                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(98, 32, 47, 0.08)' }}
+                                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }}
                                   onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                                   onClick={() => {
                                     handleFieldChange(q.id, opt.value)
@@ -804,7 +1213,7 @@ export default function JoinUs() {
                           fontFamily: 'var(--font-kollektif)',
                           borderColor: fieldErrors.schoolSituation ? 'var(--color-error)' : inputBorder,
                           background: 'var(--color-pink-light)',
-                          color: formData.schoolSituation ? 'var(--color-brown-dark)' : 'rgba(98, 32, 47, 0.6)',
+                          color: formData.schoolSituation ? 'var(--color-brown-dark)' : 'var(--color-pink-dark)',
                           fontSize: '1rem'
                         }}
                       >
@@ -827,7 +1236,7 @@ export default function JoinUs() {
                           style={{
                             background: 'var(--color-cream)',
                             borderColor: 'var(--color-brown-dark)',
-                            boxShadow: '0 8px 24px rgba(98, 32, 47, 0.2)'
+                            boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)'
                           }}
                         >
                           {content.form.schoolSituationOptions.map((opt) => (
@@ -840,7 +1249,7 @@ export default function JoinUs() {
                                 color: 'var(--color-brown-dark)',
                                 background: 'transparent'
                               }}
-                              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(98, 32, 47, 0.08)' }}
+                              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }}
                               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                               onClick={() => {
                                 setFormData((prev) => ({
@@ -894,8 +1303,36 @@ export default function JoinUs() {
                 </div>
               )}
             </div>
+            )}
 
-            {questions.filter((q) => !['name', 'email', 'schoolName', 'program', 'year'].includes(q.id)).map((q) => (
+            {isTeamApp && (
+              <>
+                <div className="md:col-span-2">
+                  <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.teamForm.whyJoinLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                  </label>
+                  <textarea
+                    value={formData.whyJoin}
+                    onChange={(e) => handleFieldChange('whyJoin', e.target.value)}
+                    onBlur={() => handleFieldBlur('whyJoin')}
+                    placeholder={content.teamForm.whyJoinPlaceholder}
+                    rows={5}
+                    className="w-full px-5 py-4 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20 transition-all resize-none text-[var(--color-brown-dark)] text-base md:text-lg"
+                    style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors.whyJoin ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
+                  />
+                  {fieldErrors.whyJoin && (
+                    <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.whyJoin}</p>
+                  )}
+                </div>
+              </>
+            )}
+
+            {questions.filter((q) => {
+              if (['name', 'email', 'schoolName', 'program', 'year'].includes(q.id)) return false
+              if (isTeamApp && q.id === 'whyJoin') return false
+              if (!isTeamApp && q.id === 'experience') return false
+              return true
+            }).map((q) => (
               <div key={q.id} className={q.type === 'textarea' || q.type === 'file' ? 'md:col-span-2' : ''}>
                 {q.id === 'experience' ? (
                   <>
@@ -917,7 +1354,7 @@ export default function JoinUs() {
               style={{
                           fontFamily: 'var(--font-kollektif)',
                           borderColor: formData.experienceOutline ? 'var(--color-brown-dark)' : inputBorder,
-                          background: formData.experienceOutline ? 'rgba(98, 32, 47, 0.08)' : 'var(--color-pink-light)',
+                          background: formData.experienceOutline ? 'var(--color-pink-medium)' : 'var(--color-pink-light)',
                           color: 'var(--color-brown-dark)'
                         }}
                       >
@@ -934,7 +1371,7 @@ export default function JoinUs() {
               style={{ 
                           fontFamily: 'var(--font-kollektif)',
                           borderColor: formData.experienceResume ? 'var(--color-brown-dark)' : inputBorder,
-                          background: formData.experienceResume ? 'rgba(98, 32, 47, 0.08)' : 'var(--color-pink-light)',
+                          background: formData.experienceResume ? 'var(--color-pink-medium)' : 'var(--color-pink-light)',
                           color: 'var(--color-brown-dark)'
                         }}
                       >
@@ -1017,7 +1454,7 @@ export default function JoinUs() {
                   fontFamily: 'var(--font-kollektif)',
                         borderColor: fieldErrors[q.id] ? 'var(--color-error)' : inputBorder,
                         background: 'var(--color-pink-light)',
-                        color: formData[q.id] ? 'var(--color-brown-dark)' : 'rgba(98, 32, 47, 0.6)',
+                        color: formData[q.id] ? 'var(--color-brown-dark)' : 'var(--color-pink-dark)',
                         fontSize: '1rem'
                       }}
                     >
@@ -1038,7 +1475,7 @@ export default function JoinUs() {
                     style={{
                           background: 'var(--color-cream)',
                           borderColor: 'var(--color-brown-dark)',
-                          boxShadow: '0 8px 24px rgba(98, 32, 47, 0.2)'
+                          boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)'
                         }}
                       >
                         {q.options.map((opt) => (
@@ -1051,7 +1488,7 @@ export default function JoinUs() {
                               color: 'var(--color-brown-dark)',
                               background: 'transparent'
                             }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(98, 32, 47, 0.08)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }}
                             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                             onClick={() => {
                               handleFieldChange(q.id, opt.value)
@@ -1108,9 +1545,7 @@ export default function JoinUs() {
           <div className="flex justify-between items-center gap-4 flex-wrap mt-10">
               <button
                 type="button"
-                onClick={() => {
-                  setFormData(emptyForm()); resumeFileRef.current = null; setHasStarted(false)
-                }}
+                onClick={resetApplication}
                 className="px-6 py-3 rounded-full font-semibold text-base md:text-lg text-[var(--color-brown-dark)] bg-transparent border-2 border-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)] hover:text-[var(--color-cream)] transition-colors"
                 style={{ fontFamily: 'var(--font-leiko)' }}
               >

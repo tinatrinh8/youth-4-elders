@@ -1,7 +1,7 @@
 {
   "page": {
     "headline": "Be Part of Something Meaningful",
-    "tagline": "Become a general member in a few steps."
+    "tagline": "Choose how you’d like to join — as a general member or on the team."
   },
   "cards": {
     "generalMember": {
@@ -9,15 +9,13 @@
       "description": "Open to everyone. Join our community and take part in events, workshops, and activities whenever you like. No commitment required—just show up when you can."
     },
     "execMember": {
-      "title": "Exec member?",
-      "descriptionBeforeLink": "Keep an eye on our ",
-      "instagramLabel": "Instagram",
-      "descriptionAfterLink": " for when exec applications open. ",
-      "teamRolesNote": " are currently only open to University of Ottawa students."
+      "title": "Team roles",
+      "description": "Help run the club—events, outreach, marketing, and more. Team applications are open now."
     }
   },
   "applyBox": {
-    "title": "Ready to join? Start here",
+    "generalTitle": "Apply as a general member",
+    "teamTitle": "Apply for a team role",
     "cta": "Get started"
   },
   "form": {
@@ -123,11 +121,66 @@
       }
     ]
   },
+  "teamForm": {
+    "title": "Y4E Team Application Form",
+    "uOttawaConfirmEyebrow": "Eligibility declaration",
+    "uOttawaConfirmTitle": "University of Ottawa enrolment",
+    "uOttawaConfirmBody": "Team roles are reserved for currently enrolled University of Ottawa students. By checking the box below, you formally confirm your enrolment status for this application.",
+    "uOttawaConfirmLabel": "I confirm that I am a currently enrolled University of Ottawa student.",
+    "uOttawaConfirmError": "Please confirm you are a University of Ottawa student to continue.",
+    "programLabel": "What's your program or field of study?",
+    "programPlaceholder": "e.g., Health Sciences, Biomedical Sciences",
+    "yearLabel": "What year are you in?",
+    "yearRequired": true,
+    "teamRoleFirstLabel": "First choice — role you’re applying for",
+    "teamRoleSecondLabel": "Second choice — fallback role",
+    "referralNameLabel": "Referral name (optional)",
+    "referralNamePlaceholder": "Name of the person who referred you",
+    "whyJoinLabel": "Why do you want this role, and what would you bring?",
+    "whyJoinPlaceholder": "Tell us why this role fits you and what you’d like to own...",
+    "teamRoleOptions": [
+      { "value": "", "label": "Select a role" },
+      { "value": "VP Marketing", "label": "VP Marketing" },
+      { "value": "VP Events", "label": "VP Events" },
+      { "value": "Events Director", "label": "Events Director" },
+      { "value": "VP External Affairs", "label": "VP External Affairs" },
+      { "value": "VP Community Engagement", "label": "VP Community Engagement" },
+      { "value": "VP Internal", "label": "VP Internal" },
+      { "value": "VP of Equity & Sustainability", "label": "VP of Equity & Sustainability" },
+      { "value": "VP Finance", "label": "VP Finance" },
+      { "value": "Junior VP Finance", "label": "Junior VP Finance" },
+      { "value": "VP Bilingual Affairs", "label": "VP Bilingual Affairs" },
+      { "value": "Open to any team role", "label": "Open to any team role" }
+    ],
+    "teamRoleSecondOptions": [
+      { "value": "", "label": "Select a fallback role" },
+      { "value": "VP Marketing", "label": "VP Marketing" },
+      { "value": "VP Events", "label": "VP Events" },
+      { "value": "Events Director", "label": "Events Director" },
+      { "value": "VP External Affairs", "label": "VP External Affairs" },
+      { "value": "VP Community Engagement", "label": "VP Community Engagement" },
+      { "value": "VP Internal", "label": "VP Internal" },
+      { "value": "VP of Equity & Sustainability", "label": "VP of Equity & Sustainability" },
+      { "value": "VP Finance", "label": "VP Finance" },
+      { "value": "Junior VP Finance", "label": "Junior VP Finance" },
+      { "value": "VP Bilingual Affairs", "label": "VP Bilingual Affairs" },
+      { "value": "Open to any team role", "label": "Open to any team role" },
+      { "value": "No second preference", "label": "No second preference" }
+    ]
+  },
   "success": {
-    "title": "Thank You!",
-    "messageBeforeLink": "You're in! We'll be in touch. Follow our ",
-    "instagramLabel": "Instagram",
-    "messageAfterLink": " for more updates.",
+    "general": {
+      "title": "Thank you for signing up!",
+      "messageBeforeLink": "You’re on the list. Keep up with our ",
+      "instagramLabel": "Instagram",
+      "messageAfterLink": " for event updates—you might also hear from us by email.",
+      "cue": "Cue: follow along, show up when you can, and welcome to the Y4E community."
+    },
+    "team": {
+      "title": "Thank you for applying!",
+      "message": "We’ve received your team application. You’ll hear back from us as soon as possible.",
+      "cue": "Cue: keep an eye on your inbox—we’ll follow up with next steps shortly."
+    },
     "submitAnother": "Submit Another"
   },
   "loading": {
