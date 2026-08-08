@@ -97,6 +97,7 @@ const CLUB_CARD_COVERS: Record<string, string> = {
   'bingo-night-2026': '/assets/events/past/bingo-night-2026.jpg',
   'sips-samples': '/assets/events/past/sips-samples.jpg',
   'technology-workshop-session-1': '/assets/events/past/technology-workshop-session-1.jpg',
+  'technology-workshop-session-2': `${GALLERY}/technology-workshop/session-1/photo-14.jpg`,
 }
 
 export function isClubRecapOnly(eventId: string): boolean {

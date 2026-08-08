@@ -33,6 +33,7 @@ function MobileMonthCarousel({
   showTopBadge: boolean
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   const scrollByCard = (direction: -1 | 1) => {
     const el = scrollerRef.current
@@ -42,40 +43,80 @@ function MobileMonthCarousel({
     el.scrollBy({ left: direction * amount, behavior: 'smooth' })
   }
 
+  const scrollToIndex = (index: number) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const cards = el.querySelectorAll<HTMLElement>('[data-mobile-event-card]')
+    cards[index]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+  }
+
+  useEffect(() => {
+    const el = scrollerRef.current
+    if (!el) return
+    const updateActive = () => {
+      const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-mobile-event-card]'))
+      if (!cards.length) return
+      const mid = el.getBoundingClientRect().left + el.clientWidth / 2
+      let closest = 0
+      let closestDist = Infinity
+      cards.forEach((card, i) => {
+        const rect = card.getBoundingClientRect()
+        const dist = Math.abs(rect.left + rect.width / 2 - mid)
+        if (dist < closestDist) {
+          closestDist = dist
+          closest = i
+        }
+      })
+      setActiveIndex(closest)
+    }
+    el.addEventListener('scroll', updateActive, { passive: true })
+    updateActive()
+    return () => el.removeEventListener('scroll', updateActive)
+  }, [monthEvents.length])
+
   if (monthEvents.length === 0) return null
 
   return (
     <div className="md:hidden relative">
       {monthEvents.length > 1 && (
-        <div className="mb-2 flex items-center justify-between gap-2 px-0.5">
+        <div className="mb-3 flex items-center justify-center gap-2.5 px-1" aria-hidden={false}>
           <button
             type="button"
             onClick={() => scrollByCard(-1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border-2"
-            style={{
-              background: 'var(--color-cream)',
-              borderColor: 'var(--color-brown-dark)',
-              color: 'var(--color-brown-dark)',
-            }}
+            className="flex h-6 w-6 items-center justify-center opacity-45"
+            style={{ color: 'var(--color-brown-dark)' }}
             aria-label="Previous event"
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.25} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
+          <div className="flex items-center gap-1.5" role="tablist" aria-label="Swipe events">
+            {monthEvents.map((event, index) => (
+              <button
+                key={event.id}
+                type="button"
+                role="tab"
+                aria-label={`Event ${index + 1} of ${monthEvents.length}`}
+                aria-current={index === activeIndex ? 'true' : undefined}
+                onClick={() => scrollToIndex(index)}
+                className="h-1.5 rounded-full transition-all duration-200"
+                style={{
+                  width: index === activeIndex ? '1.1rem' : '0.375rem',
+                  background: index === activeIndex ? 'var(--color-brown-dark)' : 'rgba(98, 32, 47, 0.28)',
+                }}
+              />
+            ))}
+          </div>
           <button
             type="button"
             onClick={() => scrollByCard(1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border-2"
-            style={{
-              background: 'var(--color-cream)',
-              borderColor: 'var(--color-brown-dark)',
-              color: 'var(--color-brown-dark)',
-            }}
+            className="flex h-6 w-6 items-center justify-center opacity-45"
+            style={{ color: 'var(--color-brown-dark)' }}
             aria-label="Next event"
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.25} d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
@@ -1007,15 +1048,58 @@ export default function PastEventsPage() {
       {/* Featured memory — award banner (not a CTA) */}
       {highlight && (
         <section className="mx-3 sm:mx-4 md:mx-24 mb-10 md:mb-16" aria-label="Featured club memory">
+          {/* Mobile: slim banner */}
           <div
-            className="relative overflow-hidden rounded-[1.25rem] md:rounded-[1.75rem] border-2 px-5 py-7 sm:px-8 sm:py-8 md:px-10 md:py-9"
+            className="md:hidden relative flex items-center gap-3 overflow-hidden rounded-2xl border-2 px-4 py-3"
+            style={{
+              background: 'var(--color-pink-medium)',
+              borderColor: 'var(--color-olive)',
+              boxShadow: '0 8px 20px rgba(196, 114, 124, 0.14)',
+            }}
+          >
+            <div className="min-w-0 flex-1">
+              <p
+                className="mb-0.5 text-[9px] font-bold uppercase tracking-[0.18em] italic"
+                style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}
+              >
+                {highlight.label}
+              </p>
+              <h2
+                className="text-lg font-bold leading-tight"
+                style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}
+              >
+                {highlight.event.title}
+              </h2>
+              <p
+                className="mt-0.5 text-[11px] font-semibold tabular-nums"
+                style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.85 }}
+              >
+                {highlightShortDate}
+              </p>
+            </div>
+            <div
+              className="pointer-events-none relative flex h-12 w-12 shrink-0 rotate-[-10deg] items-center justify-center rounded-full"
+              aria-hidden
+              style={{
+                border: '2px dashed rgba(111, 101, 9, 0.55)',
+                background: 'rgba(251, 247, 232, 0.45)',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--color-olive)' }}>
+                <path d="M12 2.5l2.6 5.9 6.4.6-4.9 4.2 1.5 6.2L12 16.2l-5.6 3.2 1.5-6.2-4.9-4.2 6.4-.6L12 2.5z" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Desktop: full award banner */}
+          <div
+            className="relative hidden overflow-hidden rounded-[1.75rem] border-2 px-10 py-9 md:block"
             style={{
               background: 'var(--color-pink-medium)',
               borderColor: 'var(--color-olive)',
               boxShadow: '0 12px 32px rgba(196, 114, 124, 0.16)',
             }}
           >
-            {/* Soft award wash */}
             <div
               className="pointer-events-none absolute inset-0 opacity-40"
               style={{
@@ -1025,29 +1109,29 @@ export default function PastEventsPage() {
               aria-hidden
             />
 
-            <div className="relative z-[2] flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8 md:gap-12">
-              <div className="min-w-0 max-w-xl md:max-w-2xl">
+            <div className="relative z-[2] flex flex-row items-center justify-between gap-12">
+              <div className="min-w-0 max-w-2xl">
                 <div className="mb-2.5 flex items-center gap-2.5">
                   <p
-                    className="text-[10px] font-bold uppercase tracking-[0.22em] md:text-xs italic"
+                    className="text-xs font-bold uppercase tracking-[0.22em] italic"
                     style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}
                   >
                     {highlight.label}
                   </p>
                   <span
-                    className="hidden h-px w-8 sm:block md:w-12"
+                    className="h-px w-12"
                     style={{ background: 'var(--color-olive)', opacity: 0.35 }}
                     aria-hidden
                   />
                 </div>
                 <h2
-                  className="mb-2.5 text-2xl font-bold leading-tight sm:text-3xl md:text-4xl"
+                  className="mb-2.5 text-4xl font-bold leading-tight"
                   style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive)' }}
                 >
                   {highlight.event.title}
                 </h2>
                 <p
-                  className="text-sm leading-relaxed md:text-base"
+                  className="text-base leading-relaxed"
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: 1.65, opacity: 0.9 }}
                 >
                   {highlightShortDate}
@@ -1055,9 +1139,8 @@ export default function PastEventsPage() {
                 </p>
               </div>
 
-              {/* Award stamp */}
               <div
-                className="pointer-events-none relative mx-auto flex h-[6.25rem] w-[6.25rem] shrink-0 rotate-[-12deg] items-center justify-center rounded-full sm:mx-0 md:h-[7.25rem] md:w-[7.25rem] md:rotate-[-14deg]"
+                className="pointer-events-none relative flex h-[7.25rem] w-[7.25rem] shrink-0 rotate-[-14deg] items-center justify-center rounded-full"
                 aria-hidden
                 style={{
                   border: '2.5px dashed rgba(111, 101, 9, 0.55)',
@@ -1081,13 +1164,13 @@ export default function PastEventsPage() {
                     <path d="M12 2.5l2.6 5.9 6.4.6-4.9 4.2 1.5 6.2L12 16.2l-5.6 3.2 1.5-6.2-4.9-4.2 6.4-.6L12 2.5z" />
                   </svg>
                   <span
-                    className="text-[8px] md:text-[9px] font-bold uppercase leading-tight tracking-[0.16em]"
+                    className="text-[9px] font-bold uppercase leading-tight tracking-[0.16em]"
                     style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
                   >
                     Standout
                   </span>
                   <span
-                    className="text-[7px] md:text-[8px] font-bold uppercase leading-tight tracking-[0.14em]"
+                    className="text-[8px] font-bold uppercase leading-tight tracking-[0.14em]"
                     style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)', opacity: 0.72 }}
                   >
                     of ’26
@@ -1345,11 +1428,9 @@ export default function PastEventsPage() {
                 </div>
               </div>
 
-              {/* Desktop TOC */}
+              {/* Desktop TOC — peek tab; click to open/close (stays open until tab is clicked) */}
               <div
                 className="hidden md:flex fixed right-0 top-1/2 z-40 -translate-y-1/2 items-stretch pl-5"
-                onMouseEnter={() => setTocOpen(true)}
-                onMouseLeave={() => setTocOpen(false)}
               >
                 <button
                   type="button"

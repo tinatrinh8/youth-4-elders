@@ -153,6 +153,7 @@ function MobileMonthCarousel({
   showTopBadge: boolean
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   const scrollByCard = (direction: -1 | 1) => {
     const el = scrollerRef.current
@@ -162,40 +163,80 @@ function MobileMonthCarousel({
     el.scrollBy({ left: direction * amount, behavior: 'smooth' })
   }
 
+  const scrollToIndex = (index: number) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const cards = el.querySelectorAll<HTMLElement>('[data-mobile-event-card]')
+    cards[index]?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+  }
+
+  useEffect(() => {
+    const el = scrollerRef.current
+    if (!el) return
+    const updateActive = () => {
+      const cards = Array.from(el.querySelectorAll<HTMLElement>('[data-mobile-event-card]'))
+      if (!cards.length) return
+      const mid = el.getBoundingClientRect().left + el.clientWidth / 2
+      let closest = 0
+      let closestDist = Infinity
+      cards.forEach((card, i) => {
+        const rect = card.getBoundingClientRect()
+        const dist = Math.abs(rect.left + rect.width / 2 - mid)
+        if (dist < closestDist) {
+          closestDist = dist
+          closest = i
+        }
+      })
+      setActiveIndex(closest)
+    }
+    el.addEventListener('scroll', updateActive, { passive: true })
+    updateActive()
+    return () => el.removeEventListener('scroll', updateActive)
+  }, [monthEvents.length])
+
   if (monthEvents.length === 0) return null
 
   return (
     <div className="md:hidden relative">
       {monthEvents.length > 1 && (
-        <div className="mb-2 flex items-center justify-between gap-2 px-0.5">
+        <div className="mb-3 flex items-center justify-center gap-2.5 px-1">
           <button
             type="button"
             onClick={() => scrollByCard(-1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border-2"
-            style={{
-              background: 'var(--color-cream)',
-              borderColor: 'var(--color-brown-dark)',
-              color: 'var(--color-brown-dark)',
-            }}
+            className="flex h-6 w-6 items-center justify-center opacity-55"
+            style={{ color: 'var(--color-cream)' }}
             aria-label="Previous event"
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.25} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
+          <div className="flex items-center gap-1.5" role="tablist" aria-label="Swipe events">
+            {monthEvents.map((event, index) => (
+              <button
+                key={event.id}
+                type="button"
+                role="tab"
+                aria-label={`Event ${index + 1} of ${monthEvents.length}`}
+                aria-current={index === activeIndex ? 'true' : undefined}
+                onClick={() => scrollToIndex(index)}
+                className="h-1.5 rounded-full transition-all duration-200"
+                style={{
+                  width: index === activeIndex ? '1.1rem' : '0.375rem',
+                  background: index === activeIndex ? 'var(--color-pink-medium)' : 'rgba(251, 247, 232, 0.35)',
+                }}
+              />
+            ))}
+          </div>
           <button
             type="button"
             onClick={() => scrollByCard(1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border-2"
-            style={{
-              background: 'var(--color-cream)',
-              borderColor: 'var(--color-brown-dark)',
-              color: 'var(--color-brown-dark)',
-            }}
+            className="flex h-6 w-6 items-center justify-center opacity-55"
+            style={{ color: 'var(--color-cream)' }}
             aria-label="Next event"
           >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.25} d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
@@ -878,30 +919,66 @@ export default function UpcomingEventsPage() {
 
       {/* Short programs teaser — full detail lives on Club Info */}
       <section className="mx-3 sm:mx-4 md:mx-24 mb-10 md:mb-16">
+        {/* Mobile: slim banner */}
+        <Link
+          href="/club-info#programs"
+          className="md:hidden flex items-center gap-3 rounded-2xl border-2 px-4 py-3"
+          style={{
+            background: 'var(--color-brown-dark)',
+            borderColor: 'var(--color-brown-dark)',
+            boxShadow: '0 8px 20px rgba(98, 32, 47, 0.22)',
+          }}
+        >
+          <div className="min-w-0 flex-1">
+            <p
+              className="mb-0.5 text-[9px] font-bold uppercase tracking-[0.18em]"
+              style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive-light)' }}
+            >
+              Sessions & programs
+            </p>
+            <h2
+              className="text-lg font-bold leading-tight"
+              style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
+            >
+              What Y4E Offers
+            </h2>
+          </div>
+          <span
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+            style={{ background: 'var(--color-olive-light)', color: 'var(--color-brown-dark)' }}
+            aria-hidden
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+            </svg>
+          </span>
+        </Link>
+
+        {/* Desktop: full teaser */}
         <div
-          className="relative overflow-hidden rounded-[1.25rem] md:rounded-[1.75rem] border-2 px-5 py-6 sm:px-7 sm:py-7 md:px-9 md:py-8"
+          className="relative hidden overflow-hidden rounded-[1.75rem] border-2 px-9 py-8 md:block"
           style={{
             background: 'var(--color-brown-dark)',
             borderColor: 'var(--color-brown-dark)',
             boxShadow: '0 12px 32px rgba(98, 32, 47, 0.28)',
           }}
         >
-          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-10">
+          <div className="flex flex-row items-end justify-between gap-10">
             <div className="min-w-0 max-w-2xl">
               <p
-                className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] md:text-xs"
+                className="mb-2 text-xs font-bold uppercase tracking-[0.2em]"
                 style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive-light)' }}
               >
                 Sessions & programs
               </p>
               <h2
-                className="mb-2.5 text-2xl font-bold leading-tight sm:text-3xl md:text-4xl"
+                className="mb-2.5 text-4xl font-bold leading-tight"
                 style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
               >
                 What Y4E Offers
               </h2>
               <p
-                className="text-sm leading-relaxed md:text-base"
+                className="text-base leading-relaxed"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)', lineHeight: 1.65, opacity: 0.9 }}
               >
                 Tech help, companionship, educational and wellness workshops, community events, fundraisers, and youth-led active living—adapted for each partner.
@@ -910,7 +987,7 @@ export default function UpcomingEventsPage() {
 
             <Link
               href="/club-info#programs"
-              className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border-2 px-4 py-2 text-xs font-bold uppercase tracking-[0.1em] transition-transform duration-300 hover:-translate-y-0.5 md:text-sm"
+              className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-bold uppercase tracking-[0.1em] transition-transform duration-300 hover:-translate-y-0.5"
               style={{
                 fontFamily: 'var(--font-kollektif)',
                 background: 'var(--color-olive-light)',
@@ -1102,11 +1179,9 @@ export default function UpcomingEventsPage() {
                 </div>
               </div>
 
-              {/* Desktop TOC — peek tab + hover/tap to expand (unchanged) */}
+              {/* Desktop TOC — peek tab; click to open/close (stays open until tab is clicked) */}
               <div
                 className="hidden md:flex fixed right-0 top-1/2 z-40 -translate-y-1/2 items-stretch pl-5"
-                onMouseEnter={() => setTocOpen(true)}
-                onMouseLeave={() => setTocOpen(false)}
               >
                 <button
                   type="button"
