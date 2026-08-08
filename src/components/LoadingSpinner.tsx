@@ -2,53 +2,45 @@
 
 export default function LoadingSpinner({ message = 'Loading...' }: { message?: string }) {
   return (
-    <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center"
-      style={{ 
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
+      style={{
         background: 'var(--color-cream)',
       }}
     >
-      <div className="text-center">
-        {/* Spinning Circle */}
-        <div className="relative mb-8">
-          <div 
-            className="inline-block rounded-full border-4 border-solid animate-spin"
+      <div className="flex w-full max-w-xs flex-col items-center text-center md:max-w-sm">
+        {/* Spinning circle — smaller on phone, mid on tablet, full on desktop */}
+        <div className="relative mb-5 h-11 w-11 md:mb-6 md:h-14 md:w-14 lg:mb-8 lg:h-16 lg:w-16">
+          <div
+            className="absolute inset-0 rounded-full border-[3px] border-solid md:border-4"
             style={{
-              width: '64px',
-              height: '64px',
               borderColor: 'var(--color-olive)',
               borderTopColor: 'transparent',
               borderRightColor: 'transparent',
-              animation: 'spin 1s linear infinite'
+              animation: 'spin 1s linear infinite',
             }}
           />
-          {/* Inner circle for depth */}
-          <div 
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full"
+          <div
+            className="absolute inset-[18%] rounded-full border-2 border-solid md:border-[3px]"
             style={{
-              width: '40px',
-              height: '40px',
-              border: '3px solid var(--color-olive-light)',
+              borderColor: 'var(--color-olive-light)',
               borderTopColor: 'transparent',
               borderRightColor: 'transparent',
-              animation: 'spin 0.8s linear infinite reverse'
+              animation: 'spin 0.8s linear infinite reverse',
             }}
           />
         </div>
-        
-        {/* Loading Text */}
-        <p 
-          className="text-xl md:text-2xl font-semibold"
-          style={{ 
-            fontFamily: 'var(--font-leiko)', 
-            color: 'var(--color-olive-light)'
+
+        <p
+          className="text-base font-semibold leading-snug md:text-xl lg:text-2xl"
+          style={{
+            fontFamily: 'var(--font-leiko)',
+            color: 'var(--color-olive-light)',
           }}
         >
           {message}
         </p>
-        
       </div>
     </div>
   )
 }
-

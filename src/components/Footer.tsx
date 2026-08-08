@@ -91,14 +91,17 @@ export default function Footer() {
   const transition = 'transform 0.28s ease-out'
 
   return (
-    <footer ref={footerRef} className="mt-auto relative overflow-visible" style={{ background: footerBackground }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pt-10 pb-8 md:py-16 lg:py-20 overflow-visible">
+    <footer ref={footerRef} className={`mt-auto relative ${isPartner ? 'z-40 overflow-hidden' : 'overflow-visible'}`} style={{ background: footerBackground }}>
+      {isPartner && (
+        <div className="relative z-10 w-full h-1" style={{ background: 'var(--color-brown-dark)' }} aria-hidden />
+      )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pt-10 pb-8 md:py-7 lg:py-20 overflow-visible">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 mb-8 md:mb-12 overflow-visible">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-5 lg:gap-16 mb-8 md:mb-5 lg:mb-12 overflow-visible">
           {/* Left Side - Call to Action */}
           <div className="overflow-visible min-w-0">
             <h2
-              className="text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 md:mb-6 origin-left whitespace-nowrap md:whitespace-normal"
+              className="text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl font-bold mb-4 md:mb-3 lg:mb-6 origin-left whitespace-nowrap md:whitespace-normal"
               style={{
                 fontFamily: 'var(--font-vintage-stylist)',
                 color: footerTextColor,
@@ -112,13 +115,13 @@ export default function Footer() {
           </div>
 
           {/* Right Side - Quick Links: two columns on all screens, tighter on mobile */}
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-12">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12">
             {/* Get Around Section - centered on mobile */}
             <div className="text-center md:text-left">
-              <h3 className="text-xs md:text-sm font-black uppercase tracking-wider mb-2 md:mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
+              <h3 className="text-xs md:text-sm font-black uppercase tracking-wider mb-2 md:mb-2.5 lg:mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
                 GET AROUND
               </h3>
-              <ul className="space-y-2 md:space-y-3">
+              <ul className="space-y-2 md:space-y-2 lg:space-y-3">
                 <li>
                   <Link
                     href="/"
@@ -200,10 +203,10 @@ export default function Footer() {
 
             {/* Connect Section - centered on mobile only, left-aligned on desktop */}
             <div className="text-center md:text-left">
-              <h3 className="text-xs md:text-sm font-black uppercase tracking-wider mb-2 md:mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
+              <h3 className="text-xs md:text-sm font-black uppercase tracking-wider mb-2 md:mb-2.5 lg:mb-4" style={{ fontFamily: 'var(--font-leiko)', color: footerTextColor }}>
                 CONNECT
               </h3>
-              <ul className="space-y-2 md:space-y-3">
+              <ul className="space-y-2 md:space-y-2 lg:space-y-3">
                 <li>
                   <a
                     href="https://www.instagram.com/youth4elders/"
@@ -290,8 +293,8 @@ export default function Footer() {
         </div>
 
         {/* Footer Bottom - Copyright and Logo */}
-        <div className="pt-6 md:pt-8 border-t" style={{ borderColor: footerBorderColor }}>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
+        <div className="pt-6 md:pt-3 lg:pt-8 border-t" style={{ borderColor: footerBorderColor }}>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-5 lg:gap-6">
             {/* Copyright */}
             <div className="text-center md:text-left">
               <p className="text-xs md:text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: footerTextColor, opacity: 0.8 }}>
@@ -312,7 +315,7 @@ export default function Footer() {
                 alt="Youth 4 Elders Logo"
                 width={60}
                 height={60}
-                className="object-contain w-14 h-14 md:w-20 md:h-20"
+                className="object-contain w-14 h-14 md:w-16 md:h-16 lg:w-20 lg:h-20"
               />
             </div>
           </div>
