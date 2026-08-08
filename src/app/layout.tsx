@@ -97,14 +97,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${vintageStylist.variable} ${vintageStylistLigatures.variable} ${kollektif.variable} ${leiko.variable} ${freshwost.variable} ${playfair.variable} ${lato.variable} font-sans antialiased flex flex-col min-h-screen`} style={{ 
         fontFamily: 'var(--font-kollektif), var(--font-leiko), system-ui, Arial, sans-serif' 
       }}>
-        <GlobalLoading />
-        <NavigationBar />
-        <main className="flex-1">
-          {children}
-        </main>
-        
-        {/* Global Footer */}
-        <Footer />
+        <div id="site-root" className="relative flex min-h-dvh flex-1 flex-col">
+          <GlobalLoading />
+          <NavigationBar />
+          <main className="flex-1">
+            {children}
+          </main>
+          
+          {/* Global Footer */}
+          <Footer />
+        </div>
       </body>
     </html>
   )

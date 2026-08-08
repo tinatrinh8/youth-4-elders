@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
 
 export default function NavigationBar() {
@@ -11,8 +12,24 @@ export default function NavigationBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false)
   const [mobileEventsOpen, setMobileEventsOpen] = useState(false)
-  const [language, setLanguage] = useState<'en' | 'fr'>('en')
+  const [mounted, setMounted] = useState(false)
+  const [isTablet, setIsTablet] = useState(false)
+  const [menuViewport, setMenuViewport] = useState({ top: 0, height: 0 })
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const tapNavRef = useRef(false)
+  const whoWeAreDropdownRef = useRef<HTMLDivElement>(null)
+  const eventsDropdownRef = useRef<HTMLDivElement>(null)
+
+  const isTapNav = () => {
+    if (typeof window === 'undefined') return false
+    if (!window.matchMedia('(min-width: 768px)').matches) return false
+    const noHover = window.matchMedia('(hover: none)').matches
+    const coarse = window.matchMedia('(pointer: coarse)').matches
+    const iPad =
+      /iPad/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    return noHover || coarse || iPad
+  }
   const pathname = usePathname()
   const isJoinUsPage = pathname === '/join-us'
   const isHomePage = pathname === '/'
@@ -143,32 +160,6 @@ export default function NavigationBar() {
 
   const navColors = getNavbarColors()
 
-  // Load language preference from localStorage
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as 'en' | 'fr' | null
-    if (savedLanguage) {
-      setLanguage(savedLanguage)
-    }
-  }, [])
-
-  // Save language preference to localStorage
-  const handleLanguageChange = (lang: 'en' | 'fr') => {
-    setLanguage(lang)
-    localStorage.setItem('language', lang)
-    // Clear any pending close timeout
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current)
-      closeTimeoutRef.current = null
-    }
-    setClosingDropdown('language')
-    closeTimeoutRef.current = setTimeout(() => {
-      setHoveredDropdown(null)
-      setClosingDropdown(null)
-      closeTimeoutRef.current = null
-    }, 300)
-    // Translation implementation will be added later
-  }
-  
   // Set page background behind nav
   useEffect(() => {
     // join-us, upcoming, past, and club gallery pages manage their own background
@@ -181,11 +172,96 @@ export default function NavigationBar() {
   }, [isJoinUsPage, isUpcomingEventsPage, isPastEventsPage, isPastGalleryPage])
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    const updateTapNav = () => {
+      const tap = isTapNav()
+      tapNavRef.current = tap
+      setIsTablet(tap)
+    }
+    updateTapNav()
+    window.addEventListener('resize', updateTapNav)
+    return () => window.removeEventListener('resize', updateTapNav)
+  }, [])
+
+  useEffect(() => {
     if (!mobileMenuOpen) {
       setMobileDropdownOpen(false)
       setMobileEventsOpen(false)
+      return
+    }
+    const updateViewport = () => {
+      setMenuViewport({
+        top: window.scrollY,
+        height: window.innerHeight,
+      })
+    }
+    updateViewport()
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('resize', updateViewport)
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('resize', updateViewport)
     }
   }, [mobileMenuOpen])
+
+  useEffect(() => {
+    setMobileMenuOpen(false)
+    setHoveredDropdown(null)
+    setClosingDropdown(null)
+  }, [pathname])
+
+  const openNavDropdown = (id: string) => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
+      closeTimeoutRef.current = null
+    }
+    setClosingDropdown(null)
+    setHoveredDropdown(id)
+  }
+
+  const closeNavDropdown = (id: string) => {
+    if (hoveredDropdown !== id) return
+    setClosingDropdown(id)
+    closeTimeoutRef.current = setTimeout(() => {
+      setHoveredDropdown(null)
+      setClosingDropdown(null)
+      closeTimeoutRef.current = null
+    }, 300)
+  }
+
+  const toggleTabletDropdown = (id: string) => {
+    if (hoveredDropdown === id) {
+      closeNavDropdown(id)
+      return
+    }
+    openNavDropdown(id)
+  }
+
+  useEffect(() => {
+    if (!isTablet || !hoveredDropdown) return
+    const openId = hoveredDropdown
+    const onDocClick = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (whoWeAreDropdownRef.current?.contains(target) || eventsDropdownRef.current?.contains(target)) return
+      setClosingDropdown(openId)
+      closeTimeoutRef.current = setTimeout(() => {
+        setHoveredDropdown(null)
+        setClosingDropdown(null)
+        closeTimeoutRef.current = null
+      }, 300)
+    }
+    const attachId = window.setTimeout(() => {
+      document.addEventListener('click', onDocClick)
+    }, 0)
+    return () => {
+      window.clearTimeout(attachId)
+      document.removeEventListener('click', onDocClick)
+    }
+  }, [isTablet, hoveredDropdown])
 
   const whoWeAreSubmenu = [
     { href: '/club-info', label: 'Club Info' },
@@ -200,8 +276,9 @@ export default function NavigationBar() {
   if (isPastGalleryPage) return null
 
   return (
+    <>
     <nav 
-      className="relative z-[100] py-2 md:py-3 nav-mobile-margins"
+      className="relative z-[100] overflow-visible py-2 md:py-3 nav-mobile-margins"
       style={{
         background: navColors.background,
         borderRadius: '9999px',
@@ -216,12 +293,12 @@ export default function NavigationBar() {
         boxSizing: 'border-box'
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 flex items-center justify-between w-full">
         {/* Logo on the left */}
         <div className="flex items-center flex-shrink-0">
           <Link href="/" className="flex items-center">
             <span
-              className="mr-2 flex items-center justify-center flex-shrink-0 w-10 h-10"
+              className="mr-1.5 lg:mr-2 flex items-center justify-center flex-shrink-0 w-8 h-8 lg:w-10 lg:h-10"
               style={
                 isHomePage || isPartnerPage || isTeamPage
                   ? {
@@ -255,7 +332,7 @@ export default function NavigationBar() {
               />
             </span>
             <span 
-              className="text-xl md:text-2xl font-bold italic"
+              className="text-xl lg:text-2xl font-bold italic"
               style={{ 
                 fontFamily: 'var(--font-vintage-stylist)', 
                 color: navColors.text,
@@ -289,10 +366,10 @@ export default function NavigationBar() {
         </button>
 
         {/* Desktop Navigation links */}
-        <div className="hidden md:flex items-center gap-6 md:gap-8 relative">
+        <div className="hidden md:flex min-w-0 items-center gap-2 lg:gap-8 relative">
           <Link 
             href="/"
-            className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2"
+            className="text-sm lg:text-base font-medium whitespace-nowrap px-1.5 py-1.5 lg:px-3 lg:py-2"
             style={{ 
               color: navColors.text,
               fontFamily: 'var(--font-kollektif)',
@@ -309,43 +386,37 @@ export default function NavigationBar() {
           </Link>
           
           <div 
+            ref={whoWeAreDropdownRef}
             className="relative"
             onMouseEnter={() => {
-              // Clear any pending close timeout
-              if (closeTimeoutRef.current) {
-                clearTimeout(closeTimeoutRef.current)
-                closeTimeoutRef.current = null
-              }
-              // Immediately close any other dropdown
-              if (hoveredDropdown && hoveredDropdown !== 'who-we-are') {
-                setClosingDropdown(null)
-                setHoveredDropdown(null)
-              }
-              setClosingDropdown(null)
-              setHoveredDropdown('who-we-are')
+              if (tapNavRef.current) return
+              openNavDropdown('who-we-are')
             }}
             onMouseLeave={() => {
-              if (hoveredDropdown === 'who-we-are') {
-                setClosingDropdown('who-we-are')
-                closeTimeoutRef.current = setTimeout(() => {
-                  setHoveredDropdown(null)
-                  setClosingDropdown(null)
-                  closeTimeoutRef.current = null
-                }, 300) // Match animation duration
-              }
+              if (tapNavRef.current) return
+              closeNavDropdown('who-we-are')
             }}
           >
-            <div 
-              className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
+            <button
+              type="button"
+              className="text-sm lg:text-base font-medium whitespace-nowrap px-1.5 py-1.5 lg:px-3 lg:py-2 flex items-center gap-1 cursor-pointer"
               style={{ 
                 color: hoveredDropdown === 'who-we-are' ? navColors.hover : navColors.text,
                 fontFamily: 'var(--font-kollektif)',
-                transition: 'color 0.3s ease'
+                transition: 'color 0.3s ease',
+                background: 'transparent',
+                border: 'none'
+              }}
+              aria-expanded={hoveredDropdown === 'who-we-are'}
+              onClick={() => {
+                if (!tapNavRef.current) return
+                toggleTabletDropdown('who-we-are')
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = navColors.hover
               }}
               onMouseLeave={(e) => {
+                if (hoveredDropdown === 'who-we-are') return
                 e.currentTarget.style.color = navColors.text
               }}
             >
@@ -353,20 +424,13 @@ export default function NavigationBar() {
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
-            </div>
+            </button>
             {/* Invisible bridge to prevent gap issues */}
-            {hoveredDropdown === 'who-we-are' && (
+            {hoveredDropdown === 'who-we-are' && !tapNavRef.current && (
               <div 
                 className="absolute top-full left-0 right-0 h-10 z-[109]"
                 style={{ marginTop: 0 }}
-                onMouseEnter={() => {
-                  if (closeTimeoutRef.current) {
-                    clearTimeout(closeTimeoutRef.current)
-                    closeTimeoutRef.current = null
-                  }
-                  setClosingDropdown(null)
-                  setHoveredDropdown('who-we-are')
-                }}
+                onMouseEnter={() => openNavDropdown('who-we-are')}
               />
             )}
             {/* Dropdown Menu */}
@@ -382,12 +446,8 @@ export default function NavigationBar() {
                   transformOrigin: 'top'
                 }}
                 onMouseEnter={() => {
-                  if (closeTimeoutRef.current) {
-                    clearTimeout(closeTimeoutRef.current)
-                    closeTimeoutRef.current = null
-                  }
-                  setClosingDropdown(null)
-                  setHoveredDropdown('who-we-are')
+                  if (tapNavRef.current) return
+                  openNavDropdown('who-we-are')
                 }}
               >
                 <div className="py-2">
@@ -421,7 +481,7 @@ export default function NavigationBar() {
           
           <Link 
             href="/join-us"
-            className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2"
+            className="text-sm lg:text-base font-medium whitespace-nowrap px-1.5 py-1.5 lg:px-3 lg:py-2"
             style={{ 
               color: navColors.text,
               fontFamily: 'var(--font-kollektif)',
@@ -438,43 +498,37 @@ export default function NavigationBar() {
           </Link>
           
           <div 
+            ref={eventsDropdownRef}
             className="relative"
             onMouseEnter={() => {
-              // Clear any pending close timeout
-              if (closeTimeoutRef.current) {
-                clearTimeout(closeTimeoutRef.current)
-                closeTimeoutRef.current = null
-              }
-              // Immediately close any other dropdown
-              if (hoveredDropdown && hoveredDropdown !== 'events') {
-                setClosingDropdown(null)
-                setHoveredDropdown(null)
-              }
-              setClosingDropdown(null)
-              setHoveredDropdown('events')
+              if (tapNavRef.current) return
+              openNavDropdown('events')
             }}
             onMouseLeave={() => {
-              if (hoveredDropdown === 'events') {
-                setClosingDropdown('events')
-                closeTimeoutRef.current = setTimeout(() => {
-                  setHoveredDropdown(null)
-                  setClosingDropdown(null)
-                  closeTimeoutRef.current = null
-                }, 300) // Match animation duration
-              }
+              if (tapNavRef.current) return
+              closeNavDropdown('events')
             }}
           >
-            <div 
-              className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
+            <button
+              type="button"
+              className="text-sm lg:text-base font-medium whitespace-nowrap px-1.5 py-1.5 lg:px-3 lg:py-2 flex items-center gap-1 cursor-pointer"
               style={{ 
                 color: hoveredDropdown === 'events' ? navColors.hover : navColors.text,
                 fontFamily: 'var(--font-kollektif)',
-                transition: 'color 0.3s ease'
+                transition: 'color 0.3s ease',
+                background: 'transparent',
+                border: 'none'
+              }}
+              aria-expanded={hoveredDropdown === 'events'}
+              onClick={() => {
+                if (!tapNavRef.current) return
+                toggleTabletDropdown('events')
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = navColors.hover
               }}
               onMouseLeave={(e) => {
+                if (hoveredDropdown === 'events') return
                 e.currentTarget.style.color = navColors.text
               }}
             >
@@ -482,26 +536,19 @@ export default function NavigationBar() {
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
-            </div>
+            </button>
             {/* Invisible bridge to prevent gap issues */}
-            {hoveredDropdown === 'events' && (
+            {hoveredDropdown === 'events' && !tapNavRef.current && (
               <div 
                 className="absolute top-full left-0 right-0 h-10 z-[109]"
                 style={{ marginTop: 0 }}
-                onMouseEnter={() => {
-                  if (closeTimeoutRef.current) {
-                    clearTimeout(closeTimeoutRef.current)
-                    closeTimeoutRef.current = null
-                  }
-                  setClosingDropdown(null)
-                  setHoveredDropdown('events')
-                }}
+                onMouseEnter={() => openNavDropdown('events')}
               />
             )}
             {/* Dropdown Menu */}
             {(hoveredDropdown === 'events' || closingDropdown === 'events') && (
               <div 
-                className="absolute top-full left-0 w-48 rounded-2xl shadow-xl z-[110] overflow-hidden"
+                className="absolute top-full right-0 left-auto xl:left-0 xl:right-auto w-48 rounded-2xl shadow-xl z-[110] overflow-hidden"
                 style={{ 
                   background: navColors.dropdownBackground || 'var(--color-cream)', 
                   border: `1px solid ${navColors.dropdownBorder || 'var(--color-brown-dark)'}`,
@@ -511,12 +558,8 @@ export default function NavigationBar() {
                   transformOrigin: 'top'
                 }}
                 onMouseEnter={() => {
-                  if (closeTimeoutRef.current) {
-                    clearTimeout(closeTimeoutRef.current)
-                    closeTimeoutRef.current = null
-                  }
-                  setClosingDropdown(null)
-                  setHoveredDropdown('events')
+                  if (tapNavRef.current) return
+                  openNavDropdown('events')
                 }}
               >
                 <div className="py-2">
@@ -567,7 +610,7 @@ export default function NavigationBar() {
           
           <Link 
             href="/contact"
-            className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2"
+            className="text-sm lg:text-base font-medium whitespace-nowrap px-1.5 py-1.5 lg:px-3 lg:py-2"
             style={{ 
               color: navColors.text,
               fontFamily: 'var(--font-kollektif)',
@@ -582,427 +625,194 @@ export default function NavigationBar() {
           >
             Contact
           </Link>
-
-          {/* Language Switcher */}
-          <div 
-            className="relative ml-2"
-            onMouseEnter={() => {
-              // Clear any pending close timeout
-              if (closeTimeoutRef.current) {
-                clearTimeout(closeTimeoutRef.current)
-                closeTimeoutRef.current = null
-              }
-              // Immediately close any other dropdown
-              if (hoveredDropdown && hoveredDropdown !== 'language') {
-                setClosingDropdown(null)
-                setHoveredDropdown(null)
-              }
-              setClosingDropdown(null)
-              setHoveredDropdown('language')
-            }}
-            onMouseLeave={() => {
-              if (hoveredDropdown === 'language') {
-                setClosingDropdown('language')
-                closeTimeoutRef.current = setTimeout(() => {
-                  setHoveredDropdown(null)
-                  setClosingDropdown(null)
-                  closeTimeoutRef.current = null
-                }, 300) // Match animation duration
-              }
-            }}
-          >
-            <div 
-              className="text-sm md:text-base font-medium whitespace-nowrap px-3 py-2 flex items-center gap-1 cursor-pointer"
-              style={{ 
-                color: hoveredDropdown === 'language' ? navColors.hover : navColors.text,
-                fontFamily: 'var(--font-kollektif)',
-                transition: 'color 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = navColors.hover
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = navColors.text
-              }}
-            >
-              {language === 'en' ? 'EN' : 'FR'}
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-            {/* Invisible bridge to prevent gap issues */}
-            {hoveredDropdown === 'language' && (
-              <div 
-                className="absolute top-full left-0 right-0 h-10 z-[109]"
-                style={{ marginTop: 0 }}
-                onMouseEnter={() => {
-                  if (closeTimeoutRef.current) {
-                    clearTimeout(closeTimeoutRef.current)
-                    closeTimeoutRef.current = null
-                  }
-                  setClosingDropdown(null)
-                  setHoveredDropdown('language')
-                }}
-              />
-            )}
-            {/* Dropdown Menu */}
-            {(hoveredDropdown === 'language' || closingDropdown === 'language') && (
-              <div 
-                className="absolute top-full left-0 w-40 rounded-2xl shadow-xl z-[110] overflow-hidden"
-                style={{ 
-                  background: navColors.dropdownBackground || 'var(--color-cream)', 
-                  border: `1px solid ${navColors.dropdownBorder || 'var(--color-brown-dark)'}`,
-                  boxShadow: `0 8px 24px ${navColors.shadow}`,
-                  marginTop: '8px',
-                  animation: closingDropdown === 'language' ? 'dropdownRollIn 0.3s ease-in' : 'dropdownRollOut 0.3s ease-out',
-                  transformOrigin: 'top'
-                }}
-                onMouseEnter={() => {
-                  if (closeTimeoutRef.current) {
-                    clearTimeout(closeTimeoutRef.current)
-                    closeTimeoutRef.current = null
-                  }
-                  setClosingDropdown(null)
-                  setHoveredDropdown('language')
-                }}
-              >
-                <div className="py-2">
-                  <button
-                    onClick={() => handleLanguageChange('en')}
-                    className="block w-full text-left px-4 py-3 text-sm"
-                    style={{ 
-                      color: navColors.dropdownText || 'var(--color-brown-dark)',
-                      fontFamily: 'var(--font-kollektif)',
-                      background: language === 'en' ? (navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)') : 'transparent',
-                      transition: 'background 0.3s ease, color 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)'
-                      e.currentTarget.style.color = navColors.dropdownHoverText || navColors.dropdownText || 'var(--color-brown-dark)'
-                    }}
-                    onMouseLeave={(e) => {
-                      if (language !== 'en') {
-                        e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = navColors.dropdownText || 'var(--color-brown-dark)'
-                      }
-                    }}
-                  >
-                    English
-                  </button>
-                  <button
-                    onClick={() => handleLanguageChange('fr')}
-                    className="block w-full text-left px-4 py-3 text-sm"
-                    style={{ 
-                      color: navColors.dropdownText || 'var(--color-brown-dark)',
-                      fontFamily: 'var(--font-kollektif)',
-                      background: language === 'fr' ? (navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)') : 'transparent',
-                      transition: 'background 0.3s ease, color 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = navColors.dropdownHover || 'rgba(73, 47, 30, 0.1)'
-                      e.currentTarget.style.color = navColors.dropdownHoverText || navColors.dropdownText || 'var(--color-brown-dark)'
-                    }}
-                    onMouseLeave={(e) => {
-                      if (language !== 'fr') {
-                        e.currentTarget.style.background = 'transparent'
-                        e.currentTarget.style.color = navColors.dropdownText || 'var(--color-brown-dark)'
-                      }
-                    }}
-                  >
-                    Français
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Mobile Menu Overlay */}
-        {mobileMenuOpen && (
-          <div 
-            className="md:hidden fixed inset-0 z-[200] bg-black bg-opacity-50"
-            style={{
-              transition: 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-              animation: 'fadeIn 0.5s ease-in-out'
-            }}
-            onClick={() => setMobileMenuOpen(false)}
-          />
-        )}
-
-        {/* Mobile Menu */}
-        <div 
-          className={`md:hidden fixed top-0 right-0 h-full w-80 max-w-[85vw] z-[201] transition-transform duration-500 ease-in-out ${
-            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
-          style={{
-            background: navColors.mobileBackground,
-            boxShadow: `-4px 0 24px ${navColors.shadow}`,
-            border: navColors.mobileBorder !== 'none' ? `2px solid ${navColors.mobileBorder}` : 'none'
-          }}
-        >
-          <div className="flex flex-col h-full p-6 overflow-y-auto">
-            {/* Mobile Menu Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center">
-                <span
-                  className="mr-2 flex items-center justify-center flex-shrink-0 w-8 h-8"
-                  style={
-                    isHomePage || isPartnerPage || isTeamPage
-                      ? {
-                          background: 'var(--color-cream)',
-                          borderRadius: '9999px',
-                          padding: 3,
-                        }
-                      : isClubInfoPage || isJoinUsPage || isUpcomingEventsPage || isPastEventsPage || isContactPage
-                        ? {
-                            background: 'var(--color-brown-dark)',
-                            borderRadius: '9999px',
-                            padding: 3,
-                          }
-                        : undefined
-                  }
-                >
-                  <Image
-                    src={
-                      isClubInfoPage || isJoinUsPage || isContactPage
-                        ? '/images/Y4E_LOGO_TEXT_PINK.png'
-                        : isPartnerPage
-                          ? '/images/Y4E_LOGO_TEXT_OLIVE.png'
-                          : isUpcomingEventsPage || isPastEventsPage
-                            ? '/images/Y4E_LOGO_TEXT_CREAM.png'
-                            : '/images/Y4E_LOGO_TEXT.png'
-                    }
-                    alt="Youth 4 Elders Logo"
-                    width={32}
-                    height={32}
-                    className="object-contain w-full h-full"
-                  />
-                </span>
-                <span 
-                  className="text-lg font-bold italic"
-                  style={{ 
-                    fontFamily: 'var(--font-vintage-stylist)', 
-                    color: navColors.text
-                  }}
-                >
-                  Youth 4 Elders
-                </span>
-              </div>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full"
-                style={{ color: navColors.text }}
-                aria-label="Close menu"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Mobile Navigation Links */}
-            <div className="flex flex-col gap-2">
-              <Link 
-                href="/"
-                className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
-                style={{ 
-                  color: navColors.text,
-                  fontFamily: 'var(--font-kollektif)',
-                  background: 'transparent'
-                }}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              
-              <div className="flex flex-col">
-                <button
-                  onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
-                  className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between"
-                  style={{ 
-                    color: navColors.text,
-                    fontFamily: 'var(--font-kollektif)',
-                    background: 'transparent'
-                  }}
-                >
-                  <span>Who We Are</span>
-                  <svg 
-                    className={`w-4 h-4 transition-transform duration-200 ${mobileDropdownOpen ? 'rotate-180' : ''}`}
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div 
-                  className="overflow-hidden transition-all duration-300 ease-in-out"
-                  style={{
-                    maxHeight: mobileDropdownOpen ? '500px' : '0',
-                    opacity: mobileDropdownOpen ? 1 : 0
-                  }}
-                >
-                  <div className="ml-4 mt-2 flex flex-col gap-1">
-                    {whoWeAreSubmenu.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="text-sm px-4 py-2 transition-all duration-200"
-                        style={{ 
-                          color: navColors.text,
-                          fontFamily: 'var(--font-kollektif)',
-                          background: 'transparent'
-                        }}
-                        onClick={() => {
-                          setMobileMenuOpen(false)
-                          setMobileDropdownOpen(false)
-                        }}
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              <Link 
-                href="/join-us"
-                className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
-                style={{ 
-                  color: navColors.text,
-                  fontFamily: 'var(--font-kollektif)',
-                  background: 'transparent'
-                }}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Get Involved
-              </Link>
-              
-              <div className="flex flex-col">
-                <button
-                  onClick={() => setMobileEventsOpen(!mobileEventsOpen)}
-                  className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between"
-                  style={{ 
-                    color: navColors.text,
-                    fontFamily: 'var(--font-kollektif)',
-                    background: 'transparent'
-                  }}
-                >
-                  <span>Events</span>
-                  <svg 
-                    className={`w-4 h-4 transition-transform duration-200 ${mobileEventsOpen ? 'rotate-180' : ''}`}
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div 
-                  className="overflow-hidden transition-all duration-300 ease-in-out"
-                  style={{
-                    maxHeight: mobileEventsOpen ? '500px' : '0',
-                    opacity: mobileEventsOpen ? 1 : 0
-                  }}
-                >
-                  <div className="ml-4 mt-2 flex flex-col gap-1">
-                    {eventsSubmenu.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="text-sm px-4 py-2 transition-all duration-200"
-                        style={{ 
-                          color: navColors.text,
-                          fontFamily: 'var(--font-kollektif)',
-                          background: 'transparent'
-                        }}
-                        onClick={() => {
-                          setMobileMenuOpen(false)
-                          setMobileEventsOpen(false)
-                        }}
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              <Link 
-                href="/contact"
-                className="text-base font-medium px-4 py-3 rounded-lg transition-all duration-200"
-                style={{ 
-                  color: navColors.text,
-                  fontFamily: 'var(--font-kollektif)',
-                  background: 'transparent'
-                }}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
-
-              {/* Mobile Language Switcher */}
-              <div className="border-t border-opacity-20 mt-2 pt-2" style={{ borderColor: navColors.text }}>
-                <div className="px-4 py-2 text-sm font-medium" style={{ 
-                  color: navColors.text,
-                  fontFamily: 'var(--font-kollektif)',
-                  opacity: 0.8
-                }}>
-                  Language
-                </div>
-                <button
-                  onClick={() => handleLanguageChange('en')}
-                  className="w-full text-left px-4 py-2 text-base rounded-lg transition-colors"
-                  style={{
-                    fontFamily: 'var(--font-kollektif)',
-                    color: navColors.text,
-                    background: language === 'en' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
-                    opacity: language === 'en' ? 1 : 0.7
-                  }}
-                  onMouseEnter={(e) => {
-                    if (language !== 'en') {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                      e.currentTarget.style.opacity = '1'
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (language !== 'en') {
-                      e.currentTarget.style.background = 'transparent'
-                      e.currentTarget.style.opacity = '0.7'
-                    }
-                  }}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => handleLanguageChange('fr')}
-                  className="w-full text-left px-4 py-2 text-base rounded-lg transition-colors"
-                  style={{
-                    fontFamily: 'var(--font-kollektif)',
-                    color: navColors.text,
-                    background: language === 'fr' ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
-                    opacity: language === 'fr' ? 1 : 0.7
-                  }}
-                  onMouseEnter={(e) => {
-                    if (language !== 'fr') {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
-                      e.currentTarget.style.opacity = '1'
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (language !== 'fr') {
-                      e.currentTarget.style.background = 'transparent'
-                      e.currentTarget.style.opacity = '0.7'
-                    }
-                  }}
-                >
-                  Français
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </nav>
+      {mounted && createPortal(
+        <>
+          {mobileMenuOpen && (
+            <div
+              className="md:hidden absolute left-0 right-0 z-[400] bg-black/50"
+              style={{ top: menuViewport.top, height: menuViewport.height }}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+          )}
+          <div
+            className={`md:hidden absolute right-0 z-[401] w-80 max-w-[85vw] transition-transform duration-500 ease-in-out ${
+              mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+            style={{
+              top: menuViewport.top,
+              height: menuViewport.height,
+              background: navColors.mobileBackground,
+              boxShadow: mobileMenuOpen ? `-4px 0 24px ${navColors.shadow}` : 'none',
+              border: navColors.mobileBorder !== 'none' ? `2px solid ${navColors.mobileBorder}` : 'none',
+              pointerEvents: mobileMenuOpen ? 'auto' : 'none',
+            }}
+            aria-hidden={!mobileMenuOpen}
+          >
+            <div className="flex h-full flex-col overflow-y-auto p-6">
+              <div className="mb-8 flex items-center justify-between">
+                <div className="flex items-center">
+                  <span
+                    className="mr-2 flex h-8 w-8 shrink-0 items-center justify-center"
+                    style={
+                      isHomePage || isPartnerPage || isTeamPage
+                        ? { background: 'var(--color-cream)', borderRadius: '9999px', padding: 3 }
+                        : isClubInfoPage || isJoinUsPage || isUpcomingEventsPage || isPastEventsPage || isContactPage
+                          ? { background: 'var(--color-brown-dark)', borderRadius: '9999px', padding: 3 }
+                          : undefined
+                    }
+                  >
+                    <Image
+                      src={
+                        isClubInfoPage || isJoinUsPage || isContactPage
+                          ? '/images/Y4E_LOGO_TEXT_PINK.png'
+                          : isPartnerPage
+                            ? '/images/Y4E_LOGO_TEXT_OLIVE.png'
+                            : isUpcomingEventsPage || isPastEventsPage
+                              ? '/images/Y4E_LOGO_TEXT_CREAM.png'
+                              : '/images/Y4E_LOGO_TEXT.png'
+                      }
+                      alt="Youth 4 Elders Logo"
+                      width={32}
+                      height={32}
+                      className="h-full w-full object-contain"
+                    />
+                  </span>
+                  <span
+                    className="text-lg font-bold italic"
+                    style={{ fontFamily: 'var(--font-vintage-stylist)', color: navColors.text }}
+                  >
+                    Youth 4 Elders
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full"
+                  style={{ color: navColors.text }}
+                  aria-label="Close menu"
+                >
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/"
+                  className="rounded-lg px-4 py-3 text-base font-medium"
+                  style={{ color: navColors.text, fontFamily: 'var(--font-kollektif)', background: 'transparent' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Home
+                </Link>
+
+                <div className="flex flex-col">
+                  <button
+                    type="button"
+                    onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+                    className="flex items-center justify-between rounded-lg px-4 py-3 text-base font-medium"
+                    style={{ color: navColors.text, fontFamily: 'var(--font-kollektif)', background: 'transparent' }}
+                  >
+                    <span>Who We Are</span>
+                    <svg
+                      className={`h-4 w-4 transition-transform duration-200 ${mobileDropdownOpen ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div
+                    className="overflow-hidden transition-all duration-300 ease-in-out"
+                    style={{ maxHeight: mobileDropdownOpen ? '500px' : '0', opacity: mobileDropdownOpen ? 1 : 0 }}
+                  >
+                    <div className="ml-4 mt-2 flex flex-col gap-1">
+                      {whoWeAreSubmenu.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="px-4 py-2 text-sm"
+                          style={{ color: navColors.text, fontFamily: 'var(--font-kollektif)', background: 'transparent' }}
+                          onClick={() => {
+                            setMobileMenuOpen(false)
+                            setMobileDropdownOpen(false)
+                          }}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  href="/join-us"
+                  className="rounded-lg px-4 py-3 text-base font-medium"
+                  style={{ color: navColors.text, fontFamily: 'var(--font-kollektif)', background: 'transparent' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Get Involved
+                </Link>
+
+                <div className="flex flex-col">
+                  <button
+                    type="button"
+                    onClick={() => setMobileEventsOpen(!mobileEventsOpen)}
+                    className="flex items-center justify-between rounded-lg px-4 py-3 text-base font-medium"
+                    style={{ color: navColors.text, fontFamily: 'var(--font-kollektif)', background: 'transparent' }}
+                  >
+                    <span>Events</span>
+                    <svg
+                      className={`h-4 w-4 transition-transform duration-200 ${mobileEventsOpen ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div
+                    className="overflow-hidden transition-all duration-300 ease-in-out"
+                    style={{ maxHeight: mobileEventsOpen ? '500px' : '0', opacity: mobileEventsOpen ? 1 : 0 }}
+                  >
+                    <div className="ml-4 mt-2 flex flex-col gap-1">
+                      {eventsSubmenu.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="px-4 py-2 text-sm"
+                          style={{ color: navColors.text, fontFamily: 'var(--font-kollektif)', background: 'transparent' }}
+                          onClick={() => {
+                            setMobileMenuOpen(false)
+                            setMobileEventsOpen(false)
+                          }}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  href="/contact"
+                  className="rounded-lg px-4 py-3 text-base font-medium"
+                  style={{ color: navColors.text, fontFamily: 'var(--font-kollektif)', background: 'transparent' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+              </div>
+            </div>
+          </div>
+        </>,
+        document.getElementById('site-root') ?? document.body
+      )}
+    </>
   )
 }

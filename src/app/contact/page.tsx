@@ -77,6 +77,29 @@ export default function Contact() {
   }, [serviceDropdownOpen])
 
   useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px) and (max-width: 1023px)')
+    const apply = () => {
+      if (mq.matches) {
+        document.documentElement.style.overflowX = 'hidden'
+        document.body.style.overflowX = 'hidden'
+        document.body.style.touchAction = 'pan-y'
+      } else {
+        document.documentElement.style.overflowX = ''
+        document.body.style.overflowX = ''
+        document.body.style.touchAction = ''
+      }
+    }
+    apply()
+    mq.addEventListener('change', apply)
+    return () => {
+      mq.removeEventListener('change', apply)
+      document.documentElement.style.overflowX = ''
+      document.body.style.overflowX = ''
+      document.body.style.touchAction = ''
+    }
+  }, [])
+
+  useEffect(() => {
     const t1 = setTimeout(() => setContactTitleVisible(true), 100)
     const t2 = setTimeout(() => setContactCaptionVisible(true), 2500)
     const t3 = setTimeout(() => setContactFormVisible(true), 2700)
@@ -328,15 +351,15 @@ export default function Contact() {
   }
 
   return (
-    <main className="min-h-screen" style={{ background: 'var(--color-cream)' }}>
+    <main className="min-h-screen contact-page-tablet-lock" style={{ background: 'var(--color-cream)' }}>
       {/* Contact - Two columns: heading (left), form with underline fields (right) */}
-      <section id="contact-form" ref={contactFormSectionRef} className="py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-4 md:px-8">
+      <section id="contact-form" ref={contactFormSectionRef} className="py-16 lg:py-24">
+        <div className="max-w-6xl mx-auto px-4 md:px-5 lg:px-8 contact-tablet-align-nav">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left Column - heading left-aligned, vertically centered with form, shifted up a bit */}
             <div className="flex flex-col items-start justify-center -mt-10 lg:-mt-14">
               <h1
-                className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight text-left"
+                className="text-5xl lg:text-7xl xl:text-8xl font-bold leading-tight text-left md:break-words lg:break-normal"
                 style={{ 
                   fontFamily: 'var(--font-vintage-stylist)', 
                   color: 'var(--color-brown-dark)'
@@ -359,7 +382,7 @@ export default function Contact() {
                 ))}
               </h1>
               <p
-                className={`mt-4 text-lg md:text-xl lg:text-2xl italic whitespace-nowrap ${contactCaptionVisible ? 'contact-caption-reveal' : 'opacity-0'}`}
+                className={`mt-4 text-lg lg:text-2xl italic whitespace-nowrap md:whitespace-normal lg:whitespace-nowrap ${contactCaptionVisible ? 'contact-caption-reveal' : 'opacity-0'}`}
                 style={{ 
                   fontFamily: 'var(--font-leiko)',
                   color: 'var(--color-brown-dark)'
@@ -373,7 +396,7 @@ export default function Contact() {
             <div className="w-full relative">
               <div className="w-full relative">
               {submitSuccess && (
-                <div className="w-full rounded-2xl p-8 md:p-10 shadow-lg contact-result-box-in" style={{ background: 'var(--color-pink-light)', border: '2px solid var(--color-brown-dark)' }}>
+                <div className="contact-form-mobile-compact w-full rounded-2xl p-8 lg:p-10 shadow-lg contact-result-box-in" style={{ background: 'var(--color-pink-light)', border: '2px solid var(--color-brown-dark)' }}>
                   <p className="text-lg font-medium mb-5" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                     Got it — we got your message and we&apos;ll be in touch!
                   </p>
@@ -393,8 +416,8 @@ export default function Contact() {
               )}
 
               {!submitSuccess && (
-                <div className="contact-form-enter w-full">
-              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                <div className="contact-form-enter contact-form-mobile-compact w-full">
+              <form onSubmit={handleSubmit} className="space-y-3.5 lg:space-y-6" noValidate>
                 {/* Row 1: Name (required) - First Name | Last Name */}
                 <div
                   className={contactFormVisible ? 'contact-form-row-slide-up' : 'opacity-0'}
@@ -404,7 +427,7 @@ export default function Contact() {
                   <label htmlFor="contact-first-name" className="block text-base font-medium mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                     Name (required <span style={{ color: 'red' }}>*</span>)
                   </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-5">
                     <input
                       id="contact-first-name"
                       type="text"
@@ -477,7 +500,7 @@ export default function Contact() {
                   className={contactFormVisible ? 'contact-form-row-slide-up' : 'opacity-0'}
                   style={{ animationDelay: contactFormVisible ? '0.22s' : undefined, animationFillMode: 'both' }}
                 >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-5">
                 <div>
                     <label htmlFor="contact-email" className="block text-base font-medium mb-2" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                       Email (required <span style={{ color: 'red' }}>*</span>)
@@ -665,19 +688,19 @@ id="contact-email"
       <section
         id="faq"
         ref={faqSectionRef}
-        className="relative overflow-hidden py-16 md:py-24"
+        className="relative overflow-hidden py-16 lg:py-24"
         style={{ background: 'var(--color-olive)' }}
       >
-        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-5 lg:px-8 contact-tablet-align-nav">
           <div className={`mb-10 animate-on-scroll fade-up ${faqInView ? 'visible' : ''}`} style={{ transitionDuration: '0.6s', transitionDelay: '0.1s' }}>
             <h2
-              className="text-3xl md:text-4xl font-bold"
+              className="text-3xl lg:text-4xl font-bold"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-cream)' }}
             >
               Got Any Questions?
             </h2>
             <p
-              className="text-lg md:text-xl mt-1"
+              className="text-lg lg:text-xl mt-1"
               style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)', opacity: 0.9 }}
             >
               We&apos;ve got answers.
@@ -700,7 +723,7 @@ id="contact-email"
                   >
                     {section.title}
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-3 lg:gap-8 items-start">
                     {section.faqs.map((faq, faqIdx) => {
                       const globalIndex = globalOffset + faqIdx
                       const isOpen = openFAQs.includes(globalIndex)
@@ -715,7 +738,7 @@ id="contact-email"
                       return (
                         <div
                           key={`${section.title}-${faqIdx}`}
-                          className="rounded-2xl overflow-hidden will-change-transform"
+                          className="rounded-xl lg:rounded-2xl overflow-hidden will-change-transform"
                   style={{
                             background: 'var(--color-cream)',
                             boxShadow: '0 2px 12px rgba(98, 32, 47, 0.08)',
@@ -726,10 +749,10 @@ id="contact-email"
                           <button
                             type="button"
                             onClick={() => toggleFAQ(globalIndex)}
-                            className="w-full px-5 py-4 flex items-center justify-between text-left gap-4"
+                            className="w-full px-3.5 py-2.5 lg:px-5 lg:py-4 flex items-center justify-between text-left gap-2.5 lg:gap-4"
                           >
                             <span
-                              className="text-base font-semibold flex-1 min-w-0"
+                              className="text-sm lg:text-base font-semibold flex-1 min-w-0"
                 style={{ 
                                 fontFamily: 'var(--font-leiko)',
                   color: 'var(--color-brown-dark)'
@@ -738,7 +761,7 @@ id="contact-email"
                               {faq.question}
                             </span>
                             <span
-                              className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-lg font-light rounded-full transition-colors"
+                              className="flex-shrink-0 w-6 h-6 lg:w-8 lg:h-8 flex items-center justify-center text-base lg:text-lg font-light rounded-full transition-colors"
                               style={{
                                 color: 'var(--color-brown-dark)',
                                 background: isOpen ? 'rgba(98, 32, 47, 0.08)' : 'transparent'
@@ -755,9 +778,9 @@ id="contact-email"
                               opacity: isOpen ? 1 : 0
                             }}
                           >
-                            <div className="px-5 pb-5 pt-0">
+                            <div className="px-3.5 pb-3.5 lg:px-5 lg:pb-5 pt-0">
                               <p
-                                className="text-sm md:text-base leading-relaxed whitespace-pre-line"
+                                className="text-sm lg:text-base leading-relaxed whitespace-pre-line"
                 style={{ 
                   fontFamily: 'var(--font-kollektif)', 
                   color: 'var(--color-brown-medium)',
@@ -780,11 +803,11 @@ id="contact-email"
           {/* Socials - underneath FAQ, inside green section */}
           <div
             ref={socialsRef}
-            className="mt-12 md:mt-16 pt-10 md:pt-12 flex flex-col items-center gap-6 text-center"
+            className="mt-12 lg:mt-16 pt-10 lg:pt-12 flex flex-col items-center gap-6 text-center"
             style={{ borderTop: '1px solid rgba(251, 247, 232, 0.3)' }}
           >
             <h2
-              className={`text-3xl md:text-4xl lg:text-5xl font-bold italic max-w-4xl leading-tight animate-on-scroll fade-up ${socialsInView ? 'visible' : ''}`}
+              className={`text-3xl lg:text-5xl font-bold italic max-w-4xl leading-tight animate-on-scroll fade-up ${socialsInView ? 'visible' : ''}`}
               style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-pink-medium)', transitionDuration: '0.5s', transitionDelay: '0s' }}
             >
               We&apos;re here, there, a bit everywhere!
@@ -795,11 +818,11 @@ id="contact-email"
                       href="https://www.instagram.com/youth4elders/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
+                      className="w-14 h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
                       style={{ background: 'var(--color-pink-medium)', color: 'var(--color-brown-dark)', borderColor: 'var(--color-pink-medium)' }}
                       aria-label="Instagram"
                     >
-                      <svg className="w-7 h-7 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-7 h-7 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                       </svg>
                     </a>
@@ -809,11 +832,11 @@ id="contact-email"
                       href="https://www.linkedin.com/company/youth4elders"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
+                      className="w-14 h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
                       style={{ background: 'var(--color-pink-medium)', color: 'var(--color-brown-dark)', borderColor: 'var(--color-pink-medium)' }}
                       aria-label="LinkedIn"
                     >
-                      <svg className="w-7 h-7 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-7 h-7 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                     </svg>
                     </a>
@@ -821,11 +844,11 @@ id="contact-email"
                   <span className={`inline-block ${socialsInView ? 'socials-logos-pop' : 'opacity-0'}`} style={{ animationDelay: socialsInView ? '0.55s' : undefined, animationFillMode: 'both' }}>
                     <a
                       href="mailto:youth4elders@gmail.com"
-                      className="w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
+                      className="w-14 h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center transition-all hover:opacity-85 hover:scale-105 border-2"
                       style={{ background: 'var(--color-pink-medium)', color: 'var(--color-brown-dark)', borderColor: 'var(--color-pink-medium)' }}
                       aria-label="Email"
                     >
-                      <svg className="w-7 h-7 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-7 h-7 lg:w-8 lg:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </a>
