@@ -159,18 +159,34 @@ export async function POST(request: NextRequest) {
         )
       }
     } else {
-      if (schoolStatus !== 'in-school' && schoolStatus !== 'not-in-school') {
+      const validStatuses = new Set(['university-college', 'high-school', 'not-in-school'])
+      if (!validStatuses.has(schoolStatus)) {
         return NextResponse.json(
-          { error: 'Please tell us if you are currently in school.' },
+          { error: 'Please select your current school status.' },
           { status: 400 }
         )
       }
 
-      if (schoolStatus === 'in-school' && !schoolName) {
+      if (schoolStatus === 'university-college' && !schoolName) {
         return NextResponse.json(
           { error: 'Please enter your university or college.' },
           { status: 400 }
         )
+      }
+
+      if (schoolStatus === 'high-school') {
+        if (!schoolName) {
+          return NextResponse.json(
+            { error: 'Please enter your high school.' },
+            { status: 400 }
+          )
+        }
+        if (!year) {
+          return NextResponse.json(
+            { error: 'Please select your grade.' },
+            { status: 400 }
+          )
+        }
       }
 
       if (schoolStatus === 'not-in-school') {
@@ -248,16 +264,25 @@ export async function POST(request: NextRequest) {
       process.env.RESEND_FROM_EMAIL || 'Youth 4 Elders <onboarding@resend.dev>'
 
     const schoolStatusLabel =
-      schoolStatus === 'in-school'
-        ? "Yes, I'm in school"
-        : schoolStatus === 'not-in-school'
-          ? "No, I'm not currently in school"
-          : '—'
+      schoolStatus === 'university-college'
+        ? 'University / college student'
+        : schoolStatus === 'high-school'
+          ? 'High school student'
+          : schoolStatus === 'not-in-school'
+            ? 'Not currently in school'
+            : '—'
 
     const schoolSituationDisplay =
       schoolSituation === 'Other'
         ? schoolSituationOther || 'Other'
         : schoolSituation
+
+    const schoolDetailsText =
+      schoolStatus === 'university-college'
+        ? `What university or college are you attending?\n${schoolName || '—'}\n\nWhat's your program or field of study?\n${program || '—'}\n\nWhat year are you in?\n${year || '—'}`
+        : schoolStatus === 'high-school'
+          ? `Which high school do you attend?\n${schoolName || '—'}\n\nWhat grade are you in?\n${year || '—'}`
+          : `What best describes you?\n${schoolSituationDisplay || '—'}`
 
     const experienceMethod = experienceResume
       ? 'Uploaded resume'
@@ -313,6 +338,13 @@ export async function POST(request: NextRequest) {
           outerBg: '#ffffff',
         }
 
+    const schoolDetailsHtml =
+      schoolStatus === 'university-college'
+        ? `${fieldBlock('What university or college are you attending?', schoolName, theme)}${fieldBlock("What's your program or field of study?", program, theme)}${fieldBlock('What year are you in?', year, theme)}`
+        : schoolStatus === 'high-school'
+          ? `${fieldBlock('Which high school do you attend?', schoolName, theme)}${fieldBlock('What grade are you in?', year, theme)}`
+          : fieldBlock('What best describes you?', schoolSituationDisplay, theme)
+
     const bodyFieldsHtml = isTeam
       ? [
           fieldBlock("What's your full name?", name, theme),
@@ -338,10 +370,8 @@ export async function POST(request: NextRequest) {
       : [
           fieldBlock("What's your full name?", name, theme),
           fieldBlock("What's your email address?", email, theme),
-          fieldBlock('Are you currently in school?', schoolStatusLabel, theme),
-          schoolStatus === 'in-school'
-            ? `${fieldBlock('What university or college are you attending?', schoolName, theme)}${fieldBlock("What's your program or field of study?", program, theme)}${fieldBlock('What year are you in?', year, theme)}`
-            : fieldBlock('What best describes you?', schoolSituationDisplay, theme),
+          fieldBlock('What is your current school status?', schoolStatusLabel, theme),
+          schoolDetailsHtml,
           fieldBlock('How did you hear about us?', howHeard, theme),
           fieldBlock('Why do you want to join Youth 4 Elders?', whyJoin, theme),
         ].join('')
@@ -394,12 +424,10 @@ export async function POST(request: NextRequest) {
           `What's your email address?`,
           email,
           '',
-          `Are you currently in school?`,
+          `What is your current school status?`,
           schoolStatusLabel,
           '',
-          schoolStatus === 'in-school'
-            ? `What university or college are you attending?\n${schoolName || '—'}\n\nWhat's your program or field of study?\n${program || '—'}\n\nWhat year are you in?\n${year || '—'}`
-            : `What best describes you?\n${schoolSituationDisplay || '—'}`,
+          schoolDetailsText,
           '',
           `How did you hear about us?`,
           howHeard || '—',

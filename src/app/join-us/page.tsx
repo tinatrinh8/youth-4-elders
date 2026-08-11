@@ -131,7 +131,7 @@ function runConfetti(
 interface FormData {
   name: string
   email: string
-  schoolStatus: '' | 'in-school' | 'not-in-school'
+  schoolStatus: '' | 'university-college' | 'high-school' | 'not-in-school'
   schoolName: string
   program: string
   year: string
@@ -169,7 +169,8 @@ const content = joinUsContent as {
     execMember: {
       title: string
       description: string
-  }
+      openStatus: string
+    }
   }
   applyBox: { generalTitle: string; teamTitle: string; cta: string }
   form: {
@@ -179,8 +180,11 @@ const content = joinUsContent as {
     submitting: string
     errorMessage: string
     schoolStatusLabel: string
-    schoolStatusInSchool: string
-    schoolStatusNotInSchool: string
+    schoolStatusOptions: { value: string; label: string }[]
+    highSchoolNameLabel: string
+    highSchoolNamePlaceholder: string
+    highSchoolGradeLabel: string
+    highSchoolGradeOptions: { value: string; label: string }[]
     schoolSituationLabel: string
     schoolSituationOtherLabel: string
     schoolSituationOtherPlaceholder: string
@@ -297,7 +301,7 @@ export default function JoinUs() {
       type === 'team'
         ? {
             ...emptyForm(),
-            schoolStatus: 'in-school',
+            schoolStatus: 'university-college',
             schoolName: 'University of Ottawa',
             uOttawaConfirm: false,
           }
@@ -429,11 +433,20 @@ export default function JoinUs() {
     })
       if (!formData.schoolStatus) {
         valid = false
-        next.schoolStatus = 'Please tell us if you are currently in school'
-      } else if (formData.schoolStatus === 'in-school') {
+        next.schoolStatus = 'Please select your current school status'
+      } else if (formData.schoolStatus === 'university-college') {
         if (!formData.schoolName.trim()) {
           valid = false
           next.schoolName = 'Please enter your university or college'
+        }
+      } else if (formData.schoolStatus === 'high-school') {
+        if (!formData.schoolName.trim()) {
+          valid = false
+          next.schoolName = 'Please enter your high school'
+        }
+        if (!formData.year) {
+          valid = false
+          next.year = 'Please select your grade'
         }
       } else if (formData.schoolStatus === 'not-in-school') {
         if (!formData.schoolSituation) {
@@ -504,6 +517,10 @@ export default function JoinUs() {
 
   const handleSubmitForm = async () => {
     if (!isFormValid()) return
+
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
 
     setIsSubmitting(true)
     setSubmitStatus('idle')
@@ -601,15 +618,23 @@ export default function JoinUs() {
 
   const successBoxRef = useRef<HTMLDivElement>(null)
 
-  // Scroll success box into view (centered) when showing success
+  // Long form leaves the window scrolled down — jump to top for loading + success
   useEffect(() => {
-    if (submitStatus === 'success') {
-      const id = requestAnimationFrame(() => {
-        successBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      })
-      return () => cancelAnimationFrame(id)
-    }
-  }, [submitStatus])
+    if (!(isSubmitting || submitStatus === 'success')) return
+
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+
+    if (submitStatus !== 'success') return
+
+    const timers = [50, 150, 350].map((ms) =>
+      window.setTimeout(() => {
+        successBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+      }, ms)
+    )
+    return () => timers.forEach((id) => window.clearTimeout(id))
+  }, [isSubmitting, submitStatus])
 
   // Unmount confetti after animation so it doesn't stay stuck on screen
   useEffect(() => {
@@ -636,9 +661,9 @@ export default function JoinUs() {
     const isTeamSuccess = submittedApplicationType === 'team'
     const successCopy = isTeamSuccess ? content.success.team : content.success.general
     return (
-      <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden" style={{ background: 'transparent' }}>
+      <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden flex items-center justify-center" style={{ background: 'transparent' }}>
         {showConfetti && <ConfettiComponent boxRef={successBoxRef as React.RefObject<HTMLDivElement>} />}
-        <div className="mx-auto px-6 py-12 flex justify-center">
+        <div className="mx-auto px-6 py-12 flex justify-center w-full">
           <div
             ref={successBoxRef}
             className="w-[min(32rem,92vw)] min-h-[min(32rem,92vw)] rounded-2xl bg-[var(--color-cream)] p-8 md:p-10 shadow-lg border-2 border-[var(--color-brown-dark)] animate-success-fade-in flex flex-col items-center justify-center text-center"
@@ -734,6 +759,12 @@ export default function JoinUs() {
                   </h3>
                   <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
                     {content.cards.execMember.description}
+                  </p>
+                  <p
+                    className="mt-2 text-sm md:text-base font-bold italic underline underline-offset-2"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                  >
+                    {content.cards.execMember.openStatus}
                   </p>
                 </div>
               </div>
@@ -833,7 +864,7 @@ export default function JoinUs() {
                             ...prev,
                             uOttawaConfirm: !prev.uOttawaConfirm,
                             schoolName: 'University of Ottawa',
-                            schoolStatus: 'in-school',
+                            schoolStatus: 'university-college',
                           }))
                           setFieldErrors((prev) => {
                             const next = { ...prev }
@@ -1055,66 +1086,101 @@ export default function JoinUs() {
               {fieldErrors.schoolStatus && (
                 <p className="text-base text-[var(--color-error)] mb-2" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.schoolStatus}</p>
               )}
-              <div className="flex flex-wrap gap-3 mb-4">
+              <div className={`relative w-full mb-4 ${openSelectId === 'schoolStatus' ? 'z-[100]' : ''}`} ref={(el) => { selectDropdownRefs.current.schoolStatus = el }}>
                 <button
                   type="button"
-                  onClick={() => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      schoolStatus: 'in-school',
-                      schoolSituation: '',
-                      schoolSituationOther: '',
-                    }))
-                    setFieldErrors((prev) => {
-                      const next = { ...prev }
-                      delete next.schoolStatus
-                      delete next.schoolSituation
-                      delete next.schoolSituationOther
-                      return next
-                    })
-                  }}
-                  className="px-5 py-4 rounded-xl border-2 text-base font-medium transition-colors"
+                  onClick={() => setOpenSelectId((prev) => (prev === 'schoolStatus' ? null : 'schoolStatus'))}
+                  className="w-full flex items-center justify-between pl-5 pr-12 py-4 rounded-xl border-2 text-left transition-colors cursor-pointer"
                   style={{
                     fontFamily: 'var(--font-kollektif)',
-                    borderColor: formData.schoolStatus === 'in-school' ? 'var(--color-brown-dark)' : inputBorder,
-                    background: formData.schoolStatus === 'in-school' ? 'var(--color-pink-medium)' : 'var(--color-pink-light)',
-                    color: 'var(--color-brown-dark)'
+                    borderColor: fieldErrors.schoolStatus ? 'var(--color-error)' : inputBorder,
+                    background: 'var(--color-pink-light)',
+                    color: formData.schoolStatus ? 'var(--color-brown-dark)' : 'var(--color-pink-dark)',
+                    fontSize: '1rem'
                   }}
                 >
-                  {content.form.schoolStatusInSchool}
+                  <span className="text-base md:text-lg">
+                    {content.form.schoolStatusOptions.find((o) => o.value === formData.schoolStatus)?.label ?? 'Select an option'}
+                  </span>
+                  <svg
+                    className={`w-5 h-5 flex-shrink-0 absolute right-5 top-1/2 -translate-y-1/2 transition-transform ${openSelectId === 'schoolStatus' ? 'rotate-180' : ''}`}
+                    style={{ color: 'var(--color-brown-dark)' }}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      schoolStatus: 'not-in-school',
-                      schoolName: '',
-                      program: '',
-                      year: '',
-                    }))
-                    setFieldErrors((prev) => {
-                      const next = { ...prev }
-                      delete next.schoolStatus
-                      delete next.schoolName
-                      delete next.program
-                      delete next.year
-                      return next
-                    })
-                  }}
-                  className="px-5 py-4 rounded-xl border-2 text-base font-medium transition-colors"
-                  style={{
-                    fontFamily: 'var(--font-kollektif)',
-                    borderColor: formData.schoolStatus === 'not-in-school' ? 'var(--color-brown-dark)' : inputBorder,
-                    background: formData.schoolStatus === 'not-in-school' ? 'var(--color-pink-medium)' : 'var(--color-pink-light)',
-                    color: 'var(--color-brown-dark)'
-                  }}
-                >
-                  {content.form.schoolStatusNotInSchool}
-                </button>
+                {openSelectId === 'schoolStatus' && (
+                  <div
+                    className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-56 border-2"
+                    style={{
+                      background: 'var(--color-cream)',
+                      borderColor: 'var(--color-brown-dark)',
+                      boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)'
+                    }}
+                  >
+                    {content.form.schoolStatusOptions.map((opt) => (
+                      <button
+                        key={opt.value || 'empty'}
+                        type="button"
+                        className="block w-full text-left px-5 py-3.5 text-base md:text-lg transition-colors border-0"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          color: 'var(--color-brown-dark)',
+                          background: formData.schoolStatus === opt.value ? 'var(--color-pink-medium)' : 'transparent'
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background =
+                            formData.schoolStatus === opt.value ? 'var(--color-pink-medium)' : 'transparent'
+                        }}
+                        onClick={() => {
+                          const nextStatus = opt.value as FormData['schoolStatus']
+                          setFormData((prev) => ({
+                            ...prev,
+                            schoolStatus: nextStatus,
+                            ...(nextStatus === 'university-college'
+                              ? { schoolSituation: '', schoolSituationOther: '', year: '' }
+                              : {}),
+                            ...(nextStatus === 'high-school'
+                              ? { program: '', year: '', schoolSituation: '', schoolSituationOther: '' }
+                              : {}),
+                            ...(nextStatus === 'not-in-school'
+                              ? { schoolName: '', program: '', year: '' }
+                              : {}),
+                            ...(nextStatus === ''
+                              ? {
+                                  schoolName: '',
+                                  program: '',
+                                  year: '',
+                                  schoolSituation: '',
+                                  schoolSituationOther: '',
+                                }
+                              : {}),
+                          }))
+                          setFieldErrors((prev) => {
+                            const next = { ...prev }
+                            delete next.schoolStatus
+                            delete next.schoolName
+                            delete next.program
+                            delete next.year
+                            delete next.schoolSituation
+                            delete next.schoolSituationOther
+                            return next
+                          })
+                          setOpenSelectId(null)
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {formData.schoolStatus === 'in-school' && (
+              {formData.schoolStatus === 'university-college' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {questions.filter((q) => q.id === 'schoolName' || q.id === 'program' || q.id === 'year').map((q) => (
                     <div key={q.id} className={q.id === 'schoolName' ? 'md:col-span-2' : ''}>
@@ -1190,8 +1256,102 @@ export default function JoinUs() {
                           style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors[q.id] ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
                         />
                       )}
+                      {fieldErrors[q.id] && (
+                        <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors[q.id]}</p>
+                      )}
                     </div>
                   ))}
+                </div>
+              )}
+
+              {formData.schoolStatus === 'high-school' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="md:col-span-2">
+                    <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                      {content.form.highSchoolNameLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.schoolName}
+                      onChange={(e) => handleFieldChange('schoolName', e.target.value)}
+                      onBlur={() => handleFieldBlur('schoolName')}
+                      placeholder={content.form.highSchoolNamePlaceholder}
+                      className="w-full px-5 py-4 rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20 transition-all text-[var(--color-brown-dark)] text-base md:text-lg"
+                      style={{ fontFamily: 'var(--font-kollektif)', borderColor: fieldErrors.schoolName ? 'var(--color-error)' : inputBorder, background: 'var(--color-pink-light)' }}
+                    />
+                    {fieldErrors.schoolName && (
+                      <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.schoolName}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                      {content.form.highSchoolGradeLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                    </label>
+                    {fieldErrors.year && (
+                      <p className="text-base text-[var(--color-error)] mb-2" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.year}</p>
+                    )}
+                    <div className={`relative w-full ${openSelectId === 'year' ? 'z-[100]' : ''}`} ref={(el) => { selectDropdownRefs.current.year = el }}>
+                      <button
+                        type="button"
+                        onClick={() => setOpenSelectId((prev) => (prev === 'year' ? null : 'year'))}
+                        className="w-full flex items-center justify-between pl-5 pr-12 py-4 rounded-xl border-2 text-left transition-colors cursor-pointer"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          borderColor: fieldErrors.year ? 'var(--color-error)' : inputBorder,
+                          background: 'var(--color-pink-light)',
+                          color: formData.year ? 'var(--color-brown-dark)' : 'var(--color-pink-dark)',
+                          fontSize: '1rem'
+                        }}
+                      >
+                        <span className="text-base md:text-lg">
+                          {content.form.highSchoolGradeOptions.find((o) => o.value === formData.year)?.label ?? 'Select...'}
+                        </span>
+                        <svg
+                          className={`w-5 h-5 flex-shrink-0 absolute right-5 top-1/2 -translate-y-1/2 transition-transform ${openSelectId === 'year' ? 'rotate-180' : ''}`}
+                          style={{ color: 'var(--color-brown-dark)' }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      {openSelectId === 'year' && (
+                        <div
+                          className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-48 border-2"
+                          style={{
+                            background: 'var(--color-cream)',
+                            borderColor: 'var(--color-brown-dark)',
+                            boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)'
+                          }}
+                        >
+                          {content.form.highSchoolGradeOptions.map((opt) => (
+                            <button
+                              key={opt.value || 'empty'}
+                              type="button"
+                              className="block w-full text-left px-5 py-3.5 text-base md:text-lg transition-colors border-0"
+                              style={{
+                                fontFamily: 'var(--font-kollektif)',
+                                color: 'var(--color-brown-dark)',
+                                background: formData.year === opt.value ? 'var(--color-pink-medium)' : 'transparent'
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background =
+                                  formData.year === opt.value ? 'var(--color-pink-medium)' : 'transparent'
+                              }}
+                              onClick={() => {
+                                handleFieldChange('year', opt.value)
+                                setOpenSelectId(null)
+                              }}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -1232,7 +1392,7 @@ export default function JoinUs() {
                       </button>
                       {openSelectId === 'schoolSituation' && (
                         <div
-                          className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-56 border-2"
+                          className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-72 border-2"
                           style={{
                             background: 'var(--color-cream)',
                             borderColor: 'var(--color-brown-dark)',
@@ -1247,10 +1407,13 @@ export default function JoinUs() {
                               style={{
                                 fontFamily: 'var(--font-kollektif)',
                                 color: 'var(--color-brown-dark)',
-                                background: 'transparent'
+                                background: formData.schoolSituation === opt.value ? 'var(--color-pink-medium)' : 'transparent'
                               }}
                               onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }}
-                              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background =
+                                  formData.schoolSituation === opt.value ? 'var(--color-pink-medium)' : 'transparent'
+                              }}
                               onClick={() => {
                                 setFormData((prev) => ({
                                   ...prev,

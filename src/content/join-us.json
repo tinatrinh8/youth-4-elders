@@ -10,7 +10,8 @@
     },
     "execMember": {
       "title": "Team roles",
-      "description": "Help run the club—events, outreach, marketing, and more. Team applications are open now."
+      "description": "Help run the club—events, outreach, marketing, and more.",
+      "openStatus": "Applications are open now."
     }
   },
   "applyBox": {
@@ -24,18 +25,38 @@
     "submit": "Submit",
     "submitting": "Submitting...",
     "errorMessage": "Something went wrong. Please try again.",
-    "schoolStatusLabel": "Are you currently in school?",
-    "schoolStatusInSchool": "Yes, I'm in school",
-    "schoolStatusNotInSchool": "No, I'm not currently in school",
-    "schoolSituationLabel": "What best describes you?",
+    "schoolStatusLabel": "What is your current school status?",
+    "schoolStatusOptions": [
+      { "value": "", "label": "Select an option" },
+      { "value": "university-college", "label": "University / college student" },
+      { "value": "high-school", "label": "High school student" },
+      { "value": "not-in-school", "label": "Not currently in school" }
+    ],
+    "highSchoolNameLabel": "Which high school do you attend?",
+    "highSchoolNamePlaceholder": "e.g., Longfields High School, Lisgar High School...",
+    "highSchoolGradeLabel": "What grade are you in?",
+    "highSchoolGradeOptions": [
+      { "value": "", "label": "Select grade" },
+      { "value": "Grade 9", "label": "Grade 9" },
+      { "value": "Grade 10", "label": "Grade 10" },
+      { "value": "Grade 11", "label": "Grade 11" },
+      { "value": "Grade 12", "label": "Grade 12" },
+      { "value": "Other", "label": "Other" }
+    ],
+    "schoolSituationLabel": "Tell us a bit more about your situation",
     "schoolSituationOtherLabel": "Tell us a bit more",
-    "schoolSituationOtherPlaceholder": "e.g., just finished high school, taking a gap year...",
+    "schoolSituationOtherPlaceholder": "e.g., caregiver, recent grad, joining with a friend...",
     "schoolSituationOptions": [
       { "value": "", "label": "Select an option" },
+      { "value": "Community member (no school or group)", "label": "Community member (no school or group)" },
+      { "value": "Working / employed", "label": "Working / employed" },
+      { "value": "Parent or caregiver", "label": "Parent or caregiver" },
+      { "value": "Retired", "label": "Retired" },
+      { "value": "Volunteer or community organizer", "label": "Volunteer or community organizer" },
+      { "value": "Part of another club or organization", "label": "Part of another club or organization" },
+      { "value": "Taking time off / gap year", "label": "Taking time off / gap year" },
       { "value": "Just finished high school", "label": "Just finished high school" },
       { "value": "Just finished university / college", "label": "Just finished university / college" },
-      { "value": "Taking time off / gap year", "label": "Taking time off / gap year" },
-      { "value": "Looking to join as a community member", "label": "Looking to join as a community member" },
       { "value": "Other", "label": "Other" }
     ],
     "experienceChoiceLabel": "Share your experience (choose one)",
@@ -174,12 +195,12 @@
       "messageBeforeLink": "You’re on the list. Keep up with our ",
       "instagramLabel": "Instagram",
       "messageAfterLink": " for event updates—you might also hear from us by email.",
-      "cue": "Cue: follow along, show up when you can, and welcome to the Y4E community."
+      "cue": "Follow along, show up when you can, and welcome to the Y4E community."
     },
     "team": {
       "title": "Thank you for applying!",
       "message": "We’ve received your team application. You’ll hear back from us as soon as possible.",
-      "cue": "Cue: keep an eye on your inbox—we’ll follow up with next steps shortly."
+      "cue": "Keep an eye on your inbox—we’ll follow up with next steps shortly."
     },
     "submitAnother": "Submit Another"
   },

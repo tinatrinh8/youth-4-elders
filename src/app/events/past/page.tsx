@@ -1728,3 +1728,7 @@ export default function PastEventsPage() {
     </main>
   )
 }
+
+
+
+

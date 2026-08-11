@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import homeContent from '@/content/home.json'
 // Types for future Contentful integration
@@ -213,16 +214,13 @@ export default function Home() {
     }, 400) // Match animation duration (fadeOut is 0.4s)
   }
 
-  return (
-    <div className="min-h-screen">
-      {/* Connect Modal */}
-      {showModal || isClosing ? (
+  const connectModal = (showModal || isClosing) ? (
         <div 
-          className={`fixed inset-0 z-[200] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
+          className={`home-connect-overlay fixed inset-0 z-[9999] flex items-center justify-center p-4 backdrop-blur-md ${isClosing ? 'animate-fadeOut' : 'animate-fadeIn'}`}
           style={{ background: 'rgba(98, 32, 47, 0.7)' }}
         >
           <div 
-            className={`relative scrapbook-paper max-w-md w-full rounded-[1.75rem] px-7 pt-10 pb-8 text-center overflow-visible ${isClosing ? 'animate-fadeOut' : 'animate-popup'}`}
+            className={`home-connect-card relative scrapbook-paper max-w-md w-full rounded-[1.75rem] px-7 pt-10 pb-8 text-center overflow-visible ${isClosing ? 'animate-fadeOut' : 'animate-popup'}`}
             style={{ 
               background: 'var(--color-cream)',
               border: '2.5px solid var(--color-brown-dark)',
@@ -310,7 +308,11 @@ export default function Home() {
             </button>
           </div>
         </div>
-      ) : null}
+  ) : null
+
+  return (
+    <div className="min-h-screen">
+      {connectModal && typeof document !== 'undefined' ? createPortal(connectModal, document.body) : null}
       
       {/* Hero Section - Large Text Overlay Style */}
       <section
