@@ -1,16 +1,25 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
+
 export default function LoadingSpinner({ message = 'Loading...' }: { message?: string }) {
-  return (
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const content = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center px-6"
-      style={{
-        background: 'var(--color-cream)',
-      }}
+      className="loading-spinner-overlay"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
     >
-      <div className="flex w-full max-w-xs flex-col items-center text-center md:max-w-sm">
+      <div className="loading-spinner-center">
         {/* Spinning circle — smaller on phone, mid on tablet, full on desktop */}
-        <div className="relative mb-5 h-11 w-11 md:mb-6 md:h-14 md:w-14 lg:mb-8 lg:h-16 lg:w-16">
+        <div className="loading-spinner-ring relative mb-5 h-11 w-11 md:mb-6 md:h-14 md:w-14 lg:mb-8 lg:h-16 lg:w-16">
           <div
             className="absolute inset-0 rounded-full border-[3px] border-solid md:border-4"
             style={{
@@ -43,4 +52,11 @@ export default function LoadingSpinner({ message = 'Loading...' }: { message?: s
       </div>
     </div>
   )
+
+  if (!mounted) {
+    // SSR / first paint: still render fixed overlay so layout stays centered
+    return content
+  }
+
+  return createPortal(content, document.body)
 }

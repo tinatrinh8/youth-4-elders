@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
 
@@ -15,6 +15,7 @@ export default function NavigationBar() {
   const [mounted, setMounted] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
   const [menuViewport, setMenuViewport] = useState({ top: 0, height: 0 })
+  const [memorySheetOpen, setMemorySheetOpen] = useState(false)
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const tapNavRef = useRef(false)
   const whoWeAreDropdownRef = useRef<HTMLDivElement>(null)
@@ -37,9 +38,17 @@ export default function NavigationBar() {
   const isClubInfoPage = pathname === '/club-info'
   const isPartnerPage = pathname === '/partner'
   const isUpcomingEventsPage = pathname === '/events/upcoming'
-  const isPastGalleryPage = pathname.startsWith('/events/past/gallery/')
-  const isPastEventsPage = pathname === '/events/past'
+  const isPastGalleryPage = pathname.startsWith('/events/past/gallery/') && !memorySheetOpen
+  const isPastEventsPage = pathname === '/events/past' || memorySheetOpen
   const isTeamPage = pathname === '/team'
+
+  useLayoutEffect(() => {
+    const sync = () => setMemorySheetOpen(document.body.classList.contains('past-gallery-sheet-open'))
+    sync()
+    const mo = new MutationObserver(sync)
+    mo.observe(document.body, { attributes: true, attributeFilter: ['class'] })
+    return () => mo.disconnect()
+  }, [pathname])
 
   // Determine navbar color scheme based on page
   const getNavbarColors = () => {

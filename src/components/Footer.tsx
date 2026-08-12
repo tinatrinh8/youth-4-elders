@@ -3,21 +3,30 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 
 const SCROLL_RANGE_PX = 420
 
 export default function Footer() {
   const pathname = usePathname()
+  const [memorySheetOpen, setMemorySheetOpen] = useState(false)
   const isHome = pathname === '/'
   const isClubInfo = pathname === '/club-info'
   const isPartner = pathname === '/partner'
   const isJoinUs = pathname === '/join-us'
   const isUpcomingEvents = pathname === '/events/upcoming'
-  const isPastEvents = pathname === '/events/past' || pathname.startsWith('/events/past/')
-  const isPastGallery = pathname.startsWith('/events/past/gallery/')
+  const isPastGallery = pathname.startsWith('/events/past/gallery/') && !memorySheetOpen
+  const isPastEvents = pathname === '/events/past' || pathname.startsWith('/events/past/') || memorySheetOpen
   const isTeam = pathname === '/team'
   const isContact = pathname === '/contact'
+
+  useLayoutEffect(() => {
+    const sync = () => setMemorySheetOpen(document.body.classList.contains('past-gallery-sheet-open'))
+    sync()
+    const mo = new MutationObserver(sync)
+    mo.observe(document.body, { attributes: true, attributeFilter: ['class'] })
+    return () => mo.disconnect()
+  }, [pathname])
   const footerBackground = isPastGallery
     ? 'var(--color-brown-dark)'
     : isPastEvents
@@ -326,11 +335,9 @@ export default function Footer() {
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         className={`fixed z-50 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg ${
-          isUpcomingEvents
+          isUpcomingEvents || isPastEvents
             ? 'hidden md:flex bottom-8 right-8 h-12 w-12'
-            : isPastEvents
-              ? 'bottom-8 right-4 h-9 w-9 md:bottom-8 md:right-8 md:h-12 md:w-12'
-              : 'bottom-8 right-8 h-12 w-12'
+            : 'bottom-8 right-8 h-12 w-12'
         }`}
         style={{
           background: 'var(--color-brown-dark)',

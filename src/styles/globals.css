@@ -551,6 +551,46 @@ body::-webkit-scrollbar {
   to { transform: rotate(360deg); }
 }
 
+/* Full-viewport loading overlay — centered on phone, tablet, and desktop */
+.loading-spinner-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100%;
+  min-height: 100%;
+  min-height: 100dvh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(1.5rem, env(safe-area-inset-top, 0px))
+    max(1.5rem, env(safe-area-inset-right, 0px))
+    max(1.5rem, env(safe-area-inset-bottom, 0px))
+    max(1.5rem, env(safe-area-inset-left, 0px));
+  box-sizing: border-box;
+  background: var(--color-cream);
+}
+
+.loading-spinner-center {
+  position: relative;
+  top: auto;
+  left: auto;
+  display: flex;
+  width: 100%;
+  max-width: 20rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .loading-spinner-center {
+    max-width: 24rem;
+  }
+}
+
 /* Word fade-in (Home + Club info headings) */
 @keyframes wordFadeInUpBlur {
   from {
@@ -1532,6 +1572,415 @@ body::-webkit-scrollbar {
   }
 }
 
+/* Upcoming events: tablet — fixed frame + scaled chrome (JS handles date push) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  html:has(body.upcoming-events-page),
+  body.upcoming-events-page {
+    overflow-x: clip !important;
+    max-width: 100vw;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  body.upcoming-events-page #site-root,
+  body.upcoming-events-page #site-root > main,
+  body.upcoming-events-page .upcoming-events-page-lock {
+    max-width: 100vw !important;
+    overflow-x: clip !important;
+    overscroll-behavior-x: none;
+  }
+
+  body.upcoming-events-page .upcoming-events-page-lock {
+    touch-action: pan-y;
+    padding-top: 3.5rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-hero,
+  body.upcoming-events-page .upcoming-programs-banner {
+    max-width: 100%;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook {
+    overflow: hidden !important;
+    box-shadow: 0 14px 36px rgba(98, 32, 47, 0.13), 0 1px 0 rgba(251, 247, 232, 0.8) inset !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-body.scrapbook-lines {
+    background-size: auto 26px !important;
+  }
+
+  body.upcoming-events-page .upcoming-month-toc {
+    right: 0;
+    left: auto;
+    max-height: 90vh;
+  }
+
+  body.upcoming-events-page .upcoming-programs-banner {
+    padding-top: 0.7rem !important;
+    padding-bottom: 0.7rem !important;
+  }
+
+  /* Always use JS pin on tablet — disable CSS sticky */
+  body.upcoming-events-page .upcoming-sticky-date {
+    position: relative !important;
+    top: auto !important;
+  }
+}
+
+.upcoming-sticky-date {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 92px;
+  z-index: 1;
+}
+
+/* JS date-push mode */
+.upcoming-sticky-date.is-js-pinned {
+  position: relative !important;
+  top: auto !important;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Upcoming events: mobile only — compact scrapbook planner + page chrome */
+@media (max-width: 767px) {
+  body.upcoming-events-page .upcoming-events-page-lock {
+    padding-top: 3.25rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-hero {
+    margin-left: 0.65rem !important;
+    margin-right: 0.65rem !important;
+    margin-bottom: 1.1rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook {
+    border-radius: 0.95rem !important;
+    box-shadow: 0 10px 28px rgba(98, 32, 47, 0.12), 0 1px 0 rgba(251, 247, 232, 0.8) inset !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-inner {
+    border-radius: 0.85rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook .washi-tape {
+    width: 58px !important;
+    height: 14px !important;
+    top: -0.45rem !important;
+    left: 0.85rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-header {
+    padding: 0.4rem 0.75rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-header p:first-child {
+    font-size: 0.55rem !important;
+    letter-spacing: 0.14em !important;
+    margin-bottom: 0.1rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-header p:last-child {
+    font-size: 0.7rem !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-copy {
+    padding: 0.65rem 0.9rem 0.7rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-copy .planner-sticker {
+    margin-bottom: 0.55rem !important;
+    padding: 0.35rem 0.55rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-copy .planner-sticker span:first-child {
+    font-size: 0.55rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-copy .planner-sticker span:last-child {
+    font-size: 0.7rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-copy h1 {
+    font-size: 1.2rem !important;
+    line-height: 1.12 !important;
+    margin-bottom: 0.45rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-desc {
+    font-size: 0.78rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-cue {
+    font-size: 0.68rem !important;
+    padding: 0.1rem 0.35rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-calendar {
+    padding: 0.5rem 0.75rem 0.85rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-cal-weekdays,
+  body.upcoming-events-page .upcoming-cal-days {
+    gap: 0.2rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-cal-weekdays > div {
+    font-size: 0.55rem !important;
+    padding-top: 0.1rem !important;
+    padding-bottom: 0.1rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-cal-days > div {
+    font-size: 0.65rem !important;
+    border-radius: 0.3rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-calendar > p {
+    margin-top: 0.55rem !important;
+    font-size: 0.55rem !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  body.upcoming-events-page .upcoming-scrapbook-body.scrapbook-lines {
+    background-size: auto 22px !important;
+  }
+
+  body.upcoming-events-page .upcoming-event-card {
+    border-radius: 0.85rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-event-card > div.relative {
+    gap: 0.65rem !important;
+    padding: 0.75rem 0.75rem 0.85rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-event-card .scrapbook-stamp {
+    width: 3.1rem !important;
+    height: 3.1rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-event-card h3 {
+    font-size: 1rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  body.upcoming-events-page .upcoming-event-card p {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Past events: tablet — fixed frame + scaled chrome (JS handles date push) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  html:has(body.past-events-page),
+  body.past-events-page {
+    overflow-x: clip !important;
+    max-width: 100vw;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  body.past-events-page #site-root,
+  body.past-events-page #site-root > main,
+  body.past-events-page .past-events-page-lock {
+    max-width: 100vw !important;
+    overflow-x: clip !important;
+    overscroll-behavior-x: none;
+  }
+
+  body.past-events-page .past-events-page-lock {
+    touch-action: pan-y;
+    padding-top: 3.5rem !important;
+    padding-bottom: 4rem !important;
+  }
+
+  body.past-events-page .past-hero,
+  body.past-events-page .past-featured-banner {
+    max-width: 100%;
+  }
+
+  body.past-events-page .past-hero {
+    overflow: visible !important;
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  body.past-events-page .past-scrapbook {
+    overflow: visible !important;
+    box-shadow: 0 14px 36px rgba(98, 32, 47, 0.13), 0 1px 0 rgba(251, 247, 232, 0.8) inset !important;
+  }
+
+  /* Keep washi tapes hanging outside the scrapbook edge on tablet */
+  body.past-events-page .past-scrapbook .washi-tape {
+    z-index: 2;
+  }
+
+  body.past-events-page .past-scrapbook-copy.scrapbook-lines {
+    background-size: auto 26px !important;
+  }
+
+  body.past-events-page .past-featured-banner {
+    padding-top: 0.7rem !important;
+    padding-bottom: 0.7rem !important;
+  }
+
+  /* Always use JS pin on tablet — disable CSS sticky */
+  body.past-events-page .past-sticky-date {
+    position: relative !important;
+    top: auto !important;
+  }
+}
+
+.past-sticky-date {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 92px;
+  z-index: 1;
+}
+
+.past-sticky-date.is-js-pinned {
+  position: relative !important;
+  top: auto !important;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Past events: mobile only — compact memory scrapbook + cards */
+@media (max-width: 767px) {
+  body.past-events-page .past-events-page-lock {
+    padding-top: 3.25rem !important;
+    padding-bottom: 3.5rem !important;
+  }
+
+  body.past-events-page .past-hero {
+    margin-left: 0.65rem !important;
+    margin-right: 0.65rem !important;
+    margin-bottom: 1.1rem !important;
+  }
+
+  body.past-events-page .past-scrapbook {
+    border-radius: 0.95rem !important;
+    box-shadow: 0 10px 28px rgba(98, 32, 47, 0.12), 0 1px 0 rgba(251, 247, 232, 0.8) inset !important;
+  }
+
+  body.past-events-page .past-scrapbook-inner {
+    border-radius: 0.85rem !important;
+  }
+
+  body.past-events-page .past-scrapbook .washi-tape {
+    width: 58px !important;
+    height: 14px !important;
+  }
+
+  body.past-events-page .past-scrapbook .washi-tape-wide {
+    width: 72px !important;
+  }
+
+  body.past-events-page .past-scrapbook-header {
+    padding: 0.4rem 0.75rem !important;
+  }
+
+  body.past-events-page .past-scrapbook-header p:first-child {
+    font-size: 0.55rem !important;
+    letter-spacing: 0.14em !important;
+    margin-bottom: 0.1rem !important;
+  }
+
+  body.past-events-page .past-scrapbook-header p:last-child {
+    font-size: 0.7rem !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  body.past-events-page .past-scrapbook-calendar {
+    padding: 0.5rem 0.75rem 0.7rem !important;
+  }
+
+  body.past-events-page .past-cal-weekdays,
+  body.past-events-page .past-cal-days {
+    gap: 0.2rem !important;
+  }
+
+  body.past-events-page .past-cal-weekdays > div {
+    font-size: 0.55rem !important;
+    padding-top: 0.1rem !important;
+    padding-bottom: 0.1rem !important;
+  }
+
+  body.past-events-page .past-cal-days > div {
+    font-size: 0.65rem !important;
+    border-radius: 0.3rem !important;
+  }
+
+  body.past-events-page .past-scrapbook-calendar > p {
+    margin-top: 0.55rem !important;
+    font-size: 0.55rem !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  body.past-events-page .past-scrapbook-copy {
+    padding: 0.65rem 0.9rem 0.7rem !important;
+  }
+
+  body.past-events-page .past-scrapbook-sticker {
+    margin-bottom: 0.4rem !important;
+    padding: 0.28rem 0.45rem !important;
+  }
+
+  body.past-events-page .past-scrapbook-sticker span:first-child {
+    font-size: 0.48rem !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  body.past-events-page .past-scrapbook-sticker span:last-child {
+    font-size: 0.62rem !important;
+  }
+
+  body.past-events-page .past-scrapbook-copy h1 {
+    font-size: 1.4rem !important;
+    line-height: 1.12 !important;
+    margin-bottom: 0.4rem !important;
+  }
+
+  body.past-events-page .past-scrapbook-desc {
+    font-size: 0.78rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  body.past-events-page .past-scrapbook-cue {
+    font-size: 0.68rem !important;
+    padding: 0.1rem 0.35rem !important;
+  }
+
+  body.past-events-page .past-event-card {
+    border-radius: 0.85rem !important;
+  }
+
+  body.past-events-page .past-event-card > div.relative {
+    gap: 0.65rem !important;
+    padding: 0.75rem 0.75rem 0.85rem !important;
+  }
+
+  body.past-events-page .past-event-card .scrapbook-stamp {
+    width: 3.1rem !important;
+    height: 3.1rem !important;
+  }
+
+  body.past-events-page .past-event-card h3 {
+    font-size: 1rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  body.past-events-page .past-event-card p {
+    font-size: 0.75rem !important;
+  }
+}
+
 /* Scrapbook / planner shared accents */
 .scrapbook-paper {
   background-image:
@@ -1705,6 +2154,157 @@ body::-webkit-scrollbar {
 .past-events-link:hover,
 .past-events-link:focus-visible {
   animation: pastEventsWiggle 0.45s ease;
+}
+
+@keyframes pastGallerySwipeIn {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pastGallerySwipeOut {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+/* Overlay sheet — covers past events while that page stays still underneath */
+.past-gallery-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-brown-dark);
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translate3d(100%, 0, 0);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.past-gallery-sheet.is-open {
+  transform: translate3d(0, 0, 0);
+}
+
+.past-gallery-sheet.is-exiting {
+  transform: translate3d(100%, 0, 0);
+  transition-duration: 0.7s;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.past-gallery-page {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100dvh;
+  background: var(--color-brown-dark);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Standalone hard-nav page — same swipe in/out as the sheet */
+.past-gallery-page:not(.past-gallery-page--sheet) {
+  transform: translate3d(100%, 0, 0);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.past-gallery-page:not(.past-gallery-page--sheet).is-open {
+  transform: translate3d(0, 0, 0);
+}
+
+.past-gallery-page:not(.past-gallery-page--sheet).is-exiting {
+  transform: translate3d(100%, 0, 0);
+  transition-duration: 0.7s;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.past-gallery-page--sheet {
+  transform: none;
+  transition: none;
+  min-height: 100%;
+}
+
+html:has(body.past-gallery-page-open),
+body.past-gallery-page-open {
+  overflow-x: clip;
+}
+
+body.past-gallery-sheet-open {
+  overflow: hidden;
+}
+
+/* Keep past events painted and still under the sheet — do not restyle it */
+body.past-gallery-sheet-open .past-events-page-lock {
+  pointer-events: none;
+}
+
+body.past-gallery-page-open #site-root > main {
+  overflow-x: clip;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .past-gallery-sheet,
+  .past-gallery-sheet.is-open,
+  .past-gallery-sheet.is-exiting,
+  .past-gallery-page,
+  .past-gallery-page.is-open,
+  .past-gallery-page.is-exiting {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Past gallery: tablet — smaller recap + video; photo masonry stays as-is */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .past-gallery-page .past-gallery-recap {
+    max-width: 40rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    padding-bottom: 2.75rem !important;
+  }
+
+  .past-gallery-page .past-gallery-recap h1 {
+    font-size: 2.15rem !important;
+    line-height: 1.08 !important;
+  }
+
+  .past-gallery-page .past-gallery-recap > p:first-child {
+    font-size: 0.625rem !important;
+  }
+
+  .past-gallery-page .past-gallery-recap > p:nth-child(3) {
+    font-size: 0.875rem !important;
+  }
+
+  .past-gallery-page .past-gallery-recap .space-y-2\.5 p,
+  .past-gallery-page .past-gallery-recap [class*='space-y'] > p {
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .past-gallery-page .past-gallery-video {
+    padding-bottom: 3rem !important;
+  }
+
+  .past-gallery-page .past-gallery-video > div {
+    max-width: min(100%, 28rem) !important;
+  }
+
+  .past-gallery-page .past-gallery-video video {
+    max-height: min(62vh, 28rem) !important;
+  }
 }
 
 /* Club card — Open memory CTA */
@@ -1897,6 +2497,125 @@ body::-webkit-scrollbar {
 .friday-lesson-card.is-in .friday-lesson-copy {
   opacity: 1;
   transform: translate3d(0, 0, 0);
+}
+
+/* Phone: thinner “What We Taught” banner + smaller lesson copy */
+@media (max-width: 767px) {
+  .friday-lessons-header {
+    margin-bottom: 1.75rem !important;
+  }
+
+  .friday-lessons-header-card {
+    padding: 0.7rem 0.85rem !important;
+  }
+
+  .friday-lessons-header-card h2 {
+    font-size: 1.55rem !important;
+    line-height: 0.95 !important;
+  }
+
+  .friday-lessons-header-card > p[aria-hidden] {
+    font-size: 3.25rem !important;
+    top: -0.35rem !important;
+    right: -0.15rem !important;
+  }
+
+  .friday-lessons-header-card .max-w-md {
+    font-size: 0.7rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .friday-lesson-card {
+    padding: 0.85rem 0.9rem !important;
+  }
+
+  .friday-lesson-week-num {
+    font-size: 1.35rem !important;
+  }
+
+  .friday-lesson-copy h3 {
+    font-size: 1.05rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .friday-lesson-summary {
+    font-size: 0.75rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .friday-board-item {
+    gap: 0.5rem !important;
+    font-size: 0.75rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .friday-board-item > span:first-child {
+    font-size: 0.625rem !important;
+  }
+
+  .friday-lesson-slides {
+    max-width: none;
+    width: 100%;
+  }
+
+  .friday-slide-carousel {
+    border-width: 1.5px !important;
+  }
+
+  .friday-slide-carousel-frame {
+    aspect-ratio: 16 / 9 !important;
+    max-height: none;
+  }
+}
+
+/* Tablet: compact side-by-side lessons + thinner slideshows */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .friday-lessons-header-card {
+    padding: 0.85rem 1.1rem !important;
+  }
+
+  .friday-lessons-header-card h2 {
+    font-size: 2rem !important;
+    line-height: 0.95 !important;
+  }
+
+  .friday-lesson-card {
+    padding: 1rem 1.1rem !important;
+  }
+
+  .friday-lesson-slides {
+    max-width: none;
+    width: 100%;
+    justify-self: stretch;
+    align-self: center;
+  }
+
+  .friday-lesson-card.slides-from-left .friday-lesson-slides {
+    justify-self: stretch;
+    align-self: center;
+  }
+
+  .friday-slide-carousel {
+    border-width: 1.5px !important;
+    width: 100%;
+  }
+
+  .friday-slide-carousel-frame {
+    aspect-ratio: 16 / 9 !important;
+    max-height: none;
+    min-height: 11.5rem;
+  }
+
+  .friday-lesson-copy h3 {
+    font-size: 1.35rem !important;
+  }
+
+  .friday-lesson-copy p,
+  .friday-board-item {
+    font-size: 0.85rem !important;
+  }
 }
 
 .friday-carousel-slide {

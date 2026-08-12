@@ -648,8 +648,11 @@ export default function JoinUs() {
 
   if (isSubmitting && submitStatus === 'idle') {
     return (
-      <main className="min-h-screen pt-[120px] pb-[120px] flex items-center justify-center join-us-page-lock" style={{ background: 'transparent' }}>
-        <div className="text-center">
+      <main
+        className="fixed inset-0 z-[50] flex items-center justify-center px-6 join-us-page-lock"
+        style={{ background: 'var(--color-brown-dark)' }}
+      >
+        <div className="flex flex-col items-center text-center">
           <div className="mb-6 inline-block h-12 w-12 rounded-full border-4 border-[var(--color-cream)]/30 border-t-[var(--color-cream)] animate-spin" />
           <p className="text-xl font-medium text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
             {content.loading.message}

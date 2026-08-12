@@ -19,26 +19,104 @@ const EVENT_TYPE_STICKERS = {
   holiday: '/assets/events/holiday.png',
 } as const
 
-function useScrollReveal<T extends HTMLElement>(rootMargin = '0px 0px -8% 0px', threshold = 0.1) {
-  const ref = useRef<T>(null)
-  const [visible, setVisible] = useState(false)
+/** iPad/Safari CSS sticky often only updates on scroll-up; emulate the push with transforms. */
+function needsStickyDatePolyfill() {
+  if (typeof window === 'undefined') return false
+  if (!window.matchMedia('(min-width: 768px)').matches) return false
+  // Tablet widths: always use JS (CSS sticky is unreliable here)
+  if (window.matchMedia('(max-width: 1023px)').matches) return true
+  const coarse = window.matchMedia('(pointer: coarse)').matches
+  const noHover = window.matchMedia('(hover: none)').matches
+  const iPadOS =
+    navigator.maxTouchPoints > 1 &&
+    (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+  return coarse || noHover || iPadOS
+}
 
+const STICKY_DATE_TOP = 92
+
+function useStickyDatePush(revision: string | number) {
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return
-        setVisible(true)
-        observer.unobserve(el)
-      },
-      { threshold, rootMargin }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [rootMargin, threshold])
+    let active = needsStickyDatePolyfill()
+    let raf = 0
+    let idleTimer = 0
+    let looping = false
 
-  return { ref, visible }
+    const sync = () => {
+      if (!active) return
+      document.querySelectorAll<HTMLElement>('[data-date-row]').forEach(row => {
+        const pin = row.querySelector<HTMLElement>('[data-date-pin]')
+        if (!pin) return
+        pin.classList.add('is-js-pinned')
+        const rowTop = row.getBoundingClientRect().top
+        const maxY = Math.max(0, row.offsetHeight - pin.offsetHeight)
+        const y = Math.max(0, Math.min(maxY, STICKY_DATE_TOP - rowTop))
+        pin.style.transform = `translate3d(0, ${y}px, 0)`
+      })
+    }
+
+    const loop = () => {
+      sync()
+      if (looping) {
+        raf = requestAnimationFrame(loop)
+      } else {
+        raf = 0
+        sync()
+      }
+    }
+
+    const startLoop = () => {
+      if (!active) return
+      window.clearTimeout(idleTimer)
+      if (!looping) {
+        looping = true
+        raf = requestAnimationFrame(loop)
+      }
+      idleTimer = window.setTimeout(() => {
+        looping = false
+      }, 200)
+    }
+
+    const onChange = () => {
+      active = needsStickyDatePolyfill()
+      if (!active) {
+        looping = false
+        document.querySelectorAll<HTMLElement>('[data-date-pin]').forEach(pin => {
+          pin.classList.remove('is-js-pinned')
+          pin.style.transform = ''
+        })
+        return
+      }
+      startLoop()
+    }
+
+    sync()
+    window.addEventListener('scroll', startLoop, { passive: true })
+    window.addEventListener('resize', onChange)
+    document.addEventListener('touchstart', startLoop, { passive: true })
+    document.addEventListener('touchmove', startLoop, { passive: true })
+    document.addEventListener('touchend', startLoop, { passive: true })
+
+    const tabletMq = window.matchMedia('(min-width: 768px) and (max-width: 1023px)')
+    tabletMq.addEventListener('change', onChange)
+
+    return () => {
+      window.removeEventListener('scroll', startLoop)
+      window.removeEventListener('resize', onChange)
+      document.removeEventListener('touchstart', startLoop)
+      document.removeEventListener('touchmove', startLoop)
+      document.removeEventListener('touchend', startLoop)
+      tabletMq.removeEventListener('change', onChange)
+      window.clearTimeout(idleTimer)
+      looping = false
+      if (raf) cancelAnimationFrame(raf)
+      document.querySelectorAll<HTMLElement>('[data-date-pin]').forEach(pin => {
+        pin.classList.remove('is-js-pinned')
+        pin.style.transform = ''
+      })
+    }
+  }, [revision])
 }
 
 function UpcomingToolsAndTitle({
@@ -46,47 +124,48 @@ function UpcomingToolsAndTitle({
   setSearchQuery,
   filterType,
   setFilterType,
+  reveal,
 }: {
   searchQuery: string
   setSearchQuery: (v: string) => void
   filterType: 'all' | 'holiday' | 'school' | 'club'
   setFilterType: (v: 'all' | 'holiday' | 'school' | 'club') => void
+  reveal: boolean
 }) {
-  const { ref, visible } = useScrollReveal<HTMLDivElement>('0px 0px -10% 0px', 0.12)
   const [stage, setStage] = useState(0)
   // 0 = hidden, 1 = search/filters, 2 = title, 3 = logo
 
   useEffect(() => {
-    if (!visible) {
+    if (!reveal) {
       setStage(0)
       return
     }
     setStage(1)
-    const titleTimer = window.setTimeout(() => setStage(2), 520)
-    const logoTimer = window.setTimeout(() => setStage(3), 520 + 780)
+    const titleTimer = window.setTimeout(() => setStage(2), 750)
+    const logoTimer = window.setTimeout(() => setStage(3), 750 + 1000)
     return () => {
       window.clearTimeout(titleTimer)
       window.clearTimeout(logoTimer)
     }
-  }, [visible])
+  }, [reveal])
 
   const searchReady = stage >= 1
   const titleReady = stage >= 2
   const logoReady = stage >= 3
 
   return (
-    <div ref={ref} className="mb-10 md:mb-28 lg:mb-32">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-3 mb-20 md:mb-40 lg:mb-48">
+    <div className="mb-10 md:mb-16 lg:mb-32">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 md:gap-3 mb-20 md:mb-24 lg:mb-48">
         <div
-          className={`relative w-full sm:flex-1 sm:max-w-xl md:max-w-2xl lg:max-w-3xl transition-all duration-700 ease-out ${searchReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-5'}`}
+          className={`relative w-full sm:flex-1 sm:max-w-xl md:max-w-xl lg:max-w-3xl transition-all duration-700 ease-out ${searchReady ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-5'}`}
         >
-          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search upcoming events..." className="w-full h-10 md:h-12 pl-9 md:pl-11 pr-9 md:pr-11 rounded-lg md:rounded-xl border-2 focus:outline-none text-sm md:text-base" style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-cream)', borderColor: searchQuery ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)', color: 'var(--color-brown-dark)' }} />
-          <svg className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5" style={{ color: 'var(--color-olive)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search upcoming events..." className="w-full h-10 md:h-11 lg:h-12 pl-9 md:pl-10 lg:pl-11 pr-9 md:pr-10 lg:pr-11 rounded-lg md:rounded-xl border-2 focus:outline-none text-sm md:text-[0.95rem] lg:text-base" style={{ fontFamily: 'var(--font-kollektif)', background: 'var(--color-cream)', borderColor: searchQuery ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)', color: 'var(--color-brown-dark)' }} />
+          <svg className="absolute left-3 md:left-3.5 lg:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-[1.1rem] md:h-[1.1rem] lg:w-5 lg:h-5" style={{ color: 'var(--color-olive)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           {searchQuery && (
-            <button type="button" onClick={() => setSearchQuery('')} className="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 w-7 h-7 md:w-9 md:h-9 rounded-lg transition-all" style={{ background: 'rgba(98, 32, 47, 0.1)', color: 'var(--color-brown-dark)' }} aria-label="Clear search">
-              <svg className="w-4 h-4 md:w-5 md:h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button type="button" onClick={() => setSearchQuery('')} className="absolute right-2 md:right-2.5 lg:right-3 top-1/2 -translate-y-1/2 w-7 h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 rounded-lg transition-all" style={{ background: 'rgba(98, 32, 47, 0.1)', color: 'var(--color-brown-dark)' }} aria-label="Clear search">
+              <svg className="w-4 h-4 md:w-[1.1rem] md:h-[1.1rem] lg:w-5 lg:h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -97,23 +176,23 @@ function UpcomingToolsAndTitle({
           style={{ transitionDelay: searchReady ? '100ms' : '0ms' }}
         >
           {(['all', 'club', 'school', 'holiday'] as const).map(t => (
-            <button key={t} type="button" onClick={() => setFilterType(t)} className="h-8 md:h-10 px-2.5 md:px-4 rounded-lg font-semibold text-xs md:text-sm transition-all" style={{ fontFamily: 'var(--font-kollektif)', background: filterType === t ? 'var(--color-brown-dark)' : 'var(--color-cream)', color: filterType === t ? 'var(--color-cream)' : 'var(--color-brown-dark)', border: `2px solid ${filterType === t ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)'}` }}>
+            <button key={t} type="button" onClick={() => setFilterType(t)} className="h-8 md:h-9 lg:h-10 px-2.5 md:px-3 lg:px-4 rounded-lg font-semibold text-xs md:text-[0.8rem] lg:text-sm transition-all" style={{ fontFamily: 'var(--font-kollektif)', background: filterType === t ? 'var(--color-brown-dark)' : 'var(--color-cream)', color: filterType === t ? 'var(--color-cream)' : 'var(--color-brown-dark)', border: `2px solid ${filterType === t ? 'var(--color-brown-dark)' : 'rgba(234, 225, 203, 0.55)'}` }}>
               {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-3 md:gap-5 px-1">
+      <div className="flex flex-col items-center gap-3 md:gap-4 lg:gap-5 px-1">
         <h2
-          className="text-[2.35rem] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-tight text-center leading-[1.05]"
+          className="text-[2.35rem] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl font-bold uppercase tracking-tight text-center leading-[1.05]"
           style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-pink-medium)' }}
         >
           {['Upcoming', 'events'].map((word, i) => (
             <span key={word}>
               <span
                 className={`inline-block transition-all duration-700 ease-out ${titleReady ? 'opacity-100 translate-y-0 blur-0' : 'opacity-0 translate-y-6 blur-sm'}`}
-                style={{ transitionDelay: titleReady ? `${i * 160}ms` : '0ms' }}
+                style={{ transitionDelay: titleReady ? `${i * 220}ms` : '0ms' }}
               >
                 {word}
               </span>
@@ -122,7 +201,7 @@ function UpcomingToolsAndTitle({
           ))}
         </h2>
         <span
-          className={`relative flex items-center justify-center flex-shrink-0 w-20 h-20 md:w-28 md:h-28 transition-all duration-700 ease-out ${logoReady ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-6'}`}
+          className={`relative flex items-center justify-center flex-shrink-0 w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 transition-all duration-700 ease-out ${logoReady ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-6'}`}
           style={{
             background: 'var(--color-pink-medium)',
             borderRadius: '9999px',
@@ -290,6 +369,8 @@ export default function UpcomingEventsPage() {
   const [today, setToday] = useState(() => normalizeDay(new Date()))
   const [heroCardVisible, setHeroCardVisible] = useState(false)
   const [heroTextVisible, setHeroTextVisible] = useState(false)
+  const [bannerVisible, setBannerVisible] = useState(false)
+  const [toolsVisible, setToolsVisible] = useState(false)
   const [tocOpen, setTocOpen] = useState(false)
   const [tocYear, setTocYear] = useState<number | null>(null)
   const [activeMonthKey, setActiveMonthKey] = useState<number | null>(null)
@@ -305,6 +386,7 @@ export default function UpcomingEventsPage() {
 
   // Match join-us transition pattern: set transition first, then background change.
   useEffect(() => {
+    document.body.classList.add('upcoming-events-page')
     const rafId = requestAnimationFrame(() => {
       document.body.style.transition = 'background 0.8s ease-in-out'
       document.documentElement.style.transition = 'background 0.8s ease-in-out'
@@ -313,16 +395,23 @@ export default function UpcomingEventsPage() {
         document.documentElement.style.background = 'var(--color-olive)'
       })
     })
-    return () => cancelAnimationFrame(rafId)
+    return () => {
+      cancelAnimationFrame(rafId)
+      document.body.classList.remove('upcoming-events-page')
+    }
   }, [])
 
-  // Stage reveal: background first, then hero card, then hero text.
+  // Stage reveal: scrapbook → banner → search/title (paced so each finishes before the next)
   useEffect(() => {
     const cardTimer = setTimeout(() => setHeroCardVisible(true), 900)
-    const textTimer = setTimeout(() => setHeroTextVisible(true), 1200)
+    const textTimer = setTimeout(() => setHeroTextVisible(true), 1500)
+    const bannerTimer = setTimeout(() => setBannerVisible(true), 2500)
+    const toolsTimer = setTimeout(() => setToolsVisible(true), 3400)
     return () => {
       clearTimeout(cardTimer)
       clearTimeout(textTimer)
+      clearTimeout(bannerTimer)
+      clearTimeout(toolsTimer)
     }
   }, [])
 
@@ -334,27 +423,33 @@ export default function UpcomingEventsPage() {
     }
   }, [])
 
-  // Mobile: lock page to vertical scroll only (carousels handle their own horizontal swipe)
+  // Phone + tablet: lock horizontal swipe (JS date-push does not need overflow visible)
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
+    const mq = window.matchMedia('(max-width: 1023px)')
+    const html = document.documentElement
+    const body = document.body
+    const prevHtml = html.style.overflowX
+    const prevBody = body.style.overflowX
+    const prevTouch = body.style.touchAction
+
     const apply = () => {
       if (mq.matches) {
-        document.documentElement.style.overflowX = 'hidden'
-        document.body.style.overflowX = 'hidden'
-        document.body.style.touchAction = 'pan-y'
+        html.style.overflowX = 'clip'
+        body.style.overflowX = 'clip'
+        body.style.touchAction = 'pan-y'
       } else {
-        document.documentElement.style.overflowX = ''
-        document.body.style.overflowX = ''
-        document.body.style.touchAction = ''
+        html.style.overflowX = ''
+        body.style.overflowX = ''
+        body.style.touchAction = ''
       }
     }
     apply()
     mq.addEventListener('change', apply)
     return () => {
       mq.removeEventListener('change', apply)
-      document.documentElement.style.overflowX = ''
-      document.body.style.overflowX = ''
-      document.body.style.touchAction = ''
+      html.style.overflowX = prevHtml
+      body.style.overflowX = prevBody
+      body.style.touchAction = prevTouch
     }
   }, [])
 
@@ -440,6 +535,9 @@ export default function UpcomingEventsPage() {
     }
     return years
   }, [groupedByMonth])
+
+  const stickyRevision = `${displayEvents.length}:${filterType}:${searchQuery}`
+  useStickyDatePush(stickyRevision)
 
   useEffect(() => {
     if (tocByYear.length === 0) {
@@ -554,7 +652,7 @@ export default function UpcomingEventsPage() {
 
     return (
       <article
-        className="relative scrapbook-paper w-full overflow-hidden rounded-[1.1rem] md:rounded-[1.5rem] border-2 transition-transform duration-300 md:hover:-translate-y-0.5"
+        className="upcoming-event-card relative scrapbook-paper w-full overflow-hidden rounded-[1.1rem] md:rounded-[1.35rem] lg:rounded-[1.5rem] border-2 transition-transform duration-300 md:hover:-translate-y-0.5"
         style={{
           background: typeAccent.cardBg,
           borderColor: 'var(--color-brown-dark)',
@@ -563,15 +661,15 @@ export default function UpcomingEventsPage() {
       >
         {/* Soft top accent strip — absolute so it hugs the card edges */}
         <div
-          className="absolute inset-x-0 top-0 z-[1] h-1.5 md:h-2"
+          className="absolute inset-x-0 top-0 z-[1] h-1.5 md:h-1.5 lg:h-2"
           style={{ background: typeAccent.bg }}
           aria-hidden
         />
 
-        <div className="relative flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-6 p-4 pt-5 sm:p-5 sm:pt-6 md:p-7 md:pt-8">
+        <div className="relative flex flex-col sm:flex-row gap-4 sm:gap-5 md:gap-5 lg:gap-6 p-4 pt-5 sm:p-5 sm:pt-6 md:p-5 md:pt-6 lg:p-7 lg:pt-8">
           {/* Type sticker */}
           <div
-            className="scrapbook-stamp shrink-0 self-start relative w-[4.25rem] h-[4.25rem] md:w-[5.25rem] md:h-[5.25rem] -rotate-6"
+            className="scrapbook-stamp shrink-0 self-start relative w-[4.25rem] h-[4.25rem] md:w-[4.5rem] md:h-[4.5rem] lg:w-[5.25rem] lg:h-[5.25rem] -rotate-6"
             aria-hidden
           >
             <Image
@@ -625,7 +723,7 @@ export default function UpcomingEventsPage() {
             </div>
 
             <h3
-              className="text-xl sm:text-2xl md:text-3xl lg:text-[2.1rem] font-bold leading-tight mb-2"
+              className="text-xl sm:text-2xl md:text-2xl lg:text-[2.1rem] font-bold leading-tight mb-2"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
             >
               {event.title}
@@ -641,7 +739,7 @@ export default function UpcomingEventsPage() {
 
             {event.description && (
               <p
-                className="text-[0.95rem] sm:text-base md:text-lg leading-relaxed"
+                className="text-[0.95rem] sm:text-base md:text-[0.95rem] lg:text-lg leading-relaxed"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-medium)', lineHeight: 1.75 }}
               >
                 {event.description}
@@ -727,14 +825,14 @@ export default function UpcomingEventsPage() {
   }
 
   return (
-    <main
-      className="min-h-screen pt-[60px] pb-20 overflow-x-hidden md:overflow-x-visible max-w-[100vw] md:max-w-none"
+    <div
+      className="upcoming-events-page-lock min-h-screen pt-[60px] pb-20 overflow-x-clip max-w-[100vw]"
       style={{ background: 'transparent', touchAction: 'pan-y' }}
     >
       {/* Hero — scrapbook planner calendar */}
-      <section className="mx-3 sm:mx-4 md:mx-24 mb-8 md:mb-14">
+      <section className="upcoming-hero mx-3 sm:mx-4 md:mx-10 lg:mx-24 mb-8 md:mb-12 lg:mb-14">
         <div
-          className={`relative scrapbook-paper rounded-[1.25rem] md:rounded-[1.75rem] overflow-visible border-2 transition-all duration-700 ease-out ${heroCardVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          className={`upcoming-scrapbook relative scrapbook-paper rounded-[1.25rem] md:rounded-[1.55rem] lg:rounded-[1.75rem] overflow-hidden lg:overflow-visible border-2 transition-all duration-700 ease-out ${heroCardVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
           style={{
             background: 'var(--color-cream)',
             borderColor: 'var(--color-brown-dark)',
@@ -742,23 +840,23 @@ export default function UpcomingEventsPage() {
           }}
         >
           {/* Washi tape strips */}
-          <div className="washi-tape washi-tape-pink -top-3 left-6 sm:left-8 md:left-16 -rotate-6" aria-hidden />
-          <div className="hidden sm:block washi-tape washi-tape-olive -top-2 right-16 md:right-28 rotate-3" aria-hidden />
+          <div className="washi-tape washi-tape-pink -top-3 left-6 sm:left-8 md:left-12 lg:left-16 -rotate-6" aria-hidden />
+          <div className="hidden sm:block washi-tape washi-tape-olive -top-2 right-16 md:right-20 lg:right-28 rotate-3" aria-hidden />
 
           {/* Paper corner fold */}
           <div className="scrapbook-corner hidden sm:block" aria-hidden />
 
-          <div className="overflow-hidden rounded-[1.15rem] md:rounded-[1.65rem]">
+          <div className="upcoming-scrapbook-inner overflow-hidden rounded-[1.15rem] md:rounded-[1.45rem] lg:rounded-[1.65rem]">
             {/* Calendar binding / header */}
             <div
-              className="relative px-4 sm:px-6 md:px-10 py-3.5 md:py-5 flex items-center justify-center md:justify-between gap-3 md:gap-4"
+              className="upcoming-scrapbook-header relative px-4 sm:px-6 md:px-8 lg:px-10 py-3.5 md:py-4 lg:py-5 flex items-center justify-center md:justify-between gap-3 md:gap-3.5 lg:gap-4"
               style={{ background: 'var(--color-brown-dark)' }}
             >
-              <div className="hidden md:flex items-center gap-2.5" aria-hidden>
+              <div className="hidden md:flex items-center gap-2 md:gap-2 lg:gap-2.5" aria-hidden>
                 {[0, 1, 2, 3].map(i => (
                   <span
                     key={i}
-                    className="planner-ring w-3 h-3 md:w-3.5 md:h-3.5 rounded-full border-2"
+                    className="planner-ring w-3 h-3 md:w-3 md:h-3 lg:w-3.5 lg:h-3.5 rounded-full border-2"
                     style={{
                       background: 'var(--color-pink-light)',
                       borderColor: 'rgba(248, 218, 212, 0.5)',
@@ -769,23 +867,23 @@ export default function UpcomingEventsPage() {
               </div>
               <div className="text-center min-w-0 px-1">
                 <p
-                  className="text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.28em] mb-1"
+                  className="text-[9px] sm:text-[10px] md:text-[11px] lg:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.28em] mb-1"
                   style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive-light)' }}
                 >
                   Scrapbook planner
                 </p>
                 <p
-                  className="text-xs sm:text-sm md:text-base font-bold uppercase tracking-[0.14em] sm:tracking-[0.22em]"
+                  className="text-xs sm:text-sm md:text-[0.95rem] lg:text-base font-bold uppercase tracking-[0.14em] sm:tracking-[0.22em]"
                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-light)' }}
                 >
                   {today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                 </p>
               </div>
-              <div className="hidden md:flex items-center gap-2.5" aria-hidden>
+              <div className="hidden md:flex items-center gap-2 md:gap-2 lg:gap-2.5" aria-hidden>
                 {[0, 1, 2, 3].map(i => (
                   <span
                     key={i}
-                    className="planner-ring w-3 h-3 md:w-3.5 md:h-3.5 rounded-full border-2"
+                    className="planner-ring w-3 h-3 md:w-3 md:h-3 lg:w-3.5 lg:h-3.5 rounded-full border-2"
                     style={{
                       background: 'var(--color-pink-light)',
                       borderColor: 'rgba(248, 218, 212, 0.5)',
@@ -796,12 +894,12 @@ export default function UpcomingEventsPage() {
               </div>
             </div>
 
-            {/* Calendar page body */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 min-h-0 md:min-h-[400px] scrapbook-lines">
-              <div className="relative flex flex-col justify-center px-5 sm:px-6 md:px-10 lg:px-14 py-8 sm:py-10 md:py-14 border-b-2 lg:border-b-0 lg:border-r-2" style={{ borderColor: 'rgba(187, 180, 123, 0.45)' }}>
+            {/* Calendar page body — side-by-side from tablet up (desktop layout, scaled down) */}
+            <div className="upcoming-scrapbook-body grid grid-cols-1 md:grid-cols-2 min-h-0 md:min-h-[320px] lg:min-h-[400px] scrapbook-lines">
+              <div className="upcoming-scrapbook-copy relative flex flex-col justify-center px-5 sm:px-6 md:px-8 lg:px-14 py-8 sm:py-10 md:py-10 lg:py-14 border-b-2 md:border-b-0 md:border-r-2" style={{ borderColor: 'rgba(187, 180, 123, 0.45)' }}>
                 {/* Polaroid-ish date sticker */}
                 <div
-                  className={`planner-sticker mb-4 md:mb-5 w-fit px-3 py-2 rounded-md border-2 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0 rotate-[-2deg]' : 'opacity-0 translate-y-3'}`}
+                  className={`planner-sticker mb-4 md:mb-4 lg:mb-5 w-fit px-3 py-2 md:px-2.5 md:py-1.5 lg:px-3 lg:py-2 rounded-md border-2 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0 rotate-[-2deg]' : 'opacity-0 translate-y-3'}`}
                   style={{
                     background: 'var(--color-pink-light)',
                     borderColor: 'var(--color-brown-dark)',
@@ -810,33 +908,33 @@ export default function UpcomingEventsPage() {
                     color: 'var(--color-brown-dark)',
                   }}
                 >
-                  <span className="text-[10px] font-bold uppercase tracking-widest block">Today</span>
-                  <span className="text-sm font-bold">
+                  <span className="text-[10px] md:text-[9px] lg:text-[10px] font-bold uppercase tracking-widest block">Today</span>
+                  <span className="text-sm md:text-[0.8rem] lg:text-sm font-bold">
                     {today.toLocaleDateString('en-US', { weekday: 'short' })} · {today.getDate()}
                   </span>
                 </div>
 
                 <h1
-                  className={`text-[1.75rem] leading-[1.12] sm:text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-tight mb-3 md:mb-4 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', transitionDelay: heroTextVisible ? '120ms' : '0ms' }}
+                  className={`text-[1.75rem] leading-[1.12] sm:text-3xl md:text-3xl lg:text-5xl font-bold uppercase tracking-tight mb-3 md:mb-3 lg:mb-4 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', transitionDelay: heroTextVisible ? '180ms' : '0ms' }}
                 >
-                  Discover upcoming events
+                  Look ahead with us
                 </h1>
                 <p
-                  className={`text-[0.95rem] sm:text-base md:text-lg max-w-md mb-6 md:mb-8 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
-                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: '1.6', transitionDelay: heroTextVisible ? '220ms' : '0ms' }}
+                  className={`upcoming-scrapbook-desc text-[0.95rem] sm:text-base md:text-base lg:text-lg max-w-md mb-6 md:mb-5 lg:mb-8 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+                  style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: '1.6', transitionDelay: heroTextVisible ? '340ms' : '0ms' }}
                 >
                   Workshops, community meetups, and volunteer opportunities—pin what&apos;s next in your planner.
                 </p>
                 <p
-                  className={`inline-block w-fit max-w-full text-xs md:text-base italic px-2 py-0.5 md:px-2.5 md:py-1 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+                  className={`upcoming-scrapbook-cue inline-block w-fit max-w-full text-xs md:text-sm lg:text-base italic px-2 py-0.5 md:px-2 md:py-0.5 lg:px-2.5 lg:py-1 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
                   style={{
                     fontFamily: 'var(--font-leiko)',
                     color: 'var(--color-brown-dark)',
                     background: 'linear-gradient(transparent 55%, var(--color-pink-medium) 55%)',
                     boxDecorationBreak: 'clone',
                     WebkitBoxDecorationBreak: 'clone',
-                    transitionDelay: heroTextVisible ? '320ms' : '0ms',
+                    transitionDelay: heroTextVisible ? '500ms' : '0ms',
                   }}
                 >
                   Scroll down to see upcoming events
@@ -844,21 +942,21 @@ export default function UpcomingEventsPage() {
               </div>
 
               <div
-                className={`relative px-4 sm:px-5 md:px-8 lg:px-10 py-6 sm:py-8 md:py-10 flex flex-col justify-center transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
-                style={{ transitionDelay: heroTextVisible ? '200ms' : '0ms' }}
+                className={`upcoming-scrapbook-calendar relative px-4 sm:px-5 md:px-6 lg:px-10 py-6 sm:py-8 md:py-8 lg:py-10 flex flex-col justify-center transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+                style={{ transitionDelay: heroTextVisible ? '280ms' : '0ms' }}
               >
-                <div className="grid grid-cols-7 gap-1 sm:gap-1.5 md:gap-2 mb-2">
+                <div className="grid grid-cols-7 gap-1 sm:gap-1.5 md:gap-1.5 lg:gap-2 mb-2 upcoming-cal-weekdays">
                   {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((label, i) => (
                     <div
                       key={`${label}-${i}`}
-                      className="text-center text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-wider py-1"
+                      className="text-center text-[9px] sm:text-[10px] md:text-[10px] lg:text-xs font-bold uppercase tracking-wider py-1"
                       style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive)' }}
                     >
                       {label}
                     </div>
                   ))}
                 </div>
-                <div className="grid grid-cols-7 gap-1 sm:gap-1.5 md:gap-2">
+                <div className="grid grid-cols-7 gap-1 sm:gap-1.5 md:gap-1.5 lg:gap-2 upcoming-cal-days">
                   {heroMonthGrid.map((day, i) => {
                     const isToday = day === today.getDate()
                     const hasEvent = day != null && heroEventDays.has(day)
@@ -866,7 +964,7 @@ export default function UpcomingEventsPage() {
                     return (
                       <div
                         key={i}
-                        className="relative aspect-square rounded-md sm:rounded-lg flex flex-col items-center justify-center text-[11px] sm:text-sm md:text-base font-bold tabular-nums"
+                        className="relative aspect-square rounded-md sm:rounded-lg flex flex-col items-center justify-center text-[11px] sm:text-sm md:text-sm lg:text-base font-bold tabular-nums"
                         style={{
                           fontFamily: 'var(--font-kollektif)',
                           background: day == null
@@ -906,7 +1004,7 @@ export default function UpcomingEventsPage() {
                   })}
                 </div>
                 <p
-                  className="mt-3 sm:mt-4 text-[10px] sm:text-[11px] md:text-xs font-semibold uppercase tracking-widest"
+                  className="mt-3 sm:mt-4 md:mt-3 lg:mt-4 text-[10px] sm:text-[11px] md:text-[10px] lg:text-xs font-semibold uppercase tracking-widest"
                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive)' }}
                 >
                   ● Pink dots = club events this month
@@ -918,11 +1016,13 @@ export default function UpcomingEventsPage() {
       </section>
 
       {/* Short programs teaser — full detail lives on Club Info */}
-      <section className="mx-3 sm:mx-4 md:mx-24 mb-10 md:mb-16">
+      <section className="mx-3 sm:mx-4 md:mx-10 lg:mx-24 mb-10 md:mb-12 lg:mb-16">
         {/* Mobile: slim banner */}
         <Link
           href="/club-info#programs"
-          className="md:hidden flex items-center gap-3 rounded-2xl border-2 px-4 py-3"
+          className={`md:hidden flex items-center gap-3 rounded-2xl border-2 px-4 py-3 transition-all duration-700 ease-out ${
+            bannerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}
           style={{
             background: 'var(--color-brown-dark)',
             borderColor: 'var(--color-brown-dark)',
@@ -954,31 +1054,39 @@ export default function UpcomingEventsPage() {
           </span>
         </Link>
 
-        {/* Desktop: full teaser */}
+        {/* Tablet/Desktop: full teaser (thin on tablet) */}
         <div
-          className="relative hidden overflow-hidden rounded-[1.75rem] border-2 px-9 py-8 md:block"
+          className={`upcoming-programs-banner relative hidden overflow-hidden rounded-[1.25rem] lg:rounded-[1.75rem] border-2 px-5 py-3.5 md:px-5 md:py-3.5 lg:px-9 lg:py-8 md:block transition-all duration-700 ease-out ${
+            bannerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+          }`}
           style={{
             background: 'var(--color-brown-dark)',
             borderColor: 'var(--color-brown-dark)',
             boxShadow: '0 12px 32px rgba(98, 32, 47, 0.28)',
           }}
         >
-          <div className="flex flex-row items-end justify-between gap-10">
+          <div className="flex flex-row items-center lg:items-end justify-between gap-4 lg:gap-10">
             <div className="min-w-0 max-w-2xl">
               <p
-                className="mb-2 text-xs font-bold uppercase tracking-[0.2em]"
+                className="mb-0.5 lg:mb-2 text-[10px] lg:text-xs font-bold uppercase tracking-[0.2em]"
                 style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-olive-light)' }}
               >
                 Sessions & programs
               </p>
               <h2
-                className="mb-2.5 text-4xl font-bold leading-tight"
+                className="mb-1 lg:mb-2.5 text-xl md:text-2xl lg:text-4xl font-bold leading-tight"
                 style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
               >
                 What Y4E Offers
               </h2>
               <p
-                className="text-base leading-relaxed"
+                className="md:block lg:hidden text-[0.8rem] leading-snug max-w-lg"
+                style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)', opacity: 0.9 }}
+              >
+                Tech help, companionship, workshops, and community events—adapted for each partner.
+              </p>
+              <p
+                className="hidden lg:block text-base leading-relaxed"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)', lineHeight: 1.65, opacity: 0.9 }}
               >
                 Tech help, companionship, educational and wellness workshops, community events, fundraisers, and youth-led active living—adapted for each partner.
@@ -987,7 +1095,7 @@ export default function UpcomingEventsPage() {
 
             <Link
               href="/club-info#programs"
-              className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-bold uppercase tracking-[0.1em] transition-transform duration-300 hover:-translate-y-0.5"
+              className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border-2 px-3 py-1.5 lg:px-4 lg:py-2 text-[11px] lg:text-sm font-bold uppercase tracking-[0.1em] transition-transform duration-300 hover:-translate-y-0.5"
               style={{
                 fontFamily: 'var(--font-kollektif)',
                 background: 'var(--color-olive-light)',
@@ -1004,12 +1112,13 @@ export default function UpcomingEventsPage() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-14 w-full max-w-[100vw] md:max-w-7xl overflow-x-hidden md:overflow-x-visible box-border">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-8 md:py-14 w-full max-w-[100vw] overflow-x-clip box-border">
         <UpcomingToolsAndTitle
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           filterType={filterType}
           setFilterType={setFilterType}
+          reveal={toolsVisible}
         />
 
         <section id="events-grid" className="scroll-mt-28 md:pr-0">
@@ -1058,21 +1167,6 @@ export default function UpcomingEventsPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h10M4 18h14" />
                       </svg>
                       <span className="text-[10px] font-bold uppercase tracking-[0.12em]">Scroll to</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 shadow-lg"
-                      style={{
-                        background: 'var(--color-brown-dark)',
-                        borderColor: 'var(--color-cream)',
-                        color: 'var(--color-cream)',
-                      }}
-                      aria-label="Scroll to top"
-                    >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                      </svg>
                     </button>
                   </div>
                 </div>
@@ -1179,9 +1273,9 @@ export default function UpcomingEventsPage() {
                 </div>
               </div>
 
-              {/* Desktop TOC — peek tab; click to open/close (stays open until tab is clicked) */}
+              {/* Desktop/tablet TOC — peek tab stays inside viewport */}
               <div
-                className="hidden md:flex fixed right-0 top-1/2 z-40 -translate-y-1/2 items-stretch pl-5"
+                className="upcoming-month-toc hidden md:flex fixed right-0 top-1/2 z-40 -translate-y-1/2 items-stretch"
               >
                 <button
                   type="button"
@@ -1299,34 +1393,34 @@ export default function UpcomingEventsPage() {
                 </nav>
               </div>
 
-              <div className="space-y-12 md:space-y-28">
+              <div className="space-y-12 md:space-y-20 lg:space-y-28">
                 {tocByYear.map(({ year, months }, yearIndex) => {
                   const yearEventCount = months.reduce(
                     (n, m) => n + m.dateGroups.reduce((c, g) => c + g.events.length, 0),
                     0
                   )
                   return (
-                    <div key={year} className={yearIndex > 0 ? 'pt-4 md:pt-12' : ''}>
+                    <div key={year} className={yearIndex > 0 ? 'pt-4 md:pt-8 lg:pt-12' : ''}>
                       {/* Year divider */}
                       <div
-                        className="flex items-baseline gap-3 md:gap-6 mb-7 md:mb-14"
+                        className="flex items-baseline gap-3 md:gap-4 lg:gap-6 mb-7 md:mb-10 lg:mb-14"
                         style={{ borderBottom: '2px solid rgba(234, 225, 203, 0.4)' }}
                       >
                         <h2
-                          className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-none pb-2 md:pb-4"
+                          className="text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-none pb-2 md:pb-3 lg:pb-4"
                           style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
                         >
                           {year}
                         </h2>
                         <span
-                          className="text-xs sm:text-sm md:text-base font-semibold tabular-nums pb-2 md:pb-4"
+                          className="text-xs sm:text-sm md:text-sm lg:text-base font-semibold tabular-nums pb-2 md:pb-3 lg:pb-4"
                           style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)' }}
                         >
                           {yearEventCount} event{yearEventCount === 1 ? '' : 's'}
                         </span>
                       </div>
 
-                      <div className="space-y-10 md:space-y-20">
+                      <div className="space-y-10 md:space-y-14 lg:space-y-20">
                         {months.map((month, monthIndexInYear) => {
                           const eventCount = month.dateGroups.reduce((n, g) => n + g.events.length, 0)
                           const monthName = MONTH_NAMES[new Date(month.monthKey).getMonth()]
@@ -1337,15 +1431,15 @@ export default function UpcomingEventsPage() {
                               id={`month-${month.monthKey}`}
                               className="scroll-mt-28"
                             >
-                              <div className="flex items-end justify-between gap-3 md:gap-4 mb-5 md:mb-10">
+                              <div className="flex items-end justify-between gap-3 md:gap-4 mb-5 md:mb-7 lg:mb-10">
                                 <h3
-                                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold uppercase tracking-tight leading-[1.05]"
+                                  className="text-2xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-6xl font-bold uppercase tracking-tight leading-[1.05]"
                                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
                                 >
                                   {monthName}
                                 </h3>
                                 <span
-                                  className="text-xs sm:text-sm md:text-base font-semibold tabular-nums shrink-0 pb-1"
+                                  className="text-xs sm:text-sm md:text-sm lg:text-base font-semibold tabular-nums shrink-0 pb-1"
                                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)' }}
                                 >
                                   {eventCount} event{eventCount === 1 ? '' : 's'}
@@ -1359,31 +1453,31 @@ export default function UpcomingEventsPage() {
                                 showTopBadge={isFirstMonthOverall}
                               />
 
-                              {/* Desktop: date-grouped list */}
+                              {/* Tablet/Desktop: date-grouped list (same sticky push as desktop) */}
                               <div className="hidden md:block space-y-14 lg:space-y-16">
                                 {month.dateGroups.map((group, groupIndex) => (
-                                  <div key={group.startKey} className="grid grid-cols-12 gap-6 lg:gap-8">
-                                    <div className="col-span-3">
-                                      <div className="sticky top-[92px]">
+                                  <div key={group.startKey} data-date-row className="grid grid-cols-12 items-stretch gap-5 lg:gap-8">
+                                    <div className="col-span-3 self-stretch relative min-h-full">
+                                      <div className="upcoming-sticky-date" data-date-pin>
                                         <div
-                                          className="w-full rounded-xl border-2 px-5 py-2.5"
+                                          className="w-full rounded-xl border-2 px-3.5 py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-2.5"
                                           style={{
                                             background: 'var(--color-olive-light)',
                                             borderColor: 'var(--color-brown-dark)',
                                             boxShadow: '0 4px 14px rgba(73, 47, 30, 0.1)'
                                           }}
                                         >
-                                          <div className="text-sm font-semibold leading-none mb-1 tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                                          <div className="text-xs md:text-sm font-semibold leading-none mb-1 tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                                             {group.date.toLocaleDateString('en-US', { weekday: 'short' })}
                                           </div>
-                                          <div className="text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-none" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                                          <div className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-none" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                                             {group.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                     <div className="col-span-9">
-                                      <div className="flex flex-col gap-6">
+                                      <div className="flex flex-col gap-5 lg:gap-6">
                                         {group.events.map((event, eventIndex) => (
                                           <div key={event.id} className="relative">
                                             {isFirstMonthOverall && groupIndex === 0 && eventIndex === 0 && (
@@ -1411,16 +1505,16 @@ export default function UpcomingEventsPage() {
                 })}
               </div>
 
-              <div className="mt-10 md:mt-24 flex flex-col items-center text-center gap-1.5 md:gap-3 px-3">
+              <div className="mt-10 md:mt-16 lg:mt-24 flex flex-col items-center text-center gap-1.5 md:gap-2.5 lg:gap-3 px-3">
                 <p
-                  className="text-xs md:text-lg leading-snug md:leading-normal max-w-[18rem] md:max-w-none md:whitespace-nowrap"
+                  className="text-xs md:text-base lg:text-lg leading-snug md:leading-normal max-w-[18rem] md:max-w-none md:whitespace-nowrap"
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive-light)' }}
                 >
                   Want to look back? Flip through what we&apos;ve already done.
                 </p>
                 <Link
                   href="/events/past"
-                  className="past-events-link group inline-flex items-center gap-1 md:gap-1.5 text-[11px] md:text-base font-semibold"
+                  className="past-events-link group inline-flex items-center gap-1 md:gap-1.5 text-[11px] md:text-sm lg:text-base font-semibold"
                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-cream)' }}
                 >
                   <span className="past-events-link-text">Check Past Events</span>
@@ -1476,6 +1570,6 @@ export default function UpcomingEventsPage() {
         </section>
 
       </div>
-    </main>
+    </div>
   )
 }

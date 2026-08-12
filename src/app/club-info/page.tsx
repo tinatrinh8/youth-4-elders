@@ -588,12 +588,12 @@ export default function ClubInfo() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 md:gap-6 lg:gap-8 mt-8 md:mt-10 lg:mt-16">
+              <div className="grid grid-cols-2 gap-2 md:gap-6 lg:gap-8 mt-8 md:mt-10 lg:mt-16 max-w-[18.5rem] md:max-w-none mx-auto px-1 md:px-0">
                 {founderStories.map((item) => (
                   <button
                     key={item.key}
                     type="button"
-                    className="group border p-3 md:p-7 lg:p-10 text-center transition-all duration-300 hover:-translate-y-1 w-[9.5rem] h-[9.5rem] md:w-72 md:h-72 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] mx-auto flex flex-col items-center justify-center relative"
+                    className="group border p-2.5 md:p-7 lg:p-10 text-center transition-all duration-300 hover:-translate-y-1 w-[7.75rem] h-[7.75rem] md:w-72 md:h-72 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] mx-auto flex flex-col items-center justify-center relative"
                     style={{
                       borderColor: 'rgba(251, 247, 232, 0.45)',
                       background: 'rgba(251, 247, 232, 0.04)',
@@ -611,7 +611,7 @@ export default function ClubInfo() {
                     }}
                   >
                     <div
-                      className="mx-auto relative w-14 h-14 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden"
+                      className="mx-auto relative w-12 h-12 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden"
                       style={{ background: 'var(--color-olive-light)' }}
                     >
                       <Image
