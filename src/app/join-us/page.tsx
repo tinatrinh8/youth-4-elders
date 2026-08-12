@@ -582,6 +582,7 @@ export default function JoinUs() {
   // Set initial background on mount and update when light mode changes
   // Ensure transition is set, then change the background
   useEffect(() => {
+    document.body.classList.add('join-us-page')
     // Use requestAnimationFrame to ensure transition is set before background change
     // This ensures smooth animation when navigating to join-us page
     const rafId = requestAnimationFrame(() => {
@@ -598,6 +599,7 @@ export default function JoinUs() {
     
     return () => {
       cancelAnimationFrame(rafId)
+      document.body.classList.remove('join-us-page')
       // IMPORTANT: Don't cleanup background on unmount
       // The NavigationBar will handle transitioning back to cream when isJoinUsPage becomes false
     }
@@ -646,7 +648,7 @@ export default function JoinUs() {
 
   if (isSubmitting && submitStatus === 'idle') {
     return (
-      <main className="min-h-screen pt-[120px] pb-[120px] flex items-center justify-center" style={{ background: 'transparent' }}>
+      <main className="min-h-screen pt-[120px] pb-[120px] flex items-center justify-center join-us-page-lock" style={{ background: 'transparent' }}>
         <div className="text-center">
           <div className="mb-6 inline-block h-12 w-12 rounded-full border-4 border-[var(--color-cream)]/30 border-t-[var(--color-cream)] animate-spin" />
           <p className="text-xl font-medium text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
@@ -661,25 +663,25 @@ export default function JoinUs() {
     const isTeamSuccess = submittedApplicationType === 'team'
     const successCopy = isTeamSuccess ? content.success.team : content.success.general
     return (
-      <main className="min-h-screen pt-[120px] pb-[120px] relative overflow-hidden flex items-center justify-center" style={{ background: 'transparent' }}>
+      <main className="join-us-success-view join-us-page-lock min-h-screen pt-20 pb-20 lg:pt-[120px] lg:pb-[120px] relative overflow-hidden flex items-start lg:items-center justify-center" style={{ background: 'transparent' }}>
         {showConfetti && <ConfettiComponent boxRef={successBoxRef as React.RefObject<HTMLDivElement>} />}
-        <div className="mx-auto px-6 py-12 flex justify-center w-full">
+        <div className="join-us-success-wrap mx-auto px-4 py-0 lg:px-6 lg:py-12 flex justify-center w-full">
           <div
             ref={successBoxRef}
-            className="w-[min(32rem,92vw)] min-h-[min(32rem,92vw)] rounded-2xl bg-[var(--color-cream)] p-8 md:p-10 shadow-lg border-2 border-[var(--color-brown-dark)] animate-success-fade-in flex flex-col items-center justify-center text-center"
+            className="join-us-success-card w-[min(20rem,90vw)] lg:w-[min(32rem,92vw)] min-h-0 lg:min-h-[min(32rem,92vw)] rounded-2xl bg-[var(--color-cream)] p-4 sm:p-5 lg:p-10 shadow-lg border-2 border-[var(--color-brown-dark)] animate-success-fade-in flex flex-col items-center justify-center text-center"
           >
-            <div className="mb-5 flex justify-center">
-              <Image src="/assets/join us/sign up confirmed.png" alt="Sign up confirmed" width={180} height={180} className="object-contain" />
+            <div className="mb-3 lg:mb-5 flex justify-center">
+              <Image src="/assets/join us/sign up confirmed.png" alt="Sign up confirmed" width={180} height={180} className="object-contain w-20 h-auto sm:w-24 lg:w-[180px]" />
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-3 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
+            <h2 className="text-xl sm:text-2xl lg:text-4xl font-bold mb-2 lg:mb-3 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
               {successCopy.title}
             </h2>
             {isTeamSuccess ? (
-              <p className="text-base md:text-lg text-[var(--color-brown-dark)] mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
+              <p className="text-sm lg:text-lg text-[var(--color-brown-dark)] mb-2.5 lg:mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
                 {content.success.team.message}
               </p>
             ) : (
-              <p className="text-base md:text-lg text-[var(--color-brown-dark)] mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
+              <p className="text-sm lg:text-lg text-[var(--color-brown-dark)] mb-2.5 lg:mb-4 leading-relaxed" style={{ fontFamily: 'var(--font-leiko)' }}>
                 {content.success.general.messageBeforeLink}
               <a href="https://www.instagram.com/youth4elders/" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-brown-dark)] underline hover:no-underline">
                   {content.success.general.instagramLabel}
@@ -688,14 +690,14 @@ export default function JoinUs() {
               </p>
             )}
             <p
-              className="text-sm md:text-base text-[var(--color-brown-dark)] mb-6 leading-relaxed italic"
+              className="text-xs sm:text-sm lg:text-base text-[var(--color-brown-dark)] mb-4 lg:mb-6 leading-relaxed italic"
               style={{ fontFamily: 'var(--font-leiko)', opacity: 0.85 }}
             >
               {successCopy.cue}
             </p>
             <button
               onClick={() => { setSubmitStatus('idle'); resetApplication() }}
-              className="px-6 py-3 rounded-full font-semibold text-base md:text-lg text-[var(--color-cream)] bg-[var(--color-brown-dark)] hover:opacity-90 transition-opacity"
+              className="px-4 py-2 lg:px-6 lg:py-3 rounded-full font-semibold text-sm lg:text-lg text-[var(--color-cream)] bg-[var(--color-brown-dark)] hover:opacity-90 transition-opacity"
               style={{ fontFamily: 'var(--font-leiko)' }}
             >
               {content.success.submitAnother}
@@ -707,10 +709,10 @@ export default function JoinUs() {
   }
 
     return (
-      <main className="min-h-screen pb-20" style={{ background: 'transparent' }}>
+      <main className="min-h-screen pb-20 join-us-page-lock" style={{ background: 'transparent' }}>
         {showConfetti && <ConfettiComponent />}
         {/* Headline + tagline */}
-        <div className="w-full pt-[72px] sm:pt-[80px] px-4 sm:px-8 pb-4 md:pb-6 max-w-7xl mx-auto">
+        <div className="join-us-hero w-full pt-[72px] sm:pt-[80px] px-4 sm:px-8 pb-4 md:pb-6 max-w-7xl mx-auto">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
               {(content.page.headline as string).split(/\s+/).map((word, i) => (
@@ -730,7 +732,7 @@ export default function JoinUs() {
               ))}
             </h1>
             <p
-              className={`text-base md:text-lg text-[var(--color-cream)] mt-2 ${captionVisible ? 'join-us-caption-reveal' : 'opacity-0'}`}
+              className={`join-us-tagline text-base md:text-lg text-[var(--color-cream)] mt-2 ${captionVisible ? 'join-us-caption-reveal' : 'opacity-0'}`}
               style={{ fontFamily: 'var(--font-leiko)', fontStyle: 'italic' }}
             >
               {content.page.tagline}
@@ -739,64 +741,66 @@ export default function JoinUs() {
           </div>
           
         {/* One box: General member + Exec member + Ready to join CTA; extends down with form */}
-        <div className={`max-w-7xl mx-auto px-4 sm:px-8 mt-8 md:mt-10 ${contentVisible ? 'join-us-content-pull-up' : ''}`}
+        <div className={`join-us-content max-w-7xl mx-auto px-4 sm:px-8 mt-8 md:mt-10 ${contentVisible ? 'join-us-content-pull-up' : ''}`}
           style={contentVisible ? { animationDelay: '0s' } : { opacity: 0 }}
         >
-          <div className="rounded-2xl border-2 border-[var(--color-brown-dark)]/20 overflow-hidden bg-[var(--color-cream)] shadow-lg max-w-5xl mx-auto w-full">
-            <div className="p-6 md:p-8 space-y-6 md:space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4">
-                  <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
-                    {content.cards.generalMember.title}
-                  </h3>
-                  <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
-                    {content.cards.generalMember.description}
-            </p>
-          </div>
-                <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4">
-                  <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
-                    {content.cards.execMember.title}
-                  </h3>
-                  <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
-                    {content.cards.execMember.description}
-                  </p>
-                  <p
-                    className="mt-2 text-sm md:text-base font-bold italic underline underline-offset-2"
-                    style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+          <div className="join-us-card rounded-2xl border-2 border-[var(--color-brown-dark)]/20 overflow-hidden bg-[var(--color-cream)] shadow-lg max-w-5xl mx-auto w-full">
+            <div className="join-us-card-intro p-6 md:p-8 space-y-6 md:space-y-8">
+              <div className="join-us-role-grid grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <div className="join-us-role-block flex flex-col gap-3">
+                  <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4 flex-1">
+                    <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                      {content.cards.generalMember.title}
+                    </h3>
+                    <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
+                      {content.cards.generalMember.description}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => startApplication('general')}
+                    className="join-us-role-cta w-full text-center px-4 py-3 md:px-5 md:py-4 flex items-center justify-center rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
                   >
-                    {content.cards.execMember.openStatus}
-                  </p>
+                    <span className="text-sm md:text-base font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
+                      {content.applyBox.generalTitle}
+                    </span>
+                  </button>
+                </div>
+                <div className="join-us-role-block flex flex-col gap-3">
+                  <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4 flex-1">
+                    <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                      {content.cards.execMember.title}
+                    </h3>
+                    <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
+                      {content.cards.execMember.description}
+                    </p>
+                    <p
+                      className="mt-2 text-sm md:text-base font-bold italic underline underline-offset-2"
+                      style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                    >
+                      {content.cards.execMember.openStatus}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => startApplication('team')}
+                    className="join-us-role-cta w-full text-center px-4 py-3 md:px-5 md:py-4 flex items-center justify-center rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
+                  >
+                    <span className="text-sm md:text-base font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
+                      {content.applyBox.teamTitle}
+                    </span>
+                  </button>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            <button
-                type="button"
-                  onClick={() => startApplication('general')}
-                className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
-              >
-                  <h3 className="text-base md:text-lg font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
-                    {content.applyBox.generalTitle}
-                  </h3>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => startApplication('team')}
-                  className="w-full text-center p-5 md:p-6 flex flex-col items-center gap-2 rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
-                >
-                  <h3 className="text-base md:text-lg font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
-                    {content.applyBox.teamTitle}
-                </h3>
-            </button>
             </div>
-            </div>
-            <div className={`overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'max-h-[4200px] opacity-100' : 'max-h-0 opacity-0'}`}>
-              <div className={`bg-[var(--color-cream)] border-t-2 border-[var(--color-brown-dark)]/20 p-8 md:p-10 ${hasStarted ? 'join-us-form-roll-down' : ''}`}>
+            <div className={`join-us-form-shell overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'is-open max-h-[8000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+              <div className={`join-us-form bg-[var(--color-cream)] border-t-2 border-[var(--color-brown-dark)]/20 p-8 md:p-10 ${hasStarted ? 'join-us-form-roll-down' : ''}`}>
         <div className="max-w-5xl w-full">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-leiko)' }}>
+          <h2 className="join-us-form-title text-2xl md:text-3xl font-bold mb-8 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-leiko)' }}>
             {isTeamApp ? content.teamForm.title : content.form.title}
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="join-us-form-fields grid grid-cols-1 md:grid-cols-2 gap-6">
             {questions.filter((q) => q.id === 'name' || q.id === 'email').map((q) => (
               <div key={q.id}>
                 <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
@@ -1705,7 +1709,7 @@ export default function JoinUs() {
               <button type="button" onClick={() => setSubmitStatus('idle')} className="flex-shrink-0 text-lg opacity-80 hover:opacity-100" style={{ color: 'var(--color-cream)' }} aria-label="Close">×</button>
             </div>
           )}
-          <div className="flex justify-between items-center gap-4 flex-wrap mt-10">
+          <div className="join-us-form-actions flex justify-between items-center gap-4 flex-wrap mt-10">
               <button
                 type="button"
                 onClick={resetApplication}
