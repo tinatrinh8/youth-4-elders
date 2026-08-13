@@ -170,7 +170,7 @@ const content = joinUsContent as {
       title: string
       description: string
       openStatus: string
-    }
+  }
   }
   applyBox: { generalTitle: string; teamTitle: string; cta: string }
   form: {
@@ -752,13 +752,13 @@ export default function JoinUs() {
               <div className="join-us-role-grid grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 <div className="join-us-role-block flex flex-col gap-3">
                   <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4 flex-1">
-                    <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
-                      {content.cards.generalMember.title}
-                    </h3>
-                    <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
-                      {content.cards.generalMember.description}
-                    </p>
-                  </div>
+                  <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.cards.generalMember.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
+                    {content.cards.generalMember.description}
+            </p>
+          </div>
                   <button
                     type="button"
                     onClick={() => startApplication('general')}
@@ -771,10 +771,10 @@ export default function JoinUs() {
                 </div>
                 <div className="join-us-role-block flex flex-col gap-3">
                   <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4 flex-1">
-                    <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
-                      {content.cards.execMember.title}
-                    </h3>
-                    <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
+                  <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                    {content.cards.execMember.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
                       {content.cards.execMember.description}
                     </p>
                     <p
@@ -783,17 +783,17 @@ export default function JoinUs() {
                     >
                       {content.cards.execMember.openStatus}
                     </p>
-                  </div>
-                  <button
-                    type="button"
+              </div>
+            <button
+                type="button"
                     onClick={() => startApplication('team')}
                     className="join-us-role-cta w-full text-center px-4 py-3 md:px-5 md:py-4 flex items-center justify-center rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
                   >
                     <span className="text-sm md:text-base font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
                       {content.applyBox.teamTitle}
                     </span>
-                  </button>
-                </div>
+            </button>
+            </div>
               </div>
             </div>
             <div className={`join-us-form-shell overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'is-open max-h-[8000px] opacity-100' : 'max-h-0 opacity-0'}`}>
@@ -1188,7 +1188,7 @@ export default function JoinUs() {
               </div>
 
               {formData.schoolStatus === 'university-college' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {questions.filter((q) => q.id === 'schoolName' || q.id === 'program' || q.id === 'year').map((q) => (
                     <div key={q.id} className={q.id === 'schoolName' ? 'md:col-span-2' : ''}>
                       <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>

@@ -1109,7 +1109,7 @@ export default function PastEventsPage() {
                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', transitionDelay: heroTextVisible ? '180ms' : '0ms' }}
                 >
                   Look back with us
-                </h1>
+              </h1>
                 <p
                   className={`past-scrapbook-desc text-[0.95rem] sm:text-base md:text-base lg:text-lg max-w-md mb-6 md:mb-5 lg:mb-8 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: '1.6', transitionDelay: heroTextVisible ? '340ms' : '0ms' }}
@@ -1128,8 +1128,8 @@ export default function PastEventsPage() {
                   }}
                 >
                   Scroll down to look back
-                </p>
-              </div>
+              </p>
+            </div>
 
               <div
                 className={`past-scrapbook-calendar relative order-2 px-4 sm:px-5 md:px-6 lg:px-10 py-6 sm:py-8 md:py-8 lg:py-10 flex flex-col justify-center transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
@@ -1146,9 +1146,9 @@ export default function PastEventsPage() {
                       style={{ fontFamily: 'var(--font-freshwost)', color: 'var(--color-brown-dark)' }}
                     >
                       {label}
-                    </div>
+            </div>
                   ))}
-                </div>
+          </div>
                 <div className="past-cal-days grid grid-cols-7 gap-1 sm:gap-1.5 md:gap-1.5 lg:gap-2">
                   {heroMonthGrid.map((day, i) => {
                     const isToday = day === today.getDate()
@@ -1183,7 +1183,7 @@ export default function PastEventsPage() {
                         {hasClubMemory && (
                           <span className="memory-grid-dot" aria-hidden />
                         )}
-                      </div>
+        </div>
                     )
                   })}
                 </div>
@@ -1390,7 +1390,7 @@ export default function PastEventsPage() {
               }`}
               style={{ transitionDelay: searchReady ? '100ms' : '0ms' }}
             >
-              {(['all', 'club', 'school', 'holiday'] as const).map(t => (
+            {(['all', 'club', 'school', 'holiday'] as const).map(t => (
                 <button
                   key={t}
                   type="button"
@@ -1404,10 +1404,10 @@ export default function PastEventsPage() {
                   }}
                 >
                   {t === 'all' ? 'All types' : t.charAt(0).toUpperCase() + t.slice(1)}
-                </button>
-              ))}
-            </div>
+              </button>
+            ))}
           </div>
+        </div>
 
           <div className="flex flex-col items-center gap-3 md:gap-4 lg:gap-5 px-1">
             <h2
@@ -1448,7 +1448,7 @@ export default function PastEventsPage() {
               />
             </span>
           </div>
-        </div>
+          </div>
 
         <section id="events-grid" className="scroll-mt-28 md:pr-0">
           {groupedByMonth.length > 0 ? (
@@ -1496,8 +1496,8 @@ export default function PastEventsPage() {
                       </svg>
                       <span className="text-[10px] font-bold uppercase tracking-[0.12em]">Scroll to</span>
                     </button>
-                  </div>
-                </div>
+                    </div>
+                    </div>
 
                 <div
                   id="month-toc-panel-mobile"
@@ -1821,10 +1821,10 @@ export default function PastEventsPage() {
                                           </div>
                                         ))}
                                       </div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
+                  </div>
+                </div>
+              ))}
+            </div>
                             </section>
                           )
                         })}

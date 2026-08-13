@@ -670,8 +670,8 @@ export default function UpcomingEventsPage() {
           {/* Type sticker */}
           <div
             className="scrapbook-stamp shrink-0 self-start relative w-[4.25rem] h-[4.25rem] md:w-[4.5rem] md:h-[4.5rem] lg:w-[5.25rem] lg:h-[5.25rem] -rotate-6"
-            aria-hidden
-          >
+          aria-hidden
+        >
             <Image
               src={EVENT_TYPE_STICKERS[event.type]}
               alt=""
@@ -679,7 +679,7 @@ export default function UpcomingEventsPage() {
               height={96}
               className="object-contain w-full h-full drop-shadow-[0_4px_10px_rgba(61,57,10,0.22)]"
             />
-          </div>
+        </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-2.5 md:mb-3">
@@ -763,10 +763,10 @@ export default function UpcomingEventsPage() {
           ? { bg: 'var(--color-olive-light)', text: 'var(--color-olive-deep)', label: 'School', cardBg: 'var(--color-cream)' }
           : { bg: 'rgba(98, 32, 47, 0.12)', text: 'var(--color-brown-dark)', label: 'Holiday', cardBg: 'var(--color-cream)' }
 
-    return (
+  return (
       <article
         className="relative w-full overflow-hidden rounded-xl border-2"
-        style={{
+          style={{
           background: typeAccent.cardBg,
           borderColor: 'var(--color-brown-dark)',
           boxShadow: '0 6px 16px rgba(98, 32, 47, 0.08)',
@@ -775,8 +775,8 @@ export default function UpcomingEventsPage() {
         <div className="absolute inset-x-0 top-0 z-[1] h-1.5" style={{ background: typeAccent.bg }} aria-hidden />
         <div
           className="pointer-events-none absolute top-3 right-2.5 z-10 w-[3.35rem] h-[3.35rem] rotate-[8deg]"
-          aria-hidden
-        >
+              aria-hidden
+            >
           <Image
             src={EVENT_TYPE_STICKERS[event.type]}
             alt=""
@@ -784,7 +784,7 @@ export default function UpcomingEventsPage() {
             height={56}
             className="object-contain w-full h-full drop-shadow-[0_3px_8px_rgba(61,57,10,0.28)]"
           />
-        </div>
+            </div>
         <div className="relative p-3.5 pt-5 pr-[4.25rem]">
           <div className="mb-2">
             <span
@@ -919,8 +919,8 @@ export default function UpcomingEventsPage() {
                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', transitionDelay: heroTextVisible ? '180ms' : '0ms' }}
                 >
                   Look ahead with us
-                </h1>
-                <p
+            </h1>
+            <p
                   className={`upcoming-scrapbook-desc text-[0.95rem] sm:text-base md:text-base lg:text-lg max-w-md mb-6 md:mb-5 lg:mb-8 transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
                   style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-olive)', lineHeight: '1.6', transitionDelay: heroTextVisible ? '340ms' : '0ms' }}
                 >
@@ -939,7 +939,7 @@ export default function UpcomingEventsPage() {
                 >
                   Scroll down to see upcoming events
                 </p>
-              </div>
+          </div>
 
               <div
                 className={`upcoming-scrapbook-calendar relative px-4 sm:px-5 md:px-6 lg:px-10 py-6 sm:py-8 md:py-8 lg:py-10 flex flex-col justify-center transition-all duration-700 ease-out ${heroTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
@@ -1091,7 +1091,7 @@ export default function UpcomingEventsPage() {
               >
                 Tech help, companionship, educational and wellness workshops, community events, fundraisers, and youth-led active living—adapted for each partner.
               </p>
-            </div>
+        </div>
 
             <Link
               href="/club-info#programs"
@@ -1108,7 +1108,7 @@ export default function UpcomingEventsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
-          </div>
+      </div>
         </div>
       </section>
 
@@ -1167,8 +1167,8 @@ export default function UpcomingEventsPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h10M4 18h14" />
                       </svg>
                       <span className="text-[10px] font-bold uppercase tracking-[0.12em]">Scroll to</span>
-                    </button>
-                  </div>
+            </button>
+        </div>
                 </div>
 
                 <div
@@ -1207,10 +1207,10 @@ export default function UpcomingEventsPage() {
                         aria-label="Close"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+        </div>
 
                     <div
                       className="mb-3 grid w-full gap-2"
@@ -1411,40 +1411,40 @@ export default function UpcomingEventsPage() {
                           style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
                         >
                           {year}
-                        </h2>
+                </h2>
                         <span
                           className="text-xs sm:text-sm md:text-sm lg:text-base font-semibold tabular-nums pb-2 md:pb-3 lg:pb-4"
                           style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)' }}
                         >
                           {yearEventCount} event{yearEventCount === 1 ? '' : 's'}
                         </span>
-                      </div>
+              </div>
 
                       <div className="space-y-10 md:space-y-14 lg:space-y-20">
                         {months.map((month, monthIndexInYear) => {
-                          const eventCount = month.dateGroups.reduce((n, g) => n + g.events.length, 0)
+                  const eventCount = month.dateGroups.reduce((n, g) => n + g.events.length, 0)
                           const monthName = MONTH_NAMES[new Date(month.monthKey).getMonth()]
                           const isFirstMonthOverall = yearIndex === 0 && monthIndexInYear === 0
-                          return (
-                            <section
-                              key={month.monthKey}
+                  return (
+                  <section
+                    key={month.monthKey}
                               id={`month-${month.monthKey}`}
                               className="scroll-mt-28"
-                            >
+                  >
                               <div className="flex items-end justify-between gap-3 md:gap-4 mb-5 md:mb-7 lg:mb-10">
-                                <h3
+                      <h3
                                   className="text-2xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-6xl font-bold uppercase tracking-tight leading-[1.05]"
                                   style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-pink-medium)' }}
-                                >
+                      >
                                   {monthName}
-                                </h3>
-                                <span
+                      </h3>
+                      <span
                                   className="text-xs sm:text-sm md:text-sm lg:text-base font-semibold tabular-nums shrink-0 pb-1"
-                                  style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)' }}
-                                >
-                                  {eventCount} event{eventCount === 1 ? '' : 's'}
-                                </span>
-                              </div>
+                        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-olive-light)' }}
+                      >
+                        {eventCount} event{eventCount === 1 ? '' : 's'}
+                      </span>
+                    </div>
 
                               {/* Mobile: horizontal swipe carousel per month */}
                               <MobileMonthCarousel
@@ -1455,13 +1455,13 @@ export default function UpcomingEventsPage() {
 
                               {/* Tablet/Desktop: date-grouped list (same sticky push as desktop) */}
                               <div className="hidden md:block space-y-14 lg:space-y-16">
-                                {month.dateGroups.map((group, groupIndex) => (
+                      {month.dateGroups.map((group, groupIndex) => (
                                   <div key={group.startKey} data-date-row className="grid grid-cols-12 items-stretch gap-5 lg:gap-8">
                                     <div className="col-span-3 self-stretch relative min-h-full">
                                       <div className="upcoming-sticky-date" data-date-pin>
                                         <div
                                           className="w-full rounded-xl border-2 px-3.5 py-2 md:px-4 md:py-2.5 lg:px-5 lg:py-2.5"
-                                          style={{
+                                style={{
                                             background: 'var(--color-olive-light)',
                                             borderColor: 'var(--color-brown-dark)',
                                             boxShadow: '0 4px 14px rgba(73, 47, 30, 0.1)'
@@ -1469,36 +1469,36 @@ export default function UpcomingEventsPage() {
                                         >
                                           <div className="text-xs md:text-sm font-semibold leading-none mb-1 tracking-tight" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
                                             {group.date.toLocaleDateString('en-US', { weekday: 'short' })}
-                                          </div>
+                                </div>
                                           <div className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-tight leading-none" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
-                                            {group.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
+                                  {group.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </div>
+                                </div>
+                              </div>
+                            </div>
                                     <div className="col-span-9">
                                       <div className="flex flex-col gap-5 lg:gap-6">
-                                        {group.events.map((event, eventIndex) => (
-                                          <div key={event.id} className="relative">
+                              {group.events.map((event, eventIndex) => (
+                                <div key={event.id} className="relative">
                                             {isFirstMonthOverall && groupIndex === 0 && eventIndex === 0 && (
-                                              <div className="pointer-events-none absolute -top-2 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase" style={{ background: 'var(--color-pink-medium)', color: 'var(--color-cream)', fontFamily: 'var(--font-kollektif)', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', border: '2px solid var(--color-cream)' }}>
-                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                                                </svg>
-                                                Top pick
-                                              </div>
-                                            )}
-                                            {renderCard(event)}
-                                          </div>
-                                        ))}
-                                      </div>
+                                    <div className="pointer-events-none absolute -top-2 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] sm:text-xs font-bold uppercase" style={{ background: 'var(--color-pink-medium)', color: 'var(--color-cream)', fontFamily: 'var(--font-kollektif)', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', border: '2px solid var(--color-cream)' }}>
+                                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                      </svg>
+                                      Top pick
                                     </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </section>
-                          )
-                        })}
+                                  )}
+                                  {renderCard(event)}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                  )
+                })}
                       </div>
                     </div>
                   )
@@ -1540,8 +1540,8 @@ export default function UpcomingEventsPage() {
                 viewBox="0 0 24 24"
                 aria-hidden
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               <h3
                 className="text-2xl md:text-3xl font-normal mb-3"
                 style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-cream)' }}

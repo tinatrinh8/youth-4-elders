@@ -307,7 +307,7 @@ export default function Footer() {
             {/* Copyright */}
             <div className="text-center md:text-left">
               <p className="text-xs md:text-sm" style={{ fontFamily: 'var(--font-kollektif)', color: footerTextColor, opacity: 0.8 }}>
-                © 2025 Youth 4 Elders. All rights reserved.
+                © 2026 Youth 4 Elders. All rights reserved.
               </p>
             </div>
 

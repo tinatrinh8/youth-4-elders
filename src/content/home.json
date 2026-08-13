@@ -22,19 +22,19 @@
     "updates": [
       {
         "id": "1",
+        "title": "Exec Applications Open!",
+        "description": "We’re building next year’s team. Put your name in before August 30 — hop over to Join Us to apply.",
+        "icon": "📋",
+        "type": "highlight",
+        "hasCountdown": true
+      },
+      {
+        "id": "2",
         "title": "Website Now Live!",
         "description": "Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.",
         "icon": "✨",
         "type": "highlight",
         "hasCountdown": false
-      },
-      {
-        "id": "2",
-        "title": "Upcoming Event: Bingo Night",
-        "description": "April 7 at the RGN Student Lounge: trivia, three bingo rounds, and $30 FNS gift cards for round winners. Spots are limited!",
-        "icon": "🎱",
-        "type": "highlight",
-        "hasCountdown": true
       },
       {
         "id": "3",
@@ -48,10 +48,10 @@
   },
   "countdown": {
     "daysLeftLabel": "DAYS LEFT UNTIL",
-    "eventName": "BINGO NIGHT",
-    "todayLabel": "TODAY",
-    "todayIsThe": "Today is the",
-    "todayEventName": "Bingo Night"
+    "eventName": "Applications close",
+    "todayLabel": "CLOSED",
+    "todayIsThe": "Applications are",
+    "todayEventName": "closed for now"
   },
   "quote": {
     "text": "Bridging generations, one connection at a time."

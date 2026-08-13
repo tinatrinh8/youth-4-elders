@@ -22,6 +22,7 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  const [countdownReady, setCountdownReady] = useState(false)
   const [visibleElements, setVisibleElements] = useState<Set<string>>(new Set())
   const [heroImageLoaded, setHeroImageLoaded] = useState(false)
   const [heroBgRadius, setHeroBgRadius] = useState(24)
@@ -30,6 +31,11 @@ export default function Home() {
   const parallaxBgRef = useRef<HTMLDivElement>(null)
   const countdownBoxRef = useRef<HTMLDivElement>(null)
   const countdownShadowRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    document.body.classList.add('home-page-active')
+    return () => document.body.classList.remove('home-page-active')
+  }, [])
 
   // Club updates - can be populated from Contentful
   // When updates are added or removed, the section will automatically adjust
@@ -78,11 +84,19 @@ export default function Home() {
         const footer = document.querySelector('footer')
 
         let height = rect.height
+        const isMobile = window.innerWidth < 768
         if (footer) {
           const footerRect = footer.getBoundingClientRect()
-          height = Math.max(height, footerRect.bottom - rect.top)
+          if (isMobile) {
+            // Keep stickers spread through the cream section (not crushed into the footer band)
+            height = rect.height + Math.min(72, footerRect.height * 0.2)
+          } else {
+            height = Math.max(height, footerRect.bottom - rect.top)
+          }
         }
 
+        // Fixed so stars stay put while content scrolls (needed for mobile too)
+        parallaxBgRef.current.style.position = 'fixed'
         parallaxBgRef.current.style.top = `${rect.top}px`
         parallaxBgRef.current.style.left = `${rect.left}px`
         parallaxBgRef.current.style.width = `${rect.width}px`
@@ -130,28 +144,28 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // Bingo Night — April 7, 2026 (matches events.ts and home.json countdown)
-    const targetDate = new Date(2026, 3, 7, 0, 0, 0) // April 7, 2026 at midnight
-    
+    // Exec applications close end of day — August 30, 2026 (matches home.json countdown)
+    const targetDate = new Date(2026, 7, 30, 23, 59, 59)
+
     const calculateTimeLeft = () => {
-      const now = new Date().getTime()
-      const difference = targetDate.getTime() - now
-      
+      const difference = targetDate.getTime() - Date.now()
+
       if (difference > 0) {
         setTimeLeft({
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
           hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
           minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((difference % (1000 * 60)) / 1000)
+          seconds: Math.floor((difference % (1000 * 60)) / 1000),
         })
       } else {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
       }
+      setCountdownReady(true)
     }
-    
+
     calculateTimeLeft()
     const interval = setInterval(calculateTimeLeft, 1000)
-    
+
     return () => clearInterval(interval)
   }, [])
 
@@ -213,6 +227,12 @@ export default function Home() {
       setIsClosing(false)
     }, 400) // Match animation duration (fadeOut is 0.4s)
   }
+
+  const isCountdownLive =
+    countdownReady &&
+    (timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0 || timeLeft.seconds > 0)
+  // Keep at least 1 on the final day so we don't flash a "0 / closed" card early
+  const displayDays = isCountdownLive ? Math.max(1, timeLeft.days) : 0
 
   const connectModal = (showModal || isClosing) ? (
         <div 
@@ -311,17 +331,15 @@ export default function Home() {
   ) : null
 
   return (
-    <div className="min-h-screen">
+    <div className="home-page min-h-screen">
       {connectModal && typeof document !== 'undefined' ? createPortal(connectModal, document.body) : null}
       
       {/* Hero Section - Large Text Overlay Style */}
       <section
         ref={heroSectionRef}
-        className="relative"
+        className="home-hero relative"
         style={{ 
           background: 'transparent',
-          height: '120vh',
-          minHeight: '120vh',
           borderTop: 'none',
           borderLeft: 'none',
           borderRight: 'none',
@@ -337,17 +355,10 @@ export default function Home() {
       >
         {/* Background Image */}
         <div
-          className="absolute inset-0 w-full h-full"
+          className="home-hero-media absolute"
           style={{
             borderRadius: `${heroBgRadius}px`,
             overflow: 'hidden',
-            marginLeft: '16px',
-            marginRight: '16px',
-            marginTop: '40px',
-            marginBottom: '80px',
-            width: 'calc(100% - 32px)',
-            height: 'calc(100% - 120px)',
-            top: '0',
             opacity: visibleElements.has('hero-bg') ? 1 : 0,
             transition: 'opacity 0.6s ease-out, border-radius 1.1s ease-out'
           }}
@@ -374,7 +385,7 @@ export default function Home() {
 
         {/* Large Marketing Text - Upper Right (slow fade-in after image loads) */}
         <div 
-          className="absolute top-20 right-8 md:right-12 z-20 max-w-lg text-right"
+          className="home-hero-live absolute top-20 right-8 md:right-12 z-20 max-w-lg text-right"
           style={{
             opacity: visibleElements.has('hero-marketing') ? 1 : 0,
             transform: visibleElements.has('hero-marketing') ? 'translateX(0)' : 'translateX(60px)',
@@ -393,11 +404,11 @@ export default function Home() {
 
         {/* Large Elegant Script "Youth 4 Elders" - word-by-word fade-in-up-from-blur after image loads */}
         <div 
-          className="absolute bottom-0 left-0 right-0 z-50 pointer-events-none"
+          className="home-hero-title-wrap absolute bottom-0 left-0 right-0 z-50 pointer-events-none"
           style={{ marginBottom: '-60px', overflow: 'visible' }}
         >
           <h1 
-            className="text-[10rem] md:text-[12rem] lg:text-[16rem] font-bold italic leading-none"
+            className="home-hero-title text-[9.5rem] sm:text-[9.75rem] md:text-[12rem] lg:text-[16rem] font-bold italic leading-none"
             style={{ 
               fontFamily: 'var(--font-vintage-stylist)', 
               color: 'var(--color-olive)',
@@ -407,30 +418,47 @@ export default function Home() {
               textShadow: 'none'
             }}
           >
-            {['Youth', '4', 'Elders'].map((word, i) => (
-              <span
-                key={i}
-                className={heroImageLoaded ? 'word-fade-in-up-blur-slow' : ''}
-                style={{
-                  display: 'inline-block',
-                  animationDelay: heroImageLoaded ? `${i * 0.28}s` : undefined,
-                  opacity: heroImageLoaded ? undefined : 0,
-                }}
-              >
-                {word}{i < 2 ? '\u00A0' : ''}
-              </span>
-            ))}
+            <span
+              className={`home-hero-word ${heroImageLoaded ? 'word-fade-in-up-blur-slow' : ''}`}
+              style={{
+                display: 'inline-block',
+                animationDelay: heroImageLoaded ? '0s' : undefined,
+                opacity: heroImageLoaded ? undefined : 0,
+              }}
+            >
+              Youth&nbsp;
+            </span>
+            <span
+              className={`home-hero-word home-hero-word-4 ${heroImageLoaded ? 'word-fade-in-up-blur-slow' : ''}`}
+              style={{
+                display: 'inline-block',
+                animationDelay: heroImageLoaded ? '0.28s' : undefined,
+                opacity: heroImageLoaded ? undefined : 0,
+              }}
+            >
+              4&nbsp;
+            </span>
+            <span
+              className={`home-hero-word home-hero-word-elders ${heroImageLoaded ? 'word-fade-in-up-blur-slow' : ''}`}
+              style={{
+                display: 'inline-block',
+                animationDelay: heroImageLoaded ? '0.56s' : undefined,
+                opacity: heroImageLoaded ? undefined : 0,
+              }}
+            >
+              Elders
+            </span>
           </h1>
         </div>
 
       </section>
 
       {/* "Nothing great is built alone" Section */}
-      <section className="relative z-10 py-32 md:py-48" style={{ background: 'var(--color-olive)' }}>
+      <section className="home-mission relative z-10 py-32 md:py-48" style={{ background: 'var(--color-olive)' }}>
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-20 md:mb-28">
             <h2
-              className="text-6xl md:text-8xl lg:text-9xl font-bold mb-12"
+              className="home-mission-title text-6xl md:text-8xl lg:text-9xl font-bold mb-12"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-olive-light)' }}
               data-animate-id="mission-headline"
             >
@@ -461,10 +489,10 @@ export default function Home() {
       </section>
 
       {/* Current Club Updates and Countdown Section - Connected to Events */}
-      <section className="relative z-20 pt-20 md:pt-24 pb-28 md:pb-32" style={{ background: 'var(--color-cream)' }}>
+      <section className="home-updates relative z-20 pt-20 md:pt-24 pb-28 md:pb-32" style={{ background: 'var(--color-cream)' }}>
         <div className="max-w-6xl mx-auto px-8 md:px-10">
         <h3
-          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-10 text-left"
+          className="home-updates-heading text-4xl md:text-5xl lg:text-6xl font-bold mb-10 text-left"
           style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}
           data-animate-id="club-updates-heading"
         >
@@ -499,15 +527,15 @@ export default function Home() {
             ))}
           </span>
         </h3>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-28 items-start">
+        <div className="home-updates-grid grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-28 items-start">
             {/* Left Side - Current Club Updates */}
-            <div className="flex flex-col justify-center items-start lg:items-start order-2 lg:order-1">
+            <div className="home-updates-list flex flex-col justify-center items-start lg:items-start order-2 lg:order-1">
               {/* Dynamic Updates Container - Automatically adjusts height based on number of updates */}
               <div className="w-full max-w-lg space-y-8 mb-8">
                 {clubUpdates.map((update, index) => (
                   <div 
                     key={update.id}
-                    className={`p-6 rounded-lg animate-on-scroll slide-up ${visibleElements.has(`club-update-${update.id}`) ? 'visible' : ''}`}
+                    className={`home-update-card p-6 rounded-lg animate-on-scroll slide-up ${visibleElements.has(`club-update-${update.id}`) ? 'visible' : ''}`}
                     data-animate-id={`club-update-${update.id}`}
                     style={{
                       transitionDelay: `${index * 0.1}s`,
@@ -531,7 +559,7 @@ export default function Home() {
                         {update.icon}
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                        <h4 className="text-lg font-bold mb-1" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>
                           {update.title}
                         </h4>
                         <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.9 }}>
@@ -546,14 +574,14 @@ export default function Home() {
 
             {/* Right Side - Countdown Timer */}
             <div 
-              className={`flex justify-center lg:justify-end order-1 lg:order-2 mt-6 md:mt-8 animate-on-scroll scale self-start ${visibleElements.has('countdown-timer') ? 'visible' : ''}`}
+              className={`home-countdown flex justify-center lg:justify-end order-1 lg:order-2 mt-6 md:mt-8 lg:mt-0 animate-on-scroll scale self-start ${visibleElements.has('countdown-timer') ? 'visible' : ''}`}
               data-animate-id="countdown-timer"
             >
-              <div className="relative">
+              <div className="home-countdown-frame relative">
                 {/* Shadow Box Layer - Full opacity, offset */}
                 <div 
                   ref={countdownShadowRef}
-                  className="absolute max-w-md px-10 md:px-16 text-center"
+                  className="home-countdown-shadow absolute max-w-md px-10 md:px-16 text-center"
                 style={{
                     background: 'var(--color-brown-dark)',
                     borderRadius: '60px',
@@ -571,7 +599,7 @@ export default function Home() {
                 />
                 <div 
                   ref={countdownBoxRef}
-                  className="mx-auto px-10 md:px-16 text-center relative z-10"
+                  className="home-countdown-box mx-auto px-10 md:px-16 text-center relative z-10"
                   style={{
                     background: 'var(--color-cream)',
                     borderRadius: '60px',
@@ -589,12 +617,12 @@ export default function Home() {
                     gap: '2rem'
                   }}
                 >
-                {timeLeft.days > 0 ? (
+                {isCountdownLive ? (
                   <>
                     {/* Single Cream Block with Number */}
                     <div className="mb-8 flex justify-center">
                       <div 
-                        className="rounded-3xl px-12 md:px-16 py-10 md:py-14 flex items-center justify-center relative"
+                        className="home-countdown-digit rounded-3xl px-12 md:px-16 py-10 md:py-14 flex items-center justify-center relative"
                         style={{
                           background: 'var(--color-brown-dark)',
                           minWidth: '140px',
@@ -603,13 +631,13 @@ export default function Home() {
                         }}
                       >
                         <div 
-                          className="text-7xl md:text-8xl lg:text-9xl font-bold relative z-10 animate-pulse-subtle"
+                          className="home-countdown-digit-num text-7xl md:text-8xl lg:text-9xl font-bold relative z-10 animate-pulse-subtle"
                           style={{
                             fontFamily: 'var(--font-kollektif)',
                             color: 'var(--color-cream)'
                           }}
                         >
-                          {timeLeft.days}
+                          {displayDays}
                         </div>
                         {/* Flip clock divider line */}
                         <div 
@@ -637,9 +665,9 @@ export default function Home() {
                         {content.countdown.daysLeftLabel}
                       </p>
                       <p 
-                        className="text-xl md:text-2xl lg:text-3xl font-bold"
+                        className="text-xl md:text-2xl lg:text-3xl font-bold italic"
                         style={{
-                          fontFamily: 'var(--font-vintage-stylist)',
+                          fontFamily: 'var(--font-leiko)',
                           color: 'var(--color-brown-dark)'
                         }}
                       >
@@ -647,24 +675,22 @@ export default function Home() {
                       </p>
                     </div>
                   </>
-                ) : (
+                ) : countdownReady ? (
                   <>
-                    {/* Today's Event Message */}
-                    <div className="mb-8 flex justify-center">
-                      <div 
-                        className="rounded-3xl px-8 md:px-12 py-10 md:py-14 flex items-center justify-center"
+                    <div className="mb-6 flex justify-center">
+                      <div
+                        className="rounded-2xl px-8 md:px-10 py-6 md:py-8 flex items-center justify-center"
                         style={{
                           background: 'var(--color-brown-dark)',
-                          minWidth: '140px',
-                          minHeight: '190px',
-                          boxShadow: '0 4px 16px rgba(98, 32, 47, 0.2)'
+                          minWidth: '10rem',
+                          boxShadow: '0 4px 16px rgba(98, 32, 47, 0.2)',
                         }}
                       >
-                        <div 
-                          className="text-4xl md:text-5xl lg:text-6xl font-bold text-center"
-                style={{
-                  fontFamily: 'var(--font-kollektif)',
-                            color: 'var(--color-cream)'
+                        <div
+                          className="text-2xl md:text-3xl font-bold text-center tracking-[0.12em]"
+                          style={{
+                            fontFamily: 'var(--font-kollektif)',
+                            color: 'var(--color-cream)',
                           }}
                         >
                           {content.countdown.todayLabel}
@@ -672,36 +698,36 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Text Below */}
-                    <div className="space-y-1">
-                      <p 
-                        className="text-xl md:text-2xl lg:text-3xl font-bold"
+                    <div className="space-y-1 px-2">
+                      <p
+                        className="text-base md:text-lg"
                         style={{
-                          fontFamily: 'var(--font-vintage-stylist)',
-                          color: 'var(--color-brown-dark)'
+                          fontFamily: 'var(--font-leiko)',
+                          color: 'var(--color-brown-dark)',
+                          opacity: 0.85,
                         }}
                       >
                         {content.countdown.todayIsThe}
                       </p>
-                      <p 
-                        className="text-2xl md:text-3xl lg:text-4xl font-bold"
+                      <p
+                        className="text-2xl md:text-3xl font-bold"
                         style={{
                           fontFamily: 'var(--font-vintage-stylist)',
-                          color: 'var(--color-brown-dark)'
+                          color: 'var(--color-brown-dark)',
                         }}
                       >
                         {content.countdown.todayEventName}
                       </p>
                     </div>
                   </>
-                )}
+                ) : null}
                 </div>
               </div>
             </div>
           </div>
           {/* Quote box moved below updates */}
           <div
-            className={`relative rounded-2xl p-5 md:p-8 mt-12 md:mt-16 max-w-4xl mx-auto animate-on-scroll slide-up ${visibleElements.has('impact-quote') ? 'visible' : ''}`}
+            className={`home-quote relative rounded-2xl p-5 md:p-8 mt-12 md:mt-16 max-w-4xl mx-auto animate-on-scroll slide-up ${visibleElements.has('impact-quote') ? 'visible' : ''}`}
             data-animate-id="impact-quote"
             style={{
               background: 'var(--color-olive)',
@@ -733,7 +759,7 @@ export default function Home() {
               &ldquo;
             </div>
             <p 
-              className="text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed text-center relative z-10 px-4"
+              className="home-quote-text text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed text-center relative z-10 px-4"
               style={{ 
                 fontFamily: 'var(--font-leiko)',
                 color: 'var(--color-olive-light)',
@@ -747,18 +773,18 @@ export default function Home() {
       </section>
 
       {/* Events Section */}
-      <section className="relative z-10 py-32 md:py-48 lg:py-64 overflow-hidden" style={{ background: 'var(--color-pink-medium)' }}>
+      <section className="home-events relative z-10 py-32 md:py-48 lg:py-64 overflow-hidden" style={{ background: 'var(--color-pink-medium)' }}>
         {/* Large Background Text - Scrolling */}
-        <div className="absolute inset-0 flex items-start pointer-events-none overflow-hidden" style={{ top: '10%' }}>
+        <div className="home-events-marquee-wrap absolute inset-0 flex items-start pointer-events-none overflow-hidden" style={{ top: '10%' }}>
           <div className="flex whitespace-nowrap animate-scroll-text" style={{ width: '200%' }}>
             <h2 
-              className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
+              className="home-events-marquee text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', display: 'inline-block' }}
             >
               Our Events
             </h2>
             <h2 
-              className="text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
+              className="home-events-marquee text-9xl md:text-[11rem] lg:text-[14rem] xl:text-[16rem] font-bold opacity-20 px-8"
               style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)', display: 'inline-block' }}
             >
               Our Events
@@ -767,10 +793,10 @@ export default function Home() {
         </div>
 
         <div className="max-w-7xl mx-auto px-8 relative z-10 -mt-2 md:mt-2 lg:mt-4">
-          <div className="flex flex-col md:flex-row gap-2 md:gap-3 mb-16 md:mb-20" style={{ minHeight: '500px', overflowX: 'hidden' }}>
+          <div className="home-events-row flex flex-col md:flex-row gap-2 md:gap-3 mb-16 md:mb-20" style={{ minHeight: '500px', overflowX: 'hidden' }}>
             {/* Event Card 1 */}
             <div 
-              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-left ${visibleElements.has('event-card-1') ? 'visible' : ''}`}
+              className={`home-event-card relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-left ${visibleElements.has('event-card-1') ? 'visible' : ''}`}
               data-animate-id="event-card-1"
               style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
               onMouseEnter={(e) => {
@@ -827,7 +853,7 @@ export default function Home() {
 
             {/* Event Card 2 */}
             <div 
-              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-up ${visibleElements.has('event-card-2') ? 'visible' : ''}`}
+              className={`home-event-card relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-up ${visibleElements.has('event-card-2') ? 'visible' : ''}`}
               data-animate-id="event-card-2"
               style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
               onMouseEnter={(e) => {
@@ -884,7 +910,7 @@ export default function Home() {
 
             {/* Event Card 3 */}
             <div 
-              className={`relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-right ${visibleElements.has('event-card-3') ? 'visible' : ''}`}
+              className={`home-event-card relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-right ${visibleElements.has('event-card-3') ? 'visible' : ''}`}
               data-animate-id="event-card-3"
               style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
               onMouseEnter={(e) => {
@@ -943,7 +969,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
             <div className={`animate-on-scroll slide-left ${visibleElements.has('event-types') ? 'visible' : ''}`} data-animate-id="event-types">
               <p className="text-base md:text-lg mb-3" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>{content.events.eventTypesLabel}</p>
-              <p className="text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-vintage-stylist)', color: 'var(--color-brown-dark)' }}>{content.events.eventTypesText}</p>
+              <p className="home-event-types-text text-2xl md:text-3xl font-bold" style={{ fontFamily: 'var(--font-leiko)', color: 'var(--color-brown-dark)' }}>{content.events.eventTypesText}</p>
             </div>
             <a
               href="/events/upcoming"
@@ -962,7 +988,7 @@ export default function Home() {
       </section>
 
       {/* How to Get Involved Section */}
-      <section ref={parallaxSectionRef} className="relative z-10 pt-20 md:pt-28 pb-14 md:pb-20 overflow-hidden" style={{ background: 'var(--color-cream)' }}>
+      <section ref={parallaxSectionRef} className="home-get-involved relative z-10 pt-20 md:pt-28 pb-14 md:pb-20 overflow-hidden" style={{ background: 'var(--color-cream)' }}>
         {/* Fixed Background Images - Parallax Effect */}
         <div ref={parallaxBgRef} className="absolute inset-0 pointer-events-none parallax-bg overflow-visible" style={{ zIndex: 0 }}>
           {/* Wider spread: scale container so images extend further left/right */}
@@ -1093,9 +1119,9 @@ export default function Home() {
           >
             {content.getInvolved.description}
           </p>
-          <div className="max-w-3xl text-right order-1 lg:order-2 lg:ml-auto">
+          <div className="home-get-involved-cta max-w-3xl text-right order-1 lg:order-2 lg:ml-auto">
             <h2
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tight"
+              className="home-get-involved-heading text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95] tracking-tight"
               style={{ color: 'var(--color-olive)', fontFamily: 'var(--font-kollektif)' }}
               data-animate-id="get-involved-heading"
             >
@@ -1116,7 +1142,7 @@ export default function Home() {
                   </span>
                 ))}
               </span>
-              <span className="block text-6xl md:text-7xl lg:text-8xl font-bold italic leading-[0.90] tracking-tight mt-[-0.2em] ml-[0.18em] md:ml-[0.24em]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
+              <span className="home-get-involved-script block text-6xl md:text-7xl lg:text-8xl font-bold italic leading-[0.90] tracking-tight mt-[-0.2em] ml-[0.18em] md:ml-[0.24em]" style={{ fontFamily: 'var(--font-vintage-stylist)' }}>
                 <span
                   className={visibleElements.has('get-involved-heading') ? 'word-fade-in-up-blur' : ''}
                   style={{
@@ -1130,7 +1156,7 @@ export default function Home() {
               </span>
             </h2>
             <div
-              className={`mt-6 animate-on-scroll scale ${visibleElements.has('get-involved-button') ? 'visible' : ''}`}
+              className={`home-get-involved-button mt-6 animate-on-scroll scale ${visibleElements.has('get-involved-button') ? 'visible' : ''}`}
               data-animate-id="get-involved-button"
             >
               <a
