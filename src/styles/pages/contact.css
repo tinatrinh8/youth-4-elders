@@ -1,0 +1,213 @@
+/*
+ * CONTACT PAGE (/contact)
+ */
+/* Contact page: tablet only — no sideways swipe + align with nav pill */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .contact-page-tablet-lock {
+    max-width: 100vw;
+    overflow-x: hidden;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  .contact-tablet-align-nav {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+}
+
+/* ========== Contact form: compact fields on mobile + tablet only ========== */
+@media (max-width: 1023px) {
+  .contact-form-mobile-compact label {
+    font-size: 13px !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  .contact-form-mobile-compact .contact-form-field,
+  .contact-form-mobile-compact #contact-service-trigger,
+  .contact-form-mobile-compact textarea {
+    font-size: 14px !important;
+    padding: 0.55rem 0.85rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .contact-form-mobile-compact #contact-service-trigger {
+    padding-right: 2.4rem !important;
+  }
+
+  .contact-form-mobile-compact #contact-service-trigger svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    right: 0.75rem;
+  }
+
+  .contact-form-mobile-compact .absolute.top-full {
+    border-radius: 0.85rem !important;
+    max-height: 10rem !important;
+  }
+
+  .contact-form-mobile-compact .absolute.top-full button {
+    font-size: 13px !important;
+    padding: 0.55rem 0.85rem !important;
+  }
+
+  .contact-form-mobile-compact p.text-sm,
+  .contact-form-mobile-compact p.text-lg {
+    font-size: 13px !important;
+  }
+
+  .contact-form-mobile-compact .contact-submit-btn {
+    font-size: 14px !important;
+    padding: 0.6rem 1.25rem !important;
+    border-radius: 0.85rem !important;
+    box-shadow: 3px 3px 0 var(--color-brown-dark);
+  }
+
+  .contact-form-mobile-compact.contact-result-box-in,
+  .contact-form-mobile-compact.w-full.rounded-2xl {
+    padding: 1.1rem !important;
+    border-radius: 0.9rem !important;
+  }
+}
+
+/* ========== Contact form: autofill/filled state ========== */
+.contact-form-field:-webkit-autofill,
+.contact-form-field:-webkit-autofill:hover,
+.contact-form-field:-webkit-autofill:focus,
+.contact-form-field:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-pink-medium) inset !important;
+  box-shadow: 0 0 0 1000px var(--color-pink-medium) inset !important;
+  -webkit-text-fill-color: var(--color-brown-dark) !important;
+  caret-color: var(--color-brown-dark);
+}
+
+/* Lighter pink when user has filled in the field */
+.contact-form-field:not(:placeholder-shown) {
+  background: var(--color-pink-light) !important;
+}
+
+/* Contact form: smooth appear for success/failure result box */
+.contact-result-box-in {
+  animation: ideaSuccessBoxIn 0.45s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+  transform-origin: center center;
+}
+
+/* Contact form: each row slides up with stagger */
+@keyframes contactFormRowSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-form-row-slide-up {
+  animation: contactFormRowSlideUp 0.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+/* Contact caption: hidden until animation runs, then fades up (no flash) */
+@keyframes contactCaptionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+}
+
+.contact-caption-reveal {
+  opacity: 0;
+  animation: contactCaptionReveal 0.6s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+/* Socials: title fades up, then logos pop in after */
+@keyframes socialsLogoPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.socials-logos-pop {
+  animation: socialsLogoPop 0.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+/* Contact form: smooth enter when form comes back after success/failure */
+.contact-form-enter {
+  animation: contactFormEnter 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+@keyframes contactFormEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Progress bar */
+@keyframes progressFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-progress-fade-in {
+  animation: progressFadeIn 0.5s ease-out;
+}
+
+.contact-submit-btn {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 var(--color-brown-dark);
+  transition:
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    color 0.22s ease;
+}
+
+.contact-submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(251, 247, 232, 0.45) 50%,
+    transparent 80%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.55s ease;
+  pointer-events: none;
+}
+
+.contact-submit-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  background: var(--color-pink-light) !important;
+  color: var(--color-brown-dark) !important;
+  box-shadow: 4px 7px 0 var(--color-brown-dark);
+}
+
+.contact-submit-btn:hover:not(:disabled)::after {
+  transform: translateX(130%);
+}
+
+.contact-submit-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 2px 2px 0 var(--color-brown-dark);
+}

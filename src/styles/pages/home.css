@@ -1,0 +1,1178 @@
+/*
+ * HOME PAGE (/)
+ *
+ * Search in this file:
+ *   home-connect          connect banner
+ *   home-countdown        days-left card
+ *   max-width: 767px      phone layout
+ *   Tablet:               tablet layout
+ *   parallax              Get Involved stickers
+ *   sponsor-logo          home + partner logos
+ */
+@media (max-width: 767px) {
+  .home-connect-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.85rem !important;
+    box-sizing: border-box !important;
+    overflow: auto;
+  }
+
+  .home-connect-card {
+    width: 100% !important;
+    max-width: min(19.5rem, calc(100vw - 1.7rem)) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    min-width: 0;
+    flex-shrink: 1;
+    padding: 1.15rem 1rem 1rem !important;
+    border-radius: 1.25rem !important;
+    border-width: 2px !important;
+  }
+
+  .home-connect-card .washi-tape {
+    width: 52px !important;
+    height: 12px !important;
+  }
+
+  .home-connect-card .washi-tape-pink {
+    top: -0.45rem !important;
+    left: 1rem !important;
+  }
+
+  .home-connect-card .washi-tape-olive {
+    top: -0.35rem !important;
+    right: 1.15rem !important;
+  }
+
+  .home-connect-card > p:first-of-type {
+    margin-bottom: 0.55rem !important;
+    padding: 0.2rem 0.55rem !important;
+    font-size: 0.5rem !important;
+    letter-spacing: 0.14em !important;
+  }
+
+  .home-connect-card > h2 {
+    font-size: 1.35rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0.4rem !important;
+  }
+
+  .home-connect-card > p:nth-of-type(2) {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.85rem !important;
+    max-width: 100% !important;
+  }
+
+  .home-connect-card > div.flex {
+    gap: 0.45rem !important;
+    margin-bottom: 0.65rem !important;
+  }
+
+  .home-connect-card > div.flex > a {
+    padding: 0.55rem 0.7rem !important;
+    font-size: 0.8rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .home-connect-card > button {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Connect banner — slightly smaller on tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .home-connect-card {
+    max-width: 22.5rem !important;
+    padding: 2rem 1.5rem 1.65rem !important;
+    border-radius: 1.5rem !important;
+  }
+
+  .home-connect-card .washi-tape {
+    width: 72px !important;
+    height: 18px !important;
+  }
+
+  .home-connect-card > p:first-of-type {
+    margin-bottom: 0.75rem !important;
+    font-size: 0.55rem !important;
+  }
+
+  .home-connect-card > h2 {
+    font-size: 2.1rem !important;
+    margin-bottom: 0.65rem !important;
+  }
+
+  .home-connect-card > p:nth-of-type(2) {
+    font-size: 0.95rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .home-connect-card > div.flex {
+    gap: 0.65rem !important;
+    margin-bottom: 0.9rem !important;
+  }
+
+  .home-connect-card > div.flex > a {
+    padding: 0.7rem 0.85rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  .home-connect-card > button {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* Homepage countdown: inverted merlot + cream (all breakpoints) */
+.home-page .home-countdown-box {
+  background: var(--color-brown-dark) !important;
+  border-color: var(--color-brown-dark) !important;
+  box-shadow: 0 8px 32px rgba(98, 32, 47, 0.35) !important;
+}
+
+.home-page .home-countdown-shadow {
+  background: rgba(53, 18, 25, 0.95) !important;
+}
+
+.home-page .home-countdown-digit {
+  background: var(--color-cream) !important;
+}
+
+.home-page .home-countdown-digit-num {
+  color: var(--color-brown-dark) !important;
+}
+
+.home-page .home-countdown-digit > div.absolute {
+  background: rgba(98, 32, 47, 0.25) !important;
+}
+
+.home-page .home-countdown-box .space-y-1 > p {
+  color: var(--color-cream) !important;
+}
+
+.home-page .home-countdown-box .rounded-2xl {
+  background: var(--color-cream) !important;
+}
+
+.home-page .home-countdown-box .rounded-2xl > div {
+  color: var(--color-brown-dark) !important;
+}
+
+/* ========== Homepage: phone + tablet only (desktop lg+ untouched) ========== */
+
+/* Desktop hero sizing (matches previous inline layout) */
+@media (min-width: 1024px) {
+  .home-page .home-hero {
+    height: 120vh;
+    min-height: 120vh;
+  }
+
+  .home-page .home-hero-media {
+    top: 0;
+    left: 16px;
+    right: 16px;
+    bottom: auto;
+    margin: 40px 0 80px;
+    width: calc(100% - 32px);
+    height: calc(100% - 120px);
+  }
+
+  .home-page .home-countdown {
+    margin-top: -0.35rem !important;
+  }
+
+  .home-page .home-events {
+    padding-bottom: 10rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  html:has(body.home-page-active),
+  body.home-page-active {
+    overflow-x: clip !important;
+    max-width: 100vw;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  body.home-page-active #site-root,
+  body.home-page-active #site-root > main,
+  body.home-page-active .home-page {
+    max-width: 100vw !important;
+    overflow-x: clip !important;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  .home-page {
+    overflow-x: clip;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .home-page .home-hero {
+    height: 28.25rem !important; /* 1.85 + 23.5 + 2.9 */
+    min-height: 28.25rem !important;
+    max-height: none !important;
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  .home-page .home-hero-media {
+    top: 1.85rem !important;
+    left: 1rem !important;
+    right: 1rem !important;
+    bottom: auto !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: 23.5rem !important;
+    max-height: 23.5rem !important;
+  }
+
+  .home-page .home-hero-live {
+    top: 2.5rem !important;
+    right: 1.65rem !important;
+    max-width: 8.5rem !important;
+  }
+
+  .home-page .home-hero-live p {
+    font-size: 0.8rem !important;
+  }
+
+  .home-page .home-hero-title-wrap {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 3.55rem !important;
+    margin-bottom: -4.25rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    z-index: 30 !important;
+    max-width: 100vw !important;
+    overflow: visible !important;
+  }
+
+  .home-page .home-hero-title {
+    font-size: clamp(5.75rem, 28vw, 9.5rem) !important;
+    line-height: 0.76 !important;
+    white-space: normal !important;
+    max-width: 100% !important;
+  }
+
+  .home-page .home-hero-word {
+    display: inline-block !important;
+  }
+
+  .home-page .home-hero-word:first-child,
+  .home-page .home-hero-word-4 {
+    transform: translateY(-0.18em) !important;
+  }
+
+  .home-page .home-hero-word-4 {
+    margin-right: 0 !important;
+  }
+
+  .home-page .home-hero-word-elders {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 0.08em !important;
+  }
+
+  .home-page .home-mission {
+    position: relative;
+    z-index: 1;
+    padding-top: 5.85rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  .home-page .home-mission > div {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  .home-page .home-mission .text-center {
+    margin-bottom: 1.75rem !important;
+  }
+
+  .home-page .home-mission-title {
+    font-size: 3.15rem !important;
+    line-height: 1.05 !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .home-page .home-mission p {
+    font-size: 1rem !important;
+    line-height: 1.55 !important;
+    text-align: center !important;
+  }
+
+  .home-page .home-updates {
+    padding-top: 2.75rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  .home-page .home-updates > div {
+    padding-left: 1.15rem !important;
+    padding-right: 1.15rem !important;
+  }
+
+  .home-page .home-updates-heading {
+    font-size: 1.78rem !important;
+    margin-bottom: 1.15rem !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .home-page .home-updates-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    align-items: start !important;
+  }
+
+  .home-page .home-updates-list {
+    order: 2 !important;
+    min-width: 0 !important;
+    margin-top: 0.35rem !important;
+  }
+
+  .home-page .home-updates-list .space-y-8 > * + * {
+    margin-top: 0.7rem !important;
+  }
+
+  .home-page .home-updates-list > div {
+    max-width: 100% !important;
+    margin-bottom: 0 !important;
+  }
+
+  .home-page .home-update-card {
+    padding: 0.75rem 0.85rem !important;
+  }
+
+  .home-page .home-update-card .flex {
+    gap: 0.55rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  .home-page .home-update-card .w-8 {
+    width: 1.6rem !important;
+    height: 1.6rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .home-page .home-update-card h4 {
+    font-size: 0.95rem !important;
+    margin-bottom: 0.2rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .home-page .home-update-card p {
+    font-size: 0.78rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .home-page .home-countdown {
+    order: 1 !important;
+    width: 100% !important;
+    margin-top: 0.8rem !important;
+    margin-bottom: 0.5rem !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+  }
+
+  .home-page .home-countdown-frame {
+    width: min(100%, 11.25rem) !important;
+    max-width: 11.25rem !important;
+    margin-inline: auto !important;
+  }
+
+  .home-page .home-countdown-box {
+    border-radius: 1.5rem !important;
+    min-height: 0 !important;
+    max-width: 11.25rem !important;
+    width: 100% !important;
+    padding: 1.15rem 0.75rem !important;
+    gap: 0.55rem !important;
+  }
+
+  .home-page .home-countdown-shadow {
+    border-radius: 1.5rem !important;
+    min-height: 0 !important;
+    max-width: 11.25rem !important;
+    width: 100% !important;
+    padding: 1.15rem 0.75rem !important;
+    top: 5px !important;
+    left: calc(50% + 3px) !important;
+  }
+
+  .home-page .home-countdown-digit {
+    min-width: 3.5rem !important;
+    min-height: 4.15rem !important;
+    padding: 0.6rem 0.7rem !important;
+    border-radius: 0.8rem !important;
+  }
+
+  .home-page .home-countdown-digit-num {
+    font-size: 2.15rem !important;
+  }
+
+  .home-page .home-countdown-box .mb-8 {
+    margin-bottom: 0.35rem !important;
+  }
+
+  .home-page .home-countdown-box .space-y-1 > p:first-child {
+    font-size: 0.55rem !important;
+    letter-spacing: 0.08em !important;
+    opacity: 0.9;
+  }
+
+  .home-page .home-countdown-box .space-y-1 > p:last-child {
+    font-size: 0.78rem !important;
+  }
+
+  .home-page .home-updates .home-quote {
+    margin-top: 1.5rem !important;
+    padding: 0.7rem 0.55rem !important;
+  }
+
+  .home-page .home-updates .home-quote-text {
+    font-size: clamp(0.62rem, 3.1vw, 0.85rem) !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    padding-left: 0.35rem !important;
+    padding-right: 0.35rem !important;
+  }
+
+  .home-page .home-events {
+    padding-top: 6.5rem !important;
+    padding-bottom: 4rem !important;
+    overflow-x: clip !important;
+    max-width: 100vw !important;
+  }
+
+  .home-page .home-events > .home-events-marquee-wrap {
+    top: 4.25rem !important;
+    align-items: flex-start !important;
+    z-index: 0 !important;
+  }
+
+  .home-page .home-events > .max-w-7xl {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+    padding-top: 4.75rem !important;
+    margin-top: 0 !important;
+    position: relative !important;
+    z-index: 10 !important;
+  }
+
+  .home-page .home-events-marquee {
+    font-size: 10rem !important;
+  }
+
+  .home-page .home-events-row {
+    min-height: 0 !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    margin-bottom: 1.75rem !important;
+  }
+
+  .home-page .home-event-card {
+    min-height: 15.5rem !important;
+    width: 100% !important;
+    flex-basis: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0.75rem !important;
+    overflow: hidden !important;
+  }
+
+  .home-page .home-event-card > .relative {
+    min-height: 15.5rem !important;
+  }
+
+  .home-page .home-event-card .event-details {
+    max-height: 7.5rem !important;
+    opacity: 1 !important;
+  }
+
+  .home-page .home-event-card > div:last-child {
+    padding: 0.85rem 1rem 1rem !important;
+  }
+
+  .home-page .home-event-types-text {
+    font-size: 1.15rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .home-page .home-get-involved {
+    padding-top: 3.5rem !important;
+    padding-bottom: 3.5rem !important;
+    min-height: 0 !important;
+    max-width: 100vw !important;
+  }
+
+  /* Stickers clipped to cream — parallax driven by JS (don't override transform) */
+  .home-page .home-get-involved {
+    overflow: hidden !important;
+  }
+
+  .home-page .home-get-involved .parallax-bg {
+    overflow: hidden !important;
+    z-index: 0 !important;
+  }
+
+  .home-page .home-get-involved > .max-w-7xl {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+    position: relative !important;
+    z-index: 10 !important;
+    gap: 1.1rem !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Unwrap CTA so we can order: title → paragraph → button */
+  .home-page .home-get-involved-cta {
+    display: contents !important;
+  }
+
+  .home-page .home-get-involved-heading {
+    order: 1 !important;
+    width: 100% !important;
+    font-size: 1.85rem !important;
+    text-align: right !important;
+  }
+
+  .home-page .home-get-involved-script {
+    font-size: 2.75rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    text-align: right !important;
+  }
+
+  .home-page .home-get-involved p {
+    order: 2 !important;
+    width: 100% !important;
+    max-width: 22rem !important;
+    margin-left: auto !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    text-align: right !important;
+  }
+
+  .home-page .home-get-involved-button {
+    order: 3 !important;
+    width: 100% !important;
+    text-align: right !important;
+    margin-top: 0.15rem !important;
+  }
+}
+
+/* Tablet: same layout as desktop, smaller scale — locked inside the screen frame */
+@media (min-width: 768px) and (max-width: 1023px) {
+  html:has(body.home-page-active),
+  body.home-page-active {
+    overflow-x: clip !important;
+    max-width: 100vw;
+    width: 100%;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+
+  /* Don't clip #site-root/main — that breaks position:fixed parallax on iPad */
+  body.home-page-active #site-root,
+  body.home-page-active #site-root > main {
+    max-width: 100vw !important;
+    width: 100% !important;
+    overflow-x: visible !important;
+  }
+
+  .home-page {
+    overflow-x: visible;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .home-page > *:not(.home-get-involved) {
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  /* —— Hero: one fixed screen within the tablet frame —— */
+  .home-page .home-hero {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow: clip !important;
+  }
+
+  .home-page .home-hero-media {
+    top: 0 !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: auto !important;
+    margin: 28px 0 56px !important;
+    width: calc(100% - 24px) !important;
+    height: calc(100% - 84px) !important;
+    max-height: none !important;
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  .home-page .home-hero-live {
+    top: 4.5rem !important;
+    right: 2rem !important;
+    max-width: min(16rem, calc(100vw - 4rem)) !important;
+  }
+
+  .home-page .home-hero-live p {
+    font-size: 1.15rem !important;
+  }
+
+  .home-page .home-hero-title-wrap {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 1.85rem !important;
+    margin-bottom: -3.15rem !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+    max-width: 100vw !important;
+    overflow: visible !important;
+  }
+
+  .home-page .home-hero-title {
+    font-size: clamp(10.5rem, 22vw, 15.5rem) !important;
+    line-height: 0.78 !important;
+    white-space: normal !important;
+    max-width: 100% !important;
+  }
+
+  .home-page .home-hero-word {
+    display: inline-block !important;
+    width: auto !important;
+  }
+
+  .home-page .home-hero-word:first-child,
+  .home-page .home-hero-word-4 {
+    transform: translateY(-0.12em) !important;
+  }
+
+  .home-page .home-hero-word-4 {
+    margin-right: 0 !important;
+  }
+
+  .home-page .home-hero-word-elders {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 0.06em !important;
+    transform: none !important;
+  }
+
+  /* —— Mission —— */
+  .home-page .home-mission {
+    padding-top: 6.5rem !important;
+    padding-bottom: 6.5rem !important;
+    overflow-x: clip !important;
+  }
+
+  .home-page .home-mission-title {
+    font-size: clamp(5.75rem, 12vw, 8.25rem) !important;
+    line-height: 1.02 !important;
+    margin-bottom: 0.85rem !important;
+  }
+
+  .home-page .home-mission .text-center {
+    margin-bottom: 1.75rem !important;
+  }
+
+  .home-page .home-mission p {
+    font-size: 1.35rem !important;
+    line-height: 1.55 !important;
+    text-align: center !important;
+  }
+
+  /* —— Club updates + countdown (2-col like desktop) —— */
+  .home-page .home-updates {
+    padding-top: 4rem !important;
+    padding-bottom: 5rem !important;
+    overflow-x: clip !important;
+  }
+
+  .home-page .home-updates > div {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .home-page .home-updates-heading {
+    font-size: clamp(2.25rem, 5vw, 3rem) !important;
+    margin-bottom: 1.75rem !important;
+    text-align: left !important;
+    white-space: normal !important;
+  }
+
+  .home-page .home-updates-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 2.25rem !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .home-page .home-updates-list {
+    order: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .home-page .home-update-card {
+    padding: 1rem 1.1rem !important;
+  }
+
+  .home-page .home-update-card h4 {
+    font-size: 1.05rem !important;
+  }
+
+  .home-page .home-update-card p {
+    font-size: 0.9rem !important;
+  }
+
+  .home-page .home-countdown {
+    order: 2 !important;
+    justify-content: center !important;
+    align-self: center !important;
+    margin-top: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .home-page .home-countdown-frame {
+    width: min(100%, 19.5rem) !important;
+    max-width: 19.5rem !important;
+    margin-inline: auto !important;
+  }
+
+  .home-page .home-countdown-box,
+  .home-page .home-countdown-shadow {
+    border-radius: 2.5rem !important;
+    min-height: 26rem !important;
+    max-width: 19.5rem !important;
+    width: 100% !important;
+    padding: 3.25rem 1.5rem !important;
+    gap: 1.25rem !important;
+  }
+
+  .home-page .home-countdown-shadow {
+    top: 8px !important;
+    left: calc(50% + 5px) !important;
+  }
+
+  .home-page .home-countdown-box .mb-8 {
+    margin-bottom: 0.85rem !important;
+  }
+
+  .home-page .home-countdown-digit {
+    min-width: 11rem !important;
+    min-height: 12rem !important;
+    padding: 1.75rem 2rem !important;
+    border-radius: 1.25rem !important;
+  }
+
+  .home-page .home-countdown-digit-num {
+    font-size: 5.25rem !important;
+  }
+
+  .home-page .home-updates .home-quote {
+    margin-top: 2.5rem !important;
+    max-width: 100% !important;
+  }
+
+  .home-page .home-updates .home-quote-text {
+    font-size: 1.35rem !important;
+    line-height: 1.4 !important;
+    white-space: normal !important;
+  }
+
+  /* —— Events (side-by-side cards like desktop) —— */
+  .home-page .home-events {
+    padding-top: 8.5rem !important;
+    padding-bottom: 7rem !important;
+    overflow-x: clip !important;
+    max-width: 100vw !important;
+  }
+
+  .home-page .home-events > .home-events-marquee-wrap {
+    top: 6.25% !important;
+    z-index: 0 !important;
+    overflow: hidden !important;
+    max-width: 100% !important;
+  }
+
+  .home-page .home-events > .max-w-7xl {
+    padding-top: 0.75rem !important;
+    padding-left: 2.75rem !important;
+    padding-right: 2.75rem !important;
+    margin-top: 0.5rem !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .home-page .home-events-marquee {
+    font-size: clamp(10.5rem, 20vw, 15rem) !important;
+  }
+
+  .home-page .home-events-row {
+    flex-direction: row !important;
+    min-height: 22rem !important;
+    gap: 0.85rem !important;
+    margin-bottom: 2.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    align-items: stretch !important;
+  }
+
+  /* No hover lift on tablet — compact even text bars so photos show more */
+  .home-page .home-event-card {
+    min-height: 22rem !important;
+    height: 22rem !important;
+    width: auto !important;
+    flex: 1 1 0 !important;
+    flex-basis: 33.333% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    z-index: 1 !important;
+    cursor: default !important;
+  }
+
+  .home-page .home-event-card > .relative {
+    min-height: 100% !important;
+    height: 100% !important;
+  }
+
+  .home-page .home-event-card > div:last-child {
+    height: 7.25rem !important;
+    min-height: 7.25rem !important;
+    max-height: 7.25rem !important;
+    padding: 0.65rem 0.75rem 0.7rem !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+
+  .home-page .home-event-card h3 {
+    font-size: 0.92rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .home-page .home-event-card .event-details {
+    max-height: none !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    flex: 1 1 auto !important;
+  }
+
+  .home-page .home-event-card .event-details p {
+    font-size: 0.65rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0.15rem !important;
+  }
+
+  .home-page .home-event-card .event-details p:last-child {
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+    line-clamp: 3 !important;
+    overflow: hidden !important;
+    margin-bottom: 0 !important;
+  }
+
+  .home-page .home-event-types-text {
+    font-size: 1.25rem !important;
+    white-space: nowrap !important;
+  }
+
+  .home-page .home-events > .max-w-7xl > div:last-child {
+    flex-wrap: nowrap !important;
+    align-items: flex-end !important;
+    gap: 1rem !important;
+  }
+
+  .home-page .home-events > .max-w-7xl > div:last-child > div {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .home-page .home-events > .max-w-7xl > div:last-child > a {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* —— Get involved (2-col: copy left, title+button right) —— */
+  .home-page .home-get-involved {
+    padding-top: 4.5rem !important;
+    padding-bottom: 4rem !important;
+    overflow: hidden !important;
+    max-width: 100vw !important;
+  }
+
+  .home-page .home-get-involved .parallax-bg {
+    /* Extra safety: never paint past the cream section on tablet */
+    clip-path: inset(0) !important;
+  }
+
+  /* Burgundy footer covers any sticker bleed on tablet */
+  body.home-page-active footer {
+    position: relative !important;
+    z-index: 30 !important;
+  }
+
+  .home-page .home-get-involved > .max-w-7xl {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 1.75rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .home-page .home-get-involved-cta {
+    display: block !important;
+    order: 2 !important;
+    text-align: right !important;
+    margin-left: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .home-page .home-get-involved-heading {
+    order: unset !important;
+    width: auto !important;
+    font-size: clamp(2rem, 4.5vw, 2.65rem) !important;
+    text-align: right !important;
+  }
+
+  .home-page .home-get-involved-script {
+    font-size: clamp(3rem, 7vw, 4.25rem) !important;
+    margin-left: 0.2em !important;
+    margin-right: 0 !important;
+    text-align: right !important;
+  }
+
+  .home-page .home-get-involved p {
+    order: 1 !important;
+    width: auto !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    font-size: 1.15rem !important;
+    line-height: 1.55 !important;
+    text-align: left !important;
+    min-width: 0 !important;
+  }
+
+  .home-page .home-get-involved-button {
+    order: unset !important;
+    width: auto !important;
+    text-align: right !important;
+    margin-top: 1.25rem !important;
+  }
+}
+
+/* ========== 7. PAGE: Home (/) ========== */
+/* Stickers: viewport-locked field, revealed only through Get Involved */
+.parallax-bg {
+  overflow: hidden !important;
+  pointer-events: none !important;
+  will-change: transform;
+  backface-visibility: hidden;
+  clip-path: inset(0);
+}
+
+.parallax-bg-inner {
+  backface-visibility: hidden;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.home-page .home-events {
+  position: relative;
+  z-index: 20;
+}
+
+.home-page .home-get-involved {
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.home-page .home-get-involved > .max-w-7xl {
+  position: relative;
+  z-index: 10;
+}
+
+/* Footer always covers the sticker window when it scrolls in */
+body.home-page-active footer {
+  position: relative;
+  z-index: 25;
+}
+
+@keyframes scrollText {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll-text {
+  animation: scrollText 30s linear infinite;
+  will-change: transform;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Sponsor logos (Home + Partner) */
+.sponsor-logo[data-sponsor-index="0"] {
+  max-width: 450px;
+}
+@media (max-width: 767px) {
+  .sponsor-logo[data-sponsor-index="0"] {
+    transform: scale(1.75);
+    padding: 0 !important;
+  }
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="0"] {
+    max-width: 450px;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sponsor-logo[data-sponsor-index="0"] {
+    transform: scale(1.7);
+    padding: 0 !important;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="0"] {
+    width: 800px !important;
+    max-width: 1000px;
+    height: auto !important;
+    min-height: 320px;
+    flex-shrink: 0;
+  }
+}
+
+.sponsor-logo[data-sponsor-index="1"] {
+  max-width: 500px;
+}
+@media (max-width: 767px) {
+  .sponsor-logo[data-sponsor-index="1"] {
+    transform: scale(1.4);
+    padding: 0 !important;
+  }
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="1"] {
+    max-width: 400px;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sponsor-logo[data-sponsor-index="1"] {
+    transform: scale(1.28);
+    padding: 0 !important;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="1"] {
+    width: 500px !important;
+    max-width: 1000px;
+    height: auto !important;
+    min-height: 320px;
+    flex-shrink: 0;
+  }
+}
+
+.sponsor-logo[data-sponsor-index="2"] {
+  max-width: 350px;
+}
+@media (max-width: 767px) {
+  .sponsor-logo[data-sponsor-index="2"] {
+    transform: scale(1.48);
+    padding: 0 !important;
+  }
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="2"] {
+    max-width: 450px;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sponsor-logo[data-sponsor-index="2"] {
+    transform: scale(1.65);
+    padding: 0 !important;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="2"] {
+    width: 400px !important;
+    max-width: 1000px;
+    height: auto !important;
+    min-height: 320px;
+    flex-shrink: 0;
+  }
+}
+
+.sponsor-logo[data-sponsor-index="3"] {
+  max-width: 300px;
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="3"] {
+    max-width: 400px;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="3"] {
+    max-width: 500px;
+  }
+}
+
+.sponsor-logo[data-sponsor-index="4"] {
+  max-width: 180px;
+}
+@media (min-width: 768px) {
+  .sponsor-logo[data-sponsor-index="4"] {
+    max-width: 200px;
+  }
+}
+@media (min-width: 1024px) {
+  .sponsor-logo[data-sponsor-index="4"] {
+    width: 240px !important;
+    max-width: 300px;
+    height: auto !important;
+    min-height: 200px;
+    flex-shrink: 0;
+  }
+}

@@ -1,0 +1,104 @@
+/*
+ * TEAM PAGE (/team)
+ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  body.team-page .team-page-inner {
+    max-width: 64rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+
+  body.team-page .team-page-hero {
+    padding-bottom: 6rem;
+  }
+
+  body.team-page .team-page-hero h1 {
+    font-size: 3rem !important;
+    line-height: 0.95;
+  }
+
+  body.team-page .team-page-hero p {
+    font-size: 1rem !important;
+  }
+
+  body.team-page .team-member-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  body.team-page .team-member-photo {
+    max-width: 190px !important;
+    width: 190px;
+    margin-bottom: 0.75rem;
+  }
+
+  body.team-page .team-member-card h3,
+  body.team-page .team-member-card p {
+    width: 190px;
+    text-align: left;
+  }
+
+  body.team-page .team-member-card h3 {
+    font-size: 1rem !important;
+  }
+
+  body.team-page .team-member-card p {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Team page: no sideways swipe on phone + tablet */
+@media (max-width: 1023px) {
+  html:has(body.team-page),
+  body.team-page {
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+  }
+
+  body.team-page #site-root,
+  body.team-page #site-root > main {
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  .team-page-tablet-lock {
+    max-width: 100vw;
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+  }
+}
+
+/* ========== 8. PAGE: Team (/team) ========== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fadeInUp {
+  opacity: 0;
+  animation: fadeInUp 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-fadeInScale {
+  opacity: 0;
+  animation: fadeInScale 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}

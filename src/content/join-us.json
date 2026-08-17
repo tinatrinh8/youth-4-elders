@@ -10,8 +10,12 @@
     },
     "execMember": {
       "title": "Team roles",
-      "description": "Help run the club—events, outreach, marketing, and more.",
-      "openStatus": "Applications are open now."
+      "description": "Help run the club—events, outreach, marketing, and more. You’ll work with the team to plan programs and keep Youth 4 Elders growing.",
+      "applicationsOpen": false,
+      "openStatus": "Applications are open now.",
+      "pausedLabel": "Paused",
+      "closedStatus": "Not open yet",
+      "closedCta": "Check back later"
     }
   },
   "applyBox": {

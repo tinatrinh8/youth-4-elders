@@ -1,0 +1,57 @@
+/* NavigationBar dropdown + page-frame margins */
+/* ========== 3. SHARED: Navigation (NavigationBar) ========== */
+@keyframes dropdownRollOut {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scaleY(0);
+    transform-origin: top;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    transform-origin: top;
+  }
+}
+
+@keyframes dropdownRollIn {
+  from {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    transform-origin: top;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scaleY(0);
+    transform-origin: top;
+  }
+}
+
+.animate-dropdown-roll-out {
+  animation: dropdownRollOut 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+.animate-dropdown-roll-in {
+  animation: dropdownRollIn 0.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+}
+
+/* Mobile Navigation Margins */
+@media (max-width: 767px) {
+  .nav-mobile-margins {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Tablet: same desktop pill nav, tighter so it fits */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-mobile-margins {
+    margin-left: 1.25rem !important;
+    margin-right: 1.25rem !important;
+    margin-top: 1.25rem !important;
+    margin-bottom: 0.75rem !important;
+    max-width: calc(100vw - 2.5rem);
+    min-width: 0;
+  }
+}

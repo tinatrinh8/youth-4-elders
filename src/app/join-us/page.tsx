@@ -169,7 +169,11 @@ const content = joinUsContent as {
     execMember: {
       title: string
       description: string
+      applicationsOpen: boolean
       openStatus: string
+      pausedLabel: string
+      closedStatus: string
+      closedCta: string
   }
   }
   applyBox: { generalTitle: string; teamTitle: string; cta: string }
@@ -291,8 +295,10 @@ export default function JoinUs() {
   const selectDropdownRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   const isTeamApp = applicationType === 'team'
+  const teamApplicationsOpen = content.cards.execMember.applicationsOpen
 
   const startApplication = (type: ApplicationType) => {
+    if (type === 'team' && !teamApplicationsOpen) return
     setApplicationType(type)
     resumeFileRef.current = null
     setFieldErrors({})
@@ -748,10 +754,10 @@ export default function JoinUs() {
           style={contentVisible ? { animationDelay: '0s' } : { opacity: 0 }}
         >
           <div className="join-us-card rounded-2xl border-2 border-[var(--color-brown-dark)]/20 overflow-hidden bg-[var(--color-cream)] shadow-lg max-w-5xl mx-auto w-full">
-            <div className="join-us-card-intro p-6 md:p-8 space-y-6 md:space-y-8">
-              <div className="join-us-role-grid grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            <div className="join-us-card-intro p-4 md:p-5">
+              <div className="join-us-role-grid grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                 <div className="join-us-role-block flex flex-col gap-3">
-                  <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4 flex-1">
+                  <div className="join-us-role-card rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-3 flex-1">
                   <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
                     {content.cards.generalMember.title}
                   </h3>
@@ -769,28 +775,50 @@ export default function JoinUs() {
                     </span>
                   </button>
                 </div>
-                <div className="join-us-role-block flex flex-col gap-3">
-                  <div className="rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-4 flex-1">
+                <div className={`join-us-role-block flex flex-col gap-3 ${teamApplicationsOpen ? '' : 'is-paused'}`}>
+                  <div className="join-us-role-card relative rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-3 flex-1">
                   <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
                     {content.cards.execMember.title}
                   </h3>
                   <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
                       {content.cards.execMember.description}
                     </p>
+                    {teamApplicationsOpen && (
                     <p
                       className="mt-2 text-sm md:text-base font-bold italic underline underline-offset-2"
                       style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
                     >
                       {content.cards.execMember.openStatus}
                     </p>
+                    )}
+                    {!teamApplicationsOpen && (
+                      <div className="join-us-paused-stamp" aria-hidden>
+                        <span className="join-us-paused-stamp-word">{content.cards.execMember.pausedLabel}</span>
+                        <span className="join-us-paused-stamp-sub">{content.cards.execMember.closedStatus}</span>
+                      </div>
+                    )}
               </div>
             <button
                 type="button"
                     onClick={() => startApplication('team')}
-                    className="join-us-role-cta w-full text-center px-4 py-3 md:px-5 md:py-4 flex items-center justify-center rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
+                    disabled={!teamApplicationsOpen}
+                    aria-disabled={!teamApplicationsOpen}
+                    aria-label={
+                      teamApplicationsOpen
+                        ? content.applyBox.teamTitle
+                        : `${content.cards.execMember.pausedLabel}. ${content.cards.execMember.closedStatus}.`
+                    }
+                    className={`join-us-role-cta w-full text-center px-4 py-3 md:px-5 md:py-4 flex items-center justify-center rounded-xl border-2 ${
+                      teamApplicationsOpen
+                        ? 'bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-[var(--color-cream)]/40'
+                        : 'join-us-paused-seal cursor-default'
+                    }`}
                   >
-                    <span className="text-sm md:text-base font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
-                      {content.applyBox.teamTitle}
+                    <span
+                      className={`text-sm md:text-base font-bold ${teamApplicationsOpen ? 'text-[var(--color-cream)]' : 'join-us-paused-seal-label'}`}
+                      style={{ fontFamily: teamApplicationsOpen ? 'var(--font-leiko)' : 'var(--font-vintage-stylist)' }}
+                    >
+                      {teamApplicationsOpen ? content.applyBox.teamTitle : content.cards.execMember.closedCta}
                     </span>
             </button>
             </div>

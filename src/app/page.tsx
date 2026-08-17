@@ -29,6 +29,7 @@ export default function Home() {
   const heroSectionRef = useRef<HTMLElement>(null)
   const parallaxSectionRef = useRef<HTMLElement>(null)
   const parallaxBgRef = useRef<HTMLDivElement>(null)
+  const parallaxInnerRef = useRef<HTMLDivElement>(null)
   const countdownBoxRef = useRef<HTMLDivElement>(null)
   const countdownShadowRef = useRef<HTMLDivElement>(null)
 
@@ -76,49 +77,75 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // Position fixed background relative to section
-    const updateBackgroundPosition = () => {
-      if (parallaxSectionRef.current && parallaxBgRef.current) {
-        const section = parallaxSectionRef.current
-        const rect = section.getBoundingClientRect()
-        const footer = document.querySelector('footer')
+    // Cream section is a moving "window": stickers stay put in the viewport
+    // and are only visible while Get Involved is on screen — hide under pink/footer.
+    const section = parallaxSectionRef.current
+    const bg = parallaxBgRef.current
+    const inner = parallaxInnerRef.current
+    if (!section || !bg || !inner) return
 
-        let height = rect.height
-        const isMobile = window.innerWidth < 768
-        if (footer) {
-          const footerRect = footer.getBoundingClientRect()
-          if (isMobile) {
-            // Keep stickers spread through the cream section (not crushed into the footer band)
-            height = rect.height + Math.min(72, footerRect.height * 0.2)
-          } else {
-            height = Math.max(height, footerRect.bottom - rect.top)
-          }
-        }
+    let raf = 0
+    let running = false
 
-        // Fixed so stars stay put while content scrolls (needed for mobile too)
-        parallaxBgRef.current.style.position = 'fixed'
-        parallaxBgRef.current.style.top = `${rect.top}px`
-        parallaxBgRef.current.style.left = `${rect.left}px`
-        parallaxBgRef.current.style.width = `${rect.width}px`
-        parallaxBgRef.current.style.height = `${height}px`
-      }
+    bg.style.position = 'fixed'
+    bg.style.top = '0'
+    bg.style.left = '0'
+    bg.style.right = 'auto'
+    bg.style.bottom = 'auto'
+    bg.style.overflow = 'hidden'
+    bg.style.pointerEvents = 'none'
+    bg.style.zIndex = '0'
+    bg.style.clipPath = 'inset(0)'
+    bg.style.willChange = 'transform'
+    bg.style.backfaceVisibility = 'hidden'
+
+    inner.style.position = 'absolute'
+    inner.style.top = '0'
+    inner.style.left = '-18%'
+    inner.style.width = '136%'
+    inner.style.transformOrigin = 'center center'
+    inner.style.willChange = 'transform'
+    inner.style.backfaceVisibility = 'hidden'
+
+    const updateParallax = () => {
+      running = false
+      const rect = section.getBoundingClientRect()
+      const winH = window.innerHeight || 1
+
+      const visible = rect.bottom > 0 && rect.top < winH
+      bg.style.visibility = visible ? 'visible' : 'hidden'
+      if (!visible) return
+
+      // Window = cream section only (not pink, not footer)
+      bg.style.width = `${rect.width}px`
+      bg.style.height = `${rect.height}px`
+      bg.style.transform = `translate3d(${rect.left}px, ${rect.top}px, 0)`
+
+      // Stickers stay locked to the viewport as the window scrolls over them
+      inner.style.height = `${winH}px`
+      inner.style.transform = `translate3d(0, ${-rect.top}px, 0) scale(1.25)`
     }
 
-    const handleScroll = () => {
-      updateBackgroundPosition()
+    const onScroll = () => {
+      if (running) return
+      running = true
+      raf = requestAnimationFrame(updateParallax)
     }
 
-    const handleResize = () => {
-      updateBackgroundPosition()
+    const onResize = () => {
+      cancelAnimationFrame(raf)
+      running = false
+      updateParallax()
     }
 
-    window.addEventListener('scroll', handleScroll)
-    window.addEventListener('resize', handleResize)
-    updateBackgroundPosition() // Initial call
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onResize)
+    updateParallax()
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleResize)
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
     }
   }, [])
 
@@ -144,8 +171,8 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // Exec applications close end of day — August 30, 2026 (matches home.json countdown)
-    const targetDate = new Date(2026, 7, 30, 23, 59, 59)
+    // Fall term at uOttawa — September 8, 2026 (matches home.json countdown)
+    const targetDate = new Date(2026, 8, 8, 0, 0, 0)
 
     const calculateTimeLeft = () => {
       const difference = targetDate.getTime() - Date.now()
@@ -226,6 +253,49 @@ export default function Home() {
       setShowModal(false)
       setIsClosing(false)
     }, 400) // Match animation duration (fadeOut is 0.4s)
+  }
+
+  // Hover lift is desktop-only (tablet/phone show details always via CSS)
+  const eventHoverEnabled = () => typeof window !== 'undefined' && window.innerWidth >= 1024
+
+  const expandEventCard = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!eventHoverEnabled()) return
+    const container = e.currentTarget.parentElement
+    if (!container) return
+    e.currentTarget.style.flexBasis = '50%'
+    e.currentTarget.style.zIndex = '20'
+    e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
+    Array.from(container.children).forEach((sibling) => {
+      if (sibling !== e.currentTarget) {
+        const el = sibling as HTMLElement
+        el.style.flexBasis = '25%'
+        el.style.transition = 'flex-basis 500ms ease-out'
+      }
+    })
+    const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement | null
+    if (textContainer) {
+      textContainer.style.maxHeight = '120px'
+      textContainer.style.opacity = '1'
+    }
+  }
+
+  const collapseEventCard = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!eventHoverEnabled()) return
+    const container = e.currentTarget.parentElement
+    if (!container) return
+    e.currentTarget.style.flexBasis = '33.333%'
+    e.currentTarget.style.zIndex = '1'
+    e.currentTarget.style.boxShadow = 'none'
+    Array.from(container.children).forEach((sibling) => {
+      if (sibling !== e.currentTarget) {
+        ;(sibling as HTMLElement).style.flexBasis = '33.333%'
+      }
+    })
+    const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement | null
+    if (textContainer) {
+      textContainer.style.maxHeight = '0'
+      textContainer.style.opacity = '0'
+    }
   }
 
   const isCountdownLive =
@@ -469,6 +539,7 @@ export default function Home() {
                   style={{
                     animationDelay: visibleElements.has('mission-headline') ? `${i * 0.12}s` : undefined,
                     opacity: visibleElements.has('mission-headline') ? undefined : 0,
+                    fontStyle: i === 4 ? 'italic' : undefined,
                   }}
                 >
                   {word}{i < 4 ? '\u00A0' : ''}
@@ -773,7 +844,7 @@ export default function Home() {
       </section>
 
       {/* Events Section */}
-      <section className="home-events relative z-10 py-32 md:py-48 lg:py-64 overflow-hidden" style={{ background: 'var(--color-pink-medium)' }}>
+      <section className="home-events relative z-20 py-32 md:py-48 lg:py-64 overflow-hidden" style={{ background: 'var(--color-pink-medium)' }}>
         {/* Large Background Text - Scrolling */}
         <div className="home-events-marquee-wrap absolute inset-0 flex items-start pointer-events-none overflow-hidden" style={{ top: '10%' }}>
           <div className="flex whitespace-nowrap animate-scroll-text" style={{ width: '200%' }}>
@@ -799,43 +870,8 @@ export default function Home() {
               className={`home-event-card relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-left ${visibleElements.has('event-card-1') ? 'visible' : ''}`}
               data-animate-id="event-card-1"
               style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
-              onMouseEnter={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '50%'
-                  e.currentTarget.style.zIndex = '20'
-                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '25%'
-                      sibling.style.transition = 'flex-basis 500ms ease-out'
-                    }
-                  })
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '120px'
-                    textContainer.style.opacity = '1'
-                  }
-                }
-              }}
-              onMouseLeave={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '33.333%'
-                  e.currentTarget.style.zIndex = '1'
-                  e.currentTarget.style.boxShadow = 'none'
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) sibling.style.flexBasis = '33.333%'
-                  })
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '0'
-                    textContainer.style.opacity = '0'
-                  }
-                }
-              }}
+              onMouseEnter={expandEventCard}
+              onMouseLeave={collapseEventCard}
             >
               <div className="relative h-full w-full min-h-[500px] overflow-hidden">
                 <Image src="/assets/abbott.JPG" alt="Workshop Series" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -856,43 +892,8 @@ export default function Home() {
               className={`home-event-card relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-up ${visibleElements.has('event-card-2') ? 'visible' : ''}`}
               data-animate-id="event-card-2"
               style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
-              onMouseEnter={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '50%'
-                  e.currentTarget.style.zIndex = '20'
-                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '25%'
-                      sibling.style.transition = 'flex-basis 500ms ease-out'
-                    }
-                  })
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '120px'
-                    textContainer.style.opacity = '1'
-                  }
-                }
-              }}
-              onMouseLeave={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '33.333%'
-                  e.currentTarget.style.zIndex = '1'
-                  e.currentTarget.style.boxShadow = 'none'
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) sibling.style.flexBasis = '33.333%'
-                  })
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '0'
-                    textContainer.style.opacity = '0'
-                  }
-                }
-              }}
+              onMouseEnter={expandEventCard}
+              onMouseLeave={collapseEventCard}
             >
               <div className="relative h-full w-full min-h-[500px] overflow-hidden">
                 <Image src="/assets/kreme.JPG" alt="Krispy Kreme Fundraiser" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -913,43 +914,8 @@ export default function Home() {
               className={`home-event-card relative overflow-hidden transition-all duration-500 ease-out cursor-pointer flex-shrink-0 group animate-on-scroll slide-right ${visibleElements.has('event-card-3') ? 'visible' : ''}`}
               data-animate-id="event-card-3"
               style={{ background: 'var(--color-cream)', minHeight: '500px', width: '100%', flexBasis: '33.333%' }}
-              onMouseEnter={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '50%'
-                  e.currentTarget.style.zIndex = '20'
-                  e.currentTarget.style.boxShadow = '0 30px 80px rgba(0, 0, 0, 0.4)'
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) {
-                      sibling.style.flexBasis = '25%'
-                      sibling.style.transition = 'flex-basis 500ms ease-out'
-                    }
-                  })
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '120px'
-                    textContainer.style.opacity = '1'
-                  }
-                }
-              }}
-              onMouseLeave={(e) => {
-                const container = e.currentTarget.parentElement
-                if (container) {
-                  e.currentTarget.style.flexBasis = '33.333%'
-                  e.currentTarget.style.zIndex = '1'
-                  e.currentTarget.style.boxShadow = 'none'
-                  const siblings = Array.from(container.children) as HTMLElement[]
-                  siblings.forEach((sibling) => {
-                    if (sibling !== e.currentTarget) sibling.style.flexBasis = '33.333%'
-                  })
-                  const textContainer = e.currentTarget.querySelector('.event-details') as HTMLElement
-                  if (textContainer) {
-                    textContainer.style.maxHeight = '0'
-                    textContainer.style.opacity = '0'
-                  }
-                }
-              }}
+              onMouseEnter={expandEventCard}
+              onMouseLeave={collapseEventCard}
             >
               <div className="relative h-full w-full min-h-[500px] overflow-hidden">
                 <Image src="/assets/banner.JPG" alt="Build a Bouquet" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -989,10 +955,9 @@ export default function Home() {
 
       {/* How to Get Involved Section */}
       <section ref={parallaxSectionRef} className="home-get-involved relative z-10 pt-20 md:pt-28 pb-14 md:pb-20 overflow-hidden" style={{ background: 'var(--color-cream)' }}>
-        {/* Fixed Background Images - Parallax Effect */}
-        <div ref={parallaxBgRef} className="absolute inset-0 pointer-events-none parallax-bg overflow-visible" style={{ zIndex: 0 }}>
-          {/* Wider spread: scale container so images extend further left/right */}
-          <div className="absolute inset-0 origin-center" style={{ transform: 'scale(1.45)', left: '-22.5%', top: 0, width: '145%', height: '100%' }}>
+        {/* Stickers — absolute + section overflow clips them to cream only */}
+        <div ref={parallaxBgRef} className="absolute inset-0 pointer-events-none parallax-bg overflow-hidden" aria-hidden style={{ zIndex: 0 }}>
+          <div ref={parallaxInnerRef} className="parallax-bg-inner absolute inset-0 origin-center">
           {Array.from({ length: 60 }).map((_, i) => {
             const images = ['/assets/star.png', '/assets/swirl.png']
             const image = images[i % 2]

@@ -22,36 +22,36 @@
     "updates": [
       {
         "id": "1",
-        "title": "Exec Applications Open!",
-        "description": "We’re building next year’s team. Put your name in before August 30 — hop over to Join Us to apply.",
-        "icon": "📋",
+        "title": "See You on Campus",
+        "description": "uOttawa’s back this fall — come find us, jump into events, and start the year with Y4E.",
+        "icon": "📚",
         "type": "highlight",
         "hasCountdown": true
       },
       {
         "id": "2",
-        "title": "Website Now Live!",
-        "description": "Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.",
-        "icon": "✨",
+        "title": "We're Recruiting!",
+        "description": "General membership is open all year long — hop over to Join Us to apply.",
+        "icon": "📋",
         "type": "highlight",
         "hasCountdown": false
       },
       {
         "id": "3",
-        "title": "Tech Literacy at Glebe",
-        "description": "Our tech literacy workshop series has started again at The Glebe Centre as of January 16.",
-        "icon": "💻",
-        "type": "standard",
+        "title": "Website Now Live!",
+        "description": "Our new website is here! Explore our events, learn about our mission, and discover how you can get involved.",
+        "icon": "✨",
+        "type": "highlight",
         "hasCountdown": false
       }
     ]
   },
   "countdown": {
     "daysLeftLabel": "DAYS LEFT UNTIL",
-    "eventName": "Applications close",
-    "todayLabel": "CLOSED",
-    "todayIsThe": "Applications are",
-    "todayEventName": "closed for now"
+    "eventName": "We're back on campus",
+    "todayLabel": "TODAY",
+    "todayIsThe": "Today is",
+    "todayEventName": "back to campus"
   },
   "quote": {
     "text": "Bridging generations, one connection at a time."

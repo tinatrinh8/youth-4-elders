@@ -1,0 +1,101 @@
+/* Design tokens, html/body, scrollbar, font variables — site-wide */
+/* ========== 1. GLOBAL: Design tokens (colors, fonts, aura) ========== */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* ============================================
+     MAIN COLOR PALETTE - Youth 4 Elders Theme
+     ============================================
+    Color Priority: Brown (main) > Cream > Pink shades
+     Use these variables throughout the site for consistent theming.
+  */
+  
+  /* MAIN/PRIMARY COLOR - Dusty merlot */
+  --color-brown-dark: #62202F;
+  --color-brown-medium: #62202F;
+  --color-brown: #62202F;
+  
+  /* BASE - Warm white */
+  --color-cream: #FBF7E8;
+  
+  /* PINK SHADES - Accent Colors (Pink Panther) */
+  --color-pink-light: #F8DAD4;   /* slightly lighter pink when input is filled */
+  --color-pink-medium: #F5D0C6;  /* default (non-filled) input background */
+  --color-pink-dark: #c4727c; /* darker pink for readability on light backgrounds */
+
+  /* Green accents */
+  --color-olive: #6f6509;
+  --color-olive-light: #bbb47b;
+  --color-olive-dark: #6f6509;
+  /* Darker olive for nav / small type on cream (same hue, lower luminance) */
+  --color-olive-deep: #3d390a;
+
+  /* Error - validation and submit failure messages */
+  --color-error: #a1224c;
+  
+  /* Dynamic page background - updated by components for smooth transitions */
+  --page-background: var(--color-cream);
+
+  /* --- AURA COLORS - Following color priority --- */
+  /* Main aura (dusty merlot) */
+  --aura-brown: rgba(98, 32, 47, 0.45); 
+  /* Base (warm white) */
+  --aura-cream: rgba(251, 247, 232, 0.6); 
+  /* Green accents */
+  --aura-green: rgba(201, 218, 168, 0.5);
+  /* Pink shades */
+  --aura-pink: rgba(245, 208, 198, 0.6);
+  --aura-pink-medium: rgba(245, 208, 198, 0.6);
+
+  /* Forest green aura */
+  --aura-forest: var(--aura-brown);
+  
+  
+  --aura-size: 300%; 
+  --aura-speed: 30s; 
+}
+
+/* ========== 2. GLOBAL: Base (html, body, scrollbar) ========== */
+/* Force light mode for now */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #ffffff; 
+    --foreground: #171717; 
+  }
+}
+
+html {
+  background: var(--color-cream);
+  min-height: 100%;
+  transition: background 0.8s ease-in-out;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--foreground);
+  font-family: var(--font-lato), 'Noah', Georgia, 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  min-height: 100vh;
+  position: relative; 
+  overflow-x: hidden;
+  transition: background 0.8s ease-in-out;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Font variables - 4 font variations available throughout the site */
+:root {
+  --font-noah: 'Noah', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-georgia: Georgia, 'Times New Roman', serif;
+  /* --font-vintage-stylist, --font-vintage-ligatures, --font-kollektif, --font-leiko from layout.tsx */
+}
