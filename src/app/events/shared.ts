@@ -47,8 +47,17 @@ export function formatRange(start: Date, end?: Date) {
 
 export function getTimeFromDescription(description?: string) {
   if (!description) return null
+  const range = description.match(
+    /(\d{1,2}(?::\d{2})?)\s*[–-]\s*(\d{1,2}(?::\d{2})?)\s*(AM|PM|am|pm)/
+  )
+  if (range) {
+    const start = range[1]
+    const end = range[2]
+    const meridian = range[3].toUpperCase()
+    return `${start}–${end} ${meridian}`
+  }
   const timeMatch = description.match(/(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm))|(\d{1,2}\s*(?:AM|PM|am|pm))/i)
-  return timeMatch ? timeMatch[0] : null
+  return timeMatch ? timeMatch[0].replace(/\s*(am|pm)$/i, (m) => ` ${m.trim().toUpperCase()}`) : null
 }
 
 export function getLocationFromDescription(description?: string) {

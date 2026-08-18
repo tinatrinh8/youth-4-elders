@@ -321,37 +321,41 @@ function MobileMonthCarousel({
         </div>
       )}
 
-      <div className="w-full max-w-full overflow-hidden">
+      <div className="w-full max-w-full">
         <div
           ref={scrollerRef}
-          className="flex w-full max-w-full items-start gap-3 overflow-x-auto overscroll-x-contain pb-1 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+          className="flex w-full max-w-full items-start gap-3 overflow-x-auto overscroll-x-contain pt-3 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             WebkitOverflowScrolling: 'touch',
             touchAction: 'pan-x',
             overscrollBehaviorX: 'contain',
-            scrollPaddingInline: 'max(0.75rem, calc(50% - min(42.5vw, 10rem)))',
-            paddingInline: 'max(0.75rem, calc(50% - min(42.5vw, 10rem)))',
+            scrollPaddingInline: 'max(1.25rem, calc(50% - min(39vw, 9.5rem)))',
+            paddingInline: 'max(1.25rem, calc(50% - min(39vw, 9.5rem)))',
           }}
         >
           {monthEvents.map((event, eventIndex) => (
             <div
               key={event.id}
               data-mobile-event-card
-              className="relative w-[min(85vw,20rem)] max-w-[85vw] shrink-0 snap-center"
+              className="relative w-[min(78vw,19rem)] max-w-[calc(100vw-2.5rem)] shrink-0 snap-center"
             >
               {showTopBadge && eventIndex === 0 && (
                 <div
-                  className="pointer-events-none absolute -top-2 right-1 z-10 rounded-md px-2 py-0.5 text-[9px] font-bold uppercase"
+                  className="pointer-events-none absolute -top-2 right-3 z-20 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase leading-none"
                   style={{
                     background: 'var(--color-pink-medium)',
                     color: 'var(--color-cream)',
                     fontFamily: 'var(--font-kollektif)',
-                    border: '1.5px solid var(--color-cream)',
+                    border: '2px solid var(--color-cream)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                   }}
                 >
-                  Top
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                  </svg>
+                  Top pick
                 </div>
               )}
               {renderCard(event)}
@@ -774,7 +778,7 @@ export default function UpcomingEventsPage() {
       >
         <div className="absolute inset-x-0 top-0 z-[1] h-1.5" style={{ background: typeAccent.bg }} aria-hidden />
         <div
-          className="pointer-events-none absolute top-3 right-2.5 z-10 w-[3.35rem] h-[3.35rem] rotate-[8deg]"
+          className="pointer-events-none absolute top-3 right-4 z-10 w-[3.35rem] h-[3.35rem] rotate-[8deg]"
               aria-hidden
             >
           <Image
@@ -832,7 +836,7 @@ export default function UpcomingEventsPage() {
       {/* Hero — scrapbook planner calendar */}
       <section className="upcoming-hero mx-3 sm:mx-4 md:mx-10 lg:mx-24 mb-8 md:mb-12 lg:mb-14">
         <div
-          className={`upcoming-scrapbook relative scrapbook-paper rounded-[1.25rem] md:rounded-[1.55rem] lg:rounded-[1.75rem] overflow-hidden lg:overflow-visible border-2 transition-all duration-700 ease-out ${heroCardVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          className={`upcoming-scrapbook relative scrapbook-paper rounded-[1.25rem] md:rounded-[1.55rem] lg:rounded-[1.75rem] overflow-visible md:overflow-hidden lg:overflow-visible border-2 transition-all duration-700 ease-out ${heroCardVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
           style={{
             background: 'var(--color-cream)',
             borderColor: 'var(--color-brown-dark)',

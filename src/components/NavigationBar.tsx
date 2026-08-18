@@ -10,11 +10,11 @@ export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
   const [closingDropdown, setClosingDropdown] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileMenuPhase, setMobileMenuPhase] = useState<'closed' | 'opening' | 'open' | 'closing'>('closed')
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false)
   const [mobileEventsOpen, setMobileEventsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
-  const [menuViewport, setMenuViewport] = useState({ top: 0, height: 0 })
   const [memorySheetOpen, setMemorySheetOpen] = useState(false)
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const tapNavRef = useRef(false)
@@ -196,24 +196,31 @@ export default function NavigationBar() {
   }, [])
 
   useEffect(() => {
+    if (mobileMenuOpen) {
+      setMobileMenuPhase((phase) => (phase === 'open' ? 'open' : 'opening'))
+      return
+    }
+    setMobileMenuPhase((phase) => (phase === 'closed' ? 'closed' : 'closing'))
+  }, [mobileMenuOpen])
+
+  useEffect(() => {
+    if (mobileMenuPhase !== 'opening' && mobileMenuPhase !== 'closing') return
+    const done = window.setTimeout(() => {
+      setMobileMenuPhase(mobileMenuOpen ? 'open' : 'closed')
+    }, 500)
+    return () => window.clearTimeout(done)
+  }, [mobileMenuPhase, mobileMenuOpen])
+
+  useEffect(() => {
     if (!mobileMenuOpen) {
       setMobileDropdownOpen(false)
       setMobileEventsOpen(false)
       return
     }
-    const updateViewport = () => {
-      setMenuViewport({
-        top: window.scrollY,
-        height: window.innerHeight,
-      })
-    }
-    updateViewport()
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    window.addEventListener('resize', updateViewport)
     return () => {
       document.body.style.overflow = prevOverflow
-      window.removeEventListener('resize', updateViewport)
     }
   }, [mobileMenuOpen])
 
@@ -638,27 +645,32 @@ export default function NavigationBar() {
       </div>
     </nav>
       {mounted && createPortal(
-        <>
-          {mobileMenuOpen && (
-            <div
-              className="md:hidden absolute left-0 right-0 z-[400] bg-black/50"
-              style={{ top: menuViewport.top, height: menuViewport.height }}
-              onClick={() => setMobileMenuOpen(false)}
-            />
-          )}
+        <div
+          className="md:hidden fixed inset-0 z-[400] overflow-hidden"
+          style={{ pointerEvents: mobileMenuPhase === 'closed' ? 'none' : 'auto' }}
+          aria-hidden={mobileMenuPhase === 'closed'}
+        >
           <div
-            className={`md:hidden absolute right-0 z-[401] w-80 max-w-[85vw] transition-transform duration-500 ease-in-out ${
-              mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            className={`nav-mobile-scrim absolute inset-0 bg-black/50 ${
+              mobileMenuPhase === 'opening' ? 'is-opening' : ''
+            } ${mobileMenuPhase === 'open' ? 'is-open' : ''} ${
+              mobileMenuPhase === 'closing' ? 'is-closing' : ''
+            }`}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div
+            className={`nav-mobile-drawer absolute right-0 top-0 z-[401] h-full w-80 max-w-[85vw] ${
+              mobileMenuPhase === 'opening' ? 'is-opening' : ''
+            } ${mobileMenuPhase === 'open' ? 'is-open' : ''} ${
+              mobileMenuPhase === 'closing' ? 'is-closing' : ''
             }`}
             style={{
-              top: menuViewport.top,
-              height: menuViewport.height,
               background: navColors.mobileBackground,
-              boxShadow: mobileMenuOpen ? `-4px 0 24px ${navColors.shadow}` : 'none',
+              boxShadow:
+                mobileMenuPhase === 'closed' ? 'none' : `-4px 0 24px ${navColors.shadow}`,
               border: navColors.mobileBorder !== 'none' ? `2px solid ${navColors.mobileBorder}` : 'none',
-              pointerEvents: mobileMenuOpen ? 'auto' : 'none',
+              pointerEvents: mobileMenuPhase === 'closed' ? 'none' : 'auto',
             }}
-            aria-hidden={!mobileMenuOpen}
           >
             <div className="flex h-full flex-col overflow-y-auto p-6">
               <div className="mb-8 flex items-center justify-between">
@@ -819,8 +831,8 @@ export default function NavigationBar() {
               </div>
             </div>
           </div>
-        </>,
-        document.getElementById('site-root') ?? document.body
+        </div>,
+        document.body
       )}
     </>
   )

@@ -77,16 +77,19 @@ export default function Contact() {
   }, [serviceDropdownOpen])
 
   useEffect(() => {
-    const mq = window.matchMedia('(min-width: 768px) and (max-width: 1023px)')
+    document.body.classList.add('contact-page')
+    return () => document.body.classList.remove('contact-page')
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1023px)')
     const apply = () => {
       if (mq.matches) {
-        document.documentElement.style.overflowX = 'hidden'
-        document.body.style.overflowX = 'hidden'
-        document.body.style.touchAction = 'pan-y'
+        document.documentElement.style.overflowX = 'clip'
+        document.body.style.overflowX = 'clip'
       } else {
         document.documentElement.style.overflowX = ''
         document.body.style.overflowX = ''
-        document.body.style.touchAction = ''
       }
     }
     apply()
@@ -95,7 +98,6 @@ export default function Contact() {
       mq.removeEventListener('change', apply)
       document.documentElement.style.overflowX = ''
       document.body.style.overflowX = ''
-      document.body.style.touchAction = ''
     }
   }, [])
 

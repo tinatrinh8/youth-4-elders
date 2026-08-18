@@ -222,37 +222,38 @@ function MobileMonthCarousel({
         </div>
       )}
 
-      <div className="w-full max-w-full overflow-hidden">
+      <div className="w-full max-w-full">
         <div
           ref={scrollerRef}
-          className="flex w-full max-w-full items-start gap-3 overflow-x-auto overscroll-x-contain pb-1 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+          className="flex w-full max-w-full items-start gap-3 overflow-x-auto overscroll-x-contain pt-3 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             WebkitOverflowScrolling: 'touch',
             touchAction: 'pan-x',
             overscrollBehaviorX: 'contain',
-            scrollPaddingInline: 'max(0.75rem, calc(50% - min(42.5vw, 10rem)))',
-            paddingInline: 'max(0.75rem, calc(50% - min(42.5vw, 10rem)))',
+            scrollPaddingInline: 'max(1.25rem, calc(50% - min(39vw, 9.5rem)))',
+            paddingInline: 'max(1.25rem, calc(50% - min(39vw, 9.5rem)))',
           }}
         >
           {monthEvents.map((event, eventIndex) => (
             <div
               key={event.id}
               data-mobile-event-card
-              className="relative w-[min(85vw,20rem)] max-w-[85vw] shrink-0 snap-center"
+              className="relative w-[min(78vw,19rem)] max-w-[calc(100vw-2.5rem)] shrink-0 snap-center"
             >
               {showTopBadge && eventIndex === 0 && (
                 <div
-                  className="pointer-events-none absolute -top-2 right-1 z-10 rounded-md px-2 py-0.5 text-[9px] font-bold uppercase"
+                  className="pointer-events-none absolute -top-2 right-3 z-20 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase leading-none"
                   style={{
                     background: 'var(--color-pink-medium)',
                     color: 'var(--color-cream)',
                     fontFamily: 'var(--font-kollektif)',
-                    border: '1.5px solid var(--color-cream)',
+                    border: '2px solid var(--color-cream)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                   }}
                 >
-                  Top
+                  Recent
                 </div>
               )}
               {renderCard(event)}

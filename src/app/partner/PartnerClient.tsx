@@ -361,7 +361,7 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
       >
         {/* Photos extend into the cream gap; pink sponsors (z-20) is the cutoff */}
         <div 
-          className="absolute inset-0 -bottom-16 md:-bottom-48 lg:bottom-0 pointer-events-none overflow-visible"
+          className="partner-float-layer absolute inset-0 -bottom-16 md:-bottom-48 lg:bottom-0 pointer-events-none overflow-hidden lg:overflow-visible"
           style={{ 
             zIndex: 1,
             padding: '1rem'

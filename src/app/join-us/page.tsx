@@ -795,7 +795,7 @@ export default function JoinUs() {
                       <div className="join-us-paused-stamp" aria-hidden>
                         <span className="join-us-paused-stamp-word">{content.cards.execMember.pausedLabel}</span>
                         <span className="join-us-paused-stamp-sub">{content.cards.execMember.closedStatus}</span>
-                      </div>
+                </div>
                     )}
               </div>
             <button

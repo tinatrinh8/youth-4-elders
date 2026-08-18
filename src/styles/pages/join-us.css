@@ -183,18 +183,22 @@
     touch-action: pan-y;
   }
 
+  body.join-us-page .join-us-card,
   body.join-us-page .join-us-card.is-form-open,
   body.join-us-page .join-us-card:has(.join-us-form-shell.is-open) {
-    overflow: visible;
+    overflow: hidden !important;
+    isolation: isolate;
   }
 
   body.join-us-page .join-us-form-shell.is-open {
     max-height: none !important;
-    overflow: visible !important;
+    overflow: hidden !important;
   }
 
   body.join-us-page .join-us-form {
     padding: 1.25rem 1.1rem !important;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
   }
 
   body.join-us-page .join-us-form-title {
@@ -365,10 +369,10 @@
 /* Join us: phone only */
 @media (max-width: 767px) {
   body.join-us-page .join-us-hero {
-    padding-top: 5.25rem !important;
+    padding-top: 2.5rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
-    padding-bottom: 0.75rem !important;
+    padding-bottom: 1rem !important;
   }
 
   body.join-us-page .join-us-hero h1 {
@@ -378,17 +382,18 @@
 
   body.join-us-page .join-us-tagline {
     font-size: 0.9rem !important;
-    margin-top: 0.5rem !important;
+    margin-top: 0.4rem !important;
   }
 
   body.join-us-page .join-us-content {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
-    margin-top: 1.25rem !important;
+    margin-top: 1.95rem !important;
   }
 
   body.join-us-page .join-us-card {
     border-radius: 1rem !important;
+    overflow: hidden !important;
   }
 
   body.join-us-page .join-us-card-intro {

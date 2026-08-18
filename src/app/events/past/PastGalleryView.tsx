@@ -15,16 +15,25 @@ import {
 import { getClubGalleryBlurb, getClubGalleryItems, getClubGalleryVideos, getWorkshopFridayExamples, collapseWorkshopSeries, isWorkshopEventId, resolveWorkshopPageId, isClubRecapOnly, isGalleryComingSoon } from './pastGalleries'
 import { galleryHref, getGalleryParent, setGalleryParent } from './galleryNav'
 
+function tidyLocation(raw: string): string {
+  return raw
+    .replace(/\s+on\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\b.*$/i, '')
+    .replace(/\s+on\s+\d{1,2}\b.*$/i, '')
+    .replace(/\s+from\s+\d.*$/i, '')
+    .replace(/[,;:\s]+$/g, '')
+    .trim()
+}
+
 function cleanLocation(description?: string): string | null {
   if (!description) return null
   // Stop at sentence end or narrative dashes so "at Venue—a 6-week…" doesn't swallow the blurb.
   const stop = '[^!.—–]'
   const meet = description.match(new RegExp(`Meet us in\\s+(${stop}+)`, 'i'))
-  if (meet) return meet[1].trim()
+  if (meet) return tidyLocation(meet[1])
   const located = description.match(new RegExp(`Located at\\s+(${stop}+)`, 'i'))
-  if (located) return located[1].trim()
-  const at = description.match(new RegExp(`\\bat\\s+([A-Z]${stop}{3,60})`))
-  if (at && !/^us\b/i.test(at[1])) return at[1].trim()
+  if (located) return tidyLocation(located[1])
+  const at = description.match(new RegExp(`\\bat\\s+([A-Z]${stop}{3,80})`))
+  if (at && !/^us\b/i.test(at[1])) return tidyLocation(at[1])
   return null
 }
 
