@@ -366,13 +366,20 @@
   }
 }
 
+/* Join us: desktop only */
+@media (min-width: 1024px) {
+  body.join-us-page .join-us-hero {
+    padding-top: 7rem !important;
+  }
+}
+
 /* Join us: phone only */
 @media (max-width: 767px) {
   body.join-us-page .join-us-hero {
-    padding-top: 2.5rem !important;
+    padding-top: 3.25rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
-    padding-bottom: 1rem !important;
+    padding-bottom: 0.75rem !important;
   }
 
   body.join-us-page .join-us-hero h1 {
@@ -382,13 +389,13 @@
 
   body.join-us-page .join-us-tagline {
     font-size: 0.9rem !important;
-    margin-top: 0.4rem !important;
+    margin-top: 0.5rem !important;
   }
 
   body.join-us-page .join-us-content {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
-    margin-top: 1.95rem !important;
+    margin-top: 1.25rem !important;
   }
 
   body.join-us-page .join-us-card {

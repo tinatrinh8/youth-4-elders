@@ -121,29 +121,12 @@
 
 .word-fade-in-up-blur {
   display: inline-block;
-  animation: wordFadeInUpBlur 0.65s ease-out var(--word-fade-delay, 0s) forwards;
+  animation: wordFadeInUpBlur 0.65s ease-out forwards;
   animation-fill-mode: both;
 }
 
 .word-fade-in-up-blur-slow {
   display: inline-block;
-  animation: wordFadeInUpBlur 1s ease-out var(--word-fade-delay, 0s) forwards;
+  animation: wordFadeInUpBlur 1s ease-out forwards;
   animation-fill-mode: both;
-}
-
-/* iPhone Safari can leave short words stuck on blur(0) — clear filter after entrance */
-@media (max-width: 767px) {
-  .join-us-hero .word-fade-in-up-blur-slow {
-    animation:
-      wordFadeInUpBlur var(--word-fade-duration, 1s) ease-out var(--word-fade-delay, 0s) forwards,
-      wordFadeFilterClear 0.001ms linear calc(var(--word-fade-delay, 0s) + var(--word-fade-duration, 1s)) forwards;
-    --word-fade-duration: 1s;
-  }
-}
-
-@keyframes wordFadeFilterClear {
-  to {
-    filter: none;
-    -webkit-filter: none;
-  }
 }
