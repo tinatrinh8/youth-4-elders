@@ -6,6 +6,7 @@ import '@/styles/globals.css'
 import NavigationBar from '@/components/NavigationBar'
 import Footer from '@/components/Footer'
 import GlobalLoading from '@/components/GlobalLoading'
+import PageBackgroundSync from '@/components/PageBackgroundSync'
 
 // Font 1: Vintage Stylist - Elegant display/serif font
 const vintageStylist = localFont({
@@ -108,6 +109,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         fontFamily: 'var(--font-kollektif), var(--font-leiko), system-ui, Arial, sans-serif' 
       }}>
         <div id="site-root" className="relative flex min-h-dvh flex-1 flex-col">
+          <PageBackgroundSync />
           {!lockPage && <GlobalLoading />}
           {!lockPage && <NavigationBar />}
           <main className="flex-1">

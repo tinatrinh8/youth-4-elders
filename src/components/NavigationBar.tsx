@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { setPageBackground } from '@/lib/pageBackground'
 import Image from 'next/image'
 import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
@@ -169,14 +168,6 @@ export default function NavigationBar() {
   }
 
   const navColors = getNavbarColors()
-
-  // Set page background behind nav
-  useEffect(() => {
-    // join-us, upcoming, past, and club gallery pages manage their own background
-    if (isJoinUsPage || isUpcomingEventsPage || isPastEventsPage || isPastGalleryPage) return
-
-    setPageBackground('var(--color-cream)')
-  }, [isJoinUsPage, isUpcomingEventsPage, isPastEventsPage, isPastGalleryPage])
 
   useEffect(() => {
     setMounted(true)

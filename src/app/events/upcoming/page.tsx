@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { setPageBackground } from '@/lib/pageBackground'
 import { events } from '../events'
 import {
   type DisplayEvent,
@@ -387,18 +386,6 @@ export default function UpcomingEventsPage() {
     const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime()
     const t = setTimeout(update, msUntilMidnight)
     return () => clearTimeout(t)
-  }, [])
-
-  // Match join-us transition pattern: set transition first, then background change.
-  useEffect(() => {
-    document.body.classList.add('upcoming-events-page')
-    const rafId = requestAnimationFrame(() => {
-      setPageBackground('var(--color-olive)', true)
-    })
-    return () => {
-      cancelAnimationFrame(rafId)
-      document.body.classList.remove('upcoming-events-page')
-    }
   }, [])
 
   // Stage reveal: scrapbook → banner → search/title (paced so each finishes before the next)

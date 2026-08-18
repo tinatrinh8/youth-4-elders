@@ -14,7 +14,6 @@ import {
 } from '../shared'
 import { getClubGalleryBlurb, getClubGalleryItems, getClubGalleryVideos, getWorkshopFridayExamples, collapseWorkshopSeries, isWorkshopEventId, resolveWorkshopPageId, isClubRecapOnly, isGalleryComingSoon } from './pastGalleries'
 import { galleryHref, getGalleryParent, setGalleryParent } from './galleryNav'
-import { setPageBackground } from '@/lib/pageBackground'
 
 function tidyLocation(raw: string): string {
   return raw
@@ -666,15 +665,6 @@ export default function PastGalleryView({
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [selectedPhotoIndex])
-
-  useEffect(() => {
-    // Standalone page only — don't repaint the past-events page under a sheet
-    if (isSheet) return
-    const rafId = requestAnimationFrame(() => {
-      setPageBackground('var(--color-brown-dark)', true)
-    })
-    return () => cancelAnimationFrame(rafId)
-  }, [isSheet])
 
   if (!event) {
     return (

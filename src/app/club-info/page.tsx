@@ -180,11 +180,6 @@ export default function ClubInfo() {
   }, [])
 
   useEffect(() => {
-    document.body.classList.add('club-info-page')
-    return () => document.body.classList.remove('club-info-page')
-  }, [])
-
-  useEffect(() => {
     const sync = () => {
       setViewportH(window.innerHeight)
       setViewportW(window.innerWidth)

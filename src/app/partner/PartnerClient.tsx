@@ -205,11 +205,6 @@ export default function PartnerClient({ partners, sponsors }: PartnerClientProps
     return () => window.removeEventListener('resize', sync)
   }, [])
 
-  useEffect(() => {
-    document.body.classList.add('partner-page')
-    return () => document.body.classList.remove('partner-page')
-  }, [])
-
   // Initialize with first partner if available, or show fallback
   useEffect(() => {
     if (partners.length > 0) {

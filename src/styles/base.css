@@ -111,11 +111,20 @@ body::-webkit-scrollbar {
     min-height: 100dvh;
     min-height: -webkit-fill-available;
     background: var(--page-background, var(--color-cream));
+    transition: background 0.8s ease-in-out;
   }
 }
 
 /* Per-page color on the scrolling canvas (what shows through Safari's translucent bars) */
-body.join-us-page {
+body.home-page-active,
+body.contact-page,
+body.partner-page,
+body.club-info-page {
+  --page-background: var(--color-cream);
+}
+
+body.join-us-page,
+body.past-gallery-page-open {
   --page-background: var(--color-brown-dark);
 }
 
@@ -125,10 +134,6 @@ body.upcoming-events-page {
 
 body.past-events-page {
   --page-background: var(--color-olive-light);
-}
-
-body.past-gallery-page-open {
-  --page-background: var(--color-brown-dark);
 }
 
 body.team-page {

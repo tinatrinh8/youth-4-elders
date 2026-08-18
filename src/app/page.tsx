@@ -33,11 +33,6 @@ export default function Home() {
   const countdownBoxRef = useRef<HTMLDivElement>(null)
   const countdownShadowRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    document.body.classList.add('home-page-active')
-    return () => document.body.classList.remove('home-page-active')
-  }, [])
-
   // Club updates - can be populated from Contentful
   // When updates are added or removed, the section will automatically adjust
   // TODO: Replace this with Contentful data fetching

@@ -13,7 +13,6 @@ import {
 import { getClubMemoryBlurb, getClubCardCover, collapseWorkshopSeries, isClubRecapOnly } from './pastGalleries'
 import { clearGalleryParents, galleryHref } from './galleryNav'
 import { useMemorySheet } from './MemorySheet'
-import { setPageBackground } from '@/lib/pageBackground'
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -292,17 +291,6 @@ export default function PastEventsPage() {
     const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime()
     const t = setTimeout(update, msUntilMidnight)
     return () => clearTimeout(t)
-  }, [])
-
-  useEffect(() => {
-    document.body.classList.add('past-events-page')
-    const rafId = requestAnimationFrame(() => {
-      setPageBackground('var(--color-olive-light)', true)
-    })
-    return () => {
-      cancelAnimationFrame(rafId)
-      document.body.classList.remove('past-events-page')
-    }
   }, [])
 
   // Stage reveal: scrapbook → banner → search/title (same pacing as upcoming)

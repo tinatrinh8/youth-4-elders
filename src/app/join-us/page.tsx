@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import joinUsContent from '@/content/join-us.json'
-import { setPageBackground } from '@/lib/pageBackground'
 
 // Confetti Component - Shoots from left and right sides
 const ConfettiComponent = ({ boxRef }: { boxRef?: React.RefObject<HTMLDivElement | null> }) => {
@@ -585,17 +584,6 @@ export default function JoinUs() {
       setIsSubmitting(false)
     }
   }
-
-  // Set initial background on mount and update when light mode changes
-  // Ensure transition is set, then change the background
-  useLayoutEffect(() => {
-    document.body.classList.add('join-us-page')
-    setPageBackground('var(--color-brown-dark)', true)
-
-    return () => {
-      document.body.classList.remove('join-us-page')
-    }
-  }, [])
 
   // Page load animation: headline (word fade, no blur) → caption slide up → content pulls up
   const [headlineVisible, setHeadlineVisible] = useState(false)
