@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { setPageBackground } from '@/lib/pageBackground'
 import Image from 'next/image'
 import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
@@ -174,10 +175,7 @@ export default function NavigationBar() {
     // join-us, upcoming, past, and club gallery pages manage their own background
     if (isJoinUsPage || isUpcomingEventsPage || isPastEventsPage || isPastGalleryPage) return
 
-    document.body.style.background = 'var(--color-cream)'
-    document.documentElement.style.background = 'var(--color-cream)'
-    document.body.style.transition = 'none'
-    document.documentElement.style.transition = 'none'
+    setPageBackground('var(--color-cream)')
   }, [isJoinUsPage, isUpcomingEventsPage, isPastEventsPage, isPastGalleryPage])
 
   useEffect(() => {

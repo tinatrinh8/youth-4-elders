@@ -82,7 +82,13 @@
     max(1.5rem, env(safe-area-inset-bottom, 0px))
     max(1.5rem, env(safe-area-inset-left, 0px));
   box-sizing: border-box;
-  background: var(--color-cream);
+  background: var(--page-background, var(--color-cream));
+}
+
+@supports (-webkit-touch-callout: none) {
+  .loading-spinner-overlay {
+    background: transparent;
+  }
 }
 
 .loading-spinner-center {

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { setPageBackground } from '@/lib/pageBackground'
 import { events } from '../events'
 import {
   type DisplayEvent,
@@ -392,12 +393,7 @@ export default function UpcomingEventsPage() {
   useEffect(() => {
     document.body.classList.add('upcoming-events-page')
     const rafId = requestAnimationFrame(() => {
-      document.body.style.transition = 'background 0.8s ease-in-out'
-      document.documentElement.style.transition = 'background 0.8s ease-in-out'
-      requestAnimationFrame(() => {
-        document.body.style.background = 'var(--color-olive)'
-        document.documentElement.style.background = 'var(--color-olive)'
-      })
+      setPageBackground('var(--color-olive)', true)
     })
     return () => {
       cancelAnimationFrame(rafId)

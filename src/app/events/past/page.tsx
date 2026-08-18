@@ -13,6 +13,7 @@ import {
 import { getClubMemoryBlurb, getClubCardCover, collapseWorkshopSeries, isClubRecapOnly } from './pastGalleries'
 import { clearGalleryParents, galleryHref } from './galleryNav'
 import { useMemorySheet } from './MemorySheet'
+import { setPageBackground } from '@/lib/pageBackground'
 
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
@@ -296,12 +297,7 @@ export default function PastEventsPage() {
   useEffect(() => {
     document.body.classList.add('past-events-page')
     const rafId = requestAnimationFrame(() => {
-      document.body.style.transition = 'background 0.8s ease-in-out'
-      document.documentElement.style.transition = 'background 0.8s ease-in-out'
-      requestAnimationFrame(() => {
-        document.body.style.background = 'var(--color-olive-light)'
-        document.documentElement.style.background = 'var(--color-olive-light)'
-      })
+      setPageBackground('var(--color-olive-light)', true)
     })
     return () => {
       cancelAnimationFrame(rafId)

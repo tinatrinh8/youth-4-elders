@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
+import { clearPageBackground, setPageBackground } from '@/lib/pageBackground'
 
 interface TeamMember {
   name: string
@@ -300,14 +301,10 @@ export default function Team() {
 
   useEffect(() => {
     document.body.classList.add('team-page')
-    document.body.style.transition = 'background 0.8s ease-in-out'
-    document.documentElement.style.transition = 'background 0.8s ease-in-out'
-    document.body.style.background = 'var(--color-pink-light)'
-    document.documentElement.style.background = 'var(--color-pink-light)'
+    setPageBackground('var(--color-pink-light)', true)
     return () => {
       document.body.classList.remove('team-page')
-      document.body.style.background = ''
-      document.documentElement.style.background = ''
+      clearPageBackground()
     }
   }, [])
 

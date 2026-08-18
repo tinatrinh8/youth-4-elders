@@ -3,6 +3,7 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import Image from 'next/image'
 import joinUsContent from '@/content/join-us.json'
+import { setPageBackground } from '@/lib/pageBackground'
 
 // Confetti Component - Shoots from left and right sides
 const ConfettiComponent = ({ boxRef }: { boxRef?: React.RefObject<HTMLDivElement | null> }) => {
@@ -589,15 +590,10 @@ export default function JoinUs() {
   // Ensure transition is set, then change the background
   useLayoutEffect(() => {
     document.body.classList.add('join-us-page')
-    document.body.style.transition = 'background 0.8s ease-in-out'
-    document.documentElement.style.transition = 'background 0.8s ease-in-out'
-    document.body.style.background = 'var(--color-brown-dark)'
-    document.documentElement.style.background = 'var(--color-brown-dark)'
+    setPageBackground('var(--color-brown-dark)', true)
 
     return () => {
       document.body.classList.remove('join-us-page')
-      // IMPORTANT: Don't cleanup background on unmount
-      // The NavigationBar will handle transitioning back to cream when isJoinUsPage becomes false
     }
   }, [])
 
@@ -708,7 +704,7 @@ export default function JoinUs() {
   }
 
     return (
-      <main className="min-h-screen pb-20 join-us-page-lock" style={{ background: 'transparent' }}>
+      <main className="join-us-page-lock min-h-dvh min-h-screen pb-20" style={{ background: 'var(--color-brown-dark)' }}>
         {showConfetti && <ConfettiComponent />}
         {/* Headline + tagline */}
         <div className="join-us-hero w-full pt-[72px] sm:pt-[80px] px-4 sm:px-8 pb-4 md:pb-6 max-w-7xl mx-auto">
