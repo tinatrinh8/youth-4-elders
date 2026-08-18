@@ -119,32 +119,16 @@
   }
 }
 
-@keyframes wordFadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(0.4em);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.word-fade-in-up-blur,
+.word-fade-in-up-blur-slow {
+  display: inline-block;
+  filter: none;
 }
 
 .word-fade-in-up-blur {
-  display: inline-block;
-  animation: wordFadeInUpBlur 0.65s ease-out both;
+  animation: wordFadeInUpBlur 0.65s ease-out backwards;
 }
 
 .word-fade-in-up-blur-slow {
-  display: inline-block;
-  animation: wordFadeInUpBlur 1s ease-out both;
-}
-
-/* iPhone Safari can leave short words (e.g. "of") stuck blurred after filter: blur() */
-@media (max-width: 767px) {
-  .word-fade-in-up-blur,
-  .word-fade-in-up-blur-slow {
-    animation-name: wordFadeInUp;
-    filter: none;
-  }
+  animation: wordFadeInUpBlur 1s ease-out backwards;
 }
