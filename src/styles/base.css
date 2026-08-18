@@ -99,6 +99,20 @@ body::-webkit-scrollbar {
   min-height: 100dvh;
 }
 
+/* iPhone/iPad Safari: page color shows through translucent top/bottom chrome */
+@supports (-webkit-touch-callout: none) {
+  html,
+  body {
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+  }
+
+  #site-root {
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+  }
+}
+
 /* Match page background behind iOS safe areas (status bar / home indicator) */
 html:has(body.join-us-page),
 body.join-us-page {

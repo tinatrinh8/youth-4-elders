@@ -1,8 +1,3 @@
-import type { Viewport } from 'next'
-
-export const viewport: Viewport = {
-  themeColor: '#62202F',
-}
 
 export default function JoinUsLayout({ children }: { children: React.ReactNode }) {
   return (
