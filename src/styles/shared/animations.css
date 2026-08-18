@@ -115,20 +115,35 @@
   to {
     opacity: 1;
     transform: translateY(0);
-    filter: none;
+    filter: blur(0);
   }
 }
 
-.word-fade-in-up-blur,
+.word-fade-in-up-blur {
+  display: inline-block;
+  animation: wordFadeInUpBlur 0.65s ease-out var(--word-fade-delay, 0s) forwards;
+  animation-fill-mode: both;
+}
+
 .word-fade-in-up-blur-slow {
   display: inline-block;
-  filter: none;
+  animation: wordFadeInUpBlur 1s ease-out var(--word-fade-delay, 0s) forwards;
+  animation-fill-mode: both;
 }
 
-.word-fade-in-up-blur {
-  animation: wordFadeInUpBlur 0.65s ease-out backwards;
+/* iPhone Safari can leave short words stuck on blur(0) — clear filter after entrance */
+@media (max-width: 767px) {
+  .join-us-hero .word-fade-in-up-blur-slow {
+    animation:
+      wordFadeInUpBlur var(--word-fade-duration, 1s) ease-out var(--word-fade-delay, 0s) forwards,
+      wordFadeFilterClear 0.001ms linear calc(var(--word-fade-delay, 0s) + var(--word-fade-duration, 1s)) forwards;
+    --word-fade-duration: 1s;
+  }
 }
 
-.word-fade-in-up-blur-slow {
-  animation: wordFadeInUpBlur 1s ease-out backwards;
+@keyframes wordFadeFilterClear {
+  to {
+    filter: none;
+    -webkit-filter: none;
+  }
 }

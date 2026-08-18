@@ -730,7 +730,7 @@ export default function JoinUs() {
                     className={headlineVisible ? 'word-fade-in-up-blur-slow' : ''}
                     style={{
                       display: 'inline-block',
-                      animationDelay: headlineVisible ? `${i * 0.2}s` : undefined,
+                      ['--word-fade-delay' as string]: headlineVisible ? `${i * 0.2}s` : undefined,
                       opacity: headlineVisible ? undefined : 0
                     }}
                   >
