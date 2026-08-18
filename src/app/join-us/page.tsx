@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import Image from 'next/image'
 import joinUsContent from '@/content/join-us.json'
 
@@ -587,31 +587,21 @@ export default function JoinUs() {
 
   // Set initial background on mount and update when light mode changes
   // Ensure transition is set, then change the background
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.body.classList.add('join-us-page')
-    // Use requestAnimationFrame to ensure transition is set before background change
-    // This ensures smooth animation when navigating to join-us page
-    const rafId = requestAnimationFrame(() => {
-      // Ensure transition is set on both elements (in case inline styles override CSS)
-      document.body.style.transition = 'background 0.8s ease-in-out'
-      document.documentElement.style.transition = 'background 0.8s ease-in-out'
-      
-      // Then set background - the transition will handle the animation
-      requestAnimationFrame(() => {
-        document.body.style.background = 'var(--color-brown-dark)'
-        document.documentElement.style.background = 'var(--color-brown-dark)'
-      })
-    })
-    
+    document.body.style.transition = 'background 0.8s ease-in-out'
+    document.documentElement.style.transition = 'background 0.8s ease-in-out'
+    document.body.style.background = 'var(--color-brown-dark)'
+    document.documentElement.style.background = 'var(--color-brown-dark)'
+
     return () => {
-      cancelAnimationFrame(rafId)
       document.body.classList.remove('join-us-page')
       // IMPORTANT: Don't cleanup background on unmount
       // The NavigationBar will handle transitioning back to cream when isJoinUsPage becomes false
     }
   }, [])
 
-  // Page load animation: headline (word-fade blur) → caption slide up → content pulls up
+  // Page load animation: headline (word fade, no blur) → caption slide up → content pulls up
   const [headlineVisible, setHeadlineVisible] = useState(false)
   const [captionVisible, setCaptionVisible] = useState(false)
   const [contentVisible, setContentVisible] = useState(false)
@@ -727,7 +717,7 @@ export default function JoinUs() {
               {(content.page.headline as string).split(/\s+/).map((word, i) => (
                 <span key={i}>
                   <span
-                    className={headlineVisible ? 'word-fade-in-up-blur-slow' : ''}
+                    className={headlineVisible ? 'join-us-headline-word' : ''}
                     style={{
                       display: 'inline-block',
                       animationDelay: headlineVisible ? `${i * 0.2}s` : undefined,

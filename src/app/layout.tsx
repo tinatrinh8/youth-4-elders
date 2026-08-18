@@ -1,11 +1,12 @@
 // src/app/layout.tsx
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { headers } from 'next/headers'
 import '@/styles/globals.css'
 import NavigationBar from '@/components/NavigationBar'
 import Footer from '@/components/Footer'
 import GlobalLoading from '@/components/GlobalLoading'
+import BrowserChromeSync from '@/components/BrowserChromeSync'
 
 // Font 1: Vintage Stylist - Elegant display/serif font
 const vintageStylist = localFont({
@@ -82,6 +83,13 @@ const freshwost = localFont({
 const playfair = vintageStylist
 const lato = kollektif
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#FBF7E8',
+}
+
 export const metadata: Metadata = {
   title: 'Youth 4 Elders | UOttawa',
   description: 'Student-led club dedicated to bridging the gap between youth and elders.',
@@ -102,6 +110,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         fontFamily: 'var(--font-kollektif), var(--font-leiko), system-ui, Arial, sans-serif' 
       }}>
         <div id="site-root" className="relative flex min-h-dvh flex-1 flex-col">
+          {!lockPage && <BrowserChromeSync />}
           {!lockPage && <GlobalLoading />}
           {!lockPage && <NavigationBar />}
           <main className="flex-1">

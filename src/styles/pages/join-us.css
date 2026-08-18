@@ -2,7 +2,26 @@
  * JOIN US PAGE (/join-us)
  */
 /* ========== 9. PAGE: Join us (/join-us) ========== */
-/* Hero: headline word-fade (blur), then caption slide up, then content pulls up */
+/* Hero: headline word-fade (no blur — short words like "of" smear on iOS), then caption slide up */
+@keyframes joinUsWordFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.join-us-headline-word {
+  display: inline-block;
+  animation: joinUsWordFadeIn 1s ease-out forwards;
+  animation-fill-mode: both;
+  filter: none;
+  -webkit-filter: none;
+}
+
 .join-us-caption-reveal {
   opacity: 0;
   animation: joinUsCaptionReveal 0.6s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
@@ -369,7 +388,7 @@
 /* Join us: desktop only */
 @media (min-width: 1024px) {
   body.join-us-page .join-us-hero {
-    padding-top: 7rem !important;
+    padding-top: 6rem !important;
   }
 }
 
