@@ -2,61 +2,65 @@
 /* ========== 5. SHARED: Intersection Observer (animate-on-scroll) ========== */
 .animate-on-scroll {
   opacity: 0;
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition:
+    opacity 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.05s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
 }
 
 .animate-on-scroll.visible {
   opacity: 1;
+  will-change: auto;
 }
 
 .animate-on-scroll.slide-left {
-  transform: translateX(-30px);
+  transform: translate3d(-18px, 0, 0);
 }
 
 .animate-on-scroll.slide-left.visible {
-    transform: translateX(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .animate-on-scroll.slide-right {
-  transform: translateX(30px);
+  transform: translate3d(18px, 0, 0);
 }
 
 .animate-on-scroll.slide-right.visible {
-    transform: translateX(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .animate-on-scroll.slide-up {
-  transform: translateY(30px);
+  transform: translate3d(0, 18px, 0);
 }
 
 .animate-on-scroll.slide-up.visible {
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 .animate-on-scroll.scale {
-    transform: scale(0.9);
-  }
+  transform: scale(0.96);
+}
 
 .animate-on-scroll.scale.visible {
-    transform: scale(1);
+  transform: scale(1);
 }
 
 .animate-on-scroll.fade {
-    opacity: 0;
+  opacity: 0;
 }
 
 .animate-on-scroll.fade.visible {
-    opacity: 1;
+  opacity: 1;
 }
 
 .animate-on-scroll.fade-up {
-    opacity: 0;
-  transform: translateY(30px);
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
 }
 
 .animate-on-scroll.fade-up.visible {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 /* ========== 6. SHARED: Loading & word-fade ========== */
@@ -115,24 +119,24 @@
 @keyframes wordFadeInUpBlur {
   from {
     opacity: 0;
-    transform: translateY(0.4em);
-    filter: blur(8px);
+    transform: translate3d(0, 0.28em, 0);
+    filter: blur(5px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     filter: blur(0);
   }
 }
 
 .word-fade-in-up-blur {
   display: inline-block;
-  animation: wordFadeInUpBlur 0.65s ease-out forwards;
+  animation: wordFadeInUpBlur 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   animation-fill-mode: both;
 }
 
 .word-fade-in-up-blur-slow {
   display: inline-block;
-  animation: wordFadeInUpBlur 1s ease-out forwards;
+  animation: wordFadeInUpBlur 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   animation-fill-mode: both;
 }

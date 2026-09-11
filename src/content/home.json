@@ -22,17 +22,17 @@
     "updates": [
       {
         "id": "1",
-        "title": "See You on Campus",
-        "description": "uOttawa’s back this fall — come find us, jump into events, and start the year with Y4E.",
-        "icon": "📚",
+        "title": "We're Recruiting!",
+        "description": "Exec applications are open now — apply for a team role on Join Us. General membership stays open all year.",
+        "icon": "📋",
         "type": "highlight",
         "hasCountdown": true
       },
       {
         "id": "2",
-        "title": "We're Recruiting!",
-        "description": "General membership is open all year long — hop over to Join Us to apply.",
-        "icon": "📋",
+        "title": "See You on Campus",
+        "description": "uOttawa’s back this fall — come find us, jump into events, and start the year with Y4E.",
+        "icon": "📚",
         "type": "highlight",
         "hasCountdown": false
       },
@@ -48,10 +48,10 @@
   },
   "countdown": {
     "daysLeftLabel": "DAYS LEFT UNTIL",
-    "eventName": "We're back on campus",
-    "todayLabel": "TODAY",
-    "todayIsThe": "Today is",
-    "todayEventName": "back to campus"
+    "eventName": "applications close",
+    "todayLabel": "SOON",
+    "todayIsThe": "No countdown yet —",
+    "todayEventName": "new events coming"
   },
   "quote": {
     "text": "Bridging generations, one connection at a time."

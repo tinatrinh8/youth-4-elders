@@ -166,8 +166,8 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // Fall term at uOttawa — September 8, 2026 (matches home.json countdown)
-    const targetDate = new Date(2026, 8, 8, 0, 0, 0)
+    // No dated countdown for now — keep applications "OPEN" state until a real deadline/event is set
+    const targetDate = new Date(2026, 8, 1, 0, 0, 0)
 
     const calculateTimeLeft = () => {
       const difference = targetDate.getTime() - Date.now()
@@ -217,8 +217,8 @@ export default function Home() {
     // "Youth 4 Elders" and "is now live" are triggered by hero image onLoad (see Image below)
 
     const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
+      threshold: 0.08,
+      rootMargin: '0px 0px -8% 0px',
     }
 
     const observer = new IntersectionObserver((entries) => {
@@ -604,7 +604,7 @@ export default function Home() {
                     className={`home-update-card p-6 rounded-lg animate-on-scroll slide-up ${visibleElements.has(`club-update-${update.id}`) ? 'visible' : ''}`}
                     data-animate-id={`club-update-${update.id}`}
                     style={{
-                      transitionDelay: `${index * 0.1}s`,
+                      transitionDelay: `${index * 0.14}s`,
                       background: update.hasCountdown 
                         ? 'rgba(251, 247, 232, 0.85)' 
                         : 'rgba(251, 247, 232, 0.7)',
@@ -640,7 +640,7 @@ export default function Home() {
 
             {/* Right Side - Countdown Timer */}
             <div 
-              className={`home-countdown flex justify-center lg:justify-end order-1 lg:order-2 mt-6 md:mt-8 lg:mt-0 animate-on-scroll scale self-start ${visibleElements.has('countdown-timer') ? 'visible' : ''}`}
+              className={`home-countdown flex justify-center lg:justify-end order-1 lg:order-2 mt-6 md:mt-8 lg:mt-0 animate-on-scroll home-countdown-enter self-start ${visibleElements.has('countdown-timer') ? 'visible' : ''}`}
               data-animate-id="countdown-timer"
             >
               <div className="home-countdown-frame relative">
@@ -743,7 +743,7 @@ export default function Home() {
                   </>
                 ) : countdownReady ? (
                   <>
-                    <div className="mb-6 flex justify-center">
+                    <div className="home-countdown-open-badge mb-6 flex justify-center">
                       <div
                         className="rounded-2xl px-8 md:px-10 py-6 md:py-8 flex items-center justify-center"
                         style={{
@@ -753,7 +753,7 @@ export default function Home() {
                         }}
                       >
                         <div
-                          className="text-2xl md:text-3xl font-bold text-center tracking-[0.12em]"
+                          className="home-countdown-open-label text-2xl md:text-3xl font-bold text-center tracking-[0.12em]"
                           style={{
                             fontFamily: 'var(--font-kollektif)',
                             color: 'var(--color-cream)',
@@ -764,9 +764,9 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <div className="space-y-1 px-2">
+                    <div className="home-countdown-open-copy space-y-1 px-2">
                       <p
-                        className="text-base md:text-lg"
+                        className="home-countdown-open-kicker text-base md:text-lg"
                         style={{
                           fontFamily: 'var(--font-leiko)',
                           color: 'var(--color-brown-dark)',
@@ -776,9 +776,9 @@ export default function Home() {
                         {content.countdown.todayIsThe}
                       </p>
                       <p
-                        className="text-2xl md:text-3xl font-bold"
+                        className="home-countdown-open-title text-2xl md:text-3xl font-bold"
                         style={{
-                          fontFamily: 'var(--font-vintage-stylist)',
+                          fontFamily: 'var(--font-kollektif)',
                           color: 'var(--color-brown-dark)',
                         }}
                       >
