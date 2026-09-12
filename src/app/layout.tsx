@@ -90,13 +90,50 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Youth 4 Elders | UOttawa',
-  description: 'Student-led club dedicated to bridging the gap between youth and elders.',
+  metadataBase: new URL('https://www.youth4elders.ca'),
+  title: 'Youth 4 Elders | University of Ottawa',
+  description:
+    'A University of Ottawa student organization bridging the gap between youth and elders. Follow us on Instagram @youth4elders.',
   icons: {
     icon: [{ url: '/images/Y4E_LOGO.png', type: 'image/png' }],
     shortcut: '/images/Y4E_LOGO.png',
     apple: '/images/Y4E_LOGO.png',
   },
+  openGraph: {
+    title: 'Youth 4 Elders | University of Ottawa',
+    description:
+      'A University of Ottawa student organization bridging the gap between youth and elders in Ottawa.',
+    url: 'https://www.youth4elders.ca',
+    siteName: 'Youth 4 Elders',
+    type: 'website',
+    images: [{ url: '/images/Y4E_LOGO.png' }],
+  },
+  alternates: {
+    canonical: 'https://www.youth4elders.ca',
+  },
+}
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Youth 4 Elders',
+  alternateName: 'Y4E',
+  url: 'https://www.youth4elders.ca',
+  logo: 'https://www.youth4elders.ca/images/Y4E_LOGO.png',
+  description:
+    'A University of Ottawa student organization bridging the gap between youth and elders in Ottawa.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '7-85 University Private',
+    addressLocality: 'Ottawa',
+    addressRegion: 'ON',
+    postalCode: 'K1N 6N5',
+    addressCountry: 'CA',
+  },
+  sameAs: [
+    'https://www.instagram.com/youth4elders/',
+    'https://www.linkedin.com/company/youth4elders/',
+  ],
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -108,6 +145,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={`${vintageStylist.variable} ${vintageStylistLigatures.variable} ${kollektif.variable} ${leiko.variable} ${freshwost.variable} ${playfair.variable} ${lato.variable} font-sans antialiased flex flex-col min-h-screen`} style={{ 
         fontFamily: 'var(--font-kollektif), var(--font-leiko), system-ui, Arial, sans-serif' 
       }}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <div id="site-root" className="relative flex min-h-dvh flex-1 flex-col">
           <PageBackgroundSync />
           {!lockPage && <GlobalLoading />}
