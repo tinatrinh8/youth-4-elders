@@ -348,7 +348,7 @@ export default function Contact() {
   }
 
   return (
-    <main className="min-h-screen contact-page-tablet-lock" style={{ background: 'var(--color-cream)' }}>
+    <main className="min-h-screen contact-page-tablet-lock" style={{ background: 'transparent' }}>
       {/* Contact - Two columns: heading (left), form with underline fields (right) */}
       <section id="contact-form" ref={contactFormSectionRef} className="py-16 lg:py-24">
         <div className="max-w-6xl mx-auto px-4 md:px-5 lg:px-8 contact-tablet-align-nav">
@@ -851,6 +851,18 @@ id="contact-email"
                     </a>
                   </span>
             </div>
+            <p
+              className={`text-base lg:text-lg leading-relaxed animate-on-scroll fade-up ${socialsInView ? 'visible' : ''}`}
+              style={{
+                fontFamily: 'var(--font-kollektif)',
+                color: 'var(--color-cream)',
+                opacity: 0.95,
+                transitionDuration: '0.5s',
+                transitionDelay: '0.65s'
+              }}
+            >
+              7-85 University Private, Ottawa, ON K1N 6N5
+            </p>
           </div>
         </div>
       </section>

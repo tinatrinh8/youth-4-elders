@@ -294,7 +294,7 @@ export default function NavigationBar() {
         marginTop: '40px',
         marginBottom: '16px',
         boxShadow: `0 4px 12px ${navColors.shadow}`,
-        transition: 'background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+        transition: 'background 0.8s ease-in-out, border-color 0.8s ease-in-out, box-shadow 0.8s ease-in-out',
         boxSizing: 'border-box'
       }}
     >

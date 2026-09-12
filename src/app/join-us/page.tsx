@@ -146,6 +146,8 @@ interface FormData {
   linkedinUrl: string
   teamRole: string
   teamRoleSecond: string
+  teamRoleOther: string
+  teamRoleSecondOther: string
   referralName: string
   uOttawaConfirm: boolean
 }
@@ -223,6 +225,9 @@ optionResume: string
     yearRequired: boolean
     teamRoleFirstLabel: string
     teamRoleSecondLabel: string
+    teamRoleHint: string
+    teamRoleOtherLabel: string
+    teamRoleOtherPlaceholder: string
     referralNameLabel: string
     referralNamePlaceholder: string
     whyJoinLabel: string
@@ -277,6 +282,8 @@ export default function JoinUs() {
     linkedinUrl: '',
     teamRole: '',
     teamRoleSecond: '',
+    teamRoleOther: '',
+    teamRoleSecondOther: '',
     referralName: '',
     uOttawaConfirm: false,
   })
@@ -418,17 +425,31 @@ export default function JoinUs() {
       if (!formData.teamRole) {
         valid = false
         next.teamRole = 'Please select your first-choice role'
+      } else if (formData.teamRole === 'Other' && !formData.teamRoleOther.trim()) {
+        valid = false
+        next.teamRoleOther = 'Please tell us which role you’re interested in'
       }
       if (!formData.teamRoleSecond) {
         valid = false
         next.teamRoleSecond = 'Please select a second-choice role (or “No second preference”)'
+      } else if (formData.teamRoleSecond === 'Other' && !formData.teamRoleSecondOther.trim()) {
+        valid = false
+        next.teamRoleSecondOther = 'Please tell us which fallback role you’re interested in'
       } else if (
         formData.teamRole &&
         formData.teamRoleSecond !== 'No second preference' &&
-        formData.teamRoleSecond === formData.teamRole
+        formData.teamRoleSecond === formData.teamRole &&
+        formData.teamRole !== 'Other'
       ) {
         valid = false
         next.teamRoleSecond = 'Please choose a different fallback role'
+      } else if (
+        formData.teamRole === 'Other' &&
+        formData.teamRoleSecond === 'Other' &&
+        formData.teamRoleOther.trim().toLowerCase() === formData.teamRoleSecondOther.trim().toLowerCase()
+      ) {
+        valid = false
+        next.teamRoleSecondOther = 'Please choose a different fallback role'
       }
     } else {
     questions.forEach((q) => {
@@ -547,8 +568,16 @@ export default function JoinUs() {
       body.append('experience', formData.experience)
       body.append('linkedinUrl', formData.linkedinUrl)
       body.append('uOttawaConfirm', String(formData.uOttawaConfirm))
-      body.append('teamRole', formData.teamRole)
-      body.append('teamRoleSecond', formData.teamRoleSecond)
+      const resolvedTeamRole =
+        formData.teamRole === 'Other'
+          ? `Other — ${formData.teamRoleOther.trim()}`
+          : formData.teamRole
+      const resolvedTeamRoleSecond =
+        formData.teamRoleSecond === 'Other'
+          ? `Other — ${formData.teamRoleSecondOther.trim()}`
+          : formData.teamRoleSecond
+      body.append('teamRole', resolvedTeamRole)
+      body.append('teamRoleSecond', resolvedTeamRoleSecond)
       body.append('referralName', formData.referralName)
       body.append('experienceOutline', String(formData.experienceOutline))
       body.append('experienceResume', String(formData.experienceResume))
@@ -630,7 +659,7 @@ export default function JoinUs() {
     return (
       <main
         className="fixed inset-0 z-[50] flex items-center justify-center px-6 join-us-page-lock"
-        style={{ background: 'var(--color-brown-dark)' }}
+        style={{ background: 'transparent' }}
       >
         <div className="flex flex-col items-center text-center">
           <div className="mb-6 inline-block h-12 w-12 rounded-full border-4 border-[var(--color-cream)]/30 border-t-[var(--color-cream)] animate-spin" />
@@ -692,7 +721,7 @@ export default function JoinUs() {
   }
 
     return (
-      <main className="join-us-page-lock min-h-dvh min-h-screen pb-20" style={{ background: 'var(--color-brown-dark)' }}>
+      <main className="join-us-page-lock min-h-dvh min-h-screen pb-20" style={{ background: 'transparent' }}>
         {showConfetti && <ConfettiComponent />}
         {/* Headline + tagline */}
         <div className="join-us-hero w-full pt-[72px] sm:pt-[80px] px-4 sm:px-8 pb-4 md:pb-6 max-w-7xl mx-auto">
@@ -984,6 +1013,9 @@ export default function JoinUs() {
                   <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
                     {content.teamForm.teamRoleFirstLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
                   </label>
+                  <p className="text-sm mb-3 opacity-80" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}>
+                    {content.teamForm.teamRoleHint}
+                  </p>
                   <div className={`relative w-full ${openSelectId === 'teamRole' ? 'z-[100]' : ''}`} ref={(el) => { selectDropdownRefs.current.teamRole = el }}>
                     <button
                       type="button"
@@ -1009,14 +1041,18 @@ export default function JoinUs() {
                             setFormData((prev) => ({
                               ...prev,
                               teamRole: opt.value,
+                              teamRoleOther: opt.value === 'Other' ? prev.teamRoleOther : '',
                               teamRoleSecond:
-                                prev.teamRoleSecond === opt.value && opt.value !== 'Open to any team role'
+                                prev.teamRoleSecond === opt.value &&
+                                opt.value !== 'Open to any team role' &&
+                                opt.value !== 'Other'
                                   ? ''
                                   : prev.teamRoleSecond,
                             }))
                             setFieldErrors((prev) => {
                               const next = { ...prev }
                               delete next.teamRole
+                              delete next.teamRoleOther
                               delete next.teamRoleSecond
                               return next
                             })
@@ -1030,6 +1066,29 @@ export default function JoinUs() {
                   </div>
                   {fieldErrors.teamRole && (
                     <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.teamRole}</p>
+                  )}
+                  {formData.teamRole === 'Other' && (
+                    <div className="mt-3">
+                      <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                        {content.teamForm.teamRoleOtherLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.teamRoleOther}
+                        onChange={(e) => handleFieldChange('teamRoleOther', e.target.value)}
+                        placeholder={content.teamForm.teamRoleOtherPlaceholder}
+                        className="w-full px-5 py-4 rounded-xl border-2 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          borderColor: fieldErrors.teamRoleOther ? 'var(--color-error)' : inputBorder,
+                          background: 'var(--color-pink-light)',
+                          color: 'var(--color-brown-dark)',
+                        }}
+                      />
+                      {fieldErrors.teamRoleOther && (
+                        <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.teamRoleOther}</p>
+                      )}
+                    </div>
                   )}
                 </div>
                 <div className="md:col-span-2">
@@ -1057,9 +1116,28 @@ export default function JoinUs() {
                     {openSelectId === 'teamRoleSecond' && (
                       <div className="absolute top-full left-0 right-0 mt-2 rounded-xl overflow-y-auto overflow-x-hidden z-[9999] py-2 max-h-56 border-2" style={{ background: 'var(--color-cream)', borderColor: 'var(--color-brown-dark)', boxShadow: '0 8px 24px color-mix(in srgb, var(--color-brown-dark) 25%, transparent)' }}>
                         {content.teamForm.teamRoleSecondOptions
-                          .filter((opt) => !opt.value || opt.value === 'No second preference' || opt.value !== formData.teamRole)
+                          .filter((opt) =>
+                            !opt.value ||
+                            opt.value === 'No second preference' ||
+                            opt.value === 'Other' ||
+                            opt.value === 'Open to any team role' ||
+                            opt.value !== formData.teamRole
+                          )
                           .map((opt) => (
-                          <button key={opt.value || 'empty-second'} type="button" className="block w-full text-left px-5 py-3.5 text-base md:text-lg transition-colors border-0" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'transparent' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }} onClick={() => { handleFieldChange('teamRoleSecond', opt.value); setOpenSelectId(null) }}>
+                          <button key={opt.value || 'empty-second'} type="button" className="block w-full text-left px-5 py-3.5 text-base md:text-lg transition-colors border-0" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', background: 'transparent' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-pink-medium)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }} onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              teamRoleSecond: opt.value,
+                              teamRoleSecondOther: opt.value === 'Other' ? prev.teamRoleSecondOther : '',
+                            }))
+                            setFieldErrors((prev) => {
+                              const next = { ...prev }
+                              delete next.teamRoleSecond
+                              delete next.teamRoleSecondOther
+                              return next
+                            })
+                            setOpenSelectId(null)
+                          }}>
                             {opt.label}
                           </button>
                         ))}
@@ -1068,6 +1146,29 @@ export default function JoinUs() {
                   </div>
                   {fieldErrors.teamRoleSecond && (
                     <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.teamRoleSecond}</p>
+                  )}
+                  {formData.teamRoleSecond === 'Other' && (
+                    <div className="mt-3">
+                      <label className="block text-base md:text-lg font-semibold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
+                        {content.teamForm.teamRoleOtherLabel}<span className="text-[var(--color-error)] ml-0.5">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.teamRoleSecondOther}
+                        onChange={(e) => handleFieldChange('teamRoleSecondOther', e.target.value)}
+                        placeholder={content.teamForm.teamRoleOtherPlaceholder}
+                        className="w-full px-5 py-4 rounded-xl border-2 text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brown-dark)]/20"
+                        style={{
+                          fontFamily: 'var(--font-kollektif)',
+                          borderColor: fieldErrors.teamRoleSecondOther ? 'var(--color-error)' : inputBorder,
+                          background: 'var(--color-pink-light)',
+                          color: 'var(--color-brown-dark)',
+                        }}
+                      />
+                      {fieldErrors.teamRoleSecondOther && (
+                        <p className="text-base text-[var(--color-error)] mt-1.5" style={{ fontFamily: 'var(--font-kollektif)' }}>{fieldErrors.teamRoleSecondOther}</p>
+                      )}
+                    </div>
                   )}
                 </div>
                 <div className="md:col-span-2">
