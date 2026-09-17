@@ -4,6 +4,16 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import joinUsContent from '@/content/join-us.json'
 
+function withBold(text: string) {
+  return text.split(/(\*\*.*?\*\*)/g).map((part, idx) =>
+    part.startsWith('**') && part.endsWith('**') ? (
+      <strong key={idx}>{part.slice(2, -2)}</strong>
+    ) : (
+      <span key={idx}>{part}</span>
+    )
+  )
+}
+
 // Confetti Component - Shoots from left and right sides
 const ConfettiComponent = ({ boxRef }: { boxRef?: React.RefObject<HTMLDivElement | null> }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -173,6 +183,7 @@ const content = joinUsContent as {
       description: string
       applicationsOpen: boolean
       openStatus: string
+      deadlineNote: string
       pausedLabel: string
       closedStatus: string
       closedCta: string
@@ -791,7 +802,7 @@ export default function JoinUs() {
                       className="mt-2 text-sm md:text-base font-bold italic underline underline-offset-2"
                       style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
                     >
-                      {content.cards.execMember.openStatus}
+                      {withBold(content.cards.execMember.openStatus)}
                     </p>
                     )}
                     {!teamApplicationsOpen && (
@@ -830,9 +841,17 @@ export default function JoinUs() {
             <div className={`join-us-form-shell overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'is-open max-h-[8000px] opacity-100' : 'max-h-0 opacity-0'}`}>
               <div className={`join-us-form bg-[var(--color-cream)] border-t-2 border-[var(--color-brown-dark)]/20 p-8 md:p-10 ${hasStarted ? 'join-us-form-roll-down' : ''}`}>
         <div className="max-w-5xl w-full">
-          <h2 className="join-us-form-title text-2xl md:text-3xl font-bold mb-8 text-[var(--color-brown-dark)]" style={{ fontFamily: 'var(--font-leiko)' }}>
+          <h2 className={`join-us-form-title text-2xl md:text-3xl font-bold text-[var(--color-brown-dark)] ${isTeamApp && teamApplicationsOpen ? '' : 'mb-8'}`} style={{ fontFamily: 'var(--font-leiko)' }}>
             {isTeamApp ? content.teamForm.title : content.form.title}
           </h2>
+          {isTeamApp && teamApplicationsOpen && (
+            <p
+              className="mt-2 mb-8 text-sm md:text-base font-semibold italic"
+              style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+            >
+              {withBold(content.cards.execMember.deadlineNote)}
+            </p>
+          )}
 
           <div className="join-us-form-fields grid grid-cols-1 md:grid-cols-2 gap-6">
             {questions.filter((q) => q.id === 'name' || q.id === 'email').map((q) => (

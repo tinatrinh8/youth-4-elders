@@ -22,8 +22,8 @@
     "updates": [
       {
         "id": "1",
-        "title": "We're Recruiting!",
-        "description": "Exec applications are open now — apply for a team role on Join Us. General membership stays open all year.",
+        "title": "Recruitment Season!",
+        "description": "Exec applications close **September 25**. General membership stays open all year. [Apply on Join Us →](/join-us)",
         "icon": "📋",
         "type": "highlight",
         "hasCountdown": true
@@ -49,9 +49,9 @@
   "countdown": {
     "daysLeftLabel": "DAYS LEFT UNTIL",
     "eventName": "applications close",
-    "todayLabel": "SOON",
-    "todayIsThe": "No countdown yet —",
-    "todayEventName": "new events coming"
+    "todayLabel": "CLOSED",
+    "todayIsThe": "Team applications have closed —",
+    "todayEventName": "general membership stays open"
   },
   "quote": {
     "text": "Bridging generations, one connection at a time."

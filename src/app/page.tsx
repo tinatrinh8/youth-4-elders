@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
+import Link from 'next/link'
 import homeContent from '@/content/home.json'
 // Types for future Contentful integration
 // import type { Entry } from 'contentful'
@@ -16,6 +17,30 @@ interface ClubUpdate {
   icon: string
   type: 'highlight' | 'standard' // 'highlight' uses pink styling, 'standard' uses brown
   hasCountdown?: boolean // Only highlight pink if countdown is attached
+}
+
+function withRichText(text: string) {
+  const parts = text.split(/(\*\*.*?\*\*|\[.*?\]\(.*?\))/g)
+  return parts.map((part, idx) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={idx}>{part.slice(2, -2)}</strong>
+    }
+    const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/)
+    if (linkMatch) {
+      const [, label, href] = linkMatch
+      return (
+        <Link
+          key={idx}
+          href={href}
+          className="mt-3 block w-fit font-bold underline underline-offset-4 decoration-2 hover:opacity-80 transition-opacity"
+          style={{ color: 'var(--color-brown-dark)', fontFamily: 'var(--font-leiko)' }}
+        >
+          {label}
+        </Link>
+      )
+    }
+    return <span key={idx}>{part}</span>
+  })
 }
 
 export default function Home() {
@@ -166,8 +191,8 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    // No dated countdown for now — keep applications "OPEN" state until a real deadline/event is set
-    const targetDate = new Date(2026, 8, 1, 0, 0, 0)
+    // Team role applications close end of day Sept 25, 2026
+    const targetDate = new Date(2026, 8, 26, 0, 0, 0)
 
     const calculateTimeLeft = () => {
       const difference = targetDate.getTime() - Date.now()
@@ -629,7 +654,7 @@ export default function Home() {
                           {update.title}
                         </h4>
                         <p className="text-base leading-relaxed" style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.9 }}>
-                          {update.description}
+                          {withRichText(update.description)}
                         </p>
                       </div>
                     </div>
