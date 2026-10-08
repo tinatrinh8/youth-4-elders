@@ -6,6 +6,9 @@ import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
 
+type SiteLocale = 'en' | 'fr'
+const LOCALE_STORAGE_KEY = 'y4e-locale'
+
 export default function NavigationBar() {
   const [hoveredDropdown, setHoveredDropdown] = useState<string | null>(null)
   const [closingDropdown, setClosingDropdown] = useState<string | null>(null)
@@ -16,6 +19,7 @@ export default function NavigationBar() {
   const [mounted, setMounted] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
   const [memorySheetOpen, setMemorySheetOpen] = useState(false)
+  const [locale, setLocale] = useState<SiteLocale>('en')
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const tapNavRef = useRef(false)
   const whoWeAreDropdownRef = useRef<HTMLDivElement>(null)
@@ -171,7 +175,76 @@ export default function NavigationBar() {
 
   useEffect(() => {
     setMounted(true)
+    try {
+      const saved = window.localStorage.getItem(LOCALE_STORAGE_KEY)
+      if (saved === 'en' || saved === 'fr') setLocale(saved)
+    } catch {
+      // ignore storage errors
+    }
   }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+    document.documentElement.lang = locale
+    try {
+      window.localStorage.setItem(LOCALE_STORAGE_KEY, locale)
+    } catch {
+      // ignore storage errors
+    }
+  }, [locale, mounted])
+
+  // Light nav bars use dark text; dark nav bars use cream text.
+  const isLightNav =
+    isJoinUsPage || isContactPage || isClubInfoPage || isUpcomingEventsPage || isPastEventsPage
+  const langActiveText = isLightNav
+    ? 'var(--color-cream)'
+    : isPartnerPage
+      ? 'var(--color-olive)'
+      : 'var(--color-brown-dark)'
+
+  const renderLanguageToggle = (key: string, size: 'default' | 'compact' = 'default') => (
+    <div
+      key={key}
+      role="group"
+      aria-label="Language"
+      className={`nav-lang-toggle flex items-center rounded-full border flex-shrink-0 ${
+        size === 'compact' ? 'p-0.5 w-fit' : 'p-0.5'
+      }`}
+      style={{
+        borderColor: navColors.text,
+        background: 'transparent',
+      }}
+    >
+      {([
+        { code: 'en' as const, label: 'EN' },
+        { code: 'fr' as const, label: 'FR' },
+      ]).map(({ code, label }) => {
+        const active = locale === code
+        return (
+          <button
+            key={code}
+            type="button"
+            aria-pressed={active}
+            aria-label={code === 'en' ? 'English' : 'Français'}
+            title={code === 'fr' ? 'Version française à venir' : 'English'}
+            onClick={() => setLocale(code)}
+            className={`rounded-full font-bold tracking-wide transition-colors duration-200 ${
+              size === 'compact'
+                ? 'px-2 py-0.5 text-[10px]'
+                : 'px-2.5 py-1 text-[11px] lg:text-xs'
+            }`}
+            style={{
+              fontFamily: 'var(--font-kollektif)',
+              background: active ? navColors.text : 'transparent',
+              color: active ? langActiveText : navColors.text,
+            }}
+          >
+            {label}
+          </button>
+        )
+      })}
+    </div>
+  )
 
   useEffect(() => {
     const updateTapNav = () => {
@@ -349,7 +422,7 @@ export default function NavigationBar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button — language toggle lives inside the slide-out drawer */}
         <button
           className="md:hidden flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
           style={{
@@ -630,6 +703,8 @@ export default function NavigationBar() {
           >
             Contact
           </Link>
+
+          {renderLanguageToggle('desktop')}
         </div>
       </div>
     </nav>
@@ -817,6 +892,19 @@ export default function NavigationBar() {
                 >
                   Contact
                 </Link>
+
+                <div
+                  className="mt-4 flex flex-col items-center px-4 pt-4"
+                  style={{ borderTop: `1px solid ${navColors.text}` }}
+                >
+                  <p
+                    className="mb-2 text-[10px] font-semibold uppercase tracking-wider opacity-80"
+                    style={{ fontFamily: 'var(--font-kollektif)', color: navColors.text }}
+                  >
+                    Language / Langue
+                  </p>
+                  {renderLanguageToggle('mobile-drawer', 'compact')}
+                </div>
               </div>
             </div>
           </div>

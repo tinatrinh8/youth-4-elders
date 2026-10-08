@@ -528,7 +528,7 @@ export default function ClubInfo() {
                 }}
               >
                   <Image
-                    src="/assets/club-info/founders.jpg"
+                    src="/assets/club-info/founders.JPG"
                     alt="Youth 4 Elders founders at a club gathering"
                     fill
                     sizes="(max-width: 767px) 230px, (max-width: 1023px) 360px, 520px"
@@ -852,7 +852,7 @@ export default function ClubInfo() {
               {/* Image — overlaps the pink box more (larger negative margin) */}
               <div className="relative w-[78%] max-w-[240px] md:w-64 lg:w-96 xl:w-[26rem] md:max-w-md flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto md:mx-0 md:mr-[-3.5rem] lg:mr-[-7rem] md:z-10 border-2 md:border-[3px] lg:border-4 border-solid" style={{ borderColor: 'var(--color-olive)' }}>
                 <Image
-                  src="/assets/club-info/table.jpg"
+                  src="/assets/club-info/table.JPG"
                   alt="Support that reaches every generation — collaboration and programs"
                   fill
                   className="object-cover"
@@ -894,7 +894,7 @@ export default function ClubInfo() {
               {/* Image — on right, overlaps the box (mirror of block 1) */}
               <div className="relative w-[78%] max-w-[240px] md:w-64 lg:w-96 xl:w-[26rem] md:max-w-md flex-shrink-0 aspect-square rounded-xl overflow-hidden mx-auto md:mx-0 md:ml-[-3.5rem] lg:ml-[-7rem] md:z-10 order-1 border-2 md:border-[3px] lg:border-4 border-solid" style={{ borderColor: 'var(--color-olive)' }}>
                 <Image
-                  src="/assets/club-info/team.jpg"
+                  src="/assets/club-info/team.JPG"
                   alt="Grow your skills. Make a real impact — Youth 4 Elders team"
                   fill
                   className="object-cover"
