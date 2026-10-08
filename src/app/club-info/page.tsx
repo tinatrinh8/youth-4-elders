@@ -528,7 +528,7 @@ export default function ClubInfo() {
                 }}
               >
                   <Image
-                    src="/assets/club-info/founders.JPG"
+                    src="/assets/club-info/founders.jpg"
                     alt="Youth 4 Elders founders at a club gathering"
                     fill
                     sizes="(max-width: 767px) 230px, (max-width: 1023px) 360px, 520px"

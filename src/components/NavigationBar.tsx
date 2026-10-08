@@ -208,7 +208,7 @@ export default function NavigationBar() {
       role="group"
       aria-label="Language"
       className={`nav-lang-toggle flex items-center rounded-full border flex-shrink-0 ${
-        size === 'compact' ? 'p-0.5 w-fit' : 'p-0.5'
+        size === 'compact' ? 'p-1 w-fit' : 'p-0.5'
       }`}
       style={{
         borderColor: navColors.text,
@@ -230,7 +230,7 @@ export default function NavigationBar() {
             onClick={() => setLocale(code)}
             className={`rounded-full font-bold tracking-wide transition-colors duration-200 ${
               size === 'compact'
-                ? 'px-2 py-0.5 text-[10px]'
+                ? 'px-3.5 py-1.5 text-sm'
                 : 'px-2.5 py-1 text-[11px] lg:text-xs'
             }`}
             style={{
@@ -898,7 +898,7 @@ export default function NavigationBar() {
                   style={{ borderTop: `1px solid ${navColors.text}` }}
                 >
                   <p
-                    className="mb-2 text-[10px] font-semibold uppercase tracking-wider opacity-80"
+                    className="mb-2.5 text-xs font-semibold uppercase tracking-wider opacity-80"
                     style={{ fontFamily: 'var(--font-kollektif)', color: navColors.text }}
                   >
                     Language / Langue
