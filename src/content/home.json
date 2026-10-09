@@ -22,8 +22,8 @@
     "updates": [
       {
         "id": "1",
-        "title": "Recruitment Season!",
-        "description": "Exec applications close **September 25**. General membership stays open all year. [Apply on Join Us →](/join-us)",
+        "title": "Still want to join?",
+        "description": "Team role applications are **closed**, but general membership is still open all year. [Join as a general member →](/join-us)",
         "icon": "📋",
         "type": "highlight",
         "hasCountdown": true
@@ -50,7 +50,7 @@
     "daysLeftLabel": "DAYS LEFT UNTIL",
     "eventName": "applications close",
     "todayLabel": "CLOSED",
-    "todayIsThe": "Team applications have closed —",
+    "todayIsThe": "",
     "todayEventName": "general membership stays open"
   },
   "quote": {
@@ -61,8 +61,8 @@
     "cards": [
       {
         "title": "Workshop Series",
-        "date": "Jan 16 – Feb 20, 2026",
-        "description": "A 6-week weekly workshop series teaching and helping with technology. Now running at The Glebe Centre."
+        "date": "Started again — Fall 2026",
+        "description": "Our technology workshop series is back! Weekly sessions helping elders with phones, apps, and everyday tech at The Glebe Centre."
       },
       {
         "title": "Krispy Kreme Fundraiser",

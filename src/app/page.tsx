@@ -790,16 +790,18 @@ export default function Home() {
                     </div>
 
                     <div className="home-countdown-open-copy space-y-1 px-2">
-                      <p
-                        className="home-countdown-open-kicker text-base md:text-lg"
-                        style={{
-                          fontFamily: 'var(--font-leiko)',
-                          color: 'var(--color-brown-dark)',
-                          opacity: 0.85,
-                        }}
-                      >
-                        {content.countdown.todayIsThe}
-                      </p>
+                      {content.countdown.todayIsThe ? (
+                        <p
+                          className="home-countdown-open-kicker text-base md:text-lg"
+                          style={{
+                            fontFamily: 'var(--font-leiko)',
+                            color: 'var(--color-brown-dark)',
+                            opacity: 0.85,
+                          }}
+                        >
+                          {content.countdown.todayIsThe}
+                        </p>
+                      ) : null}
                       <p
                         className="home-countdown-open-title text-2xl md:text-3xl font-bold"
                         style={{

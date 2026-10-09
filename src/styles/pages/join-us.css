@@ -74,110 +74,46 @@
   }
 }
 
-@keyframes joinUsPausedStampPress {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) rotate(-18deg) scale(1.28);
-  }
-  55% {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(-11deg) scale(0.96);
-  }
-  100% {
-    opacity: 0.92;
-    transform: translate(-50%, -50%) rotate(-13deg) scale(1);
-  }
+.join-us-role-block.is-closed .join-us-role-card {
+  opacity: 0.95;
 }
 
-.join-us-role-block.is-paused .join-us-role-card {
-  overflow: hidden;
-  background:
-    repeating-linear-gradient(
-      -18deg,
-      var(--color-pink-light),
-      var(--color-pink-light) 10px,
-      #f3d4cc 10px,
-      #f3d4cc 20px
-    );
+.join-us-closed-cta {
+  background: transparent !important;
+  border-color: rgba(98, 32, 47, 0.35) !important;
+  border-style: solid !important;
 }
 
-.join-us-role-block.is-paused .join-us-role-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(
-      160deg,
-      rgba(251, 247, 232, 0.12) 0%,
-      rgba(251, 247, 232, 0.55) 48%,
-      rgba(98, 32, 47, 0.08) 100%
-    );
+.join-us-role-cta:not(:disabled):not(.join-us-closed-cta) {
+  transition:
+    background-color 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+  will-change: transform;
 }
 
-.join-us-paused-stamp {
-  position: absolute;
-  z-index: 5;
-  left: 50%;
-  top: 54%;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.15rem;
-  padding: 0.55rem 1.05rem 0.5rem;
-  border: 3px solid var(--color-brown-dark);
-  border-radius: 0.45rem 0.7rem 0.4rem 0.75rem;
-  color: var(--color-brown-dark);
-  background: rgba(251, 247, 232, 0.2);
-  box-shadow:
-    inset 0 0 0 2px var(--color-brown-dark),
-    1px 2px 0 rgba(98, 32, 47, 0.12);
-  mix-blend-mode: multiply;
-  animation: joinUsPausedStampPress 0.7s cubic-bezier(0.22, 1.4, 0.36, 1) both;
+.join-us-role-cta:not(:disabled):not(.join-us-closed-cta):hover {
+  background-color: color-mix(in srgb, var(--color-brown-dark) 88%, var(--color-cream)) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(98, 32, 47, 0.22);
 }
 
-.join-us-paused-stamp-word {
-  font-family: var(--font-vintage-stylist), Georgia, serif;
-  font-size: 2rem;
-  line-height: 0.85;
-  font-style: italic;
-  letter-spacing: 0.04em;
-}
-
-.join-us-paused-stamp-sub {
-  font-family: var(--font-kollektif), sans-serif;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  opacity: 0.9;
-}
-
-.join-us-paused-seal {
-  background:
-    repeating-linear-gradient(
-      -12deg,
-      var(--color-cream),
-      var(--color-cream) 9px,
-      rgba(248, 218, 212, 0.95) 9px,
-      rgba(248, 218, 212, 0.95) 18px
-    ) !important;
-  border-color: var(--color-brown-dark) !important;
-  border-style: dashed !important;
-}
-
-.join-us-paused-seal-label {
-  color: var(--color-brown-dark) !important;
-  font-size: 1.15rem !important;
-  letter-spacing: 0.03em;
+.join-us-role-cta:not(:disabled):not(.join-us-closed-cta):active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(98, 32, 47, 0.16);
+  transition-duration: 0.15s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .join-us-paused-stamp {
-    animation: none;
-    transform: translate(-50%, -50%) rotate(-13deg);
-    opacity: 0.92;
+  .join-us-role-cta:not(:disabled):not(.join-us-closed-cta) {
+    transition: background-color 0.2s ease;
+  }
+
+  .join-us-role-cta:not(:disabled):not(.join-us-closed-cta):hover,
+  .join-us-role-cta:not(:disabled):not(.join-us-closed-cta):active {
+    transform: none;
+    box-shadow: none;
   }
 }
 
@@ -349,11 +285,6 @@
     font-size: 0.9rem !important;
   }
 
-  body.join-us-page .join-us-role-cta.join-us-paused-seal span {
-    font-size: 1.15rem !important;
-    color: var(--color-brown-dark) !important;
-  }
-
   body.join-us-page .join-us-form {
     padding: 1.5rem 1.35rem !important;
   }
@@ -456,19 +387,6 @@
     padding: 0.75rem 0.85rem !important;
   }
 
-  body.join-us-page .join-us-paused-stamp-word {
-    font-size: 1.55rem;
-  }
-
-  body.join-us-page .join-us-paused-stamp {
-    padding: 0.4rem 0.8rem 0.35rem;
-  }
-
-  body.join-us-page .join-us-role-cta.join-us-paused-seal span {
-    font-size: 1rem !important;
-    color: var(--color-brown-dark) !important;
-  }
-
   body.join-us-page .join-us-role-grid h3 {
     font-size: 0.95rem !important;
     margin-bottom: 0.35rem !important;
@@ -486,11 +404,6 @@
 
   body.join-us-page .join-us-role-cta span {
     font-size: 0.8125rem !important;
-  }
-
-  body.join-us-page .join-us-role-cta.join-us-paused-seal span {
-    font-size: 1rem !important;
-    color: var(--color-brown-dark) !important;
   }
 
   body.join-us-page .join-us-form-fields {

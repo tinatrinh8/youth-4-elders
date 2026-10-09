@@ -10,13 +10,13 @@
     },
     "execMember": {
       "title": "Team roles",
-      "description": "Help run the club—events, outreach, marketing, and more. A few priority roles are open now, and you’re welcome to apply open or suggest another role that fits you.",
-      "applicationsOpen": true,
+      "description": "Help run the club—events, outreach, marketing, and more. Stay tuned for the next recruitment cycle.",
+      "applicationsOpen": false,
       "openStatus": "Deadline: **September 25**.",
       "deadlineNote": "Team role applications close **September 25**.",
-      "pausedLabel": "Paused",
-      "closedStatus": "Not open yet",
-      "closedCta": "Check back later"
+      "pausedLabel": "Closed",
+      "closedStatus": "Closed Sept 25 — next cycle TBA",
+      "closedCta": "Applications closed"
     }
   },
   "applyBox": {

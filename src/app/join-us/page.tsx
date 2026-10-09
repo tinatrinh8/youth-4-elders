@@ -782,38 +782,66 @@ export default function JoinUs() {
                   <button
                     type="button"
                     onClick={() => startApplication('general')}
-                    className="join-us-role-cta w-full text-center px-4 py-3 md:px-5 md:py-4 flex items-center justify-center rounded-xl bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-2 border-[var(--color-cream)]/40"
+                    className="join-us-role-cta w-full text-center px-4 py-3 md:px-5 md:py-4 flex items-center justify-center rounded-xl bg-[var(--color-brown-dark)] border-2 border-[var(--color-cream)]/40"
                   >
                     <span className="text-sm md:text-base font-bold text-[var(--color-cream)]" style={{ fontFamily: 'var(--font-leiko)' }}>
                       {content.applyBox.generalTitle}
                     </span>
                   </button>
                 </div>
-                <div className={`join-us-role-block flex flex-col gap-3 ${teamApplicationsOpen ? '' : 'is-paused'}`}>
-                  <div className="join-us-role-card relative rounded-xl border-2 border-[var(--color-brown-dark)] bg-[var(--color-pink-light)] px-5 py-3 flex-1">
-                  <h3 className="text-lg md:text-xl font-bold text-[var(--color-brown-dark)] mb-2" style={{ fontFamily: 'var(--font-leiko)' }}>
-                    {content.cards.execMember.title}
-                  </h3>
-                  <p className="text-sm md:text-base text-[var(--color-brown-dark)] leading-relaxed opacity-90" style={{ fontFamily: 'var(--font-kollektif)' }}>
+                <div className={`join-us-role-block flex flex-col gap-3 ${teamApplicationsOpen ? '' : 'is-closed'}`}>
+                  <div
+                    className={`join-us-role-card relative rounded-xl border-2 px-5 py-3 flex-1 ${
+                      teamApplicationsOpen
+                        ? 'border-[var(--color-brown-dark)] bg-[var(--color-pink-light)]'
+                        : 'border-[var(--color-brown-dark)]/35 bg-[var(--color-cream)]'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <h3
+                        className={`text-lg md:text-xl font-bold ${teamApplicationsOpen ? 'text-[var(--color-brown-dark)]' : 'text-[var(--color-brown-dark)]/70'}`}
+                        style={{ fontFamily: 'var(--font-leiko)' }}
+                      >
+                        {content.cards.execMember.title}
+                      </h3>
+                      {!teamApplicationsOpen && (
+                        <span
+                          className="join-us-closed-badge shrink-0 rounded-full px-2.5 py-1 text-[10px] md:text-xs font-bold uppercase tracking-[0.14em]"
+                          style={{
+                            fontFamily: 'var(--font-kollektif)',
+                            color: 'var(--color-cream)',
+                            background: 'var(--color-brown-dark)',
+                          }}
+                        >
+                          {content.cards.execMember.pausedLabel}
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      className={`text-sm md:text-base leading-relaxed ${teamApplicationsOpen ? 'text-[var(--color-brown-dark)] opacity-90' : 'text-[var(--color-brown-dark)]/65'}`}
+                      style={{ fontFamily: 'var(--font-kollektif)' }}
+                    >
                       {content.cards.execMember.description}
                     </p>
                     {teamApplicationsOpen && (
-                    <p
-                      className="mt-2 text-sm md:text-base font-bold italic underline underline-offset-2"
-                      style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
-                    >
-                      {withBold(content.cards.execMember.openStatus)}
-                    </p>
+                      <p
+                        className="mt-2 text-sm md:text-base font-bold italic underline underline-offset-2"
+                        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)' }}
+                      >
+                        {withBold(content.cards.execMember.openStatus)}
+                      </p>
                     )}
                     {!teamApplicationsOpen && (
-                      <div className="join-us-paused-stamp" aria-hidden>
-                        <span className="join-us-paused-stamp-word">{content.cards.execMember.pausedLabel}</span>
-                        <span className="join-us-paused-stamp-sub">{content.cards.execMember.closedStatus}</span>
-                </div>
+                      <p
+                        className="mt-3 text-sm md:text-base font-medium"
+                        style={{ fontFamily: 'var(--font-kollektif)', color: 'var(--color-brown-dark)', opacity: 0.75 }}
+                      >
+                        {content.cards.execMember.closedStatus}
+                      </p>
                     )}
-              </div>
-            <button
-                type="button"
+                  </div>
+                  <button
+                    type="button"
                     onClick={() => startApplication('team')}
                     disabled={!teamApplicationsOpen}
                     aria-disabled={!teamApplicationsOpen}
@@ -824,18 +852,22 @@ export default function JoinUs() {
                     }
                     className={`join-us-role-cta w-full text-center px-4 py-3 md:px-5 md:py-4 flex items-center justify-center rounded-xl border-2 ${
                       teamApplicationsOpen
-                        ? 'bg-[var(--color-brown-dark)] hover:bg-[var(--color-brown-dark)]/90 transition-opacity border-[var(--color-cream)]/40'
-                        : 'join-us-paused-seal cursor-default'
+                        ? 'bg-[var(--color-brown-dark)] border-[var(--color-cream)]/40'
+                        : 'join-us-closed-cta cursor-not-allowed'
                     }`}
                   >
                     <span
-                      className={`text-sm md:text-base font-bold ${teamApplicationsOpen ? 'text-[var(--color-cream)]' : 'join-us-paused-seal-label'}`}
-                      style={{ fontFamily: teamApplicationsOpen ? 'var(--font-leiko)' : 'var(--font-vintage-stylist)' }}
+                      className="text-sm md:text-base font-bold"
+                      style={{
+                        fontFamily: 'var(--font-leiko)',
+                        color: teamApplicationsOpen ? 'var(--color-cream)' : 'var(--color-brown-dark)',
+                        opacity: teamApplicationsOpen ? 1 : 0.55,
+                      }}
                     >
                       {teamApplicationsOpen ? content.applyBox.teamTitle : content.cards.execMember.closedCta}
                     </span>
-            </button>
-            </div>
+                  </button>
+                </div>
               </div>
             </div>
             <div className={`join-us-form-shell overflow-hidden transition-all duration-500 ease-out ${hasStarted ? 'is-open max-h-[8000px] opacity-100' : 'max-h-0 opacity-0'}`}>
