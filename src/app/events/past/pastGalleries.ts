@@ -17,8 +17,9 @@ const CLUB_INFO = [
 ]
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
-const MAX_WEEKS_PER_SESSION = 6
-/** If the next Friday is more than this many days away, treat it as a new 6-week session. */
+/** Soft cap only — real boundaries come from gaps between series. */
+const MAX_WEEKS_PER_SESSION = 12
+/** If the next Friday is more than this many days away, treat it as a new session. */
 const SESSION_GAP_DAYS = 10
 
 function withFill(lead: string[], count = 12): string[] {
@@ -82,10 +83,18 @@ export const CLUB_EVENT_GALLERIES: Record<string, string[]> = {
   ),
   /** Session 2 photos coming later — keep empty so we don't show filler. */
   'technology-workshop-session-2': [],
+  /** Session 3 (fall 2026, Glebe House) — gallery still in progress. */
+  'technology-workshop-session-3': [],
 }
 
 /** Club items that only get a list recap — no photo gallery page. */
-const CLUB_RECAP_ONLY = new Set(['club-fair', 'krispy-kreme-2026', 'bingo-night-2026'])
+const CLUB_RECAP_ONLY = new Set([
+  'club-fair',
+  'krispy-kreme-2026',
+  'bingo-night-2026',
+  'card-making-2026',
+  'board-game-seniors-2026',
+])
 
 /** List-card cover photos (kept under /assets/events/past for clarity). */
 const CLUB_CARD_COVERS: Record<string, string> = {
@@ -96,8 +105,11 @@ const CLUB_CARD_COVERS: Record<string, string> = {
   spikeball: '/assets/events/past/spikeball.jpg',
   'bingo-night-2026': '/assets/events/past/bingo-night-2026.jpg',
   'sips-samples': '/assets/events/past/sips-samples.jpg',
+  'card-making-2026': '/assets/events/past/card-making-2026.jpg',
+  'board-game-seniors-2026': '/assets/events/past/board-game-seniors-2026.jpg',
   'technology-workshop-session-1': '/assets/events/past/technology-workshop-session-1.jpg',
   'technology-workshop-session-2': `${GALLERY}/technology-workshop/session-1/photo-14.jpg`,
+  'technology-workshop-session-3': `${GALLERY}/technology-workshop/session-1/photo-14.jpg`,
 }
 
 export function isClubRecapOnly(eventId: string): boolean {
@@ -195,10 +207,16 @@ const CLUB_MEMORY_BLURBS: Record<string, string> = {
   spikeball: 'Our first Spikeball Social tournament — packed house, winners crowned, Domino’s Pizza on the table.',
   'build-a-bouquet-2026': 'Our Valentine’s Day Build-a-Bouquet — flowers made together for Abbotsford.',
   'bingo-night-2026': 'Trivia, three bingo rounds, and $30 FNS gift cards at the RGN Student Lounge.',
+  'card-making-2026':
+    'Drop-in card making in the UCU lobby — notes for seniors and a little fundraising.',
+  'board-game-seniors-2026':
+    'Board games at Glebe House to close out the fall 2026 session.',
   'technology-workshop-session-1':
     'Fall tech literacy Fridays at Abbotsford — phones, apps, and lots of hands-on examples.',
   'technology-workshop-session-2':
     'Our next tech literacy stretch — photos and Friday notes are still on the way. Check back soon.',
+  'technology-workshop-session-3':
+    'Fall tech Fridays at Glebe House — photos and Friday notes are still on the way. Check back soon.',
 }
 
 export function getClubMemoryBlurb(eventId: string): string | undefined {
@@ -306,8 +324,8 @@ type WorkshopLike = {
 }
 
 /**
- * Collapse weekly Technology Workshop Fridays into one memory per 6-week session.
- * A new session starts after a long gap or after 6 weeks.
+ * Collapse weekly Technology Workshop Fridays into one memory per session.
+ * A new session starts after a long gap (or the soft week cap).
  */
 export function collapseWorkshopSeries<T extends WorkshopLike>(list: T[]): T[] {
   const workshops = list
@@ -344,6 +362,7 @@ export function collapseWorkshopSeries<T extends WorkshopLike>(list: T[]): T[] {
     const sessionNumber = index + 1
     const weekCount = session.length
     const isLiteracy = sessionNumber === 1
+    const isSession3 = sessionNumber === 3
 
     return {
       ...first,
@@ -355,7 +374,9 @@ export function collapseWorkshopSeries<T extends WorkshopLike>(list: T[]): T[] {
       endDate: lastEnd.getTime() > first.date.getTime() ? lastEnd : first.endDate,
       description: isLiteracy
         ? `Our fall Technology Literacy Workshop at Glebe Centre Abbotsford—a ${weekCount}-week stretch of Fridays helping elders build confidence with phones, apps, and everyday tech. We bring lots of examples of lessons, activities, and real-life scenarios so everyone can learn at their own pace.`
-        : `A ${weekCount}-week stretch of Friday tech help at Glebe Centre Abbotsford.`,
+        : isSession3
+          ? `Our fall Technology Workshop series at Glebe House—a ${weekCount}-week stretch of Friday mornings helping elders with phones, apps, and everyday tech.`
+          : `A ${weekCount}-week stretch of Friday tech help at Glebe Centre Abbotsford.`,
     } as T
   })
 

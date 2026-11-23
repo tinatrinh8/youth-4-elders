@@ -6,15 +6,26 @@ export interface CalendarEvent {
   description?: string
 }
 
-// Generate recurring Technology Workshop Fridays for a 6-week session
-const generateWorkshopDates = (startDate: Date): Date[] => {
+// Generate recurring Technology Workshop Fridays for a session (weekCount or through endDate)
+const generateWorkshopDates = (startDate: Date, weekCountOrEnd?: number | Date): Date[] => {
   const dates: Date[] = []
   const currentDate = new Date(startDate)
   while (currentDate.getDay() !== 5) {
     // 5 = Friday
     currentDate.setDate(currentDate.getDate() + 1)
   }
-  for (let i = 0; i < 6; i++) {
+
+  if (weekCountOrEnd instanceof Date) {
+    const end = new Date(weekCountOrEnd)
+    end.setHours(23, 59, 59, 999)
+    for (let d = new Date(currentDate); d <= end; d.setDate(d.getDate() + 7)) {
+      dates.push(new Date(d))
+    }
+    return dates
+  }
+
+  const weeks = weekCountOrEnd ?? 6
+  for (let i = 0; i < weeks; i++) {
     const friday = new Date(currentDate)
     friday.setDate(currentDate.getDate() + i * 7)
     dates.push(friday)
@@ -22,29 +33,39 @@ const generateWorkshopDates = (startDate: Date): Date[] => {
   return dates
 }
 
-// Session 1 (fall 2025): tech literacy · Session 2: Jan 16 – Feb 20, 2026
-const workshopDates = [
-  ...generateWorkshopDates(new Date(2025, 8, 16)), // Sep 19 – Oct 24, 2025
-  ...generateWorkshopDates(new Date(2026, 0, 16)), // Jan 16 – Feb 20, 2026
+// Session 1 (fall 2025) · Session 2 (winter 2026) · Session 3 (fall 2026, Glebe House through Nov 13)
+const workshopSessions: { dates: Date[]; session: number }[] = [
+  { session: 1, dates: generateWorkshopDates(new Date(2025, 8, 16), 6) }, // Sep 19 – Oct 24, 2025
+  { session: 2, dates: generateWorkshopDates(new Date(2026, 0, 16), 6) }, // Jan 16 – Feb 20, 2026
+  { session: 3, dates: generateWorkshopDates(new Date(2026, 8, 18), new Date(2026, 10, 13)) }, // Sep 18 – Nov 13, 2026
 ]
-
-const SESSION_1_WEEKS = 6
 
 // All events data
 export const events: CalendarEvent[] = [
-  // Technology Workshop Series — two 6-week Friday sessions
-  ...workshopDates.map((date, index) => {
-    const isSession1 = index < SESSION_1_WEEKS
-    return {
-      id: `workshop-${index + 1}`,
-      title: isSession1 ? 'Technology Literacy Workshop' : 'Technology Workshop',
-      date,
-      type: 'club' as const,
-      description: isSession1
-        ? 'Our fall Technology Literacy Workshop at Glebe Centre Abbotsford—Friday sessions helping elders build confidence with phones, apps, and everyday tech. We bring lots of examples of lessons, activities, and real-life scenarios so everyone can learn at their own pace.'
-        : 'A 6-week weekly workshop series teaching and helping with technology. Help elders with technology basics. Located at Glebe Centre Abbotsford.',
-    }
-  }),
+  // Technology Workshop Series — three Friday sessions
+  ...workshopSessions.flatMap(({ dates, session }) =>
+    dates.map((date, weekIndex) => {
+      const isSession1 = session === 1
+      const isSession3 = session === 3
+      const globalIndex =
+        workshopSessions
+          .filter(s => s.session < session)
+          .reduce((sum, s) => sum + s.dates.length, 0) +
+        weekIndex +
+        1
+      return {
+        id: `workshop-${globalIndex}`,
+        title: isSession1 ? 'Technology Literacy Workshop' : 'Technology Workshop',
+        date,
+        type: 'club' as const,
+        description: isSession1
+          ? 'Our fall Technology Literacy Workshop at Glebe Centre Abbotsford—Friday sessions helping elders build confidence with phones, apps, and everyday tech. We bring lots of examples of lessons, activities, and real-life scenarios so everyone can learn at their own pace.'
+          : isSession3
+            ? 'Our fall Technology Workshop series at Glebe House—Friday mornings helping elders with phones, apps, and everyday tech.'
+            : 'A 6-week weekly workshop series teaching and helping with technology. Help elders with technology basics. Located at Glebe Centre Abbotsford.',
+      }
+    })
+  ),
   // School Club Fair — recap only (no gallery page)
   {
     id: 'club-fair',
@@ -107,6 +128,24 @@ export const events: CalendarEvent[] = [
     type: 'club',
     description:
       'Y4E Bingo Night filled the RGN Student Lounge on April 7 from 7–10 PM—a cozy evening for about 40 people with pizza, drinks, games, and prizes. We kicked things off with pizza, drinks, and trivia, then moved into three rounds of bingo (5-in-a-row, inner frame, and X), with a $30 FNS gift card for each round’s first-place winner. After the games, we lingered for photos and chill time—good food, good company, and a night well spent.',
+  },
+  // Card Making & Fundraising — UCU lobby drop-in (recap only)
+  {
+    id: 'card-making-2026',
+    title: 'Card Making & Fundraising',
+    date: new Date(2026, 9, 19), // October 19, 2026 (Monday)
+    type: 'club',
+    description:
+      'We set up a drop-in card-making table in the UCU lobby from 10–2 PM—students stopped by to write notes and make cards for seniors, hang out for a bit, and help fundraise for Y4E.',
+  },
+  // Board Game with Seniors — Glebe House (recap only)
+  {
+    id: 'board-game-seniors-2026',
+    title: 'Board Game with Seniors',
+    date: new Date(2026, 10, 20), // November 20, 2026
+    type: 'club',
+    description:
+      'To close out the fall 2026 session, we spent a morning at Glebe House from 10–12 PM playing board games with seniors—easy conversation, a few friendly matches, and a warm way to wrap the season together.',
   },
   // School events
   {

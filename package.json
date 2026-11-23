@@ -24,7 +24,7 @@
   "devDependencies": {
     "@contentful/rich-text-types": "^17.1.0",
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4.1.12",
+    "@tailwindcss/postcss": "4.1.18",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -34,7 +34,10 @@
     "eslint-config-next": "15.4.1",
     "postcss": "^8.5.6",
     "postcss-themes": "^1.0.3",
-    "tailwindcss": "^4.1.12",
+    "tailwindcss": "4.1.18",
     "typescript": "^5"
+  },
+  "overrides": {
+    "magic-string": "0.30.21"
   }
 }
